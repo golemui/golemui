@@ -14,14 +14,9 @@ export const router = createRouter({
       component: () => import('./pages/form/FormPage.vue'),
     },
     {
-      path: '/dx/kitchen-sink',
-      name: 'dx-kitchen-sink',
-      component: () => import('./pages/dx-form/DxFormPage.vue'),
-    },
-    {
-      path: '/dx/modular',
-      name: 'dx-modular',
-      component: () => import('./pages/modular-dx/ModularDxPage.vue'),
+      path: '/json/signup',
+      name: 'json-signup',
+      component: () => import('./pages/signup/SignupPage.vue'),
     },
   ],
 });

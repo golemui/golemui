@@ -8,9 +8,8 @@ import { RouterLink } from 'vue-router';
       <span class="kx-landing__eyebrow">Vue Playground</span>
       <h1 class="kx-landing__title">GolemUI Kitchen Sink</h1>
       <p class="kx-landing__subtitle">
-        Two ways to build the same form. Both pipelines render through the unified
-        <code>&lt;GuiForm&gt;</code> component and produce identical output — pick the path that
-        fits how you author forms.
+        Two forms, each one a JSON definition: the kitchen sink with every widget, and a short
+        sign-up form.
       </p>
 
       <div class="kx-landing__grid">
@@ -35,44 +34,22 @@ import { RouterLink } from 'vue-router';
           </span>
         </RouterLink>
 
-        <RouterLink to="/dx/kitchen-sink" class="kx-card kx-card--dx">
+        <RouterLink to="/json/signup" class="kx-card kx-card--signup">
           <div class="kx-card__head">
-            <span class="kx-card__badge">DX Path</span>
+            <span class="kx-card__badge">Small form</span>
           </div>
-          <h2 class="kx-card__title">Type-safe builder API</h2>
+          <h2 class="kx-card__title">Sign-up form</h2>
           <p class="kx-card__desc">
-            Compose forms with the <code>gui.*</code> builders and GSL selectors. The unified
-            <code>&lt;GuiForm&gt;</code> runs <code>processDxFacade</code> internally, with
-            memoization so the tree only walks once per definition.
+            A short form in one tab, with custom validation messages and fields that appear for a
+            paid plan.
           </p>
           <ul class="kx-card__list">
-            <li>Autocomplete, refactor safety and inline docs</li>
-            <li>Validators &amp; reactive states colocated with widgets</li>
-            <li>Selectors apply cross-cutting concerns without prop-drilling</li>
+            <li>Custom validation messages</li>
+            <li>Fields that depend on a form state</li>
+            <li>A submit button that is disabled while the form is invalid</li>
           </ul>
           <span class="kx-card__cta">
-            Open DX kitchen sink
-            <span class="kx-card__cta__arrow">→</span>
-          </span>
-        </RouterLink>
-
-        <RouterLink to="/dx/modular" class="kx-card kx-card--modular">
-          <div class="kx-card__head">
-            <span class="kx-card__badge">DX Modular</span>
-          </div>
-          <h2 class="kx-card__title">Multi-module tabbed form</h2>
-          <p class="kx-card__desc">
-            Combine independent <code>DxModule</code> slices into a single tabbed
-            <code>&lt;GuiForm&gt;</code> via <code>buildModularDx()</code>. Each module owns its
-            layout, data, and reactive states — merged at the boundary.
-          </p>
-          <ul class="kx-card__list">
-            <li>Compose features as self-contained modules</li>
-            <li>Tabs auto-generated from module labels</li>
-            <li>Data and states merged transparently at runtime</li>
-          </ul>
-          <span class="kx-card__cta">
-            Open modular DX
+            Open sign-up form
             <span class="kx-card__cta__arrow">→</span>
           </span>
         </RouterLink>

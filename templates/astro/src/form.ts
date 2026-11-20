@@ -1,11 +1,11 @@
-import type { ItemRenderContext, ValidateOn } from '@golemui/core';
-import { gui, type GuiFormInitConfig } from '@golemui/gui-shared';
+import type { ItemRenderContext } from '@golemui/core';
+import type { GuiFormInitConfig } from '@golemui/gui-shared';
 import { html, type TemplateResult } from 'lit';
 
 // Imported by the page frontmatter (server render) and by the page script (client resume),
 // so both sides build the form from the same definition. Nothing here touches the DOM.
 
-type FormShape = {
+export type FormShape = {
   country?: string;
   city?: string;
   currency?: string;
@@ -17,7 +17,7 @@ type CurrencyItem = { code: string; symbol: string; name: string };
 
 const COUNTRIES = ['United States', 'Japan', 'Brazil', 'France'];
 
-const CITIES: Record<string, string[]> = {
+export const CITIES: Record<string, string[]> = {
   'United States': ['New York', 'San Francisco', 'Los Angeles'],
   Japan: ['Tokyo', 'Osaka', 'Kyoto'],
   Brazil: ['São Paulo', 'Rio de Janeiro'],
@@ -42,58 +42,75 @@ const currencyItemRenderer = (ctx: ItemRenderContext<CurrencyItem>): TemplateRes
   </div>
 `;
 
-const formDef = [
-  gui.inputs.dropdown('country', {
-    label: 'Country',
-    items: COUNTRIES,
-    onChange: ({ data, update }) => {
-      const country = (data as FormShape).country;
-      update({ path: 'city', options: CITIES[country ?? ''] ?? [] });
+const formDef = {
+  form: [
+    {
+      kind: 'input',
+      type: 'dropdown',
+      path: 'country',
+      label: 'Country',
+      on: { change: 'loadCities' },
+      props: { items: COUNTRIES, placeholder: 'country' },
     },
-  }),
-  gui.inputs.radiogroup('city', {
-    label: 'City',
-    options: [],
-    include: { when: '!!$form.country' },
-    // `onLoad` runs in the browser once the widget has mounted, never during the server render.
-    onLoad: ({ data, update }) => {
-      const country = (data as FormShape).country;
-      if (country) update({ path: 'city', options: CITIES[country] ?? [] });
+    {
+      kind: 'input',
+      type: 'radiogroup',
+      path: 'city',
+      label: 'City',
+      include: { when: '!!$form.country' },
+      // The `load` event runs in the browser once the widget has mounted, never during the
+      // server render.
+      on: { load: 'loadCities' },
+      props: { options: [] },
     },
-  }),
-  gui.inputs.dropdown('currency', {
-    label: 'Currency',
-    items: CURRENCIES,
-    labelField: 'code',
-    valueField: 'code',
-    itemRenderer: 'currencyItemRenderer',
-    include: { when: '!!$form.city' },
-  }),
-  gui.inputs.checkbox('pets', {
-    label: 'Travelling with pets?',
-    include: { when: '!!$form.currency' },
-  }),
-  gui.inputs.datePicker('startDate', {
-    label: 'Start date',
-    icon: 'calendar_month',
-    prevMonthIcon: 'chevron_left',
-    nextMonthIcon: 'chevron_right',
-    include: { when: '$form.pets != null' },
-  }),
-  gui.actions.button({
-    label: 'Submit',
-    uid: 'submit',
-    onClick: () => 'handleSubmit',
-  }),
-];
+    {
+      kind: 'input',
+      type: 'dropdown',
+      path: 'currency',
+      label: 'Currency',
+      include: { when: '!!$form.city' },
+      props: {
+        items: CURRENCIES,
+        labelField: 'code',
+        valueField: 'code',
+        itemRenderer: 'currencyItemRenderer',
+        placeholder: 'currency',
+      },
+    },
+    {
+      kind: 'input',
+      type: 'checkbox',
+      path: 'pets',
+      label: 'Travelling with pets?',
+      include: { when: '!!$form.currency' },
+    },
+    {
+      kind: 'input',
+      type: 'datePicker',
+      path: 'startDate',
+      label: 'Start date',
+      include: { when: '$form.pets != null' },
+      props: {
+        icon: 'calendar_month',
+        prevMonthIcon: 'chevron_left',
+        nextMonthIcon: 'chevron_right',
+      },
+    },
+    {
+      kind: 'action',
+      type: 'button',
+      uid: 'submit',
+      label: 'Submit',
+      on: { click: 'handleSubmit' },
+    },
+  ],
+};
 
 export const config: GuiFormInitConfig = {
   // Server rendering requires an explicit formName: it is what makes the server and the
   // client produce the same form id.
   formName: 'signup',
   formDef,
-  formConfig: {
-    validateOn: 'submit' as ValidateOn,
-    itemRenderers: { currencyItemRenderer },
-  },
+  validateOn: 'submit',
+  itemRenderers: { currencyItemRenderer },
 };

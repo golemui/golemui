@@ -1,0 +1,35 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabCustomWidget",
+  "kind": "layout",
+  "type": "grid",
+  "children": [
+    {
+      "kind": "display",
+      "type": "heading",
+      "props": {
+        "text": "Client name: {{ $form.clientName || 'unknown' }}",
+        "level": 1
+      }
+    },
+    {
+      "kind": "input",
+      "type": "textinput",
+      "path": "clientName",
+      "label": "Client name",
+      "props": {
+        "placeholder": "Type to see the heading above change",
+        "hint": "The heading is a custom widget of this playground. A template in its text prop reads $form.clientName."
+      }
+    },
+    {
+      "kind": "input",
+      "type": "toggle",
+      "path": "registerMode",
+      "label": "{{ $form.registerMode ? 'Switch to login' : 'Switch to register' }}",
+      "props": {
+        "hint": "A template computes this label from the form data."
+      }
+    }
+  ]
+}

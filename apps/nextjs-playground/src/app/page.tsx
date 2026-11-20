@@ -11,8 +11,7 @@ const landingStyles = `
   --kx-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06);
   --kx-shadow-hover: 0 1px 2px rgba(15, 23, 42, 0.04), 0 16px 36px rgba(15, 23, 42, 0.10);
   --kx-accent-json: #6366f1;
-  --kx-accent-dx: #0ea5e9;
-  --kx-accent-modular: #8b5cf6;
+  --kx-accent-signup: #8b5cf6;
   --kx-code-bg: rgba(15, 23, 42, 0.06);
   background: var(--kx-bg);
   color: var(--kx-fg);
@@ -30,8 +29,7 @@ const landingStyles = `
     --kx-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 10px 24px rgba(0, 0, 0, 0.45);
     --kx-shadow-hover: 0 1px 2px rgba(0, 0, 0, 0.4), 0 18px 40px rgba(0, 0, 0, 0.55);
     --kx-accent-json: #818cf8;
-    --kx-accent-dx: #38bdf8;
-    --kx-accent-modular: #a78bfa;
+    --kx-accent-signup: #a78bfa;
     --kx-code-bg: rgba(255, 255, 255, 0.08);
   }
 }
@@ -86,8 +84,7 @@ const landingStyles = `
   background: var(--kx-card-accent);
 }
 .kx-card--json { --kx-card-accent: var(--kx-accent-json); }
-.kx-card--dx { --kx-card-accent: var(--kx-accent-dx); }
-.kx-card--modular { --kx-card-accent: var(--kx-accent-modular); }
+.kx-card--signup { --kx-card-accent: var(--kx-accent-signup); }
 .kx-card__head { display: flex; align-items: center; gap: 0.75rem; }
 .kx-card__badge {
   font-size: 0.7rem;
@@ -138,10 +135,8 @@ export default function LandingPage() {
           <span className="kx-landing__eyebrow">Next.js Playground</span>
           <h1 className="kx-landing__title">GolemUI Kitchen Sink</h1>
           <p className="kx-landing__subtitle">
-            Two ways to build the same form, server-rendered by Next.js. Both pipelines render
-            through the unified
-            <code style={{ padding: '0 0.25rem' }}>&lt;GuiForm&gt;</code> component and produce
-            identical output — pick the path that fits how you author forms.
+            Two forms, each one a JSON definition, server-rendered by Next.js: the kitchen sink with
+            every widget, and a short sign-up form.
           </p>
 
           <div className="kx-landing__grid">
@@ -166,46 +161,22 @@ export default function LandingPage() {
               </span>
             </Link>
 
-            <Link href="/dx/kitchen-sink" className="kx-card kx-card--dx">
+            <Link href="/json/signup" className="kx-card kx-card--signup">
               <div className="kx-card__head">
-                <span className="kx-card__badge">DX Path</span>
+                <span className="kx-card__badge">Small form</span>
               </div>
-              <h2 className="kx-card__title">Type-safe builder API</h2>
+              <h2 className="kx-card__title">Sign-up form</h2>
               <p className="kx-card__desc">
-                Compose forms with the <code>gui.*</code> builders and GSL selectors. The unified
-                <code style={{ padding: '0 0.25rem' }}>&lt;GuiForm&gt;</code> runs
-                <code style={{ padding: '0 0.25rem' }}>processDxFacade</code> internally, with
-                memoization so the tree only walks once per definition.
+                A short form in one tab, with custom validation messages and fields that appear for
+                a paid plan.
               </p>
               <ul className="kx-card__list">
-                <li>Autocomplete, refactor safety and inline docs</li>
-                <li>Validators &amp; reactive states colocated with widgets</li>
-                <li>Selectors apply cross-cutting concerns without prop-drilling</li>
+                <li>Custom validation messages</li>
+                <li>Fields that depend on a form state</li>
+                <li>A submit button that is disabled while the form is invalid</li>
               </ul>
               <span className="kx-card__cta">
-                Open DX kitchen sink
-                <span className="kx-card__cta__arrow">→</span>
-              </span>
-            </Link>
-
-            <Link href="/dx/modular" className="kx-card kx-card--modular">
-              <div className="kx-card__head">
-                <span className="kx-card__badge">DX Modular</span>
-              </div>
-              <h2 className="kx-card__title">Multi-module tabbed form</h2>
-              <p className="kx-card__desc">
-                Combine independent <code>DxModule</code> slices into a single tabbed
-                <code style={{ padding: '0 0.25rem' }}>&lt;GuiForm&gt;</code> via{' '}
-                <code>buildModularDx()</code>. Each module owns its layout, data, and reactive
-                states — merged at the boundary.
-              </p>
-              <ul className="kx-card__list">
-                <li>Compose features as self-contained modules</li>
-                <li>Tabs auto-generated from module labels</li>
-                <li>Data and states merged transparently at runtime</li>
-              </ul>
-              <span className="kx-card__cta">
-                Open modular DX
+                Open sign-up form
                 <span className="kx-card__cta__arrow">→</span>
               </span>
             </Link>

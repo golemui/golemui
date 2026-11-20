@@ -259,17 +259,15 @@ It does **not** accept object literals or callbacks. For any per-field customiza
 
 ## Demo Requirement for New Shortcut Types
 
-Every new shortcut type must be visible in the kitchen sink demo, which the four
-playground apps render at `/dx/kitchen-sink` and `/json/kitchen-sink`. Add a tab
-pair under `apps/apps-shared/src/lib/mocks/tabs/`:
+Every new shortcut type must be visible in the kitchen sink demo, which the
+playground apps render at `/json/kitchen-sink`. Add a tab under
+`apps/apps-shared/src/lib/mocks/tabs/`:
 
-- `<widget>.dx.ts` (the builder version) wired into
-  `apps/apps-shared/src/lib/mocks/kitchen-sink.dx.ts`
-- `<widget>.form-chunk.json` (the JSON version) wired into
-  `apps/apps-shared/src/lib/mocks/kitchen-sink.form.json`
+- `<widget>.form-chunk.json`, with a `$ref` and a tab entry in
+  `apps/apps-shared/src/lib/mocks/kitchen-sink.form.json`, and an entry in the chunk map of
+  `apps/apps-shared/src/lib/mocks/kitchen-sink.ts`
 
-`kitchen-sink.equivalence.spec.ts` compares the two versions tab by tab, so both
-must produce the same form.
+`kitchen-sink.spec.ts` fails when a chunk has no map entry or no tab entry.
 
 If a shortcut has no visible demo, it is not considered complete.
 

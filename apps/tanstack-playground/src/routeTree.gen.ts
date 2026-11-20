@@ -10,23 +10,12 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DxKitchenSinkRouteImport } from './routes/dx/kitchen-sink'
-import { Route as DxModularRouteImport } from './routes/dx/modular'
 import { Route as JsonKitchenSinkRouteImport } from './routes/json/kitchen-sink'
+import { Route as JsonSignupRouteImport } from './routes/json/signup'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DxKitchenSinkRoute = DxKitchenSinkRouteImport.update({
-  id: '/dx/kitchen-sink',
-  path: '/dx/kitchen-sink',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DxModularRoute = DxModularRouteImport.update({
-  id: '/dx/modular',
-  path: '/dx/modular',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JsonKitchenSinkRoute = JsonKitchenSinkRouteImport.update({
@@ -34,40 +23,40 @@ const JsonKitchenSinkRoute = JsonKitchenSinkRouteImport.update({
   path: '/json/kitchen-sink',
   getParentRoute: () => rootRouteImport,
 } as any)
+const JsonSignupRoute = JsonSignupRouteImport.update({
+  id: '/json/signup',
+  path: '/json/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dx/kitchen-sink': typeof DxKitchenSinkRoute
-  '/dx/modular': typeof DxModularRoute
   '/json/kitchen-sink': typeof JsonKitchenSinkRoute
+  '/json/signup': typeof JsonSignupRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dx/kitchen-sink': typeof DxKitchenSinkRoute
-  '/dx/modular': typeof DxModularRoute
   '/json/kitchen-sink': typeof JsonKitchenSinkRoute
+  '/json/signup': typeof JsonSignupRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dx/kitchen-sink': typeof DxKitchenSinkRoute
-  '/dx/modular': typeof DxModularRoute
   '/json/kitchen-sink': typeof JsonKitchenSinkRoute
+  '/json/signup': typeof JsonSignupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dx/kitchen-sink' | '/dx/modular' | '/json/kitchen-sink'
+  fullPaths: '/' | '/json/kitchen-sink' | '/json/signup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dx/kitchen-sink' | '/dx/modular' | '/json/kitchen-sink'
-  id:
-    '__root__' | '/' | '/dx/kitchen-sink' | '/dx/modular' | '/json/kitchen-sink'
+  to: '/' | '/json/kitchen-sink' | '/json/signup'
+  id: '__root__' | '/' | '/json/kitchen-sink' | '/json/signup'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DxKitchenSinkRoute: typeof DxKitchenSinkRoute
-  DxModularRoute: typeof DxModularRoute
   JsonKitchenSinkRoute: typeof JsonKitchenSinkRoute
+  JsonSignupRoute: typeof JsonSignupRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -79,20 +68,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dx/kitchen-sink': {
-      id: '/dx/kitchen-sink'
-      path: '/dx/kitchen-sink'
-      fullPath: '/dx/kitchen-sink'
-      preLoaderRoute: typeof DxKitchenSinkRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dx/modular': {
-      id: '/dx/modular'
-      path: '/dx/modular'
-      fullPath: '/dx/modular'
-      preLoaderRoute: typeof DxModularRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/json/kitchen-sink': {
       id: '/json/kitchen-sink'
       path: '/json/kitchen-sink'
@@ -100,14 +75,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JsonKitchenSinkRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/json/signup': {
+      id: '/json/signup'
+      path: '/json/signup'
+      fullPath: '/json/signup'
+      preLoaderRoute: typeof JsonSignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DxKitchenSinkRoute: DxKitchenSinkRoute,
-  DxModularRoute: DxModularRoute,
   JsonKitchenSinkRoute: JsonKitchenSinkRoute,
+  JsonSignupRoute: JsonSignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -45,9 +45,12 @@ import listChunk from './tabs/list.form-chunk.json';
 import repeaterChunk from './tabs/repeater.form-chunk.json';
 import tagsChunk from './tabs/tags.form-chunk.json';
 import fileuploadChunk from './tabs/fileupload.form-chunk.json';
+import multidropdownChunk from './tabs/multidropdown.form-chunk.json';
+import multilistChunk from './tabs/multilist.form-chunk.json';
+import customWidgetChunk from './tabs/custom-widget.form-chunk.json';
 
 // Chunk modules keyed by the exact $ref strings used in kitchen-sink.form.json.
-// The resolver throws on a ref with no entry here, and kitchen-sink.equivalence.spec.ts
+// The resolver throws on a ref with no entry here, and kitchen-sink.spec.ts
 // imports this file, so a new tab chunk without a map entry fails that spec.
 const chunks: Record<string, unknown> = {
   './tabs/alert.form-chunk.json': alertChunk,
@@ -93,6 +96,9 @@ const chunks: Record<string, unknown> = {
   './tabs/repeater.form-chunk.json': repeaterChunk,
   './tabs/fileupload.form-chunk.json': fileuploadChunk,
   './tabs/tags.form-chunk.json': tagsChunk,
+  './tabs/multidropdown.form-chunk.json': multidropdownChunk,
+  './tabs/multilist.form-chunk.json': multilistChunk,
+  './tabs/custom-widget.form-chunk.json': customWidgetChunk,
 };
 
 const data = {
@@ -107,6 +113,15 @@ const data = {
     defaultListRenderer: 0,
     disabledList: 0,
     customItemRenderer: 'one',
+  },
+  multiDropdowns: {
+    withIcon: ['React', 'Vue'],
+    objectItems: [1, 3],
+    disabled: ['React', 'Vue'],
+  },
+  multiLists: {
+    frameworks: ['Vue'],
+    disabled: ['React'],
   },
   fileUploads: {
     title: '',
