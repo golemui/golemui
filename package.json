@@ -43,7 +43,8 @@
     "release": "npm run build:libs && tsx tools/release.ts",
     "generate:skill": "tsx --tsconfig ./libs/gui/mcp/tsconfig.json libs/gui/mcp/tools/generate-skill-refs.ts",
     "generate:schemas": "tsx --tsconfig ./libs/gui/schemas/tsconfig.json libs/gui/schemas/tools/generate-schemas.ts",
-    "generate:validators": "tsx --tsconfig ./libs/gui/mcp/tsconfig.json libs/gui/mcp/tools/generate-validators.ts"
+    "generate:validators": "tsx --tsconfig ./libs/gui/mcp/tsconfig.json libs/gui/mcp/tools/generate-validators.ts",
+    "skill:lint": "npm run generate:validators && skillunit lint"
   },
   "private": true,
   "dependencies": {
@@ -143,6 +144,7 @@
     "react18": "npm:react@18.3.1",
     "react18-dom": "npm:react-dom@18.3.1",
     "sass": "^1.55.0",
+    "skillunit": "0.1.3",
     "snarkdown": "^2.0.0",
     "ts-lit-plugin": "^2.0.2",
     "tslib": "^2.3.0",

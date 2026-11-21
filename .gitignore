@@ -42,6 +42,12 @@ Thumbs.db
 .nx/cache
 .nx/workspace-data
 .claude
+/Claude outputs
+
+# Local secrets (TYPESAFE_API_KEY for skillunit)
+.env
+.env.*
+!.env.example
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
 

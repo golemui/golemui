@@ -1,0 +1,8 @@
+skill: ./skills/golemui
+examples:
+  ts:
+    tsconfig: ./tsconfig.skill.json
+  json:
+    command: npx tsx --tsconfig libs/gui/mcp/tsconfig.json libs/gui/mcp/src/cli.ts validate-json {file}
+  bash:
+    command: bash -n {file}

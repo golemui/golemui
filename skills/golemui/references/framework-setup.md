@@ -2,6 +2,15 @@
 
 The form definition is identical in every framework; only the host wiring changes.
 
+Setup:
+
+```ts
+import { gui } from '@golemui/gui-shared';
+import { html } from 'lit';
+declare const form: Record<string, any>;
+declare function defineNuxtPlugin(setup: () => unknown): unknown;
+```
+
 ## Install (5 packages, versions in lockstep)
 
 ```bash
@@ -182,7 +191,7 @@ module both sides import; nothing in it may touch the DOM.
 
 Server (Astro frontmatter, or a request handler):
 
-```ts
+```ts no-check
 import { preloadFormWidgets } from '@golemui/core';
 import { widgetLoaders } from '@golemui/gui-lit'; // also registers <gui-form>
 import { renderTemplate } from '@golemui/lit/ssr';
@@ -196,7 +205,7 @@ const formHtml = await renderTemplate(html`<gui-form .config=${config}></gui-for
 
 Client (Astro `<script>`, or the page's module):
 
-```ts
+```ts no-check
 import { preloadFormWidgets } from '@golemui/core';
 import { widgetLoaders, type FormElement } from '@golemui/gui-lit';
 import { initValidators } from '@golemui/gui-validators';

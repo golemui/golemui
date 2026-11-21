@@ -5,6 +5,15 @@ Use JSON when forms are stored, transferred, diffed, generated, or served from a
 All docs for this flavor live under `https://golemui.com/json/<page>.md` — never mix JSON
 shapes with `gui.*` syntax in one artifact.
 
+Setup:
+
+```ts
+type Source = Parameters<typeof import('@golemui/gui-shared').toJsonFormDefinition>[0];
+declare const formDef: Source['formDef'];
+declare const formSelectors: Source['formSelectors'];
+declare const formConfig: Source['formConfig'];
+```
+
 ## Document shape
 
 ```json

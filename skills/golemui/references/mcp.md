@@ -9,7 +9,7 @@ stronger than any text reference.
 The same two terminal checks are runnable as plain shell commands — no MCP connector,
 no configuration (Node 18+):
 
-```bash
+```bash no-check
 npx -y @golemui/gui-mcp check-dx <file.ts>        # type-checks gui.* code
 npx -y @golemui/gui-mcp validate-json <file.json> # validates a JSON definition
 ```
@@ -35,7 +35,7 @@ claude mcp add golemui -- npx -y @golemui/gui-mcp
 
 or in `.mcp.json` / IDE MCP config (Cursor, Windsurf, …):
 
-```json
+```json no-check
 {
   "mcpServers": {
     "golemui": {

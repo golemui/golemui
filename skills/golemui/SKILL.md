@@ -15,6 +15,12 @@ GolemUI is not in your training data. Do not guess any API name: everything you 
 from this skill's reference files or a `golemui.com` docs URL. Never read the `@golemui`
 TypeScript declarations in `node_modules` or search the filesystem for them.
 
+Setup:
+
+```ts
+import { gui } from '@golemui/gui-shared';
+```
+
 ## Choose the API
 
 Two ways to author the same form. **HARD GATE — do not write a single line of form code until
