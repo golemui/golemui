@@ -3,6 +3,6 @@ examples:
   ts:
     tsconfig: ./tsconfig.skill.json
   json:
-    command: npx tsx --tsconfig libs/gui/mcp/tsconfig.json libs/gui/mcp/src/cli.ts validate-json {file}
+    command: npx tsx --tsconfig libs/gui/mcp/tsconfig.json tools/validate-skill-json.ts {file}
   bash:
     command: bash -n {file}
