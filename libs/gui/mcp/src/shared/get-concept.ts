@@ -986,8 +986,8 @@ const HOST_SERVICES_CONCEPT: GetConceptResult = {
     'Never put a `File` object in the form value — the value is the plain envelope the widget ' +
       'builds from the `upload` result; form events and submit payloads deep-clone data, which ' +
       'turns non-plain objects into `{}`.',
-    '`dependencies` is merged shallowly: widget-set defaults, then the DX `formConfig.dependencies`, ' +
-      'then the init config `dependencies`; the last one wins per key.',
+    '`dependencies` is merged shallowly: the dependencies of the widget set, then the ' +
+      '`dependencies` of the form init config. The last one wins per key.',
     'The host owns server file cleanup. `uploadService.remove` is called only on an explicit user ' +
       'removal and when the single-file widget replaces its file; a deleted repeater row, a ' +
       'hidden-field prune, `setData`, a config replacement or an abandoned form all leave the ' +

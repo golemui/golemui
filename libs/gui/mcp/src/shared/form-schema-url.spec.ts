@@ -3,7 +3,6 @@ import { FORM_SCHEMA_URL } from './form-schema-url';
 
 // The alias is a website build input owned by @golemui/schemas and is not published to
 // npm, so it is read from its source location rather than imported as a package export.
-// @ts-expect-error import.meta.glob is provided by Vite/Vitest at runtime
 const aliasFiles: Record<string, { $id: string }> = import.meta.glob(
   '../../../../schemas/site/form.schema.json',
   { import: 'default', eager: true },

@@ -18,19 +18,7 @@ export default [
             // Repository-only generator scripts, not part of the published package.
             '{projectRoot}/tools/**',
           ],
-          // Option-B deps: declared for the published package, resolved from node_modules by the
-          // in-process tsc gate (typecheck.ts) rather than statically imported, so dep-checks can't see them.
-          ignoredDependencies: [
-            'vitest',
-            '@golemui/core',
-            '@golemui/gui-shared',
-            '@golemui/gui-validators',
-            '@golemui/dx',
-            'zod',
-            '@standard-schema/spec',
-            'rxjs',
-            'ts.data.json',
-          ],
+          ignoredDependencies: ['vitest'],
         },
       ],
     },

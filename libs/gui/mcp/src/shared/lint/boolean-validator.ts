@@ -14,10 +14,8 @@ export type BooleanValidatorFinding = {
  * the pristine `undefined` pass. Forcing a checkbox to be checked therefore needs
  * BOTH rules — either half alone validates something the author almost never means.
  *
- * Like `reactive-expressions.ts`, this is the shared engine for both surfaces:
- * {@link lintBooleanValidators} walks a JSON form definition, while the DX path
- * (`dx-lint.ts`) extracts each boolean-widget validator from the AST and funnels it
- * through {@link checkBooleanValidatorRules} — one rule set, no drift.
+ * {@link lintBooleanValidators} walks a JSON form definition and applies these rules to
+ * each boolean validator it finds.
  */
 export function checkBooleanValidatorRules(
   validator: { required?: unknown; const?: unknown },

@@ -71,31 +71,6 @@ export function lintReactiveExpressions(formDefinition: unknown): ExpressionFind
   return findings;
 }
 
-export type CheckExpressionOptions = {
-  /**
-   * True when the expression lives inside a repeater `props.template`, where the
-   * `$item` and `$index` scope variables are available.
-   */
-  inRepeaterTemplate?: boolean;
-};
-
-/**
- * Lint a single reactive expression string in isolation, against the same rules
- * `lintReactiveExpressions` applies while walking a JSON form definition. This is
- * the shared engine the DX path (`dx_check_code`) reuses: the JSON walker has the
- * object tree, the DX linter has the AST — both funnel each `when` expression
- * through here so the two surfaces can never drift.
- */
-export function checkReactiveExpression(
-  expression: string,
-  path = '',
-  options: CheckExpressionOptions = {},
-): ExpressionFinding[] {
-  const out: ExpressionFinding[] = [];
-  checkExpression(expression, path, out, options.inRepeaterTemplate === true);
-  return out;
-}
-
 function walk(
   node: unknown,
   path: string,

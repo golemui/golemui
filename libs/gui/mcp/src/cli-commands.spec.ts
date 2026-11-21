@@ -26,7 +26,6 @@ describe('golemui-mcp CLI subcommands', () => {
       const r = await run([flag]);
       expect(r.code).toBe(0);
       expect(r.out).toContain('validate-json');
-      expect(r.out).toContain('check-dx');
       expect(r.out).toContain('Exit codes');
     }
   });
@@ -81,35 +80,5 @@ describe('golemui-mcp CLI subcommands', () => {
     const r = await run(['validate-json', file('broken.json', '{ not json')]);
     expect(r.code).toBe(2);
     expect(r.err).toContain('not valid JSON');
-  });
-
-  it('check-dx: a real gui.* snippet exits 0 with ok: true', async () => {
-    const p = file(
-      'good.ts',
-      "import { gui } from '@golemui/gui-shared';\n" +
-        "export const form = [gui.inputs.textInput('name', { label: 'Name', validator: { required: true } })];\n",
-    );
-    const r = await run(['check-dx', p]);
-    expect(r.code).toBe(0);
-    expect(JSON.parse(r.out)).toMatchObject({ ok: true });
-  });
-
-  it('check-dx: an invented factory exits 1 with diagnostics', async () => {
-    const p = file(
-      'bad.ts',
-      "import { gui } from '@golemui/gui-shared';\n" +
-        "export const form = [gui.actions.submitButton({ label: 'Go' })];\n",
-    );
-    const r = await run(['check-dx', p]);
-    expect(r.code).toBe(1);
-    const parsed = JSON.parse(r.out);
-    expect(parsed.ok).toBe(false);
-    expect(parsed.diagnostics.length).toBeGreaterThan(0);
-  });
-
-  it('check-dx: an empty file exits 2 (environmental, not a diagnosis)', async () => {
-    const r = await run(['check-dx', file('empty.ts', '')]);
-    expect(r.code).toBe(2);
-    expect(r.err).toContain('non-empty');
   });
 });
