@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.spec.json",
+  "include": ["src/dependency-types.spec.ts", "src/lib/golem-form.spec.ts", "src/**/*.d.ts"]
+}

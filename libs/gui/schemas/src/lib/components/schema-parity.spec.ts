@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 
 // Every component schema allows scoped prop overrides via `name.<scope>` keys.
-// The DX prop types permit a scoped value for ANY prop, and each widget uses
+// A scoped value is allowed for ANY prop, and each widget uses
 // `additionalProperties: false` on `props` (plus `unevaluatedProperties: false`
 // on the widget), so a prop that lacks a `^name\.[^.]+$` patternProperties entry
 // silently rejects its own scoped form even though the direct prop is allowed.

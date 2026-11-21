@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { preloadFormWidgets } from '@golemui/core';
-import { gui, type GuiFormInitConfig } from '@golemui/gui-shared';
+import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { act } from 'react';
 import { hydrateRoot, type Root } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
@@ -23,23 +23,52 @@ vi.mock('@lit/react', async () => {
 // defer-hydration, so they upgrade, and add their ARIA attributes, before React hydrates.
 const config: GuiFormInitConfig = {
   formName: 'hydration',
-  formDef: [
-    gui.displays.alert({ text: 'Rendered on the server' }),
-    gui.layouts.tabs([
-      { label: 'Shipping', children: [gui.displays.alert({ text: 'Shipping panel' })] },
-      { label: 'Billing', children: [gui.displays.alert({ text: 'Billing panel' })] },
-    ]),
-    // A plain <button> React renders, which gui-menu gives aria-haspopup once it connects: its
-    // React wrapper holds that until React has hydrated.
-    gui.actions.menu({
-      uid: 'rowActions',
-      label: 'Actions',
-      items: [
-        { label: 'Edit', value: 'edit' },
-        { label: 'Delete', value: 'delete' },
-      ],
-    }),
-  ],
+  formDef: {
+    form: [
+      { kind: 'display', type: 'alert', props: { text: 'Rendered on the server' } },
+      {
+        kind: 'layout',
+        type: 'tabs',
+        props: {
+          tabs: [
+            { label: 'Shipping', uid: 'shipping' },
+            { label: 'Billing', uid: 'billing' },
+          ],
+          renderMode: 'all',
+        },
+        children: [
+          {
+            kind: 'layout',
+            type: 'grid',
+            uid: 'shipping',
+            props: { direction: 'column' },
+            children: [{ kind: 'display', type: 'alert', props: { text: 'Shipping panel' } }],
+          },
+          {
+            kind: 'layout',
+            type: 'grid',
+            uid: 'billing',
+            props: { direction: 'column' },
+            children: [{ kind: 'display', type: 'alert', props: { text: 'Billing panel' } }],
+          },
+        ],
+      },
+      // A plain <button> React renders, which gui-menu gives aria-haspopup once it connects: its
+      // React wrapper holds that until React has hydrated.
+      {
+        kind: 'action',
+        type: 'menu',
+        uid: 'rowActions',
+        label: 'Actions',
+        props: {
+          items: [
+            { label: 'Edit', value: 'edit' },
+            { label: 'Delete', value: 'delete' },
+          ],
+        },
+      },
+    ],
+  },
 };
 
 describe('hydrating a server-rendered form', () => {

@@ -4,6 +4,5 @@
   "lib": {
     "entryFile": "src/index.ts"
   },
-  "assets": ["README.md", "CHANGELOG.md"],
-  "allowedNonPeerDependencies": ["@golemui/dx"]
+  "assets": ["README.md", "CHANGELOG.md"]
 }

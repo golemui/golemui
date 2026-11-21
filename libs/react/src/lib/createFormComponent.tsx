@@ -9,14 +9,13 @@ import {
   buildWidgetSetForm,
   type WidgetSetDefinition,
   type WidgetSetFormInitConfig,
-} from '@golemui/dx';
+} from '@golemui/core/internals';
 import {
   type ComponentType,
   type ForwardRefExoticComponent,
   forwardRef,
   type PropsWithoutRef,
   type RefAttributes,
-  useCallback,
   useMemo,
 } from 'react';
 import { FormComponent, type FormComponentHandle } from './FormComponent';
@@ -71,14 +70,12 @@ export type WidgetSetFormComponent<
 /**
  * Builds a React form component bound to one widget set.
  *
- * The returned component accepts the widget set's form config, resolves TS
- * builder input through the widget set's `resolveFormInput`, applies the
+ * The returned component accepts the widget set's form config, applies the
  * shared merge precedence rules, and renders the core {@link FormComponent}.
  * Widget set packages instantiate this once and export the result (the gui
  * set's `GuiForm` is one example).
  *
- * @param widgetSet - The widget set's loaders, validator factory, and
- * optional form input resolver.
+ * @param widgetSet - The widget set's loaders, validator factory and default dependencies.
  * @param options - Defaults for every form the widget set creates. A per-form prop wins
  * over the matching option.
  *
@@ -86,7 +83,6 @@ export type WidgetSetFormComponent<
  * export const GuiForm = createFormComponent<GuiFormInitConfig>({
  *   widgetLoaders: guiWidgetLoaders,
  *   validators: initValidators,
- *   resolveFormInput,
  * });
  */
 export function createFormComponent<
@@ -107,7 +103,7 @@ export function createFormComponent<
     },
     ref,
   ) {
-    const { initConfig, validators, resolved } = useMemo(
+    const { initConfig, validators } = useMemo(
       () => buildWidgetSetForm(widgetSet, config),
       [config],
     );
@@ -115,15 +111,6 @@ export function createFormComponent<
     // The bundle is built with untyped loaders. This widget set's loaders
     // resolve to React components, so the config is a React init config.
     const coreConfig = initConfig as FormInitConfig<ComponentType<WithWidget>>;
-
-    // Chain DX-registered event handlers with the user-supplied callback so both fire.
-    const mergedFormEvent = useCallback(
-      (event: FormEvent) => {
-        resolved.formEvent?.(event);
-        formEvent?.(event);
-      },
-      [resolved.formEvent, formEvent],
-    );
 
     return (
       <FormComponent
@@ -135,7 +122,7 @@ export function createFormComponent<
         formHealth={formHealth}
         formHealthBoundary={formHealthBoundary ?? options?.formHealthBoundary}
         widgetErrorFallback={widgetErrorFallback ?? options?.widgetErrorFallback}
-        formEvent={mergedFormEvent}
+        formEvent={formEvent}
         formSubmit={formSubmit}
       />
     );

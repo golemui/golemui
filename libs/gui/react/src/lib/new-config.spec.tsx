@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { type Action, type Middleware, preloadFormWidgets, type State } from '@golemui/core';
-import { gui, type GuiFormInitConfig } from '@golemui/gui-shared';
+import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { type FormComponentHandle } from '@golemui/react';
 import { act, useEffect, useRef } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
@@ -35,7 +35,19 @@ const recordActionsOf =
 
 const customerConfig = (customer: string): GuiFormInitConfig => ({
   formName: 'customer',
-  formDef: [gui.inputs.textInput('firstName', { label: 'First name' })],
+  formDef: {
+    form: [
+      {
+        kind: 'input',
+        type: 'textinput',
+        uid: 'firstName',
+        path: 'firstName',
+        label: 'First name',
+        validator: { type: 'string' },
+        props: { placeholder: 'firstName' },
+      },
+    ],
+  },
   data: { firstName: customer },
   middlewares: [recordActionsOf(customer)],
 });

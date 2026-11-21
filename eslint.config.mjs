@@ -36,13 +36,13 @@ export default [
       //  scope:app ----> scope:impl -------------> scope:framework ----> scope:core
       //  apps/           gui-shared                react/lit/angular     core
       //  docs/           gui-react/lit/angular     ui-testing            gui-validators
-      //                  gui-components/schemas                          dx
+      //                  gui-components/schemas
       //                  gui-mcp
       //
       // |------------------------------------------------------------------------------------------------|
       // | Tag             | Projects                                                                     |
       // |------------------------------------------------------------------------------------------------|
-      // | scope:core      | @golemui/core, @golemui/dx, gui-validators                                   |
+      // | scope:core      | @golemui/core, gui-validators                                                |
       // | scope:framework | @golemui/react/lit/angular/vue, ui-testing                                   |
       // | scope:impl      | gui-shared, gui-react/lit/angular/vue, gui-components, gui-schemas, gui-mcp  |
       // | scope:app       | everything under apps/ and docs/                                             |

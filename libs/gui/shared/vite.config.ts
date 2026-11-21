@@ -38,7 +38,6 @@ export default defineConfig(() => ({
       external: [
         '@golemui/core',
         /^@golemui\/core\/.+/,
-        '@golemui/dx',
         '@golemui/gui-components',
         '@golemui/gui-validators',
       ],
@@ -50,16 +49,15 @@ export default defineConfig(() => ({
     globals: true,
     environment: 'node',
     include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-    // Runs `tsc --noEmit` over legacy-imports.spec.ts so a dropped TYPE
-    // re-export fails the vite:test CI step. Value exports already fail at
-    // module link time, but without this check esbuild erases the
-    // `import type` lines and the type half of the compatibility guard
-    // asserts nothing. The dedicated tsconfig keeps the checked program down
-    // to that one spec plus the entry points it imports.
+    // Runs `tsc --noEmit` over the specs that check types, so a type error in them, or a
+    // `@ts-expect-error` probe that compiles without an error, fails the vite:test CI step.
+    // esbuild erases the types, so without this check these specs assert nothing about types.
+    // The dedicated tsconfig keeps the checked program down to these specs and the entry
+    // points they import.
     typecheck: {
       enabled: true,
-      include: ['src/legacy-imports.spec.ts', 'src/lib/golem-form.spec.ts'],
-      tsconfig: 'tsconfig.legacy-imports.json',
+      include: ['src/dependency-types.spec.ts', 'src/lib/golem-form.spec.ts'],
+      tsconfig: 'tsconfig.dependency-types.json',
     },
     reporters: ['default'],
     coverage: {

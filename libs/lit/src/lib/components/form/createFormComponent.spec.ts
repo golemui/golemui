@@ -175,17 +175,18 @@ describe('a call on a form element built by createFormComponent after a new conf
     return { actionTypesByStore, configWith };
   };
 
-  const formDefThatFailsToResolve = { form: { uid: 'root', kind: 'layout', type: 'flex' } };
-  const resolveError = new Error('The form input could not be resolved');
+  // The validator factory of the widget set throws when the custom validators have this key.
+  const validatorFactoryFailureKey = 'failTheValidatorFactory';
+  const customValidatorsThatFailTheBuild = { [validatorFactoryFailureKey]: {} };
+  const validatorFactoryError = new Error('The validator factory could not build the validators');
 
   class WidgetSetFormThatKeepsUpdateErrors extends createFormComponent<any>({
     widgetLoaders: stubWidgetLoaders as Record<string, () => Promise<Type<WithWidget>>>,
-    validators: () => noopValidators,
-    resolveFormInput: (formDefinition) => {
-      if (formDefinition === formDefThatFailsToResolve) {
-        throw resolveError;
+    validators: (customValidators?: Record<string, unknown>) => {
+      if (customValidators !== undefined && validatorFactoryFailureKey in customValidators) {
+        throw validatorFactoryError;
       }
-      return { formDef: formDefinition as Record<string, any> };
+      return noopValidators;
     },
   }) {
     updateErrors: unknown[] = [];
@@ -304,11 +305,13 @@ describe('a call on a form element built by createFormComponent after a new conf
     it('applies a later setData call to the core form at once', async () => {
       const { wrapper, oldStoreActions, recorder } = await mountRecordedWrapper(tagName);
 
-      wrapper.config = recorder.configWith({ formDef: formDefThatFailsToResolve });
+      wrapper.config = recorder.configWith({ customValidators: customValidatorsThatFailTheBuild });
       await afterLitRenderSchedule();
       wrapper.setData(draft);
 
-      expect((wrapper as WidgetSetFormThatKeepsUpdateErrors).updateErrors).toEqual([resolveError]);
+      expect((wrapper as WidgetSetFormThatKeepsUpdateErrors).updateErrors).toEqual([
+        validatorFactoryError,
+      ]);
       expect(coreStoreState(wrapper).data).toEqual(draft);
       expect(oldStoreActions).toEqual(['SET_DATA']);
     });
@@ -316,7 +319,7 @@ describe('a call on a form element built by createFormComponent after a new conf
     it('drops a setData call made for that config, so a later update does not apply it', async () => {
       const { wrapper, oldStoreActions, recorder } = await mountRecordedWrapper(tagName);
 
-      wrapper.config = recorder.configWith({ formDef: formDefThatFailsToResolve });
+      wrapper.config = recorder.configWith({ customValidators: customValidatorsThatFailTheBuild });
       wrapper.setData(draft);
       await afterLitRenderSchedule();
       wrapper.setData({ firstName: 'Later' });

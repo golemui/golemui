@@ -1,7 +1,7 @@
 {
   "name": "@golemui/gui-shared",
   "version": "0.0.0",
-  "description": "The GolemUI widget set for dynamic forms: the typed gui.* form builder, the widget definitions and their styles, for every framework. Open source (MIT).",
+  "description": "The GolemUI widget set for dynamic forms: the widget definitions and their styles, for every framework. Open source (MIT).",
   "keywords": [
     "golemui",
     "dynamic-forms",
@@ -54,7 +54,6 @@
   ],
   "dependencies": {
     "@golemui/core": "*",
-    "@golemui/dx": "*",
     "@golemui/gui-validators": "*",
     "@golemui/gui-components": "*"
   },
