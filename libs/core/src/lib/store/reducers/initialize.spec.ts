@@ -26,6 +26,22 @@ describe('initialize - malformed form shape guard', () => {
     }
   });
 
+  it.each([
+    ['an empty array', []],
+    ['an array of widgets', [{ uid: 'name', kind: 'input', type: 'text', path: 'name' }]],
+    ['the JSON string of an array', '[]'],
+  ])('errors when the form definition is %s, and names the `form` key', (_name, formDef) => {
+    const result = init(formDef);
+
+    expect(result.formHealth).toMatchObject({
+      status: 'errored',
+      code: errorCodes.initializeMalformedFormShapeError,
+    });
+    if (result.formHealth.status === 'errored') {
+      expect(result.formHealth.message).toContain('formDef: { form: [...] }');
+    }
+  });
+
   it('does NOT fire for a normal core formDef (bare-array form)', () => {
     const result = init({
       form: [{ uid: 'name', kind: 'input', type: 'text', path: 'name' }],

@@ -22,7 +22,7 @@ import {
   buildWidgetSetForm,
   type WidgetSetDefinition,
   type WidgetSetFormInitConfig,
-} from '@golemui/dx';
+} from '@golemui/core/internals';
 import { FormCoreComponent } from './form.component';
 
 /**
@@ -46,8 +46,7 @@ export const GOLEMUI_WIDGET_SET = new InjectionToken<AngularWidgetSet<any>>('GOL
  * generic component directly can also provide it at component, route, or
  * application level.
  *
- * @param widgetSet - The widget set's loaders, validator factory, and
- * optional form input resolver.
+ * @param widgetSet - The widget set's loaders, validator factory and default dependencies.
  */
 export function provideWidgetSet(widgetSet: AngularWidgetSet<any>): Provider {
   return { provide: GOLEMUI_WIDGET_SET, useValue: widgetSet };
@@ -56,7 +55,6 @@ export function provideWidgetSet(widgetSet: AngularWidgetSet<any>): Provider {
 /**
  * The form component bound to the widget set provided through
  * {@link provideWidgetSet}. It accepts the widget set's form config,
- * resolves TS builder input through the widget set's `resolveFormInput`,
  * applies the shared merge precedence rules, and renders the core
  * {@link FormCoreComponent}.
  *
@@ -97,9 +95,7 @@ export class WidgetSetFormComponent implements AfterViewInit {
   formEvent = output<FormEvent>();
   formSubmit = output<FormSubmitEvent>();
 
-  // Chain DX-registered event handlers with the emitted event so both fire.
   protected onCoreFormEvent(event: FormEvent): void {
-    this.bundle().resolved.formEvent?.(event);
     this.formEvent.emit(event);
   }
 

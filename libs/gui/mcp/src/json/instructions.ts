@@ -1,7 +1,7 @@
 /**
- * The JSON form-definition half of the server's connect-time guidance (the MCP
- * `initialize.instructions` field). Composed with the DX half in `cli.ts`. Owned here so
- * the JSON path's routing advice evolves independently of the `gui.*` path's.
+ * The JSON form-definition part of the server's connect-time guidance (the MCP
+ * `initialize.instructions` field). `cli.ts` puts it between a general preamble and a
+ * closing rule.
  */
 export const JSON_INSTRUCTIONS =
   '1. Starting from an existing schema? Use a generator — both return a pre-validated definition, ' +

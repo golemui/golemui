@@ -1,10 +1,10 @@
 /**
- * The MCP tool wiring shared by both authoring paths.
+ * The MCP tool wiring of the server.
  *
- * Each path (`json/`, `dx/`) and the shared surface export a `ToolEntry[]` that pairs an
- * MCP tool descriptor with its handler. The server concatenates those arrays for both the
- * `tools/list` response and name-based dispatch, so adding a tool is a one-line change in
- * the owning module — there is no central switch to keep in sync.
+ * `json/` and `shared/` each export a `ToolEntry[]` that pairs an MCP tool descriptor with
+ * its handler. The server concatenates those arrays for both the `tools/list` response and
+ * name-based dispatch, so adding a tool is a one-line change in the owning module. There is
+ * no central switch to keep in sync.
  */
 
 /**

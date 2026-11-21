@@ -1,9 +1,7 @@
 # GolemUI — JSON form definitions
 
-The JSON API is the serializable twin of the `gui.*` TS API: both produce the same definition.
-Use JSON when forms are stored, transferred, diffed, generated, or served from a backend.
-All docs for this flavor live under `https://golemui.com/json/<page>.md` — never mix JSON
-shapes with `gui.*` syntax in one artifact.
+A GolemUI form is a JSON document. It can be stored, transferred, diffed, generated, or served
+from a backend. All docs for JSON forms live under `https://golemui.com/json/<page>.md`.
 
 ## Document shape
 
@@ -33,9 +31,9 @@ shapes with `gui.*` syntax in one artifact.
 }
 ```
 
-- Top level: `form` (required widget array), optional `states` (name → reactive expression
-  string) — here `states` IS a sibling of `form` inside the document (unlike the TS API, where
-  states live in a separate `formConfig` object).
+- Top level: `form` (required widget array) and optional `states` (name -> reactive expression
+  string). `states` is a sibling of `form` inside the document. Pass the whole document as
+  `formDef` in the config of the form component, as an object or as a string.
 - Every widget: `kind` (`input` | `action` | `display` | `layout`) + `type` (the exact widget
   name, case-sensitive, e.g. `textinput`, `datePicker`, `radiogroup`) + for inputs a `path` (the
   data key).
@@ -48,9 +46,9 @@ shapes with `gui.*` syntax in one artifact.
   `flex` is deprecated: never generate it.
 - Validators in JSON always carry an explicit `"type"` (`string`, `number`, `boolean`, `array`)
   plus rules and optional per-rule `messages`.
-- Event handlers are **names** (`"on": { "load": "loadCars" }`) resolved against host functions
-  registered on the form component — see
-  https://golemui.com/json/features/host-functions.md
+- Event handlers are **names** (`"on": { "click": "save" }`). The form sends each event to the
+  `formEvent` handler of the form component, with the name in `event.name`. See
+  https://golemui.com/json/features/events.md
 
 ### Validator gotchas (real-world traps — read before writing validators)
 
@@ -102,40 +100,13 @@ Without the MCP, the same converter runs in code or from the command line:
 - As a file: `npx @golemui/schemas convert schema.json --preset @golemui/gui-schemas/json-schema --out form.json`
   writes the form definition, and does not replace an existing file without `--force`.
 
-## Converting a `gui.*` form to JSON
-
-`toJsonFormDefinition` from `@golemui/gui-shared` converts a form written with the TS API to a
-JSON definition. It runs the builder, so the JSON holds what the selectors, the automatic labels
-and the automatic placeholders add:
-
-```ts
-import { toJsonFormDefinition } from '@golemui/gui-shared';
-
-const { formDefinition, diagnostics } = toJsonFormDefinition({
-  formDef,
-  formSelectors,
-  formConfig,
-});
-```
-
-- `formDefinition` is the JSON document. Validate it as any other JSON definition.
-- `diagnostics` lists what JSON cannot hold, each with a JSON Pointer into the document:
-  - An event handler that is a function. The JSON holds an event name such as `save_click`.
-    Handle that event in the `formEvent` handler of the form component.
-  - A widget that is a callback. The JSON holds the result of one call with an empty form.
-  - A display widget that is a render function. It is left out.
-  - The `functions`, `dependencies`, `validateOn`, `itemRenderers` and `widgetLoaders` of
-    `formConfig`. Pass them in the config of the form component (`widgetLoaders` as
-    `customWidgetLoaders`), because a JSON form has no `formConfig`.
-
 ## Key docs (fetch as needed)
 
 - Form Definition API overview: https://golemui.com/json/form-definition/overview.md
 - How resolution works: https://golemui.com/json/form-definition/how-it-works.md
 - States: https://golemui.com/json/form-definition/states.md and
-  https://golemui.com/json/features/states/index.md
+  https://golemui.com/json/features/states.md
 - Events: https://golemui.com/json/form-definition/events.md
 - Runtime functions: https://golemui.com/json/form-definition/runtime-functions.md
-- Tags: https://golemui.com/json/form-definition/tags.md
 - Custom widgets in definitions: https://golemui.com/json/form-definition/custom-widgets.md
-- Per-widget JSON shapes: see [widgets-index.md](widgets-index.md) (use the `json` URLs)
+- Per-widget JSON shapes: see [widgets-index.md](widgets-index.md)

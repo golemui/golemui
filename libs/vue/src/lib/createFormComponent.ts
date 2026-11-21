@@ -9,7 +9,7 @@ import {
   buildWidgetSetForm,
   type WidgetSetDefinition,
   type WidgetSetFormInitConfig,
-} from '@golemui/dx';
+} from '@golemui/core/internals';
 import { type Component, computed, defineComponent, h, ref } from 'vue';
 import FormComponent from './FormComponent.vue';
 import type { FormComponentHandle } from './FormComponent.types';
@@ -53,20 +53,17 @@ export type WidgetSetFormComponent<
 /**
  * Builds a Vue form component bound to one widget set.
  *
- * The returned component accepts the widget set's form config, resolves TS
- * builder input through the widget set's `resolveFormInput`, applies the
+ * The returned component accepts the widget set's form config, applies the
  * shared merge precedence rules, and renders the core `FormComponent`.
  * Widget set packages instantiate this once and export the result (the gui
  * set's `GuiForm` is one example).
  *
- * @param widgetSet - The widget set's loaders, validator factory, and
- * optional form input resolver.
+ * @param widgetSet - The widget set's loaders, validator factory and default dependencies.
  *
  * @example
  * export const GuiForm = createFormComponent<GuiFormInitConfig>({
  *   widgetLoaders: guiWidgetLoaders,
  *   validators: initValidators,
- *   resolveFormInput,
  * });
  */
 export function createFormComponent<
@@ -98,11 +95,7 @@ export function createFormComponent<
           validators: bundle.value.validators,
           autocomplete: props.autocomplete,
           formHealthBoundary: props.formHealthBoundary,
-          // Chain DX-registered event handlers with the user-supplied listener so both fire.
-          'onForm-event': (event: FormEvent) => {
-            bundle.value.resolved.formEvent?.(event);
-            emit('form-event', event);
-          },
+          'onForm-event': (event: FormEvent) => emit('form-event', event),
           'onForm-submit': (event: FormSubmitEvent) => emit('form-submit', event),
           'onForm-health': (health: FormHealth) => emit('form-health', health),
         });

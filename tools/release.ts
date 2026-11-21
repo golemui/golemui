@@ -1,4 +1,4 @@
-import { execFileSync, execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 import { copyFileSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { releaseChangelog, releasePublish, releaseVersion } from 'nx/release';
@@ -9,7 +9,6 @@ process.setMaxListeners(20);
 
 const PUBLISHABLE_PACKAGES = [
   '@golemui/core',
-  '@golemui/dx',
   '@golemui/schemas',
   '@golemui/angular',
   '@golemui/gui-angular',
@@ -106,26 +105,6 @@ function copyChangelogToPackages(dryRun: boolean) {
   });
 }
 
-function updateSkillReferences(dryRun: boolean) {
-  const refsDir = join('skills', 'golemui', 'references');
-  if (dryRun) {
-    console.log(`[dry-run] would regenerate and commit ${refsDir}`);
-    return;
-  }
-  try {
-    execSync('npm run generate:skill', { stdio: 'inherit' });
-    const dirty = execSync(`git status --porcelain ${refsDir}`).toString().trim();
-    if (!dirty) {
-      console.log('Skill references already up to date.');
-      return;
-    }
-    execSync(`git add ${refsDir}`, { stdio: 'inherit' });
-    execSync('git commit -m "chore: regenerate golemui skill references"', { stdio: 'inherit' });
-  } catch (e) {
-    console.warn(`Skill reference regeneration skipped or failed: ${(e as Error).message}`);
-  }
-}
-
 /**
  * The version tags of the repository, for example `v2.2.0`. They show which majors exist, and the
  * npm tag of a release depends on that.
@@ -167,7 +146,6 @@ function readVersionTags(): string[] {
   // Note: this will be pushed at the same time as the changelog. One push for all.
   if (releaseType === 'stable') {
     updateTemplateVersions(workspaceVersion, dryRun);
-    updateSkillReferences(dryRun);
   }
 
   await releaseChangelog({

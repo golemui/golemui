@@ -30,8 +30,8 @@ export default defineConfig(() => ({
     ssr: true,
     lib: {
       entry: {
-        lib: 'src/lib.ts', // full surface (JSON + DX) - Node consumers
-        json: 'src/json.ts', // JSON + shared only, no Node-only DX - bundles anywhere (e.g. Workers)
+        lib: 'src/lib.ts', // package root, the same surface as json
+        json: 'src/json.ts', // JSON + shared, no Node built-ins - bundles anywhere (e.g. Workers)
         // The form validator for browsers: each validator is its own chunk, loaded on demand
         'json-lazy': 'src/json-lazy.ts',
         cli: 'src/cli.ts', // MCP stdio server - Node.js only
@@ -43,11 +43,7 @@ export default defineConfig(() => ({
       external: [
         /^@modelcontextprotocol\/sdk(\/.*)?$/,
         /^ajv(\/.*)?$/,
-        // `typescript` is loaded lazily by the DX type-check only — keep it external
-        // so the JSON path never pulls the compiler into its bundle.
-        'typescript',
         'node:fs',
-        'node:module',
         'node:path',
         'node:url',
       ],
@@ -70,10 +66,6 @@ export default defineConfig(() => ({
     globals: true,
     environment: 'node',
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts}'],
-    // dx_check_code / dx-specs run a real `tsc` compile against the full @golemui type graph;
-    // the cold program init is several seconds, more on slower CI runners. The 5s vitest default
-    // times them out on CI — give the compile-based tests room.
-    testTimeout: 30000,
     reporters: ['default'],
     coverage: {
       reportsDirectory: '../../../coverage/libs/gui/mcp',

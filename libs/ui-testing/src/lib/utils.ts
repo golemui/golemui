@@ -15,7 +15,7 @@ import {
   type State,
   type ValidateOn,
 } from '@golemui/core';
-import { type Dependencies } from '@golemui/dx';
+import { type WidgetSetDependencies } from '@golemui/core/internals';
 import { type CustomValidatorSchemas } from '@golemui/gui-validators';
 
 export interface FormHandle {
@@ -67,7 +67,7 @@ export interface MountOptions<StateKeys extends UiState = string> {
   /** Adds the `custom` item renderer of the test fixtures to `config.itemRenderers`. */
   withCustomItemRenderer?: boolean;
   localization?: I18nTranslator;
-  dependencies?: Dependencies;
+  dependencies?: WidgetSetDependencies;
   functions?: ExpressionFunctions;
   onFormReady?: (handle: FormHandle) => void;
   /** The `formName` of the config, which is also the id of the form element. */

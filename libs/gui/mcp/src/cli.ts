@@ -5,8 +5,6 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { runCli } from './cli-commands';
-import { DX_INSTRUCTIONS } from './dx/instructions';
-import { dxTools } from './dx/tools';
 import { JSON_INSTRUCTIONS } from './json/instructions';
 import { jsonTools } from './json/tools';
 import { err, ok, type ToolEntry } from './shared/tool';
@@ -37,21 +35,19 @@ function readPackageMeta(): { name: string; version: string } {
 const { name: PKG_NAME, version: PKG_VERSION } = readPackageMeta();
 
 /**
- * Every MCP tool the server exposes, assembled from the two authoring paths plus the
- * shared reference tools. The order is the catalog order clients see in `tools/list`
- * (JSON surface, then the shared `get_concept`, then the `gui.*` DX surface). Dispatch is
- * by name via {@link TOOL_BY_NAME}, so each path owns its own registrations.
+ * Every MCP tool the server exposes: the JSON form-definition tools and the shared
+ * reference tools. The order is the catalog order clients see in `tools/list`.
+ * Dispatch is by name via {@link TOOL_BY_NAME}, so each module owns its own registrations.
  */
-const TOOL_ENTRIES: ToolEntry[] = [...jsonTools, ...sharedTools, ...dxTools];
+const TOOL_ENTRIES: ToolEntry[] = [...jsonTools, ...sharedTools];
 const TOOL_BY_NAME = new Map<string, ToolEntry>(TOOL_ENTRIES.map((e) => [e.tool.name, e]));
 
 /**
  * High-level guidance handed to the client on connect (the MCP `initialize`
  * `instructions` field). Tools carry their own per-call descriptions; this explains what
  * the server is for and the order to use the tools in. It is composed from a general
- * preamble, the JSON path's guidance, the `gui.*` DX path's guidance (each owned by its
- * module), and a closing rule — framed JSON-first on purpose so existing behavior isn't
- * diluted by the added programmatic path.
+ * preamble, the guidance of the JSON tools (owned by `json/instructions.ts`) and a closing
+ * rule.
  */
 const PREAMBLE =
   'This server builds and validates GolemUI form definitions — declarative, JSON-serializable ' +
@@ -62,7 +58,7 @@ const PREAMBLE =
 const CLOSER =
   'Do not hand a form definition to the user until `json_validate_form_definition` reports `valid: true`.';
 
-const SERVER_INSTRUCTIONS = PREAMBLE + JSON_INSTRUCTIONS + DX_INSTRUCTIONS + CLOSER;
+const SERVER_INSTRUCTIONS = PREAMBLE + JSON_INSTRUCTIONS + CLOSER;
 
 const server = new Server(
   { name: PKG_NAME, version: PKG_VERSION },
@@ -85,8 +81,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 });
 
 async function main() {
-  // Any argument routes to the CLI subcommands (validate-json, check-dx, help) and exits —
-  // never fall through to the stdio server with argv present: in an agent's non-interactive
+  // Any argument routes to the CLI subcommands (validate-json, help) and exits.
+  // Never fall through to the stdio server with argv present: in an agent's non-interactive
   // shell a silently started server would hang the command.
   const argv = process.argv.slice(2);
   if (argv.length > 0) {

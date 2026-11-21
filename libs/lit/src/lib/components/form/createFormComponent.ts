@@ -1,9 +1,9 @@
-import type { FormEvent, FormHealth, FormInitConfig, WithWidget } from '@golemui/core';
+import type { FormHealth, FormInitConfig, WithWidget } from '@golemui/core';
 import {
   buildWidgetSetForm,
   type WidgetSetDefinition,
   type WidgetSetFormInitConfig,
-} from '@golemui/dx';
+} from '@golemui/core/internals';
 import { html, LitElement, notEqual, type PropertyDeclaration, type PropertyValues } from 'lit';
 import type { Type } from '../../utils/type';
 import type { FormElement as CoreFormElement } from './form.element';
@@ -39,22 +39,19 @@ export type WidgetSetFormElementClass<
 /**
  * Builds a Lit form element class bound to one widget set.
  *
- * The returned class accepts the widget set's form config, resolves TS
- * builder input through the widget set's `resolveFormInput`, applies the
+ * The returned class accepts the widget set's form config, applies the
  * shared merge precedence rules, and renders the core `gui-core-form`
  * element. The class is not registered as a custom element: the widget set
  * package chooses the tag name (the gui set registers a subclass as
  * `gui-form`).
  *
- * @param widgetSet - The widget set's loaders, validator factory, and
- * optional form input resolver.
+ * @param widgetSet - The widget set's loaders, validator factory and default dependencies.
  *
  * @example
  * @customElement('gui-form')
  * export class FormElement extends createFormComponent<GuiFormInitConfig>({
  *   widgetLoaders,
  *   validators: initValidators,
- *   resolveFormInput,
  * }) {}
  */
 export function createFormComponent<
@@ -200,18 +197,11 @@ export function createFormComponent<
     }
 
     override render() {
-      const { initConfig, validators, resolved } = this.bundle;
+      const { initConfig, validators } = this.bundle;
 
       // The bundle is built with untyped loaders. This widget set's loaders
       // resolve to Lit element classes, so the config is a Lit init config.
       const coreConfig = initConfig as FormInitConfig<Type<WithWidget>>;
-
-      // DX-registered event handlers listen on the core element. User-level
-      // listeners receive the same events bubbling from it, so both fire.
-      const onFormEvent = resolved.formEvent;
-      const formEventListener = onFormEvent
-        ? (e: Event) => onFormEvent((e as CustomEvent<FormEvent>).detail)
-        : undefined;
 
       return html`
         <gui-core-form
@@ -219,7 +209,6 @@ export function createFormComponent<
           .validators=${validators}
           .autocomplete=${this.autocomplete}
           .formHealthBoundary=${this.formHealthBoundary}
-          @formEvent=${formEventListener}
         ></gui-core-form>
       `;
     }

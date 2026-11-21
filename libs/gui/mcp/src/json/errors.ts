@@ -244,7 +244,7 @@ function formatError(err: ErrorObject): FormattedError {
     case 'schemalessType': {
       const type = (err.params as { type?: string }).type;
       message = `Widget type \`${type}\` at \`${path}\` is a built-in with no JSON representation, so it cannot appear in a JSON form definition`;
-      suggestion = `Add this widget through the TS DX API instead (for example \`gui.displays.display(render)\`), or remove it from the JSON.`;
+      suggestion = `Use a custom display widget in its place, or remove it from the JSON.`;
       break;
     }
     case 'position': {
