@@ -86,9 +86,9 @@ export const initialize = ({ lang }: State, action: INITIALIZE): State => {
     };
   }
 
-  const doubleWrapped = detectDoubleWrappedForm(formDef);
-  if (doubleWrapped) {
-    return { ...initialState, formHealth: doubleWrapped };
+  const malformedShape = detectBareArrayForm(formDef) ?? detectDoubleWrappedForm(formDef);
+  if (malformedShape) {
+    return { ...initialState, formHealth: malformedShape };
   }
 
   const code = errorCodes.initializeUnknownError;
@@ -114,6 +114,20 @@ function erroredHealth(code: number, message: string): FormHealth {
 
 function malformedShapeMessage(): string {
   return 'Malformed form definition. Pass it directly as formDef - `config={{ formDef: { states, form: [...] } }}`. Do NOT wrap it in an extra `{ form: ... }`.';
+}
+
+function bareArrayMessage(): string {
+  return 'The form definition is an array of widgets. Pass a document with a `form` key - `config={{ formDef: { form: [...] } }}`.';
+}
+
+/**
+ * A form definition is a document with a `form` key. The bare widget array is not one.
+ */
+function detectBareArrayForm(formDef: unknown): FormHealth | null {
+  if (!Array.isArray(formDef)) {
+    return null;
+  }
+  return erroredHealth(errorCodes.initializeMalformedFormShapeError, bareArrayMessage());
 }
 
 /**
@@ -177,7 +191,7 @@ function warnUndeclaredStateReferences(
     console.error(
       `[GolemUI] include/exclude references undefined state "${name}" (on ${uids.join(', ')}); ` +
         `these widgets will stay hidden. Declared states: ${available}. ` +
-        `Fix: declare "${name}" in formConfig.states, or correct the name.`,
+        `Fix: declare "${name}" in the "states" of the form definition, or correct the name.`,
     );
   }
 }
