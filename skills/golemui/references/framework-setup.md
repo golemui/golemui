@@ -27,7 +27,9 @@ import '@golemui/gui-shared/forms.css';
 
 ## Submit event — per-framework matrix
 
-Add `gui.actions.button({ label, actionType: 'submit' })` to the form, then listen on the host
+Add a submit button to the form
+(`{ "kind": "action", "type": "button", "label": "Submit", "actionType": "submit" }`), then
+listen on the host
 component. The handler receives a `FormSubmitEvent` (type from `@golemui/core`); `.data` is the
 collected form data. **Vue is the ONLY kebab-case event.**
 
@@ -41,12 +43,14 @@ collected form data. **Vue is the ONLY kebab-case event.**
 
 ## Render snippets
 
+In the snippets that pass `{ formDef: form }`, `form` is the whole JSON form document
+(`{ "form": [...] }`), not the widget array.
+
 **React**
 
 ```tsx
 import '@golemui/gui-components/index.css';
 import '@golemui/gui-shared/forms.css';
-import { gui } from '@golemui/gui-shared';
 import { GuiForm } from '@golemui/gui-react';
 import type { FormSubmitEvent } from '@golemui/core';
 
@@ -77,7 +81,7 @@ Rules that follow from it:
 - Pages that render `<GuiForm>` are client components (`'use client'`): the config holds functions.
   Keep `config` at module scope (a new identity per render re-initializes the form).
 - Set `formName` — the server and the client must produce the same form id.
-- `formSubmit`, `onLoad`, `onChange` and every other handler run in the browser only.
+- `formSubmit`, `formEvent` and every other handler run in the browser only.
 - Custom widgets: ONE module-scope loaders object, spread into the preload call and passed as
   `customWidgetLoaders` in every form config (the registry caches by loader function identity).
 - Import `@golemui/gui-components/index.css` and then `@golemui/gui-shared/forms.css` once in the
@@ -157,8 +161,9 @@ Load the stylesheets through
 - `<GuiForm>` needs no compiler config. Only a component of your own that places a `gui-*` tag
   in its template needs `vue: { compilerOptions: { isCustomElement: (tag) => tag.startsWith('gui-') } }`,
   and object props on such a tag must be bound with `.prop` (an attribute would stringify them).
-- `onLoad`, like every handler except `formHealth`, runs in the browser only, never during the
-  server render. The server render calls the `formHealth` listener once, with `{ status: 'ok' }`,
+- Every handler except `formHealth` runs in the browser only, never during the server render.
+  That includes `formEvent`, so a widget `load` event reaches the host in the browser only.
+  The server render calls the `formHealth` listener once, with `{ status: 'ok' }`,
   or with the error when the form definition has one.
 - The server renders the Vue layer (`<form>`, layouts, `gui-*` tags with their attributes and
   values); the Lit `gui-*` elements render their internals once the browser upgrades them.
@@ -226,7 +231,7 @@ Rules that follow from it:
   `connectedCallback` on the server and honor `defer-hydration` on the client. Their loaders: ONE
   module-scope object, spread into both preload calls and passed as `customWidgetLoaders`.
 - `@golemui/lit/ssr` has no browser build; import it only in server code.
-- `onLoad`, `onChange` and every other handler run in the browser only.
+- `formEvent` and every other handler run in the browser only.
 - Known limitation: calendar widgets read the server clock, so their markup depends on when the
   server rendered.
 
@@ -250,8 +255,9 @@ if (el) {
 register `gui-form` in `HTMLElementTagNameMap`, so an untyped `querySelector` yields
 `Element` and `el.config` fails to compile. In plain JavaScript, drop the types.)
 
-In every case `formDef` is the bare array; form-wide config goes in the sibling
-`formConfig` (`config={{ formDef, formConfig: { states, validateOn } }}`). `validateOn` is one
+In every case `formDef` is the whole JSON document (`{ "form": [...], "states": { ... } }`), as
+an object or as a string. Named `states` go in the document. `validateOn` goes in the config,
+next to `formDef` (`config={{ formDef, validateOn: 'blur' }}`). `validateOn` is one
 of `eager` | `change` | `blur` | `submit`. There is also a `formHealth` callback/event and a
 `formEvent` event for host-dispatched widget events. `formHealth` sends `{ status: 'ok' }` or an
 error of the form itself, for example an error in the form definition. It does not report the
@@ -296,13 +302,10 @@ form.setHealth({ status: 'ok' }); // later, when the server is back
 
 ## Full component reference
 
-Everything `<gui-form>`/`<GuiForm>` accepts (data inputs, selector/engine config, callbacks) —
-the single biggest API page:
+Everything `<gui-form>`/`<GuiForm>` accepts (data inputs, engine config, callbacks), the single
+biggest API page: https://golemui.com/json/integration/configuration.md
 
-- TS: https://golemui.com/dx/integration/configuration.md
-- JSON: https://golemui.com/json/integration/configuration.md
-
-Per-framework guides: `https://golemui.com/dx/integration/{react|angular|vue|lit|vanilla}.md`
+Per-framework guides: `https://golemui.com/json/integration/{react|angular|vue|lit|vanilla}.md`
 
 SSR starters in the GolemUI repo: `templates/nextjs` (React), `templates/nuxt` (Vue),
 `templates/astro` (Lit).

@@ -15,13 +15,11 @@ skill, the MCP server or the docs below.
   [`skills/golemui`](https://github.com/golemui/golemui/tree/v2.3.0/skills/golemui) of the latest
   release, the rules and API reference for writing GolemUI forms. Read it before writing form code.
   Keep the tag: the `main` branch is the development branch of the next major version.
-- **MCP server:** `npx -y @golemui/gui-mcp` validates form definitions, type checks `gui.*` code
-  and generates a form from a JSON Schema or an OpenAPI operation. In Claude Code:
+- **MCP server:** `npx -y @golemui/gui-mcp` validates form definitions and generates a form from
+  a JSON Schema or an OpenAPI operation. In Claude Code:
   `claude mcp add golemui -- npx -y @golemui/gui-mcp`. Other clients:
   [MCP setup](https://golemui.com/mcp/setup/).
-- **Docs for LLMs:** [llms.txt](https://golemui.com/llms.txt) indexes every docs page as Markdown,
-  and [llms-gui-dx.txt](https://golemui.com/llms-gui-dx.txt) is the complete `gui.*` reference in
-  one file.
+- **Docs for LLMs:** [llms.txt](https://golemui.com/llms.txt) indexes every docs page as Markdown.
 
 ### Install
 
@@ -47,9 +45,8 @@ import '@golemui/gui-shared/forms.css';
 
 ### Render a form
 
-A form is data: an array of widget items, written with the typed `gui.*` builder from
-`@golemui/gui-shared` (the TS API) or as a JSON document (the JSON API). Both produce the same
-definition. Pass it as `formDef` to the framework component:
+A form is data: a JSON document whose `form` array holds the widget items. Pass the document, as
+an object or as a string, as `formDef` to the framework component:
 
 | Framework | Component                                                  | Submit event                          |
 | --------- | ---------------------------------------------------------- | ------------------------------------- |
@@ -61,23 +58,28 @@ definition. Pass it as `formDef` to the framework component:
 
 ```tsx
 import { GuiForm } from '@golemui/gui-react';
-import { gui } from '@golemui/gui-shared';
 
-const formDef = [
-  gui.inputs.textInput('email', {
-    label: 'Email',
-    validator: { type: 'string', required: true, format: 'email' },
-  }),
-  gui.actions.button({ label: 'Sign up', actionType: 'submit' }),
-];
+const formDef = {
+  form: [
+    {
+      kind: 'input',
+      type: 'textinput',
+      path: 'email',
+      label: 'Email',
+      validator: { type: 'string', required: true, format: 'email' },
+    },
+    { kind: 'action', type: 'button', label: 'Sign up', actionType: 'submit' },
+  ],
+};
 
 export const SignUp = () => (
   <GuiForm config={{ formDef }} formSubmit={(e) => console.log(e.data)} />
 );
 ```
 
-`formDef` is always the bare array. Form-wide settings go in a sibling `formConfig`. The
-[skill](skills/golemui/SKILL.md) lists the other rules that compile but fail at runtime.
+`formDef` is the whole document, never the bare widget array. Named `states` go in the document,
+next to `form`. The [skill](skills/golemui/SKILL.md) lists the other rules that compile but fail
+at runtime.
 
 Per-framework setup, server-side rendering and starter templates:
 [Integrations](https://golemui.com/integration/overview/) and [`templates/`](templates/).
@@ -97,18 +99,17 @@ npx nx run react-playground:serve   # also angular-, vue-, lit-, nuxt-, nextjs-,
 
 ### Packages
 
-| Package                                   | What it is                                                           |
-| ----------------------------------------- | -------------------------------------------------------------------- |
-| `libs/core`                               | The framework-agnostic forms engine                                  |
-| `libs/react`, `angular`, `vue`, `lit`     | Framework bindings of the engine, for building widget sets           |
-| `libs/gui/shared`                         | The GolemUI widget set: the `gui.*` builder, widgets and form styles |
-| `libs/gui/react`, `angular`, `vue`, `lit` | The form components apps render (`GuiForm`, `<gui-form>`)            |
-| `libs/gui/components`                     | GolemUI Components, the web components the widgets render            |
-| `libs/gui/validators`                     | Built-in and custom validators                                       |
-| `libs/gui/schemas`, `libs/schemas`        | JSON Schemas for form definitions, and the tools to generate them    |
-| `libs/dx`                                 | The pipeline that generates a `gui.*` style builder for a widget set |
-| `libs/gui/mcp`                            | The MCP server                                                       |
-| `libs/lit-utils`                          | Internal helpers shared by the Lit packages                          |
+| Package                                   | What it is                                                         |
+| ----------------------------------------- | ------------------------------------------------------------------ |
+| `libs/core`                               | The framework-agnostic forms engine                                |
+| `libs/react`, `angular`, `vue`, `lit`     | Framework bindings of the engine, for building widget sets         |
+| `libs/gui/shared`                         | The GolemUI widget set: the widget definitions and the form styles |
+| `libs/gui/react`, `angular`, `vue`, `lit` | The form components apps render (`GuiForm`, `<gui-form>`)          |
+| `libs/gui/components`                     | GolemUI Components, the web components the widgets render          |
+| `libs/gui/validators`                     | Built-in and custom validators                                     |
+| `libs/gui/schemas`, `libs/schemas`        | JSON Schemas for form definitions, and the tools to generate them  |
+| `libs/gui/mcp`                            | The MCP server                                                     |
+| `libs/lit-utils`                          | Internal helpers shared by the Lit packages                        |
 
 ### Conventions
 
