@@ -1,0 +1,44 @@
+# hosts/config.md, the stylesheets and the submit event (old non-negotiable rules 5 and 6).
+# Nothing checks the stylesheets, and only React's wrong prop fails the type-check: the Angular
+# and Vue templates are not compiled by lint.
+file: hosts/config.md
+section:
+  [
+    Packages and stylesheets,
+    Events,
+    'rule: import-both-stylesheets',
+    'rule: submit-event-name-per-framework',
+  ]
+tests:
+  - id: app-entry-styles
+    unit: import-both-stylesheets
+    scenario:
+      - The agent has just added `<GuiForm>` to a new Vite and React app, and the form shows up as plain browser inputs.
+      - A Lit app renders `<gui-form>` for the first time, and its `main.ts` imports nothing else from GolemUI.
+    question: What should the app entry import?
+    options:
+      both: '`@golemui/gui-components/index.css`, then `@golemui/gui-shared/forms.css`, once'
+      forms: Only `@golemui/gui-shared/forms.css`
+      reversed: '`@golemui/gui-shared/forms.css`, then `@golemui/gui-components/index.css`'
+      nothing: Nothing; the form component brings its own styles
+    expect: both
+
+  - id: vue-submit-listener
+    unit: submit-event-name-per-framework
+    scenario: In a Vue single-file component, the agent renders `<GuiForm>` and wants to save the data when the user sends the form.
+    question: Which listener should the agent put on `<GuiForm>`?
+    options:
+      kebab: '`@form-submit="save"`'
+      camel: '`@formSubmit="save"`'
+      native: '`@submit="save"`'
+    expect: kebab
+
+  - id: angular-submit-output
+    unit: submit-event-name-per-framework
+    scenario: In an Angular standalone component, the agent renders `<gui-form>` and wants to save the data when the user sends the form.
+    question: Which output should the agent bind on `<gui-form>`?
+    options:
+      formsubmit: '`(formSubmit)="save($event)"`'
+      ngsubmit: '`(ngSubmit)="save($event)"`'
+      kebab: '`(form-submit)="save($event)"`'
+    expect: formsubmit

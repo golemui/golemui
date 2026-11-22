@@ -3,6 +3,15 @@
 file: validators.md
 section: [A validator, How validation behaves, Rules]
 tests:
+  - id: optional-notes-limit
+    unit: json-validator-carries-type
+    scenario: An optional "Notes" text area must not go over 500 characters.
+    question: Which validator should the agent give it?
+    options:
+      typed: '`{ "type": "string", "maxLength": 500 }`'
+      untyped: '`{ "maxLength": 500 }`'
+    expect: typed
+
   - id: terms-checkbox
     unit: mandatory-checkbox-required-and-const
     scenario:

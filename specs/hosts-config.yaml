@@ -1,6 +1,6 @@
-# hosts/config.md: how a JSON definition reaches the form component. Nothing checks
-# config-keys-at-the-top (`formConfig` type-checks and is ignored) or packages-at-one-version
-# (the peer ranges are `*`).
+# hosts/config.md: how a JSON definition reaches the form component (old non-negotiable rule 1).
+# Nothing checks config-keys-at-the-top in JavaScript (`formConfig` is ignored with no error) or
+# packages-at-one-version (the peer ranges are `*`).
 file: hosts/config.md
 section:
   [
@@ -19,6 +19,16 @@ tests:
       document: The downloaded object as it is, with its `form` and its `states`
       form: The `form` array of the downloaded object
       split: The `form` array, with the `states` moved into `formConfig`
+    expect: document
+
+  - id: named-condition
+    unit: formdef-is-the-document
+    scenario: Three fields of a JSON form should appear only when the account type is "Business", and the agent wants to name that condition once and reuse it.
+    question: Where should the agent declare the named condition?
+    options:
+      document: In the `states` of the JSON document, next to `form`, and the document goes whole into `formDef`
+      config: In a `states` key of the component's config, next to `formDef`
+      formconfig: In `formConfig.states` of the component's config
     expect: document
 
   - id: validate-on-blur
