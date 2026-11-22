@@ -1,0 +1,67 @@
+# The validator rules of validators.md: the mandatory checkbox (the validator only warns), the
+# `invalid` message (no check at all) and the disabled submit (no check at all).
+file: validators.md
+section: [A validator, How validation behaves, Rules]
+tests:
+  - id: terms-checkbox
+    unit: mandatory-checkbox-required-and-const
+    scenario:
+      - The signup form must not be sent until the user ticks "I agree to the privacy policy".
+      - A consent box for the newsletter rules is mandatory; the form is invalid while it is unticked.
+    question: Which validator should the agent give the checkbox?
+    options:
+      both: '`{ "type": "boolean", "required": true, "const": true }`'
+      required: '`{ "type": "boolean", "required": true }`'
+      const: '`{ "type": "boolean", "const": true }`'
+    expect: both
+
+  - id: required-text-messages
+    unit: required-needs-an-invalid-message
+    scenario: A production order form has a required "Company name" text field, and the customer should read "Tell us your company name" whenever it is missing.
+    question: Which messages should the agent set on its validator?
+    options:
+      both: '`"messages": { "required": "Tell us your company name", "invalid": "Tell us your company name" }`'
+      required: '`"messages": { "required": "Tell us your company name" }`'
+      invalid: '`"messages": { "invalid": "Tell us your company name" }`'
+    expect: both
+
+  - id: required-number-messages
+    unit: required-needs-an-invalid-message
+    scenario: A production booking form has a required "Number of guests" field with a number validator, and the customer should read "How many guests?" whenever it is missing.
+    question: Which messages should the agent set on its validator?
+    options:
+      invalid: '`"messages": { "invalid": "How many guests?" }`'
+      both: '`"messages": { "required": "How many guests?", "invalid": "How many guests?" }`'
+      required: '`"messages": { "required": "How many guests?" }`'
+    expect: invalid
+
+  - id: submit-default-trigger
+    unit: disable-submit-only-when-eager
+    scenario: The user wants the "Book" button greyed out until the booking form is complete. The config sets no `validateOn`, and the form has a required `phone` field.
+    question: What should the agent put on the button?
+    options:
+      compound: '`"disabled": { "when": "$formIsInvalid || $form.phone === undefined" }`'
+      flag: '`"disabled": { "when": "$formIsInvalid" }`'
+      nothing: No `disabled`; a submit validates every field and shows the errors
+    expect: compound
+
+  - id: submit-on-blur
+    unit: disable-submit-only-when-eager
+    scenario:
+      - The user wants the "Book" button greyed out until the booking form is complete. The config has `validateOn` set to `blur`, and the form has a required `phone` field.
+      - Errors should only appear when the user leaves a field, so the config says `validateOn` is `blur`; the user also asks for the "Book" button to be greyed out while the form is incomplete.
+    question: What should the agent put on the button?
+    options:
+      compound: '`"disabled": { "when": "$formIsInvalid || $form.phone === undefined" }`'
+      flag: '`"disabled": { "when": "$formIsInvalid" }`'
+      nothing: No `disabled`; a submit validates every field, shows the errors and sends nothing while the form is invalid
+    expect: nothing
+
+  - id: submit-on-submit
+    unit: disable-submit-only-when-eager
+    scenario: The form validates only when it is sent (`validateOn` is `submit`), and the user would like the send button greyed out while required fields are empty.
+    question: What should the agent put on the button?
+    options:
+      compound: '`"disabled": { "when": "$formIsInvalid || $form.phone === undefined" }`'
+      nothing: No `disabled`; a submit validates every field, shows the errors and sends nothing while the form is invalid
+    expect: nothing

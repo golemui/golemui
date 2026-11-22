@@ -1,0 +1,23 @@
+# sanitize-untrusted-markdown: the widgets insert the parser's output as HTML, and nothing checks it.
+file: host-services.md
+section: [The markdown parser, 'decision: sanitize-untrusted-markdown']
+tests:
+  - id: user-written-bio
+    unit: sanitize-untrusted-markdown
+    scenario:
+      - Members write their bio in markdown, and a profile form shows it back in a `markdownText`. The app already uses `snarkdown`.
+      - A support form shows the last reply from the customer, stored as markdown in the database, in a `markdownText`; the app parses markdown with `marked`.
+    question: What `parse` should the agent give the form?
+    options:
+      sanitize: One that removes raw HTML and `javascript:` links from the output, or sanitizes it, before the cast to `SanitizedHtml`
+      cast: The parser's output cast to `SanitizedHtml` as it is
+    expect: sanitize
+
+  - id: own-help-text
+    unit: sanitize-untrusted-markdown
+    scenario: The only markdown in the form is a help paragraph the developers wrote in the definition file that ships with the app, and the app uses `snarkdown`.
+    question: Does the agent have to sanitize the parser's output for this form?
+    options:
+      cast: No, casting the parser's output to `SanitizedHtml` is enough, since the developers wrote the markdown
+      sanitize: Yes, the output must be sanitized before the cast, as for any markdown
+    expect: cast

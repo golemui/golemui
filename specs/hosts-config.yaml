@@ -1,0 +1,53 @@
+# hosts/config.md: how a JSON definition reaches the form component. Nothing checks
+# config-keys-at-the-top (`formConfig` type-checks and is ignored) or packages-at-one-version
+# (the peer ranges are `*`).
+file: hosts/config.md
+section:
+  [
+    The config,
+    'rule: formdef-is-the-document',
+    'rule: config-keys-at-the-top',
+    'rule: packages-at-one-version',
+  ]
+tests:
+  - id: fetched-document
+    unit: formdef-is-the-document
+    scenario: >-
+      The app downloads `onboarding.json` from the server. It holds `{ "states": { … }, "form": [ … ] }`, and the agent is passing it to `<GuiForm>`.
+    question: What should go in `formDef`?
+    options:
+      document: The downloaded object as it is, with its `form` and its `states`
+      form: The `form` array of the downloaded object
+      split: The `form` array, with the `states` moved into `formConfig`
+    expect: document
+
+  - id: validate-on-blur
+    unit: config-keys-at-the-top
+    scenario:
+      - Errors of the JSON form should appear only when the user leaves a field.
+      - The user asks for the JSON form to validate each field on blur instead of while typing.
+    question: Where should the agent set `validateOn`?
+    options:
+      top: "`validateOn: 'blur'` in the component's config, next to `formDef`"
+      formconfig: "`formConfig: { validateOn: 'blur' }` in the component's config"
+      document: 'A `"validateOn": "blur"` key inside the JSON document'
+    expect: top
+
+  - id: parser-placement
+    unit: config-keys-at-the-top
+    scenario: A JSON form shows a heading with `markdownText`, and the app has the `marked` package to turn markdown into HTML.
+    question: Where should the agent pass the parser?
+    options:
+      top: "`dependencies: { markdown: { parse } }` in the component's config, next to `formDef`"
+      formconfig: "`formConfig: { dependencies: { markdown: { parse } } }` in the component's config"
+      props: In the `props` of the `markdownText` widget
+    expect: top
+
+  - id: bump-one-package
+    unit: packages-at-one-version
+    scenario: A bug fixed in `@golemui/gui-react` 2.3.1 affects the app, which is on 2.3.0, and the user asks to upgrade it.
+    question: What should the agent upgrade?
+    options:
+      all: The five `@golemui` packages of the app, all to 2.3.1
+      one: '`@golemui/gui-react` alone, to 2.3.1'
+    expect: all

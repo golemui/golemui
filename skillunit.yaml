@@ -1,4 +1,6 @@
 skill: ./skills/golemui
+specs: ./specs
+context: GolemUI builds forms from JSON definitions and renders them in React, Angular, Vue, Lit and vanilla JS.
 examples:
   ts:
     tsconfig: ./tsconfig.skill.json

@@ -1,0 +1,23 @@
+# handlers-are-names: the validator accepts a function body under `on`, and nothing runs it.
+file: events.md
+tests:
+  - id: dependent-options
+    unit: handlers-are-names
+    scenario:
+      - When the user chooses a department, the next field should list only the people of that department, fetched from the HR service.
+      - Choosing a car brand has to load the models of that brand from the backend into the next field.
+    question: How should the agent wire it?
+    options:
+      formevent: 'A name under `on`, such as `"on": { "change": "fetchPeople" }`, on the first widget, handled in the form component''s `formEvent` handler by matching `event.name`, which sets the options of the second widget through `event.callback` with `OVERRIDE_WIDGET_PROP`'
+      inline: 'An expression or a function body as the value under `on`, such as `"on": { "change": "fetch(''/people'')" }`'
+      functions: 'A function registered in the `functions` of the config, named under `on` in the definition'
+    expect: formevent
+
+  - id: handler-in-the-json
+    unit: handlers-are-names
+    scenario: The user asks to keep all the behaviour of the form inside the JSON file, so that the backend can change it without a deploy, including what happens when a button is clicked.
+    question: What can the agent put under `on` for the button's click?
+    options:
+      name: Only an event name, which the application handles in its `formEvent` handler
+      body: The code to run, written as a string that the form evaluates on click
+    expect: name

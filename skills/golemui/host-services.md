@@ -15,8 +15,7 @@ declare const definition: Record<string, unknown>;
 ## The markdown parser
 
 `dependencies.markdown` is `{ parse(markdown: string): SanitizedHtml }`. Any parser works if it
-returns its HTML synchronously. `SanitizedHtml` is a string type that only a cast creates:
-cast where you sanitize, or where you trust the source.
+returns its HTML synchronously. `SanitizedHtml` is a string type that only a cast creates.
 
 ```ts
 import snarkdown from 'snarkdown';
@@ -48,11 +47,14 @@ https://golemui.com/json/features/dependencies.md
 
 ## Rules
 
-### rule: sanitize-untrusted-markdown
+### decision: sanitize-untrusted-markdown
 
-When: the markdown of a `markdownText` or `markdown` widget can come from users or stored data.
+When: writing the `parse` of the markdown parser for a form with a `markdownText` or `markdown` widget.
 
-Do: make `parse` remove raw HTML and `javascript:` links, or sanitize its output, before the cast to `SanitizedHtml`.
+Decide: whether `parse` sanitizes before the cast to `SanitizedHtml`, by where the markdown comes from.
+
+- **Users or stored data** — make `parse` remove raw HTML and `javascript:` links, or sanitize its output, before the cast.
+- **The developers, in a definition that ships with the app** — the cast alone, `parse: (md) => snarkdown(md) as SanitizedHtml`.
 
 Wrong:
 

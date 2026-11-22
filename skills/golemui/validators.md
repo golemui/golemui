@@ -132,6 +132,10 @@ Wrong:
 
   Because: a field never touched shows "Invalid input: expected string, received undefined", not "Enter your email".
 
+- Doing: a `required` message on a `number`, `integer` or `boolean` validator.
+
+  Because: those types have no `required` message, and the validator reports ``Unknown property `required` ``.
+
 Applies: json-api, validators, messages
 
 Source: libs/gui/validators/src/lib/validators.ts#fromStringValidator, libs/gui/validators/src/lib/validators.ts#fromNumberValidator, libs/gui/validators/src/lib/validators.ts#fromBooleanValidator, libs/gui/validators/src/lib/validators.ts#fromArrayValidator, libs/gui/validators/src/lib/validators.ts#resolveMessage

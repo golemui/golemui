@@ -1,0 +1,39 @@
+# Rules of definition.md that no check enforces: the validator accepts a `flex` layout, and a
+# `markdownText` with no parser renders empty with no error.
+file: definition.md
+section:
+  [Layouts, Headings and text, 'rule: never-generate-flex', 'rule: text-is-a-markdowntext-display']
+tests:
+  - id: fields-side-by-side
+    unit: never-generate-flex
+    scenario:
+      - The city and the postcode fields should sit next to each other on one line.
+      - The user wants the start date and the end date pickers in a single row instead of stacked.
+    question: Which layout widget should the agent write around the two fields?
+    options:
+      grid-row: 'A `grid` layout with `"props": { "direction": "row" }` and the two fields as its `children`'
+      flex-row: 'A `flex` layout with `"direction": "row"` and the two fields as its `children`'
+      grid-bare: 'A `grid` layout with `"direction": "row"` next to its `children`, outside `props`'
+    expect: grid-row
+
+  - id: section-title
+    unit: text-is-a-markdowntext-display
+    scenario:
+      - The checkout form needs the title "Billing details" above the card fields.
+      - Above the shipping fields there should be a small heading that says "Where should we send it?".
+    question: What should the agent add to the definition for the title?
+    options:
+      markdowntext: 'A `markdownText` display with the title as markdown in `props.md`, and a markdown parser on the form component'
+      markdown-input: 'A `markdown` widget whose value holds the title'
+      label: Put the title in the `label` of the first field below it
+    expect: markdowntext
+
+  - id: empty-heading
+    unit: text-is-a-markdowntext-display
+    scenario: The definition has a `markdownText` display with "## Your details" in its `props.md`, the page renders the form with only `formDef` in its config, and where the heading should be there is nothing, with no error in the console.
+    question: What should the agent change?
+    options:
+      parser: Give the form component a markdown parser, in `dependencies.markdown`
+      key: Move the text from `props.md` to `props.text`
+      html: Replace the markdown in `props.md` with an `<h2>` element
+    expect: parser

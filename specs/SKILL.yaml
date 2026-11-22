@@ -1,0 +1,69 @@
+# SKILL.md: checking a definition (verify-before-presenting, validate-json-until-valid), and where
+# names come from (no-guessing-api-names, docs-url-matches-the-api). No check enforces any of them.
+file: SKILL.md
+section: [Checking a definition, Rules]
+tests:
+  - id: check-with-the-cli
+    unit: verify-before-presenting
+    scenario:
+      - The agent has written a six-field signup definition to `signup.form.json`. The session has a shell, and no GolemUI tools.
+      - A short contact form definition is done and looks right; the agent can run commands in the project but has no MCP server for GolemUI.
+    question: What should the agent do before showing the definition to the user?
+    options:
+      cli: Run `npx -y @golemui/gui-mcp validate-json` on the file, and present it once it passes
+      present: Present it as it is, since it is short and follows the skill
+      ask-install: Stop and ask the user to install the GolemUI MCP server before going on
+    expect: cli
+
+  - id: chat-only
+    unit: verify-before-presenting
+    scenario: The user is in a plain chat with no tools at all and asks for a JSON definition of a feedback form.
+    question: How should the agent deliver it?
+    options:
+      offer: Write it following the skill's rules exactly, and offer the user the install of the GolemUI MCP server
+      refuse: Decline to give a definition that no tool has checked
+      plain: Give the definition with no word about checking it
+    expect: offer
+
+  - id: valid-with-a-warning
+    unit: validate-json-until-valid
+    scenario:
+      - >-
+        The check of a newsletter form came back with `"valid": true`, no errors, and one warning about the validator of its consent checkbox.
+      - '`validate-json` printed `"valid": true` for the registration form, with an entry in `warnings` that points at `/form/4/validator`.'
+    question: What should the agent do next?
+    options:
+      address: Read the warning, and fix it or tell the user why it stays
+      present: Present the definition, since it is valid and warnings do not count
+      revalidate: Run the check again until the warning goes away by itself
+    expect: address
+
+  - id: custom-widget-warning
+    unit: validate-json-until-valid
+    scenario: >-
+      The definition uses a `signaturePad` input that the user's team built and registers on the form component. The check returns `"valid": true` and one warning that `signaturePad` is not a built-in widget.
+    question: What should the agent do about that warning?
+    options:
+      explain: Keep the widget, and tell the user the warning stays because `signaturePad` is their own widget
+      replace: Replace `signaturePad` with a built-in widget so the warning goes away
+      silent: Present the definition without mentioning the warning
+    expect: explain
+
+  - id: unknown-option-name
+    unit: no-guessing-api-names
+    scenario: The user wants the date field to refuse dates before today, and the agent does not know what the option is called.
+    question: Where should the agent take the option name from?
+    options:
+      docs: From the skill's files or the `golemui.com` docs page of the widget
+      types: From the `@golemui` TypeScript declarations in `node_modules`
+      memory: From the name other form libraries use for it, such as `minDate`
+    expect: docs
+
+  - id: dx-page-found
+    unit: docs-url-matches-the-api
+    scenario: A web search for the tabs layout of GolemUI returned `https://golemui.com/dx/widgets-reference/layout-fields/tabs.md`, and the agent is writing a JSON definition.
+    question: Which page should the agent read?
+    options:
+      json: '`https://golemui.com/json/widgets-reference/layout-fields/tabs.md`'
+      dx: The `/dx/` page the search returned
+    expect: json

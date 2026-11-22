@@ -100,7 +100,9 @@ Source: libs/gui/mcp/src/cli-commands.ts#runCli, libs/gui/mcp/src/cli-commands.t
 
 When: checking a definition with `json_validate_form_definition` or `validate-json`.
 
-Do: fix the `errors` and check again until `valid: true`; then read every warning (`warnings`, `expressionWarnings`, `interpolationWarnings`), and fix it or tell the user why it stays.
+Do: fix the `errors` and check again until `valid: true`; then read every warning (`warnings`, `expressionWarnings`, `interpolationWarnings`) and fix what it points at. A warning stays only when the definition is right as it is, as for a custom widget type the app registers; then tell the user why it stays.
+
+Even when: `valid` is `true`.
 
 Wrong:
 
