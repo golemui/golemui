@@ -187,9 +187,9 @@ describe('MarkdownText schema validation', () => {
     it('should invalidate when "type" is incorrect', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, type must be 'markdownText'
           {
             kind: 'display',
+            // @ts-expect-error Expected, type must be 'markdownText'
             type: 'something',
             props: { md: 'Some content' },
           },

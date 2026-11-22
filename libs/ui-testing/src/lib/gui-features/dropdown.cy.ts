@@ -1,11 +1,5 @@
-import { defineForm, type FunctionWidgetParams } from '@golemui/core';
-import {
-  eventsNamed,
-  type FormHandle,
-  type MountComponentFn,
-  testDomId,
-  withTestFormName,
-} from '../utils';
+import { defineForm, type FormEvent } from '@golemui/core';
+import { eventsNamed, type MountComponentFn, testDomId, withTestFormName } from '../utils';
 
 export const runDropdownComponentTests = (baseMountFn: MountComponentFn) => {
   const mountFn = withTestFormName(baseMountFn);
@@ -215,21 +209,24 @@ export const runDropdownComponentTests = (baseMountFn: MountComponentFn) => {
     });
 
     it('should clear the filter before the items load and list them once they do', () => {
-      let handle!: FormHandle;
+      let dropdownLoadedCallback!: FormEvent['callback'];
       mountFn({
         formDef: defineForm({
           form: [
-            (api?: FunctionWidgetParams<any>) => ({
+            {
               uid: 'testSubject',
               kind: 'input',
               type: 'dropdown',
               path: 'country',
-              props: { items: api?.$form.countries, inputDebounce: 0 },
-            }),
+              props: { inputDebounce: 0 },
+              on: { load: 'dropdownLoaded' },
+            },
           ],
         }),
-        onFormReady: (formHandle) => {
-          handle = formHandle;
+        formEvent: (event) => {
+          if (event.name === 'dropdownLoaded') {
+            dropdownLoadedCallback = event.callback;
+          }
         },
       });
 
@@ -237,7 +234,12 @@ export const runDropdownComponentTests = (baseMountFn: MountComponentFn) => {
       cy.get('[data-cy="testSubject_textinput"]').type('a');
       cy.get('[data-cy="testSubject_textinput"]').clear();
 
-      cy.then(() => handle.setData({ countries: ['Spain', 'France'] }));
+      cy.then(() =>
+        dropdownLoadedCallback({
+          type: 'OVERRIDE_WIDGET_PROP',
+          payload: { uid: 'testSubject', prop: 'items', value: ['Spain', 'France'] },
+        }),
+      );
       cy.get('[data-cy="testSubject_textinput"]').click();
       visibleItems().should('have.length', 2);
     });

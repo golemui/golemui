@@ -163,13 +163,13 @@ describe('Textarea schema validation', () => {
     it('should fail on invalid counterMode enum', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, counterMode is invalid
           {
             uid: 'txt-1',
             path: 'comments',
             kind: 'input',
             type: 'textarea',
             props: {
+              // @ts-expect-error Expected, counterMode is invalid
               counterMode: 'whatever',
             },
           },

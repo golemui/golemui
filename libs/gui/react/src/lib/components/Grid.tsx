@@ -1,4 +1,4 @@
-import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
+import type { LayoutWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
 import {
   type FlexProps,
@@ -18,7 +18,7 @@ export function Grid(widgetInstance: WithWidget) {
   return (
     <div className="gui-field">
       <div className={gridClasses(grid)} id={domId}>
-        {(children as NonFunctionWidget<string>[]).map((child) => (
+        {children.map((child) => (
           <div key={child.uid} className={gridCellClasses(grid, child.size)}>
             <WidgetRenderer widget={child} />
           </div>

@@ -177,12 +177,12 @@ describe('Checkbox schema validation', () => {
     it('should fail on invalid enum for checkboxPosition', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expect6ed, checkboxPosition should be left or right
           {
             path: 'agree',
             kind: 'input',
             type: 'checkbox',
             props: {
+              // @ts-expect-error Expect6ed, checkboxPosition should be left or right
               checkboxPosition: 'something',
             },
           },

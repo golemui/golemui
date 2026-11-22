@@ -174,8 +174,6 @@ function makeRootSchema(formSchema: WidgetSchema): Record<string, unknown> {
 export type ValidatorMetadata = {
   /** Every widget type with a component schema, mapped to its `kind` const. */
   widgetKindByType: Record<string, string | null>;
-  /** Built-in types with no component schema (e.g. `renderer`), rejected in a JSON form. */
-  schemalessWidgetTypes: string[];
   /** Widget types a repeater `template` (and each `template.<state>`) can be. */
   templateWidgetTypes: string[];
   /** Validator `type` values that have a branch validator, in the order messages list them. */
@@ -194,14 +192,9 @@ export function planValidatorMetadata(): ValidatorMetadata {
     const kind = (schema.properties?.['kind'] as { const?: unknown } | undefined)?.const;
     widgetKindByType[widgetType] = typeof kind === 'string' ? kind : null;
   }
-  const knownWidgetTypes =
-    (WIDGETS_SCHEMA['$defs'] as Record<string, { enum?: string[] }> | undefined)?.[
-      'knownWidgetTypes'
-    ]?.enum ?? [];
   assertWidgetPositions();
   return {
     widgetKindByType,
-    schemalessWidgetTypes: knownWidgetTypes.filter((type) => !COMPONENT_SCHEMAS[type]),
     templateWidgetTypes: unionMembers(LAYOUT_WIDGET_SCHEMA['oneOf'], LAYOUT_WIDGET_SCHEMA.$id).map(
       (schemaId) => widgetTypeOfSchema(schemaId),
     ),

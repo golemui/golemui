@@ -95,6 +95,4 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
   alert: async () => (await import('./components/alert/alert.component')).AlertComponent,
   markdownText: async () =>
     (await import('./components/markdown-text/markdown-text.component')).MarkdownTextComponent,
-  renderer: async () =>
-    (await import('./components/renderer/renderer.component')).RendererComponent,
 };

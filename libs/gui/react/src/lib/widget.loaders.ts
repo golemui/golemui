@@ -61,5 +61,4 @@ export const widgetLoaders: WidgetLoaders<React.ComponentType<WithWidget>, Golem
   // DISPLAY
   alert: async () => (await import('./components/Alert')).Alert,
   markdownText: async () => (await import('./components/MarkdownText')).MarkdownText,
-  renderer: async () => (await import('./components/Renderer')).Renderer,
 };

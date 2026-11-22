@@ -1,4 +1,4 @@
-import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
+import type { LayoutWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
 
 type OwnWidgetProps = {
@@ -13,7 +13,7 @@ export function CustomLayout(widgetInstance: WithWidget) {
   return (
     <section id={uid} data-cy="custom-layout">
       <h4 data-cy="custom-layout-title">{templateData.title}</h4>
-      {(children as NonFunctionWidget<string>[]).map((child) => (
+      {children.map((child) => (
         <WidgetRenderer key={child.uid} widget={child} />
       ))}
     </section>

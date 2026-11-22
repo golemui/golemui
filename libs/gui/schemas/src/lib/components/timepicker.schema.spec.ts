@@ -163,13 +163,13 @@ describe('Timepicker schema validation', () => {
     it('should fail on a non-boolean allowCustomTime', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, allowCustomTime should be a boolean
           {
             uid: 'tp-3',
             path: 'meetingTime',
             kind: 'input',
             type: 'timePicker',
             props: {
+              // @ts-expect-error Expected, allowCustomTime should be a boolean
               allowCustomTime: 'yes',
             },
           },

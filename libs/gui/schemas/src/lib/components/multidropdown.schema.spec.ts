@@ -266,12 +266,12 @@ describe('MultiDropdown schema validation', () => {
     it('should fail on a scalar defaultValue', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error defaultValue must be an array
           {
             uid: 'mdd-1',
             path: 'countries',
             kind: 'input',
             type: 'multiDropdown',
+            // @ts-expect-error defaultValue must be an array
             defaultValue: 'US',
             props: { items: [] },
           },

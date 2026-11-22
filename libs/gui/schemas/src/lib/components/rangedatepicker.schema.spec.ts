@@ -188,13 +188,13 @@ describe('RangeDatePicker schema validation', () => {
     it('should fail on invalid type for icon', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, icon should be a string
           {
             uid: 'rdp-1',
             path: 'dateRanges',
             kind: 'input',
             type: 'rangeDatePicker',
             props: {
+              // @ts-expect-error Expected, icon should be a string
               icon: 123,
             },
           },
@@ -244,12 +244,12 @@ describe('RangeDatePicker schema validation', () => {
     it('should fail on a non-boolean allowEdit', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, allowEdit should be a boolean
           {
             path: 'dateRanges',
             kind: 'input',
             type: 'rangeDatePicker',
             props: {
+              // @ts-expect-error Expected, allowEdit should be a boolean
               allowEdit: 'yes',
             },
           },

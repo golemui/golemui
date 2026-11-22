@@ -1,4 +1,4 @@
-import { type Localizable, type WidgetPropertyFunctionParams } from '@golemui/core';
+import { type Localizable } from '@golemui/core';
 import type {
   DateRange,
   DateTimeRange,
@@ -732,22 +732,6 @@ export type AlertProps = {
 
 export type MarkdownTextProps = {
   md: string;
-};
-
-/**
- * Non-serializable component props. Used to render the provided component.
- * @template ComponentType Framework-dependent type for the component. e.g. ReactNode, Type<any>
- */
-export type RendererProps<ComponentType = unknown> = {
-  render: ComponentType;
-};
-
-/**
- * Non-serializable component props for Angular. Used to render the provided component.
- * @template ComponentType Framework-dependent type for the component. e.g. ReactNode, Type<any>
- */
-export type ComponentRendererProps<ComponentType = unknown> = {
-  render: { component: ComponentType; api: WidgetPropertyFunctionParams<any> };
 };
 
 export type RepeaterProps<Template> = {

@@ -187,13 +187,13 @@ describe('Password schema validation', () => {
     it('should fail on invalid type for showPasswordIcon', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, showPasswordIcon should be a string
           {
             uid: 'pwd-1',
             path: 'secret',
             kind: 'input',
             type: 'password',
             props: {
+              // @ts-expect-error Expected, showPasswordIcon should be a string
               showPasswordIcon: 123,
             },
           },
