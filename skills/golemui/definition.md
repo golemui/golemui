@@ -131,7 +131,7 @@ Wrong:
 
 Applies: json-api
 
-Source: libs/dx/src/lib/resolveFormInput.ts#isDxDefinitions
+Source: libs/dx/src/lib/resolveFormInput.ts#isDxDefinitions, libs/gui/mcp/src/json/errors.ts#formatError
 
 ### rule: keep-the-schema-key
 
@@ -167,7 +167,7 @@ Wrong:
 
 Applies: json-api, props, grid
 
-Source: libs/gui/schemas/src/lib/core/common.schema.json
+Source: libs/gui/schemas/src/lib/core/common.schema.json, libs/gui/mcp/src/json/errors.ts#formatError
 
 ### rule: text-is-a-markdowntext-display
 
@@ -215,7 +215,7 @@ Wrong:
 
 Applies: json-api, button
 
-Source: libs/gui/schemas/src/lib/components/button.schema.json
+Source: libs/gui/schemas/src/lib/components/button.schema.json, libs/gui/mcp/src/json/errors.ts#collectWidgetErrors, libs/core/src/lib/errors.ts#errorCodes
 
 ### rule: gap-is-a-step
 
@@ -231,7 +231,7 @@ Wrong:
 
 Applies: json-api, grid
 
-Source: libs/gui/schemas/src/lib/components/grid.schema.json
+Source: libs/gui/schemas/src/lib/components/grid.schema.json, libs/gui/mcp/src/json/errors.ts#formatError
 
 ### rule: never-generate-flex
 

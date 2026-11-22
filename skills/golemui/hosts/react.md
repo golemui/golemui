@@ -90,7 +90,7 @@ Wrong:
 
 Applies: react, nextjs
 
-Source: libs/react/src/lib/FormComponent.tsx
+Source: libs/react/src/lib/FormComponent.tsx#FormComponent
 
 ### rule: nextjs-form-in-a-client-component
 

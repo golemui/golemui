@@ -54,7 +54,7 @@ Wrong:
 
 Applies: ssr, custom-widgets, nextjs, angular, vue, lit
 
-Source: libs/core/src/lib/context/widget-registry.ts
+Source: libs/core/src/lib/context/widget-registry.ts#WidgetRegistry
 
 ### rule: ssr-dependencies-run-in-node
 

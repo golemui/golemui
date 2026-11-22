@@ -94,7 +94,7 @@ Wrong:
 
 Applies: json-api, mcp, validation
 
-Source: libs/gui/mcp/src/cli-commands.ts#runCli, libs/gui/mcp/src/cli-commands.ts#USAGE, libs/gui/mcp/src/json/validate-form-definition.ts#JSON_VALIDATE_FORM_DEFINITION_TOOL
+Source: libs/gui/mcp/src/cli-commands.ts#runCli, libs/gui/mcp/src/cli-commands.ts#USAGE, libs/gui/mcp/src/json/validate-form-definition.ts#JSON_VALIDATE_FORM_DEFINITION_TOOL, libs/gui/mcp/src/json/errors.ts#formatError
 
 ### rule: validate-json-until-valid
 
@@ -110,4 +110,4 @@ Wrong:
 
 Applies: json-api, validation, mcp
 
-Source: libs/gui/mcp/src/json/validate-core.ts#runValidation, libs/gui/mcp/src/json/validate-core.ts#ValidateResult
+Source: libs/gui/mcp/src/json/validate-core.ts#runValidation, libs/gui/mcp/src/json/validate-core.ts#ValidateResult, libs/gui/mcp/src/shared/lint/boolean-validator.ts#checkBooleanValidatorRules

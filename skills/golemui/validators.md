@@ -76,7 +76,7 @@ Wrong:
 
 Applies: json-api, validators
 
-Source: libs/gui/schemas/src/lib/validators.schema.json
+Source: libs/gui/schemas/src/lib/validators.schema.json, libs/gui/mcp/src/json/errors.ts#formatError
 
 ### rule: mandatory-checkbox-required-and-const
 

@@ -111,7 +111,7 @@ Wrong:
 
 Applies: json-api, react, angular, vue, lit, vanilla
 
-Source: libs/dx/src/lib/resolveFormInput.ts#createResolveFormInput, libs/dx/src/lib/resolveFormInput.ts#FormInput
+Source: libs/dx/src/lib/resolveFormInput.ts#createResolveFormInput, libs/dx/src/lib/resolveFormInput.ts#FormInput, libs/core/src/lib/errors.ts#errorCodes
 
 ### rule: config-keys-at-the-top
 
@@ -129,7 +129,7 @@ Wrong:
 
 Applies: json-api, react, angular, vue, lit, vanilla, dependencies, host-functions
 
-Source: libs/dx/src/lib/widgetSetForm.ts#buildWidgetSetForm, libs/dx/src/lib/resolveFormInput.ts#createResolveFormInput
+Source: libs/dx/src/lib/widgetSetForm.ts#buildWidgetSetForm, libs/dx/src/lib/resolveFormInput.ts#createResolveFormInput, libs/core/src/lib/errors.ts#errorCodes
 
 ### rule: packages-at-one-version
 
@@ -198,4 +198,4 @@ Wrong:
 
 Applies: runtime-methods, health
 
-Source: libs/core/src/lib/store/model.ts#FormHealth, libs/core/src/lib/errors.ts
+Source: libs/core/src/lib/store/model.ts#FormHealth, libs/core/src/lib/errors.ts#errorCodes

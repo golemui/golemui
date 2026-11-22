@@ -167,3 +167,5 @@ Wrong:
   Because: `@golemui/lit/ssr` has no browser build.
 
 Applies: lit, astro, ssr
+
+Source: libs/lit/src/ssr.ts
