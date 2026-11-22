@@ -66,3 +66,44 @@ jobs:
         run: npx nx affected --target=typecheck
 
       - run: npm run lint:affected
+
+  # The agent skill (skills/golemui) under SkillUnit: its examples compile and validate (lint), its
+  # units match the code they point at (sync), and its specs pass with the decision model (test).
+  skill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # A step's `if:` cannot read secrets, so the job turns "is the key set" into a variable.
+      # A pull request from a fork gets no secrets, so this is false there.
+      HAS_TYPESAFE_KEY: ${{ secrets.TYPESAFE_API_KEY != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The JSON examples go through the MCP's validator, run from source, which imports these
+      # generated modules; they are not in git.
+      - name: Generate the validators
+        run: npm run generate:validators
+
+      - name: Lint the skill, check sync, load the specs
+        run: npx skillunit check --dry-run --reporter github
+
+      - name: Test the skill with the decision model
+        if: >-
+          env.HAS_TYPESAFE_KEY == 'true' &&
+          (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)
+        env:
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+        run: npx skillunit check --reporter github
+
+      - name: Report the skipped model tests
+        if: env.HAS_TYPESAFE_KEY != 'true'
+        run: echo "::warning title=Skill tests::The tests of the agent skill did not run with the decision model, because TYPESAFE_API_KEY is not available. Lint, sync and the specs' dry run did run."
