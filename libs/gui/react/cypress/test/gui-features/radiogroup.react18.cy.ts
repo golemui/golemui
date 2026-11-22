@@ -1,4 +1,3 @@
-import { gui } from '@golemui/gui-shared';
 import { mountFramework } from '../../support/mount';
 
 // Pinned to React 18 (run with REACT18=1): red on 18, green on 19 — guards the adapter
@@ -6,16 +5,24 @@ import { mountFramework } from '../../support/mount';
 describe('radiogroup via @golemui/gui-react on React 18', () => {
   it('renders its options without crashing', () => {
     mountFramework({
-      formDef: [
-        gui.inputs.radiogroup('rentalType', {
-          label: 'Rental type',
-          options: [
-            { label: 'Daily', value: 'daily' },
-            { label: 'Weekly', value: 'weekly' },
-            { label: 'Monthly', value: 'monthly' },
-          ],
-        }),
-      ] as never,
+      formDef: {
+        form: [
+          {
+            kind: 'input',
+            type: 'radiogroup',
+            uid: 'rentalType',
+            path: 'rentalType',
+            label: 'Rental type',
+            props: {
+              options: [
+                { label: 'Daily', value: 'daily' },
+                { label: 'Weekly', value: 'weekly' },
+                { label: 'Monthly', value: 'monthly' },
+              ],
+            },
+          },
+        ],
+      } as never,
       data: {},
     });
 

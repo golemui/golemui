@@ -564,9 +564,8 @@ export const JSON_GET_WIDGET_SPEC_TOOL = {
   description:
     'Look up the JSON Schema and a minimal working example for a single GolemUI widget on the ' +
     '**JSON form-definition** surface. Use this when you need to know which `props` a widget accepts, ' +
-    'what `kind` value it uses, or what shape its `validator` takes. **If you are writing `gui.*` DX ' +
-    'code (TypeScript), you do NOT need this** — use `dx_list_factories` + `dx_get_spec` instead; ' +
-    'fetching both surfaces for the same widget is redundant. Cheaper than dumping the whole API into context.',
+    'what `kind` value it uses, or what shape its `validator` takes. ' +
+    'Cheaper than dumping the whole API into context.',
   inputSchema: {
     type: 'object' as const,
     properties: {

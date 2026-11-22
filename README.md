@@ -41,7 +41,7 @@
 
 ## Overview
 
-Define forms with the typed `gui` builder API, or as schema-validated JSON. Both produce the same serializable definition.
+Define forms as schema-validated JSON documents.
 
 - One definition renders in React, Angular, Lit, Vue, or vanilla JS.
 - Validation, conditional fields, i18n, and accessibility come from the schema and runtime.
@@ -79,34 +79,46 @@ Full walkthrough at [golemui.com/getting-started/installation](https://golemui.c
 
 ## Quick start
 
-Define a form as an array of `gui` builders and pass it to the framework component (React shown):
+Define a form as a JSON document and pass it to the framework component (React shown):
 
 ```tsx
 import '@golemui/gui-components/index.css';
 import '@golemui/gui-shared/forms.css';
 import type { FormSubmitEvent } from '@golemui/core';
 import { GuiForm } from '@golemui/gui-react';
-import { gui } from '@golemui/gui-shared';
 
-const formDef = [
-  gui.inputs.textInput('email', {
-    label: 'Email',
-    validator: { type: 'string', required: true, format: 'email' },
-  }),
-  gui.inputs.password('password', {
-    label: 'Password',
-    validator: { type: 'string', required: true, minLength: 8 },
-  }),
-  gui.inputs.checkbox('newsletter', {
-    label: 'Subscribe to the newsletter',
-    include: { when: '!!$form.email' },
-  }),
-  gui.actions.button({
-    label: 'Sign up',
-    actionType: 'submit',
-    disabled: { when: '$formIsInvalid' },
-  }),
-];
+const formDef = {
+  form: [
+    {
+      kind: 'input',
+      type: 'textinput',
+      path: 'email',
+      label: 'Email',
+      validator: { type: 'string', required: true, format: 'email' },
+    },
+    {
+      kind: 'input',
+      type: 'password',
+      path: 'password',
+      label: 'Password',
+      validator: { type: 'string', required: true, minLength: 8 },
+    },
+    {
+      kind: 'input',
+      type: 'checkbox',
+      path: 'newsletter',
+      label: 'Subscribe to the newsletter',
+      include: { when: '!!$form.email' },
+    },
+    {
+      kind: 'action',
+      type: 'button',
+      label: 'Sign up',
+      actionType: 'submit',
+      disabled: { when: '$formIsInvalid' },
+    },
+  ],
+};
 
 function handleSubmit(event: FormSubmitEvent) {
   console.log(event.data);
@@ -123,23 +135,39 @@ The same `formDef` value renders in every supported framework. See [Integrations
 
 ## Core concepts
 
-**Form definition.** A form is an array of nodes (or a single node). Each node is either a `gui` builder result or a render function. The output is serializable JSON, so a definition can be stored, transferred, and rendered later.
+**Form definition.** A form is a JSON document. Its `form` array holds the widgets, and its optional `states` object holds named conditions. A definition can be stored, transferred, and rendered later.
 
-**The `gui` builder.** Exported from `@golemui/gui-shared`, grouped into namespaces:
+**Widgets.** Each widget has a `kind` and a `type`. An input widget also has a `path`, the key of its value in the form data:
 
-| Namespace       | Purpose                                               | Examples                                                                                                                                                                                                     |
-| --------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `gui.inputs`    | Field widgets                                         | `textInput`, `numberInput`, `password`, `textarea`, `checkbox`, `dropdown`, `select`, `radiogroup`, `currency`, `tags`, `datePicker`, `timeInput`, `dateTimeInput`, `calendar`, `repeater`, `list`, `custom` |
-| `gui.actions`   | Buttons and custom actions                            | `button`, `custom`                                                                                                                                                                                           |
-| `gui.displays`  | Non-input content                                     | `display`, `alert`, `markdownText`, `custom`                                                                                                                                                                 |
-| `gui.layouts`   | Containers                                            | `grid`, `tabs`, `accordion`, `custom`                                                                                                                                                                        |
-| `gui.selectors` | Select and update widgets by type, uid, tag, or state | -                                                                                                                                                                                                            |
+| Kind      | Purpose           | Types (examples)                                                                                                                                                                              |
+| --------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `input`   | Field widgets     | `textinput`, `number`, `password`, `textarea`, `checkbox`, `dropdown`, `select`, `radiogroup`, `currency`, `tags`, `datePicker`, `timeInput`, `dateTimeInput`, `calendar`, `repeater`, `list` |
+| `action`  | Buttons and menus | `button`, `menu`                                                                                                                                                                              |
+| `display` | Non-input content | `alert`, `markdownText`                                                                                                                                                                       |
+| `layout`  | Containers        | `grid`, `tabs`, `accordion`                                                                                                                                                                   |
+
+A custom widget has its own `type`, registered through `customWidgetLoaders`.
 
 **Conditional fields.** Widgets accept `include` / `exclude` with a reactive expression over form data:
 
-```ts
-gui.inputs.radiogroup('city', { label: 'City', include: { when: '!!$form.country' } });
-gui.actions.button({ label: 'Reset', include: { when: '$form.debug === true' } });
+```json
+{
+  "form": [
+    {
+      "kind": "input",
+      "type": "radiogroup",
+      "path": "city",
+      "label": "City",
+      "include": { "when": "!!$form.country" }
+    },
+    {
+      "kind": "action",
+      "type": "button",
+      "label": "Reset",
+      "include": { "when": "$form.debug === true" }
+    }
+  ]
+}
 ```
 
 `$form.<path>` reads the current form data; the expression is evaluated at runtime.
@@ -161,21 +189,21 @@ For vanilla JS, import `@golemui/gui-lit` to register the `<gui-form>` custom el
 - **Internationalization.** Provide an `I18nTranslator` adapter (i18next, Lingui, or your own) through `localization`. Labels, hints, and validator messages are translatable, with live language switching and automatic RTL. [Docs](https://golemui.com/features/i18n/)
 - **Accessibility.** Native form elements with ARIA wiring managed for you: `aria-describedby` for hints, `aria-invalid` and `aria-errormessage` on errors, plus keyboard navigation on interactive widgets.
 - **Theming.** Styling is driven by CSS custom properties (design tokens) from a single stylesheet. Override tokens, or supply your own widget components through `customWidgetLoaders`. [Docs](https://golemui.com/styling/theming/)
-- **AI assistants (MCP).** `@golemui/gui-mcp` ships a `golemui-mcp` Model Context Protocol server with tools to validate form definitions, generate them from JSON Schema or OpenAPI, and type-check `gui.*` code.
-- **AI assistants (skill).** An installable [agent skill](./skills/golemui/SKILL.md) grounds coding agents in the real GolemUI API even without the MCP connected - `npx skills add golemui/golemui@v2.3.0` (works with Claude Code, Cursor, and other [skills.sh](https://skills.sh)-compatible agents). Its API reference is generated from the same compile-verified registry the MCP serves, so the two never disagree.
+- **AI assistants (MCP).** `@golemui/gui-mcp` ships a `golemui-mcp` Model Context Protocol server with tools to validate form definitions and generate them from JSON Schema or OpenAPI.
+- **AI assistants (skill).** An installable [agent skill](./skills/golemui/SKILL.md) grounds coding agents in the real GolemUI API even without the MCP connected - `npx skills add golemui/golemui@v2.3.0` (works with Claude Code, Cursor, and other [skills.sh](https://skills.sh)-compatible agents).
 
 ## Packages
 
-| Package                                             | Description                                                                    |
-| --------------------------------------------------- | ------------------------------------------------------------------------------ |
-| `@golemui/gui-react` / `-angular` / `-lit` / `-vue` | Framework form component and bindings                                          |
-| `@golemui/gui-shared`                               | The `gui` builder, form definition types (`GuiFormInitConfig`) and `forms.css` |
-| `@golemui/gui-components`                           | Lit web components, usable with or without forms, and their stylesheets        |
-| `@golemui/core`                                     | Framework-agnostic form runtime and shared types (`FormEvent`, `ValidateOn`)   |
-| `@golemui/gui-validators`                           | Validation schemas (`@standard-schema/spec`)                                   |
-| `@golemui/schemas`                                  | The shared core JSON Schema (common defs) and the schema tree generator        |
-| `@golemui/gui-schemas`                              | JSON Schemas for gui form definitions, generated from the widget manifest      |
-| `@golemui/gui-mcp`                                  | MCP server for coding assistants                                               |
+| Package                                             | Description                                                                         |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `@golemui/gui-react` / `-angular` / `-lit` / `-vue` | Framework form component and bindings                                               |
+| `@golemui/gui-shared`                               | The widget definitions, form definition types (`GuiFormInitConfig`) and `forms.css` |
+| `@golemui/gui-components`                           | Lit web components, usable with or without forms, and their stylesheets             |
+| `@golemui/core`                                     | Framework-agnostic form runtime and shared types (`FormEvent`, `ValidateOn`)        |
+| `@golemui/gui-validators`                           | Validation schemas (`@standard-schema/spec`)                                        |
+| `@golemui/schemas`                                  | The shared core JSON Schema (common defs) and the schema tree generator             |
+| `@golemui/gui-schemas`                              | JSON Schemas for gui form definitions, generated from the widget manifest           |
+| `@golemui/gui-mcp`                                  | MCP server for coding assistants                                                    |
 
 Import only from a package's public entry points. The `@golemui/*/internals` paths are internal and unstable.
 

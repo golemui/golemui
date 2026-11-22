@@ -40,6 +40,7 @@ describe('@golemui/core entry points', () => {
     expect(Object.keys(internalsEntry).sort()).toEqual([
       'ALLOWED_EXPRESSION_METHODS',
       'EXPRESSION_LIMITS',
+      'buildWidgetSetForm',
       'checkExpression',
       'collectWidgetUids',
       'isI18nParamExpression',

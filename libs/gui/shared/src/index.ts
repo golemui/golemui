@@ -1,31 +1,12 @@
 // ─── Public API ───────────────────────────────────────────────────────────
 //
-// Curated, end-user form-authoring surface. Building blocks, the extension API,
-// and framework-adapter contract types are intentionally NOT re-exported here —
-// they live in `./internals` (see `internals.ts`). Renderer/adapter libraries
-// import those from `@golemui/gui-shared/internals`.
+// The end-user surface: the form config type, the dependency types and the form composition
+// utils. Building blocks and the types for framework adapters are not exported here. They are
+// in `./internals` (see `internals.ts`), and renderer and adapter libraries import them from
+// `@golemui/gui-shared/internals`.
 
-// ─── DX form-authoring API ───
-export { gui } from './lib/dx';
-export type {
-  DxDefinitionItem,
-  DxDefinitions,
-  DxFormConfig,
-  GslSelectorsInput,
-  GuiFormInitConfig,
-} from './lib/dx';
-
-// --- Conversion of a gui.* form to a JSON form definition ---
-export { toJsonFormDefinition } from './lib/dx';
-export type {
-  GuiFormSource,
-  JsonFormDefinition,
-  JsonFormDiagnostic,
-  JsonFormDiagnosticCode,
-  JsonFormDiagnosticSeverity,
-  JsonFormResult,
-  JsonFormWidget,
-} from './lib/dx';
+// --- form config ---
+export type { GuiFormInitConfig } from './lib/form-init-config';
 
 // ─── shared (external libs dependency injection) ───
 export type {

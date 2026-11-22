@@ -1,12 +1,8 @@
 // Runtime-portable surface: the JSON form-definition tools plus the shared concept
 // reference.
 //
-// This entry deliberately excludes the `gui.*` DX type-check path (`./dx/*`), which
-// depends on the Node `typescript` compiler and `node:module`/`node:fs`/`node:url` and
-// is therefore Node-only. Importing from `@golemui/gui-mcp/json` (rather than the
-// package root) lets non-Node consumers — e.g. a Cloudflare Worker — bundle the JSON
-// tools without dragging in the DX machinery. The package root (`./lib`) re-exports
-// everything for Node consumers.
+// Nothing here imports Node built-ins, so a non-Node consumer, for example a Cloudflare
+// Worker, can bundle this entry. The package root (`./lib`) re-exports it.
 
 // --- JSON form-definition path ---
 export {

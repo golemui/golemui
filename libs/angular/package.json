@@ -14,9 +14,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "dependencies": {
-    "@golemui/dx": "*"
-  },
   "peerDependencies": {
     "@angular/common": ">=18.0.0",
     "@angular/core": ">=18.0.0",

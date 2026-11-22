@@ -84,7 +84,7 @@ describe('json_validate_form_definition', () => {
     expect(result.valid).toBe(false);
     const rendererError = result.errors.find((e) => e.path === '/form/0/type');
     expect(rendererError?.message).toMatch(/no JSON representation/);
-    expect(rendererError?.suggestion).toMatch(/gui\.displays\.display/);
+    expect(rendererError?.suggestion).toMatch(/custom display widget/);
     expect(result.warnings.filter((w) => w.keyword === 'customWidget')).toEqual([]);
   });
 

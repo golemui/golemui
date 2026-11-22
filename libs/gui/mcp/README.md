@@ -9,29 +9,19 @@ strict enough that one wrong property name breaks the runtime. This server close
 your AI calls it to **validate** what it wrote and to **generate** forms from existing
 JSON Schemas or OpenAPI operations, with the bundled GolemUI schemas as the source of truth.
 
-## Two entry points (one surface, two ways to author it)
+## How an agent uses it
 
-A GolemUI form can be written two ways, and the MCP serves both:
+A GolemUI form is a **JSON form definition**: the serializable object
+`{ form: [...widgets], states?: {...} }`.
 
-- a **JSON form definition**: the serializable object `{ form: [...widgets], states?: {...} }`;
-- **`gui.*` DX code**: the fluent TypeScript builder that _produces_ that same definition.
-
-There is no toggle. On connect the server sends one block of guidance (the MCP `initialize.instructions`
-field, `SERVER_INSTRUCTIONS` in [`src/cli.ts`](./src/cli.ts)) and the agent self-routes by what it is
-producing:
-
-1. **JSON path**: generate or hand-author, then **always finish with `json_validate_form_definition`**.
-2. **`gui.*` path**: call **`dx_list_factories` first** (the complete reference), write the form, then
-   **always finish with `dx_check_code`**.
-
-The two terminal checks are not interchangeable: `dx_check_code` validates `gui.*` _code_,
-`json_validate_form_definition` validates a JSON _object_. Each tool's own `description` reinforces the routing
-(e.g. `json_get_widget_spec` tells a `gui.*` author it isn't needed). To read what a client actually sees, run
+On connect the server sends one block of guidance (the MCP `initialize.instructions` field,
+`SERVER_INSTRUCTIONS` in [`src/cli.ts`](./src/cli.ts)). It tells the agent to generate or
+hand-author the definition, and then to **always finish with `json_validate_form_definition`**.
+Each tool has its own `description`. To read what a client actually sees, run
 `npm run start:mcp` (the MCP Inspector).
 
-The split is structural, not just textual: the two paths live in separate modules
-([`src/json/`](./src/json) and [`src/dx/`](./src/dx)) over a small shared surface
-([`src/shared/`](./src/shared)); neither imports the other.
+The JSON form-definition tools are in [`src/json/`](./src/json). The shared code (the
+`get_concept` reference, the linters and the tool wiring) is in [`src/shared/`](./src/shared).
 
 ## Install
 
@@ -70,16 +60,16 @@ npx -y @golemui/gui-mcp < /dev/null
 
 ## CLI (no MCP client needed)
 
-The two terminal checks are also plain subcommands of the same bin, so any shell — a CI
-step, a git hook, or an AI agent without an MCP connector — can verify a form:
+The terminal check `json_validate_form_definition` is also a plain subcommand of the same
+bin, so any shell (a CI step, a git hook, or an AI agent without an MCP connector) can verify
+a form:
 
 ```bash
 npx -y @golemui/gui-mcp validate-json signup-form.json  # JSON definition → bundled schemas
-npx -y @golemui/gui-mcp check-dx src/forms/signup.ts    # gui.* code → real @golemui types
 npx -y @golemui/gui-mcp --help
 ```
 
-Each prints a single JSON result on stdout (the same shape as the corresponding MCP tool)
+`validate-json` prints a single JSON result on stdout (the same shape as the MCP tool)
 and exits `0` on pass, `1` when problems were found, `2` on usage or file errors. In
 restricted environments, install it as a devDependency (`npm i -D @golemui/gui-mcp`) and the
 same commands resolve the project-local bin with no network at run time.
@@ -136,36 +126,6 @@ inline `when`), state-suffixed props (`"label.stateName": "..."`), the reactive 
 
 **Input:** `{ concept }` — one of `"states"`, `"string-interpolation"`, `"reactive-scope"`, `"icons"`
 
-> The five tools above serve the **JSON** surface. The three below serve the **`gui.*`** (DX code) surface —
-> see [Two entry points](#two-entry-points-one-surface-two-ways-to-author-it).
-
-### `dx_list_factories`
-
-**Call this first when writing `gui.*` code.** Returns the complete `gui.*` DX reference in one call: every
-factory with its namespace, calling convention, a **compile-verified** example, and its gotchas — plus the
-cross-cutting patterns and the common authoring rules. Its imports + render snippet are **tailored to your
-target framework** (`GOLEMUI_FRAMEWORK`). Self-sufficient for most forms; keep it in context and write from it.
-
-**Input:** none.
-
-### `dx_get_spec`
-
-A rare single-factory deep-dive — one factory's calling convention, example, and notes. Usually unneeded
-(`dx_list_factories` already carries every factory); reach here only to re-confirm one in isolation.
-
-**Input:** `{ factory }` — the camelCase name (`textInput`, `dropdown`, `radiogroup`, `button`, …).
-
-### `dx_check_code`
-
-**The `gui.*` terminal check** — the counterpart of `json_validate_form_definition` for _code_ instead of a JSON
-_object_. Type-checks the snippet against the **real `@golemui` type declarations** (compile-is-truth: GolemUI
-isn't in any model's training data, so generated `gui.*` is often a confident fabrication that doesn't
-compile). Also catches two compiler-invisible footguns — a misplaced `include`/`exclude` on a `gui.*` spread,
-and reactive-expression mistakes in `when` strings. Returns `{ ok, diagnostics }`; each diagnostic carries a
-fix `hint`. Treat `ok: false` as blocking.
-
-**Input:** `{ code }` — the `gui.*` snippet (a bare `gui.inputs.*` array is fine; the import is added if missing).
-
 ## Library usage
 
 The package also exports all tools as plain functions, so you can call them directly
@@ -203,8 +163,8 @@ are also exported if you want to register the tools in your own MCP server.
 
 ### Other runtimes and browsers
 
-`@golemui/gui-mcp/json` has the JSON tools without the Node-only `gui.*` type check, so it
-bundles anywhere, Cloudflare Workers included. `validateFormDefinition` there is synchronous
+`@golemui/gui-mcp/json` has the JSON tools and imports no Node built-ins, so it bundles
+anywhere, Cloudflare Workers included. `validateFormDefinition` there is synchronous
 and loads the validators of every widget type.
 
 In a browser, use `@golemui/gui-mcp/json/lazy`. Each widget type has its own validator module,

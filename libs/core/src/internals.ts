@@ -25,3 +25,12 @@ export { resolveItemRenderer } from './lib/utils/resolve-item-renderer';
 
 // The bindings prefix every DOM id a widget renders with its form's name.
 export { toDomId } from './lib/utils/dom-id';
+
+// The form component factory of each binding builds its core config with the same merge rules.
+export { buildWidgetSetForm } from './lib/widget-set-form';
+export type {
+  WidgetSetDefinition,
+  WidgetSetDependencies,
+  WidgetSetFormBundle,
+  WidgetSetFormInitConfig,
+} from './lib/widget-set-form';

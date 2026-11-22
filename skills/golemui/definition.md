@@ -127,11 +127,11 @@ Wrong:
 
 - Doing: a `gui.*` call, or an option name taken from a `/dx/` docs page, inside the document.
 
-  Because: a `gui.*` call returns an object of another shape, `{ "type": "ITEMS", "items": [...] }`; the validator reports ``Missing required property `kind` at `/form/0` ``.
+  Because: GolemUI 3 has no `gui.*` builder, `@golemui/gui-shared` exports no `gui`; and an option written at the top level of a widget, as the `/dx/` pages show them, fails the validator: ``Unknown property `placeholder` at `/form/0` ``.
 
 Applies: json-api
 
-Source: libs/dx/src/lib/resolveFormInput.ts#isDxDefinitions, libs/gui/mcp/src/json/errors.ts#formatError
+Source: libs/gui/shared/src/index.ts, libs/gui/mcp/src/json/errors.ts#formatError
 
 ### rule: keep-the-schema-key
 

@@ -1,7 +1,6 @@
 import { type Form } from '@golemui/core';
 import { type Example } from './types';
 
-// TODO: Migrate to gui.* DSL
 const formDef = {
   states: {
     limitReached: '$form.repeaters.users?.length === 5',

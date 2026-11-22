@@ -94,7 +94,7 @@ Do: import from the public entry points the docs show.
 
 Wrong:
 
-- Doing: `import { resolveFormInput } from '@golemui/gui-shared/internals'` in an application.
+- Doing: `import { repeaterIndexSuffix } from '@golemui/gui-shared/internals'` in an application.
 
   Because: `internals` is the unstable contract between GolemUI's own packages, and may change in any release.
 

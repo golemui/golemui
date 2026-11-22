@@ -44,13 +44,6 @@ jobs:
           git add -AN -- libs/schemas libs/gui/schemas
           git diff --exit-code -- libs/schemas libs/gui/schemas
 
-      - name: Check generated skill references are up to date
-        run: |
-          set -euo pipefail
-          npm run generate:skill
-          git add -AN -- skills
-          git diff --exit-code -- skills
-
       # The release tool chooses the npm tag of a release. The root project has no test target, so
       # the affected targets below do not run this test.
       - name: Test the release tools

@@ -70,4 +70,4 @@ Wrong:
 
 Applies: ssr, dependencies, markdownText
 
-Source: libs/dx/src/lib/widgetSetForm.ts#buildWidgetSetForm
+Source: libs/core/src/lib/widget-set-form.ts#buildWidgetSetForm

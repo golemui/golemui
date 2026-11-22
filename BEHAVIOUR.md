@@ -6,8 +6,8 @@ scenario tells where the case happens in an app, and an example shows the input 
 result.
 
 - React, Vue, Angular and Lit follow the same rule, unless the rule says otherwise.
-- The examples use the `gui.*` builder when it can express the case, and the JSON form definition
-  otherwise.
+- The examples are JSON form definitions. An example that shows TypeScript around the form (a
+  config object, a component or a handler) writes the same form as an object literal.
 - **Status: follows** means the code does this, and a test checks it.
 - **Status: not yet** means the code does something else today. The status line says what.
 - A PR that fixes a "not yet" rule adds its test and sets the status to "follows". A PR that
@@ -31,10 +31,12 @@ of each value.
 
   ```ts
   const config = {
-    formDef: [
-      gui.inputs.textInput('name', { label: 'Name' }),
-      gui.actions.button({ label: 'Save', actionType: 'submit' }),
-    ],
+    formDef: {
+      form: [
+        { kind: 'input', type: 'textinput', path: 'name', label: 'Name' },
+        { kind: 'action', type: 'button', label: 'Save', actionType: 'submit' },
+      ],
+    },
     data: { name: 'Ann', createdAt: new Date('2026-01-01') },
   };
   ```
@@ -64,12 +66,30 @@ APIs often send `null` for an empty object. The form must treat `{ order: null }
 
   ```ts
   const config = {
-    formDef: [
-      gui.inputs.repeater('order.lines', {
-        label: 'Order lines',
-        template: [gui.inputs.textInput('order.lines.items.product', { label: 'Product' })],
-      }),
-    ],
+    formDef: {
+      form: [
+        {
+          kind: 'input',
+          type: 'repeater',
+          path: 'order.lines',
+          label: 'Order lines',
+          props: {
+            template: {
+              kind: 'layout',
+              type: 'grid',
+              children: [
+                {
+                  kind: 'input',
+                  type: 'textinput',
+                  path: 'order.lines.items.product',
+                  label: 'Product',
+                },
+              ],
+            },
+          },
+        },
+      ],
+    },
     data: { customer: 'Ann', order: null },
   };
   ```
@@ -88,8 +108,14 @@ JavaScript objects.
   `Object.prototype`.
 - Example:
 
-  ```ts
-  gui.inputs.textInput('toString', { label: 'Answer', defaultValue: 'x' });
+  ```json
+  {
+    "kind": "input",
+    "type": "textinput",
+    "path": "toString",
+    "label": "Answer",
+    "defaultValue": "x"
+  }
   ```
 
   -> the value is `'x'`.
@@ -109,13 +135,15 @@ the prototype of an object.
 - Scenario: a translated label has params, and its message uses a name that is not one of them,
   for example after a typo in the translation file. The app translator replaces each
   `{name}` with `params[name]`.
-- Example:
+- Example: the message of the key `approval` is `'Approved on {date} by {constructor}'`.
 
-  ```ts
-  gui.inputs.textInput('approval', {
-    label: { key: 'approval', params: { date: '$form.date' } },
-  });
-  // The message of the key 'approval': 'Approved on {date} by {constructor}'
+  ```json
+  {
+    "kind": "input",
+    "type": "textinput",
+    "path": "approval",
+    "label": { "key": "approval", "params": { "date": "$form.date" } }
+  }
   ```
 
   -> the `constructor` param is missing. It is not the `Object` function, so the label never
@@ -133,17 +161,27 @@ visible input still uses.
   must not remove the value of the visible one.
 - Example:
 
-  ```ts
-  gui.inputs.dropdown('country', {
-    label: 'Country',
-    items: euCountries,
-    validator: { type: 'string' },
-    include: { when: '$form.region === "eu"' },
-  }),
-  gui.inputs.textInput('country', {
-    label: 'Country',
-    exclude: { when: '$form.region === "eu"' },
-  }),
+  ```json
+  {
+    "form": [
+      {
+        "kind": "input",
+        "type": "dropdown",
+        "path": "country",
+        "label": "Country",
+        "validator": { "type": "string" },
+        "include": { "when": "$form.region === 'eu'" },
+        "props": { "items": ["France", "Spain"] }
+      },
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "country",
+        "label": "Country",
+        "exclude": { "when": "$form.region === 'eu'" }
+      }
+    ]
+  }
   ```
 
   -> data `{ region: 'us', country: 'Canada' }`, the user submits -> the submit data still has
@@ -176,21 +214,33 @@ from there. An exception instead stops the whole app or the framework render.
   form. The app listens to `formHealth` to show a "This form cannot be shown" message.
 - Example: `formDef: null`, `undefined` or the JSON string `'null'`, for example when the backend
   returns no form -> code 22 with the label `root`, the same as for `formDef: 42`.
+- Example: `formDef` is the widget array without the document around it, for example `[]` while
+  the form loads -> code 23, and the message says to pass `{ form: [...] }`.
 - Example: an authoring tool saves a repeater before the author adds its template ->
   `{ "kind": "input", "type": "repeater", "path": "contacts" }` gives code 22.
 - Example: a row function reads `$item` without `?.`. The form calls the function once without a
   row when it builds the form:
 
   ```ts
-  gui.inputs.repeater('users', {
-    template: [
-      gui.inputs.dropdown('users.items.city', ({ $item }) => ({
-        label: 'City',
-        items: citiesOf($item.country),
-        validator: { type: 'string' },
-      })),
-    ],
+  const cityInput = ({ $item }) => ({
+    kind: 'input',
+    type: 'dropdown',
+    path: 'users.items.city',
+    label: 'City',
+    validator: { type: 'string' },
+    props: { items: citiesOf($item.country) },
   });
+
+  const formDef = {
+    form: [
+      {
+        kind: 'input',
+        type: 'repeater',
+        path: 'users',
+        props: { template: { kind: 'layout', type: 'grid', children: [cityInput] } },
+      },
+    ],
+  };
   ```
 
   -> code 22.
@@ -284,18 +334,32 @@ the email input shows the issue and `isFormValid` is false, but a submit button 
   a company", leaves the VAT number empty, and the error shows. Then the user unchecks the box.
 - Example:
 
-  ```ts
-  gui.inputs.checkbox('isCompany', { label: 'I buy as a company' }),
-  gui.inputs.textInput('vatNumber', {
-    label: 'VAT number',
-    validator: { required: true },
-    include: { when: '$form.isCompany === true' },
-  }),
-  gui.actions.button({
-    label: 'Pay',
-    actionType: 'submit',
-    disabled: { when: '$formIsInvalid' },
-  }),
+  ```json
+  {
+    "form": [
+      {
+        "kind": "input",
+        "type": "checkbox",
+        "path": "isCompany",
+        "label": "I buy as a company"
+      },
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "vatNumber",
+        "label": "VAT number",
+        "validator": { "type": "string", "required": true },
+        "include": { "when": "$form.isCompany === true" }
+      },
+      {
+        "kind": "action",
+        "type": "button",
+        "label": "Pay",
+        "actionType": "submit",
+        "disabled": { "when": "$formIsInvalid" }
+      }
+    ]
+  }
   ```
 
   -> when the VAT number is hidden, `$formIsInvalid` is false, `isFormValid` is true and
@@ -358,8 +422,14 @@ limit by blocking input.
   shortens it in the field.
 - Example:
 
-  ```ts
-  gui.inputs.textarea('post', { label: 'Post', validator: { maxLength: 280 } }),
+  ```json
+  {
+    "kind": "input",
+    "type": "textarea",
+    "path": "post",
+    "label": "Post",
+    "validator": { "type": "string", "maxLength": 280 }
+  }
   ```
 
   -> the user can paste 300 characters. The counter shows `-20 / 280` in red, and the input
@@ -368,12 +438,28 @@ limit by blocking input.
 - Scenario: a team takes at most 5 members. The user adds a sixth and removes another one.
 - Example:
 
-  ```ts
-  gui.inputs.repeater('members', {
-    label: 'Members',
-    validator: { maxItems: 5 },
-    template: [gui.inputs.textInput('members.items.name', { label: 'Name' })],
-  }),
+  ```json
+  {
+    "kind": "input",
+    "type": "repeater",
+    "path": "members",
+    "label": "Members",
+    "validator": { "type": "array", "maxItems": 5 },
+    "props": {
+      "template": {
+        "kind": "layout",
+        "type": "grid",
+        "children": [
+          {
+            "kind": "input",
+            "type": "textinput",
+            "path": "members.items.name",
+            "label": "Name"
+          }
+        ]
+      }
+    }
+  }
   ```
 
   -> the add button stays enabled at 5 rows. With 6 rows the form is invalid, and the repeater
@@ -391,7 +477,8 @@ limit by blocking input.
 - Scenario: the tags of a contact come from the server and can hold a duplicate, for example
   `['vip', 'vip']`. The tags input skips a repeat that the user types, but it does not check
   the loaded value.
-- Example: `gui.inputs.tags('labels', { label: 'Labels', validator: { uniqueItems: true } })`
+- Example:
+  `{ "kind": "input", "type": "tags", "path": "labels", "label": "Labels", "validator": { "type": "array", "uniqueItems": true } }`
   with the value `['vip', 'vip']` -> the value is invalid.
 - Status: follows. The textarea, the repeater, the tags input and the `uniqueItems` rule work
   this way.
@@ -405,8 +492,14 @@ touched.
   their mind and deletes it.
 - Example:
 
-  ```ts
-  gui.inputs.textInput('nickname', { label: 'Nickname', validator: { minLength: 3 } });
+  ```json
+  {
+    "kind": "input",
+    "type": "textinput",
+    "path": "nickname",
+    "label": "Nickname",
+    "validator": { "type": "string", "minLength": 3 }
+  }
   ```
 
   -> the user types `a`, deletes it and leaves the field -> no error.
@@ -425,12 +518,15 @@ false.
 - Scenario: the VAT number is shown only to companies, and never to customers in the US.
 - Example:
 
-  ```ts
-  gui.inputs.textInput('vatNumber', {
-    label: 'VAT number',
-    include: { when: '$form.customerType === "company"' },
-    exclude: { when: '$form.country === "US"' },
-  });
+  ```json
+  {
+    "kind": "input",
+    "type": "textinput",
+    "path": "vatNumber",
+    "label": "VAT number",
+    "include": { "when": "$form.customerType === 'company'" },
+    "exclude": { "when": "$form.country === 'US'" }
+  }
   ```
 
   -> a private customer in Spain: `include` is false and `exclude` is false, so the input is
@@ -712,14 +808,16 @@ an ancestor, for example of an outer page form, must not run for it.
   closes the dialog before `inputDebounce` ends.
 - Example:
 
-  ```ts
-  gui.inputs.dropdown('city', {
-    label: 'City',
-    items: [],
-    inputDebounce: 300,
-    onFilter: () => 'searchCities',
-    validator: { type: 'string' },
-  });
+  ```json
+  {
+    "kind": "input",
+    "type": "dropdown",
+    "path": "city",
+    "label": "City",
+    "validator": { "type": "string" },
+    "on": { "filter": "searchCities" },
+    "props": { "items": [], "inputDebounce": 300 }
+  }
   ```
 
   -> the dialog closes 100 ms after the last key press -> no `searchCities` event is sent.
@@ -732,13 +830,18 @@ an ancestor, for example of an outer page form, must not run for it.
   that the form names, or the name has a typo.
 - Example:
 
-  ```ts
-  gui.inputs.list('car', {
-    label: 'Car',
-    items: cars,
-    labelField: 'model',
-    itemRenderer: 'carItem',
-  });
+  ```json
+  {
+    "kind": "input",
+    "type": "list",
+    "path": "car",
+    "label": "Car",
+    "props": {
+      "items": [{ "model": "Model S" }, { "model": "Corolla" }],
+      "labelField": "model",
+      "itemRenderer": "carItem"
+    }
+  }
   ```
 
   with no `carItem` in the `itemRenderers` of the config -> the items render with the default
@@ -766,8 +869,8 @@ it must always be one. A React or Vue layout widget reads the `children` value t
   action, and a custom validator that counts its runs. The user clicks Sign up once.
 - Example:
 
-  ```ts
-  gui.actions.button({ label: 'Sign up', actionType: 'submit' });
+  ```json
+  { "kind": "action", "type": "button", "label": "Sign up", "actionType": "submit" }
   ```
 
   -> one click gives one `VALIDATE_ALL` action, and each validator runs once. The click event goes
@@ -825,44 +928,31 @@ shows the error like one of its own.
 
 ### 34. An `on` value is an event name
 
-In a form definition, each `on` value is the name of the event, a string. Function handlers are a
-`gui.*` feature: the builder keeps the function and writes an event name into `on`.
+In a form definition, each `on` value is the name of the event, a string. The host handles the
+event in its `formEvent` handler.
 
 - Scenario: a widget set built directly on `@golemui/core` chooses the event name with a function:
   `on: { click: ({ $form }) => ($form.isDraft ? 'saveDraft' : 'publish') }`.
-- Example: write the handler with `gui.*`, for example
-  `gui.actions.button({ label: 'Publish', onClick: () => 'publish' })`, or use one event name
+- Example: use one event name, for example
+  `{ "kind": "action", "type": "button", "label": "Publish", "on": { "click": "publish" } }`,
   and read `event.data.isDraft` in the host `formEvent` handler.
 - Status: not yet. The core types and the decoder accept a function in `on`, and
   `FormEvent.name` is then the function itself.
 
-### 35. A button `onClick` handler runs only on click
-
-- Scenario: an app saves the form with a button that is not a submit button. The handler calls
-  the server.
-- Example:
-
-  ```ts
-  gui.actions.button({ label: 'Save', onClick: (data) => api.save(data) });
-  ```
-
-  -> nothing runs when the form is built. On click, the handler gets the form data, and the event
-  as a second parameter.
-
-- Status: follows for a handler that declares a parameter. A handler whose `length` is 0 is
-  called while the form is built, to read a host event name: a handler with no parameters, with
-  only default or rest parameters, or a wrapped function such as a debounced one. In a callback
-  button this call happens each time the callback runs.
-
-### 36. `$log` works in every expression
+### 35. `$log` works in every expression
 
 `$log(value)` logs a value and returns it, to debug an expression.
 
 - Scenario: a form author wants to know why a label shows the wrong total.
 - Example:
 
-  ```ts
-  gui.inputs.numberInput('tip', { label: 'Tip for a total of {{ $log($form.total) }}' });
+  ```json
+  {
+    "kind": "input",
+    "type": "number",
+    "path": "tip",
+    "label": "Tip for a total of {{ $log($form.total) }}"
+  }
   ```
 
   -> the form logs the value and shows it in the label, as `$log` does in `when`. The same works
@@ -870,7 +960,7 @@ In a form definition, each `on` value is the name of the event, a string. Functi
 
 - Status: follows.
 
-### 37. An i18n param keeps the value it has
+### 36. An i18n param keeps the value it has
 
 The translator receives each param with its own value. A literal param keeps its type, and an
 expression param gives its result, also when the result is `null` or `undefined`.
@@ -879,10 +969,13 @@ expression param gives its result, also when the result is `null` or `undefined`
   app uses i18next plural keys, which need the `count` param as a number.
 - Example:
 
-  ```ts
-  gui.inputs.tags('toppings', {
-    label: { key: 'toppings.choose', params: { count: 3 } },
-  });
+  ```json
+  {
+    "kind": "input",
+    "type": "tags",
+    "path": "toppings",
+    "label": { "key": "toppings.choose", "params": { "count": 3 } }
+  }
   ```
 
   -> the translator receives `{ count: 3 }`, a number, so i18next picks the plural form.
@@ -894,7 +987,7 @@ expression param gives its result, also when the result is `null` or `undefined`
 
 ## Rules for form authors
 
-### 38. Menu item values are unique
+### 37. Menu item values are unique
 
 Two items with the same `value` in one menu are not supported. The form does not check it, and
 the items can render or select wrong.

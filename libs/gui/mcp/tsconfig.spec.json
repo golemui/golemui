@@ -17,6 +17,7 @@
     "src/**/*.ts",
     "src/**/*.json",
     "src/**/*.d.ts",
-    "tools/**/*.ts"
+    "tools/**/*.ts",
+    "../../core/src/types/subscript__justin.d.ts"
   ]
 }

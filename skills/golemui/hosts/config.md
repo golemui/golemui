@@ -28,7 +28,8 @@ import '@golemui/gui-shared/forms.css';
 ## The config
 
 The definition goes whole into `formDef`: the document with its `form` and its `states`, as
-imported from a `.json` file or fetched from a server. Everything else the form needs is a key
+imported from a `.json` file or fetched from a server, either as an object or as its JSON
+string. Everything else the form needs is a key
 of the same `config` object, next to `formDef`:
 
 ```ts
@@ -55,8 +56,8 @@ const config: GuiFormInitConfig = {
 | `middlewares`         | middlewares ([extending.md](../extending.md))                                                             |
 | `expressionPolicy`    | what the form does with an expression the expression check rejects; `'warn'` by default                   |
 
-`formConfig` and `formSelectors` belong to the `gui.*` builder of 2.x. A JSON definition
-ignores them (see `config-keys-at-the-top`).
+There is no `formConfig` or `formSelectors`: they belonged to the `gui.*` builder of GolemUI
+2.x, which GolemUI 3 removed (see `config-keys-at-the-top`).
 
 Full reference: https://golemui.com/json/integration/configuration.md
 
@@ -107,11 +108,11 @@ Wrong:
 
 - Doing: passing `definition.form`, the bare array of JSON widgets, as `formDef`.
 
-  Because: the form fails to start: `[22] form: Expected object literal, got "undefined"`.
+  Because: the form fails to start: ``[23] The form definition is an array of widgets. Pass a document with a `form` key``.
 
 Applies: json-api, react, angular, vue, lit, vanilla
 
-Source: libs/dx/src/lib/resolveFormInput.ts#createResolveFormInput, libs/dx/src/lib/resolveFormInput.ts#FormInput, libs/core/src/lib/errors.ts#errorCodes
+Source: libs/gui/shared/src/lib/form-init-config.ts#GuiFormInitConfig, libs/core/src/lib/store/reducers/initialize.ts#detectBareArrayForm, libs/core/src/lib/errors.ts#errorCodes
 
 ### rule: config-keys-at-the-top
 
@@ -119,17 +120,17 @@ When: a JSON form needs `validateOn`, `functions`, `dependencies`, `itemRenderer
 
 Do: put the key at the top level of `config`, next to `formDef`.
 
-Even when: a docs page or an older example puts it in `formConfig`.
+Even when: a docs page or a GolemUI 2.x example puts it in `formConfig`.
 
 Wrong:
 
 - Doing: `formConfig: { dependencies: { markdown }, functions }` next to a JSON `formDef`.
 
-  Because: the form ignores `formConfig` for a JSON definition: a `markdownText` renders empty, with no error, and an expression that calls `$fn` stops the form: `[40] Failed to evaluate '{{$fn.total()}}': obj[path] is not a function`.
+  Because: TypeScript reports that `formConfig` does not exist in `GuiFormInitConfig`, and in JavaScript the form never reads it: a `markdownText` renders empty, with no error, and an expression that calls `$fn` stops the form: `[40] Failed to evaluate '{{$fn.total()}}': obj[path] is not a function`.
 
 Applies: json-api, react, angular, vue, lit, vanilla, dependencies, host-functions
 
-Source: libs/dx/src/lib/widgetSetForm.ts#buildWidgetSetForm, libs/dx/src/lib/resolveFormInput.ts#createResolveFormInput, libs/core/src/lib/errors.ts#errorCodes
+Source: libs/core/src/lib/widget-set-form.ts#buildWidgetSetForm, libs/gui/shared/src/lib/form-init-config.ts#GuiFormInitConfig, libs/core/src/lib/errors.ts#errorCodes
 
 ### rule: packages-at-one-version
 
