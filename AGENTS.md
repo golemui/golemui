@@ -78,8 +78,8 @@ export const SignUp = () => (
 ```
 
 `formDef` is the whole document, never the bare widget array. Named `states` go in the document,
-next to `form`. The [skill](skills/golemui/SKILL.md) lists the other rules that compile but fail
-at runtime.
+next to `form`. The [skill](skills/golemui/SKILL.md) holds the other rules that compile but fail
+at runtime, each one tested under `specs/`.
 
 Per-framework setup, server-side rendering and starter templates:
 [Integrations](https://golemui.com/integration/overview/) and [`templates/`](templates/).
