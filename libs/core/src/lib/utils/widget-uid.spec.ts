@@ -1,8 +1,27 @@
+import { type StandardSchemaV1 } from '@standard-schema/spec';
 import { describe, expect, it } from 'vitest';
-import { type State } from '../store/model';
-import { initialize } from '../store/reducers/initialize';
-import { expandSources } from './repeater';
+import { type ValidatorFn } from '../form-validator';
+import { identityTranslator } from '../i18n';
+import { type Action } from '../store/actions';
+import { createInitialState } from '../store/model';
+import { reducer } from '../store/reducer';
 import { collectWidgetUids, type WidgetUidEntry } from './widget-uid';
+
+/** No test of this file validates an input, so the validator accepts every value. */
+const validators: ValidatorFn<unknown> = (): StandardSchemaV1 => ({
+  '~standard': {
+    version: 1,
+    vendor: 'widget-uid-spec',
+    validate: (value: unknown) => ({ value }),
+  },
+});
+
+const reduce = reducer({
+  validators,
+  validateOn: 'eager',
+  localization: identityTranslator('en-US'),
+  functions: {},
+});
 
 const heading = (fields: Record<string, unknown> = {}) => ({
   kind: 'display',
@@ -134,18 +153,18 @@ describe('collectWidgetUids', () => {
       data: { home: [{}, {}], work: [{}, {}] },
     },
   ])('gives the keys of the widgets that the form builds for $name', ({ form, data }) => {
-    const state = initialize({ lang: 'en' } as State, {
-      type: 'INITIALIZE',
-      payload: { formDef: { form }, formName: 'uids' },
-    });
+    const actions: Action[] = [
+      { type: 'INITIALIZE', payload: { formDef: { form }, formName: 'uids' } },
+      { type: 'SET_DATA', payload: { data } },
+    ];
+    const state = actions.reduce(reduce, createInitialState('en-US'));
     expect(state.formHealth).toEqual({ status: 'ok' });
-    const { resolvedSources } = expandSources(state.flatForm, data);
 
     const expectedKeys = collectWidgetUids({ form }).flatMap((entry) =>
       rowSuffixes(entry.repeaterDepth).map((suffix) => `${entry.uid}${suffix}`),
     );
 
-    expect(Object.keys(resolvedSources).sort()).toEqual(expectedKeys.sort());
+    expect(Object.keys(state.resolvedSources).sort()).toEqual(expectedKeys.sort());
   });
 });
 
