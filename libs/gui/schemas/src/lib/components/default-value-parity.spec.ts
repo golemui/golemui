@@ -13,7 +13,7 @@ describe('component schema defaultValue parity', () => {
     import: 'default',
   });
 
-  // Entries without a schemaFile (renderer) have no JSON representation at all.
+  // An entry without a schemaFile has no component schema to check.
   const schemaBearingEntries = guiWidgetManifest.filter((entry) => entry.schemaFile !== undefined);
 
   it('declares a root-level defaultValue on every input widget', () => {

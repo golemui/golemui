@@ -1,10 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  type FormWidget,
-  type FunctionWidget,
-  type InputWidget,
-  isFunctionWidget,
-} from '../form-widget';
+import { type FormWidget, type InputWidget } from '../form-widget';
 import { type State } from '../store/model';
 import { expandSources } from './repeater';
 
@@ -65,15 +60,6 @@ describe('expandSources: top-level widgets', () => {
     expect(resolvedSources['note']).toBe(note);
     expect(Object.keys(resolvedSources)).toEqual(['firstName', 'note']);
     expect(repeaterItemScopes).toEqual({});
-  });
-
-  it('keeps a top-level function widget callable and by reference', () => {
-    const fn: FunctionWidget<string> = () => displayChild('fn') as never;
-    fn.uid = 'fn' as never;
-
-    const { resolvedSources } = expandSources(flatFormOf(fn), {});
-
-    expect(resolvedSources['fn']).toBe(fn);
   });
 });
 
@@ -162,39 +148,6 @@ describe('expandSources: repeater rows', () => {
       itemPath: 'lineItems.2',
       index: 2,
     });
-  });
-
-  it('keeps a row function widget callable with concrete uid and path', () => {
-    const rowName: FunctionWidget<string> = (api) =>
-      ({
-        kind: 'input',
-        type: 'text',
-        path: 'users.items.name',
-        props: { seen: `${api?.$index}:${(api?.$item as { name?: string } | undefined)?.name}` },
-      }) as never;
-    rowName.uid = 'rowName' as never;
-    rowName.path = 'users.items.name';
-    const users = repeater('users', 'users', [rowName]);
-
-    const { resolvedSources, repeaterItemScopes } = expandSources(flatFormOf(users), {
-      users: [{ name: 'Ada' }, { name: 'Linus' }],
-    });
-
-    const second = resolvedSources['rowName[1]'];
-    expect(isFunctionWidget(second)).toBe(true);
-    expect(second.uid).toBe('rowName[1]');
-    expect(pathOf(second)).toBe('users.1.name');
-    expect(repeaterItemScopes['rowName[1]']).toEqual({ itemPath: 'users.1', index: 1 });
-    // Not pre-resolved: whoever reads it calls it with the item in scope.
-    const resolved = (second as FunctionWidget<string>)({
-      $form: {},
-      $item: { name: 'Linus' },
-      $index: 1,
-      errors: undefined,
-      touched: undefined,
-      translate: undefined,
-    });
-    expect(resolved.props?.['seen']).toBe('1:Linus');
   });
 
   it('keeps a property named items in a repeater path', () => {
@@ -287,24 +240,6 @@ describe('expandSources: nested repeaters', () => {
     expect(pathOf(resolvedSources['dev-name[1][0]'])).toBe('teams.1.devs.0.name');
   });
 
-  it('does not write uid into a repeater object a row function widget returns from a cache', () => {
-    // A memoized function returns the same object for every row. The uid write then modifies
-    // an object the user owns.
-    const cached = repeater('cached-devs', 'teams.items.devs', [
-      inputChild('dev-name', 'teams.items.devs.items.name'),
-    ]);
-    const devsFn: FunctionWidget<string> = () => cached as never;
-    devsFn.uid = 'devs' as never;
-
-    const { resolvedSources } = expandSources(
-      flatFormOf(repeater('teams', 'teams', [devsFn])),
-      data,
-    );
-
-    expect(cached.uid).toBe('cached-devs');
-    expect(pathOf(resolvedSources['dev-name[2][1]'])).toBe('teams.2.devs.1.name');
-  });
-
   it('records the rows that own every row widget, outermost first', () => {
     const { repeaterRows } = expandSources(flatFormOf(teams), data);
 
@@ -334,21 +269,5 @@ describe('expandSources: nested repeaters', () => {
     expect(pathOf(resolvedSources['order-lines[1]'])).toBe('orders.1.items');
     expect(pathOf(resolvedSources['sku[1][1]'])).toBe('orders.1.items.1.sku');
     expect(repeaterItemScopes['sku[1][1]']).toEqual({ itemPath: 'orders.1.items.1', index: 1 });
-  });
-
-  it('recurses into a nested repeater produced by a row function widget', () => {
-    const devsFn: FunctionWidget<string> = () =>
-      repeater('devs', 'teams.items.devs', [
-        inputChild('dev-name', 'teams.items.devs.items.name'),
-      ]) as never;
-    devsFn.uid = 'devs' as never;
-    const teamsWithFn = repeater('teams', 'teams', [devsFn]);
-
-    const { resolvedSources, repeaterItemScopes } = expandSources(flatFormOf(teamsWithFn), data);
-
-    // The container entry is the callable wrapper, its rows are expanded from the resolved repeater.
-    expect(isFunctionWidget(resolvedSources['devs[2]'])).toBe(true);
-    expect(pathOf(resolvedSources['dev-name[2][1]'])).toBe('teams.2.devs.1.name');
-    expect(repeaterItemScopes['dev-name[2][1]']).toEqual({ itemPath: 'teams.2.devs.1', index: 1 });
   });
 });

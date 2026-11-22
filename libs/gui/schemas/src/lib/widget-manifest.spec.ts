@@ -36,10 +36,10 @@ describe('gui widget manifest', () => {
     }
   });
 
-  it('lists renderer as the only schema-less type', () => {
-    const schemalessTypes = guiWidgetManifest
+  it('gives every entry a schema file', () => {
+    const typesWithoutSchemaFile = guiWidgetManifest
       .filter((entry) => entry.schemaFile === undefined)
       .map((entry) => entry.type);
-    expect(schemalessTypes).toEqual(['renderer']);
+    expect(typesWithoutSchemaFile).toEqual([]);
   });
 });

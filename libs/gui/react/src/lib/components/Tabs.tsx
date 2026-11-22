@@ -1,4 +1,4 @@
-import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
+import type { LayoutWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
 import type { GuiTabChangeEventDetail } from '@golemui/gui-components';
 import {
@@ -69,7 +69,7 @@ export function Tabs(widgetInstance: WithWidget) {
               data-cy={tabPanelCy(widget.uid, tab.uid)}
               hidden={isActive ? undefined : true}
             >
-              <WidgetRenderer widget={child as NonFunctionWidget<string>} />
+              <WidgetRenderer widget={child} />
             </gui-tab-panel>
           );
         })}

@@ -73,33 +73,6 @@ describe('json_validate_form_definition', () => {
     expect(typoError?.suggestion).toMatch(/textinput/);
   });
 
-  // `renderer` is a schema-less built-in, so it must get a hard error (not the
-  // custom-widget warning, and not a fuzzy match to the nearby `repeater`).
-  it('rejects the schema-less built-in type renderer with kind present', () => {
-    const result = validateFormDefinition({
-      formDefinition: {
-        form: [{ kind: 'display', type: 'renderer' }],
-      },
-    });
-    expect(result.valid).toBe(false);
-    const rendererError = result.errors.find((e) => e.path === '/form/0/type');
-    expect(rendererError?.message).toMatch(/no JSON representation/);
-    expect(rendererError?.suggestion).toMatch(/custom display widget/);
-    expect(result.warnings.filter((w) => w.keyword === 'customWidget')).toEqual([]);
-  });
-
-  it('rejects the schema-less built-in type renderer with kind omitted', () => {
-    const result = validateFormDefinition({
-      formDefinition: {
-        form: [{ type: 'renderer' }],
-      },
-    });
-    expect(result.valid).toBe(false);
-    const rendererError = result.errors.find((e) => e.path === '/form/0/type');
-    expect(rendererError?.message).toMatch(/no JSON representation/);
-    expect(result.errors.filter((e) => /repeater/.test(e.message ?? ''))).toEqual([]);
-  });
-
   it('rejects an invalid validator format', () => {
     const result = validateFormDefinition({
       formDefinition: {

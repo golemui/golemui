@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { type FormWidget, type FunctionWidget } from '../../form-widget';
+import { type FormWidget } from '../../form-widget';
 import { type ExpressionFunctions } from '../../shared';
 import { expandSources } from '../../utils/repeater';
 import { createInitialState, type State } from '../model';
@@ -139,27 +139,6 @@ describe('calculateWidgetFlags: $item / $index in item when conditions', () => {
     expect(next.widgetFlags['devs[1]']).toEqual({ hidden: true });
   });
 
-  it('resolves a row function widget with $item and $index before reading its flags', () => {
-    const rowNote: FunctionWidget<string> = (api) =>
-      ({
-        kind: 'display',
-        type: 'markdownText',
-        props: {},
-        include: { when: `${api?.$index} === 0 || ${(api?.$item as { flag?: boolean })?.flag}` },
-      }) as never;
-    rowNote.uid = 'row-note' as never;
-    state.flatForm = {
-      lineItems: repeater('lineItems', 'lineItems', [rowNote]),
-    };
-    state.data = { lineItems: [{ flag: false }, { flag: true }, { flag: false }] };
-
-    const next = runFlagsPipeline(state);
-
-    expect(next.widgetFlags['row-note[0]']).toEqual({ hidden: false });
-    expect(next.widgetFlags['row-note[1]']).toEqual({ hidden: false });
-    expect(next.widgetFlags['row-note[2]']).toEqual({ hidden: true });
-  });
-
   it('creates no flag entry for repeater item widgets without reactive flags', () => {
     state.flatForm = {
       lineItems: repeater('lineItems', 'lineItems', [displayChild('row-note')]),
@@ -170,29 +149,6 @@ describe('calculateWidgetFlags: $item / $index in item when conditions', () => {
 
     expect(next.widgetFlags['row-note[0]']).toBeUndefined();
     expect(next.widgetFlags['row-note[1]']).toBeUndefined();
-  });
-});
-
-describe('calculateWidgetFlags: function widget results', () => {
-  let state: State;
-
-  beforeEach(() => {
-    state = createInitialState('en-US');
-  });
-
-  it('does not write uid into an object the function returns from a cache', () => {
-    // A memoized function returns the same object on every call. The uid write then modifies
-    // an object the user owns.
-    const cached = displayChild('cached-note', { include: { when: '$form.show === true' } });
-    const note: FunctionWidget<string> = () => cached as never;
-    note.uid = 'note' as never;
-    state.flatForm = { note: note as unknown as FormWidget<string> };
-    state.data = { show: true };
-
-    const next = runFlagsPipeline(state);
-
-    expect(cached.uid).toBe('cached-note');
-    expect(next.widgetFlags['note'].hidden).toBe(false);
   });
 });
 

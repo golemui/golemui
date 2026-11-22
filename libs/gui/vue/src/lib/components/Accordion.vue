@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
+import type { LayoutWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/vue';
 import type { GuiToggleEventDetail } from '@golemui/gui-components';
 import {
@@ -62,9 +62,7 @@ const onToggle = (event: CustomEvent<GuiToggleEventDetail>, sectionUid: string) 
 // them, so the lookup adds this accordion's own suffix. Undefined when the child is hidden.
 const rowIndexSuffix = repeaterIndexSuffix(widget.uid);
 const sectionForUid = (sectionUid: string) =>
-  (children.value as NonFunctionWidget<string>[]).find(
-    (s) => s.uid === `${sectionUid}${rowIndexSuffix}`,
-  );
+  children.value.find((s) => s.uid === `${sectionUid}${rowIndexSuffix}`);
 
 const isOpen = (sectionUid: string) => Boolean(activeSections.value[sectionUid]);
 

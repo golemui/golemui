@@ -60,5 +60,4 @@ export const widgetLoaders: WidgetLoaders<Component<WithWidget>, GolemWidget> = 
   // DISPLAY
   alert: async () => (await import('./components/Alert.vue')).default,
   markdownText: async () => (await import('./components/MarkdownText.vue')).default,
-  renderer: async () => (await import('./components/Renderer.vue')).default,
 };

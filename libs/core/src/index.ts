@@ -22,7 +22,6 @@ export type {
   FormWidget,
   InputWidget,
   LayoutWidget,
-  NonFunctionWidget,
 } from './lib/form-widget';
 
 export { getDirectionFromLanguage, identityTranslator } from './lib/i18n';
@@ -50,14 +49,12 @@ export type {
   FormEvent,
   FormEventRow,
   FormSubmitEvent,
-  FunctionWidgetParams,
   LayoutTemplateData,
   ReactiveExpression,
   Uid,
   UiState,
   ValidateOn,
   Validator,
-  WidgetPropertyFunctionParams,
 } from './lib/shared';
 
 export type { Action } from './lib/store/actions';

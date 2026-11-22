@@ -157,13 +157,13 @@ describe('Datetimeinput schema validation', () => {
     it('should fail on invalid hourFormat value', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, hourFormat must be '12' or '24'
           {
             uid: 'dti-1',
             path: 'meetingAt',
             kind: 'input',
             type: 'dateTimeInput',
             props: {
+              // @ts-expect-error Expected, hourFormat must be '12' or '24'
               hourFormat: '13',
             },
           },
@@ -179,13 +179,13 @@ describe('Datetimeinput schema validation', () => {
     it('should fail on a non-numeric minuteStep', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, minuteStep should be a number
           {
             uid: 'dti-2',
             path: 'meetingAt',
             kind: 'input',
             type: 'dateTimeInput',
             props: {
+              // @ts-expect-error Expected, minuteStep should be a number
               minuteStep: '15',
             },
           },

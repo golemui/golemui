@@ -230,12 +230,12 @@ describe('RangeCalendar schema validation', () => {
     it('should fail on a non-boolean allowEdit', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, allowEdit should be a boolean
           {
             path: 'dates',
             kind: 'input',
             type: 'rangeCalendar',
             props: {
+              // @ts-expect-error Expected, allowEdit should be a boolean
               allowEdit: 'yes',
             },
           },
@@ -254,13 +254,13 @@ describe('RangeCalendar schema validation', () => {
     it('should fail on invalid type for numberOfMonths', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, numberOfMonths should be a number
           {
             uid: 'range-1',
             path: 'dates',
             kind: 'input',
             type: 'rangeCalendar',
             props: {
+              // @ts-expect-error Expected, numberOfMonths should be a number
               numberOfMonths: 'two',
             },
           },

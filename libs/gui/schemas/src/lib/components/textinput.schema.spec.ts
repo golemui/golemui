@@ -239,13 +239,13 @@ describe('Textinput schema validation', () => {
     it('should fail on invalid type for icon', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, icon should be a string
           {
             uid: 'txt-1',
             path: 'firstName',
             kind: 'input',
             type: 'textinput',
             props: {
+              // @ts-expect-error Expected, icon should be a string
               icon: 123,
             },
           },
@@ -263,12 +263,12 @@ describe('Textinput schema validation', () => {
     it('should fail on an unknown validator type', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, type is not a valid validator type
           {
             path: 'firstName',
             kind: 'input',
             type: 'textinput',
             props: {},
+            // @ts-expect-error Expected, type is not a valid validator type
             validator: { type: 'unknown' },
           },
         ],

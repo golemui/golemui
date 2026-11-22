@@ -51,9 +51,6 @@ export const guiWidgetManifest: readonly WidgetManifestEntry[] = [
   { type: 'tabs', schemaFile: 'tabs.schema.json', kind: 'layout' },
   { type: 'alert', schemaFile: 'alert.schema.json', kind: 'display' },
   { type: 'markdownText', schemaFile: 'markdowntext.schema.json', kind: 'display' },
-  // No schemaFile: the renderer props contain a render function, which JSON
-  // cannot express. Listing it in knownWidgetTypes rejects it in JSON forms.
-  { type: 'renderer', kind: 'display' },
   { type: 'button', schemaFile: 'button.schema.json', kind: 'action' },
   { type: 'menu', schemaFile: 'menu.schema.json', kind: 'action' },
 ];

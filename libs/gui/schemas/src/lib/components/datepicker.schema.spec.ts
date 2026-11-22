@@ -168,13 +168,13 @@ describe('Datepicker schema validation', () => {
     it('should fail on invalid type for icon', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, icon should be a string
           {
             uid: 'dp-1',
             path: 'bday',
             kind: 'input',
             type: 'datePicker',
             props: {
+              // @ts-expect-error Expected, icon should be a string
               icon: 123,
             },
           },

@@ -1,4 +1,4 @@
-import { type FormWidget, isFunctionWidget, isInputWidget, isLayoutWidget } from '../form-widget';
+import { type FormWidget, isInputWidget, isLayoutWidget } from '../form-widget';
 import { type $Errors, type DotPath } from '../shared';
 import { type State } from '../store/model';
 import { cloneObject, isPlainObject, set, unset } from './object';
@@ -91,18 +91,13 @@ export function visibleInputPaths(state: State): Set<DotPath> {
 }
 
 /**
- * The data path a widget owns: an input widget's `path`, or a function widget's `path` when it
- * returns a control. A function widget is stored as the callable itself, so `isInputWidget` is
- * false for it and its path is the one the decoder stamped on the function object.
+ * The data path a widget owns: the `path` of an input widget.
  *
  * @param widget - A `resolvedSources` entry, or a `calculatedWidgets` `current` / `source`.
  * @returns The path, or `undefined` for a widget that owns none.
  */
 export function inputPath(widget: FormWidget<string> | undefined): DotPath | undefined {
-  if (widget === undefined) {
-    return undefined;
-  }
-  return isInputWidget(widget) || isFunctionWidget(widget) ? widget.path : undefined;
+  return widget !== undefined && isInputWidget(widget) ? widget.path : undefined;
 }
 
 /**

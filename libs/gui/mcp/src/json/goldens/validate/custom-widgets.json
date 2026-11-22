@@ -561,33 +561,6 @@
       "interpolationWarnings": []
     }
   },
-  "renderer-without-a-schema": {
-    "input": {
-      "form": [
-        {
-          "kind": "display",
-          "type": "renderer"
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0/type",
-          "message": "Widget type `renderer` at `/form/0/type` is a built-in with no JSON representation, so it cannot appear in a JSON form definition",
-          "suggestion": "Use a custom display widget in its place, or remove it from the JSON.",
-          "keyword": "schemalessType",
-          "params": {
-            "type": "renderer"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
   "type-is-a-typo": {
     "input": {
       "form": [

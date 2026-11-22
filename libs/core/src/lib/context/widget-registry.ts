@@ -1,14 +1,14 @@
-import { type NonFunctionWidget } from '../form-widget';
+import { type FormWidget } from '../form-widget';
 
 /**
  * Map of widget type to a lazy component loader. This is the shape of
  * `FormInitConfig.widgetLoaders`: each entry loads the component that renders
  * that widget type, including custom widgets.
  */
-export type WidgetLoaders<
-  ComponentType,
-  Widget extends string = NonFunctionWidget['type'],
-> = Record<Widget, () => Promise<ComponentType>>;
+export type WidgetLoaders<ComponentType, Widget extends string = FormWidget['type']> = Record<
+  Widget,
+  () => Promise<ComponentType>
+>;
 
 export class WidgetRegistry<ComponentType> {
   /**
@@ -38,7 +38,7 @@ export class WidgetRegistry<ComponentType> {
     this._ready = true;
   }
 
-  async loadWidget(widget: NonFunctionWidget['type']): Promise<ComponentType> {
+  async loadWidget(widget: FormWidget['type']): Promise<ComponentType> {
     const loader = this.widgetLoaders[widget];
     if (!WidgetRegistry.sharedCache.has(loader)) {
       const promise = loader().catch((err) => {
@@ -55,7 +55,7 @@ export class WidgetRegistry<ComponentType> {
    * resolved component for synchronous access through `getIfLoaded`.
    * A failed loader rejects the returned promise, stores nothing, and stays retryable.
    */
-  async preloadWidgets(types?: NonFunctionWidget['type'][]): Promise<void> {
+  async preloadWidgets(types?: FormWidget['type'][]): Promise<void> {
     const widgetTypes = types ?? Object.keys(this.widgetLoaders);
     await Promise.all(
       widgetTypes.map(async (type) => {
@@ -69,7 +69,7 @@ export class WidgetRegistry<ComponentType> {
    * Returns the resolved component for the given widget type, or `undefined` when it
    * was never preloaded. Never starts a load.
    */
-  getIfLoaded(widget: NonFunctionWidget['type']): ComponentType | undefined {
+  getIfLoaded(widget: FormWidget['type']): ComponentType | undefined {
     const loader = this.widgetLoaders[widget];
     if (!loader) {
       return undefined;

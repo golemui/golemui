@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // The grid layout, and the deprecated flex layout, which renders as a grid.
-import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
+import type { LayoutWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/vue';
 import {
   type FlexProps,
@@ -21,11 +21,7 @@ const grid = computed(() => resolveGrid(widget.type, templateData.value));
 <template>
   <div class="gui-field">
     <div :class="gridClasses(grid)" :id="domId">
-      <div
-        v-for="child in children as NonFunctionWidget<string>[]"
-        :key="child.uid"
-        :class="gridCellClasses(grid, child.size)"
-      >
+      <div v-for="child in children" :key="child.uid" :class="gridCellClasses(grid, child.size)">
         <WidgetRenderer :widget="child" />
       </div>
     </div>

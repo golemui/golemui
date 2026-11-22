@@ -34,13 +34,12 @@ function findUidByUid(state: State, uid: string): string | undefined {
 }
 
 function findUidByPath(state: State, path: string): string | undefined {
-  // Visible widgets first, so a visible owner of the path wins, and so a function widget whose
-  // source declares no path is still found through the input shape it returns in `current`.
+  // Visible widgets first, so a visible owner of the path wins.
   const calculated = Object.values(state.calculatedWidgets).find(
     ({ source, current }) => (inputPath(current) ?? inputPath(source)) === path,
   );
   if (calculated) {
-    return calculated.source.uid as string;
+    return calculated.source.uid;
   }
 
   const hidden = Object.keys(state.resolvedSources).find(

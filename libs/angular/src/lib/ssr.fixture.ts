@@ -12,9 +12,9 @@ import type {
   FormEvent,
   FormHealth,
   FormInitConfig,
+  FormWidget,
   InputWidget,
   LayoutWidget,
-  NonFunctionWidget,
   ValidatorFn,
   WithWidget,
 } from '@golemui/core';
@@ -73,7 +73,7 @@ export const renderRecords: RenderRecord[] = [];
  * `recordRender`, which records each template evaluation in `renderRecords`.
  */
 @Directive()
-abstract class StubWidgetComponent<Widget extends NonFunctionWidget>
+abstract class StubWidgetComponent<Widget extends FormWidget>
   implements OnInit, OnDestroy, WithWidget
 {
   widget!: Widget;

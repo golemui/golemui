@@ -8,7 +8,6 @@ import {
   type FormSubmitEvent,
   identityTranslator,
   type Middleware,
-  type NonFunctionWidget,
   preloadFormWidgets,
   type State,
   type ValidatorFn,
@@ -139,7 +138,7 @@ const mountWidgetsWithoutLayout = async (
   await render(
     <ReactFormContextProvider formContext={context}>
       {uids.map((uid) => (
-        <WidgetRenderer key={uid} widget={sources[uid] as NonFunctionWidget<string>} />
+        <WidgetRenderer key={uid} widget={sources[uid]} />
       ))}
     </ReactFormContextProvider>,
   );

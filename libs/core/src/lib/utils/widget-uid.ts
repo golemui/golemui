@@ -26,18 +26,6 @@ export function templatePositionUid(repeaterPositionUid: string): string {
 }
 
 /**
- * The uid of a function widget without a uid. The `f` segment keeps it different from the plain
- * position uids: a function used again in a second form keeps the uid of its first decode, and
- * that uid must not be equal to a position uid of the second form.
- *
- * @param positionUid - The position uid of the function widget.
- * @returns The uid, for example `#0.3.f`.
- */
-export function functionWidgetPositionUid(positionUid: string): string {
-  return `${positionUid}.f`;
-}
-
-/**
  * The uid of an input without a uid. It does not depend on the position, so two inputs with the
  * same `path` and `type` get the same uid.
  *

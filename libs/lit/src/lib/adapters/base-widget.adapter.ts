@@ -1,5 +1,5 @@
 import {
-  type NonFunctionWidget,
+  type FormWidget,
   type WidgetViewModel,
   type WithWidget,
   assertNoPropCollisions,
@@ -9,7 +9,7 @@ import { toDomId } from '@golemui/core/internals';
 import { Subject, takeUntil } from 'rxjs';
 import { type LitFormContext } from '../context/form.context';
 
-export abstract class BaseWidgetAdapter<F extends NonFunctionWidget> {
+export abstract class BaseWidgetAdapter<F extends FormWidget> {
   context!: LitFormContext<WithWidget>;
   templateData: any = {};
   protected destroy$ = new Subject<void>();

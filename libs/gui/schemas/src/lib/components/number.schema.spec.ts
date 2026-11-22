@@ -196,13 +196,13 @@ describe('Number schema validation', () => {
     it('should fail on invalid type for step', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, step should be a number
           {
             uid: 'num-1',
             path: 'age',
             kind: 'input',
             type: 'number',
             props: {
+              // @ts-expect-error Expected, step should be a number
               step: 'one',
             },
           },
@@ -220,12 +220,12 @@ describe('Number schema validation', () => {
     it('should fail when a number validator uses a non-numeric minimum', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, minimum must be a number
           {
             path: 'age',
             kind: 'input',
             type: 'number',
             props: {},
+            // @ts-expect-error Expected, minimum must be a number
             validator: { type: 'number', minimum: 'eighteen' },
           },
         ],

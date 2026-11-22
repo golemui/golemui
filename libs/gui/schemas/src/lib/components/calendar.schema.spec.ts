@@ -165,13 +165,13 @@ describe('Calendar schema validation', () => {
     it('should fail on invalid type for numberOfMonths', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, numberOfMonths should be a number
           {
             uid: 'cal-1',
             path: 'meetingDate',
             kind: 'input',
             type: 'calendar',
             props: {
+              // @ts-expect-error Expected, numberOfMonths should be a number
               numberOfMonths: 'two',
             },
           },

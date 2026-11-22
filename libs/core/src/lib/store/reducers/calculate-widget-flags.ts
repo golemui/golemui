@@ -1,11 +1,4 @@
-import {
-  type FormWidget,
-  isActionWidget,
-  isFunctionWidget,
-  isInputWidget,
-  isLayoutWidget,
-  type NonFunctionWidget,
-} from '../../form-widget';
+import { type FormWidget, isActionWidget, isInputWidget, isLayoutWidget } from '../../form-widget';
 import { type $Errors, type ExpressionFunctions, type Uid } from '../../shared';
 import { calculateValidationVariables, type ValidationVariables } from '../../utils/form';
 import { type ExpressionPolicy } from '../../utils/check-expression';
@@ -43,17 +36,11 @@ function calculateFlags(
   functions: ExpressionFunctions,
   expressionPolicy: ExpressionPolicy,
 ): State['widgetFlags'] {
-  // A function widget resolves first because its flag fields are impossible to know before the call.
-  // Other widgets are checked on the source directly: the when-transform never adds or removes fields.
-  const widgets: NonFunctionWidget<string>[] = [];
+  // The flag fields are checked on the source directly: the when-transform never adds or removes fields.
+  const widgets: FormWidget<string>[] = [];
   for (const [uid, source] of Object.entries(state.resolvedSources)) {
-    if (isFunctionWidget(source)) {
-      const resolved = resolveForFlags(uid as Uid, source, state);
-      if (hasReactiveFlagFields(resolved)) {
-        widgets.push(resolved);
-      }
-    } else if (hasReactiveFlagFields(source)) {
-      widgets.push(resolveForFlags(uid as Uid, source, state));
+    if (hasReactiveFlagFields(source)) {
+      widgets.push(withRowWhenExpressions(uid as Uid, source, state));
     }
   }
 
@@ -142,7 +129,7 @@ function calculateFlags(
 }
 
 /** True when the widget has at least one include / exclude / disabled / readonly condition to evaluate. */
-function hasReactiveFlagFields(widget: NonFunctionWidget<string>): boolean {
+function hasReactiveFlagFields(widget: FormWidget<string>): boolean {
   if (widget.include && ('in' in widget.include || 'when' in widget.include)) {
     return true;
   }
@@ -177,7 +164,7 @@ function markDescendantsHidden(uid: Uid, state: State, flags: State['widgetFlags
 
   // Every widget a repeater row produces has a scope whose item path sits under the
   // repeater's path, nested rows included, so one scan covers the whole row forest.
-  if (isRepeaterWidget(source) || (isFunctionWidget(source) && source.path !== undefined)) {
+  if (isRepeaterWidget(source)) {
     const rowPrefix = `${source.path}.`;
     for (const [rowUid, scope] of Object.entries(state.repeaterItemScopes)) {
       if (scope.itemPath.startsWith(rowPrefix)) {
@@ -214,37 +201,14 @@ function markHidden(uid: Uid, flags: State['widgetFlags']): void {
 }
 
 /**
- * Turns a `resolvedSources` entry into the plain widget the flag conditions are read from:
- * a function widget is called with its item in scope, and a row widget gets its legacy `.items.`
- * when tokens rewritten for its row.
+ * Returns the widget the flag conditions are read from: a row widget gets its legacy `.items.`
+ * when tokens rewritten for its row, and every other widget is returned as it is.
  */
-function resolveForFlags(
+function withRowWhenExpressions(
   uid: Uid,
   source: FormWidget<string>,
   state: State,
-): NonFunctionWidget<string> {
-  const itemScope = state.repeaterItemScopes[uid];
-  let widget: NonFunctionWidget<string>;
-  if (isFunctionWidget(source)) {
-    // The function may return a cached object. Copy it before writing the uid,
-    // so the write never reaches the object the function owns.
-    widget = {
-      ...source({
-        $form: state.data,
-        $item: itemScope ? get(state.data, itemScope.itemPath) : undefined,
-        $index: itemScope?.index,
-        errors: undefined,
-        touched: undefined,
-        translate: undefined,
-      }),
-    };
-    widget.uid = uid;
-  } else {
-    widget = source;
-  }
+): FormWidget<string> {
   const rows = state.repeaterRows[uid];
-  if (rows !== undefined) {
-    widget = transformWidgetWhenExpressions(widget, rows);
-  }
-  return widget;
+  return rows === undefined ? source : transformWidgetWhenExpressions(source, rows);
 }

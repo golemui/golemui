@@ -1,5 +1,5 @@
 import { formatIssuePath } from 'ts.data.json';
-import { errorCodes } from '../../errors';
+import { errorCodes, errorMessage } from '../../errors';
 import { type Form, formDefDecoder } from '../../form';
 import { type FormWidget, isInputWidget, isLayoutWidget } from '../../form-widget';
 import { flattenForm } from '../../utils/form';
@@ -32,27 +32,19 @@ export const initialize = ({ lang }: State, action: INITIALIZE): State => {
     }
   }
 
-  // defineForm() converts the form array into a layout (the formDef.form entry point).
-  // When the form declaration originates from JSON (i.e., not via defineForm()),
-  // the layout must be generated here instead.
-  let decodeInput = formDef;
-  // `formDef` can be null or undefined at runtime. The decoder reports those.
-  const form = (formDef as Record<string, any> | null | undefined)?.['form'];
-  if (Array.isArray(form)) {
-    const widgets: any[] = form;
-    // A copy, because the caller keeps using the object it dispatched.
-    decodeInput = {
-      ...(formDef as Record<string, any>),
-      form: {
-        uid: '',
-        type: 'grid',
-        kind: 'layout',
-        children: widgets,
-      },
-    } as typeof formDef;
+  let result: ReturnType<typeof formDefDecoder.decode>;
+  try {
+    result = formDefDecoder.decode(withRootLayout(formDef));
+  } catch (error) {
+    // A read of the definition object threw, for example a getter of a prop.
+    return {
+      ...initialState,
+      formHealth: erroredHealth(
+        errorCodes.initializeUnknownError,
+        `The form definition cannot be read: ${errorMessage(error)}`,
+      ),
+    };
   }
-
-  const result = formDefDecoder.decode(decodeInput);
 
   if (result.isOk()) {
     formHealth = { status: 'ok' };
@@ -107,6 +99,33 @@ export const initialize = ({ lang }: State, action: INITIALIZE): State => {
     },
   };
 };
+
+/**
+ * Returns what the decoder reads. `defineForm()` converts the form array into a layout (the
+ * `formDef.form` entry point). When the form declaration originates from JSON (not via
+ * `defineForm()`), the layout is generated here.
+ */
+function withRootLayout(formDef: unknown): unknown {
+  // `formDef` can be null, undefined or a function at runtime. The decoder reports those.
+  if (typeof formDef !== 'object' || formDef === null) {
+    return formDef;
+  }
+  const form = (formDef as Record<string, any>)['form'];
+  if (!Array.isArray(form)) {
+    return formDef;
+  }
+  const widgets: any[] = form;
+  // A copy, because the caller keeps using the object it dispatched.
+  return {
+    ...(formDef as Record<string, any>),
+    form: {
+      uid: '',
+      type: 'grid',
+      kind: 'layout',
+      children: widgets,
+    },
+  };
+}
 
 function erroredHealth(code: number, message: string): FormHealth {
   return { status: 'errored', code, message: `[${code}] ${message}` };

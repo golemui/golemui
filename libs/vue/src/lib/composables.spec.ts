@@ -6,7 +6,6 @@ import {
   type FormSubmitEvent,
   identityTranslator,
   type Middleware,
-  type NonFunctionWidget,
   preloadFormWidgets,
   type State,
   type ValidatorFn,
@@ -147,10 +146,7 @@ const mountWidgetsWithoutLayout = async (
     defineComponent({
       setup() {
         provideFormContext(context);
-        return () =>
-          uids.map((uid) =>
-            h(WidgetRenderer, { key: uid, widget: sources[uid] as NonFunctionWidget<string> }),
-          );
+        return () => uids.map((uid) => h(WidgetRenderer, { key: uid, widget: sources[uid] }));
       },
     }),
   );

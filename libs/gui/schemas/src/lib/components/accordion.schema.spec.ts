@@ -166,7 +166,6 @@ describe('Accordion schema validation', () => {
   it('should fail on invalid renderMode enum', () => {
     const formDef = golemForm().create({
       form: [
-        // @ts-expect-error Expected, invalid renderMode
         {
           uid: 'acc-5',
           type: 'accordion',
@@ -182,6 +181,7 @@ describe('Accordion schema validation', () => {
           ],
           props: {
             sections: [{ uid: 's1', label: 'L' }],
+            // @ts-expect-error Expected, invalid renderMode
             renderMode: 'on-demand', // Expected: 'all' | 'activeOnly' | 'lazy'
           },
         },

@@ -1,7 +1,6 @@
 import {
   type ActionWidget,
   type DisplayWidget,
-  type FunctionWidget,
   type InputWidget,
   type LayoutWidget,
 } from '../../form-widget';
@@ -113,7 +112,7 @@ describe('calculateWidgetProps', () => {
     });
 
     it('InputWidget: copies core + label + disabled + readonly + validator + path + defaultValue', () => {
-      const validator = () => undefined;
+      const validator = { required: true };
       const source = {
         kind: 'input',
         uid: 'i1',
@@ -140,8 +139,7 @@ describe('calculateWidgetProps', () => {
       expect(current.disabled).toBe(false);
       expect(current.readonly).toBe(false);
       expect(current.defaultValue).toBe('initial');
-      // validator is a function on source, so it gets invoked by resolvePropValue, returning its result
-      expect(current.validator).toBeUndefined();
+      expect(current.validator).toBe(validator);
     });
 
     it('InputWidget: preserves defaultValue string without applying string interpolation', () => {
@@ -322,68 +320,6 @@ describe('calculateWidgetProps', () => {
   });
 
   // ---------------------------------------------------------------------------
-  // Function props
-  // ---------------------------------------------------------------------------
-
-  describe('function props', () => {
-    it('core field function receives { $form, translate } and its result is stored', () => {
-      const source = {
-        kind: 'action',
-        uid: 'a',
-        type: 'button',
-        label: ({ $form }: { $form: any }) => `Hello ${$form.name}`,
-      } satisfies ActionWidget<string>;
-      seed(state, 'a', source);
-      state.data = { name: 'World' };
-
-      const next = run(state);
-
-      expect((next.calculatedWidgets['a'].current as ActionWidget<string>).label).toBe(
-        'Hello World',
-      );
-    });
-
-    it('a prop function receives only $form, translate, $item and $index', () => {
-      let receivedNames: string[] = [];
-      const source = {
-        kind: 'action',
-        uid: 'a',
-        type: 'button',
-        label: (api: object) => {
-          receivedNames = Object.keys(api).sort();
-          return 'x';
-        },
-      } satisfies ActionWidget<string>;
-      seed(state, 'a', source);
-
-      const next = run(state);
-
-      // Checks that the function ran, so the names below were recorded.
-      expect((next.calculatedWidgets['a'].current as ActionWidget<string>).label).toBe('x');
-      expect(receivedNames).toEqual(['$form', '$index', '$item', 'translate']);
-    });
-
-    it('props field function is invoked and its result is stored', () => {
-      const source = {
-        kind: 'display',
-        uid: 'd',
-        type: 'heading',
-        props: {
-          text: ({ $form }: { $form: any }) => `Hi ${$form.user}`,
-        },
-      } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
-      state.data = { user: 'joan' };
-
-      const next = run(state);
-
-      expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text']).toBe(
-        'Hi joan',
-      );
-    });
-  });
-
-  // ---------------------------------------------------------------------------
   // TranslationConfig
   // ---------------------------------------------------------------------------
 
@@ -449,17 +385,6 @@ describe('calculateWidgetProps', () => {
       state.repeaterItemScopes['acc[1]'] = { itemPath: 'rows.1', index: 1 };
 
       expect(propsOf(run(state, translator), 'acc[1]')['sections'][0].label).toBe('Row 2');
-    });
-
-    it('translates the configs a function prop returns', () => {
-      const translator = makeTranslator((key) => `T:${key}`);
-      seed(
-        state,
-        'acc',
-        accordion(() => [{ uid: 'a', label: { key: 'k' } }]),
-      );
-
-      expect(propsOf(run(state, translator))['sections'][0].label).toBe('T:k');
     });
 
     it('leaves an object that has a key and other fields alone: it is data, not a config', () => {
@@ -739,6 +664,23 @@ describe('calculateWidgetProps', () => {
         expect(next.formHealth.code).toBe(40);
       }
     });
+
+    it('sets formHealth to errored with code 12 when the translator throws a plain error', () => {
+      const translator = makeTranslator(() => {
+        throw new Error('boom');
+      });
+      const source = {
+        kind: 'display',
+        uid: 'd',
+        type: 'heading',
+        props: { text: { key: 'title' } },
+      } satisfies DisplayWidget<string>;
+      seed(state, 'd', source);
+
+      const next = run(state, translator);
+
+      expect(next.formHealth).toEqual({ status: 'errored', code: 12, message: '[12] boom' });
+    });
   });
 
   // ---------------------------------------------------------------------------
@@ -841,14 +783,15 @@ describe('calculateWidgetProps', () => {
       );
     });
 
-    it('overrides a function-result props value', () => {
+    it('overrides a template-result props value', () => {
       const source = {
         kind: 'display',
         uid: 'd',
         type: 'heading',
-        props: { text: () => 'fn result' },
+        props: { text: 'Hi {{$form.name}}' },
       } satisfies DisplayWidget<string>;
       seed(state, 'd', source);
+      state.data = { name: 'Ada' };
       state.widgetPropOverrides = { d: { text: 'overridden' } };
 
       const next = run(state);
@@ -965,23 +908,53 @@ describe('calculateWidgetProps', () => {
       expect(cur.on?.click).toBe('submit');
     });
 
-    it('Input widget: function on.change is invoked', () => {
+    it('Input widget: string on.change is copied', () => {
       const source = {
         kind: 'input',
         uid: 'i',
         type: 'textinput',
         path: 'x',
-        on: {
-          change: ({ $form }: { $form: any }) => `go:${$form.x}`,
-        },
+        on: { change: 'valueChanged' },
       } satisfies InputWidget<any, string>;
       seed(state, 'i', source);
-      state.data = { x: 'go' };
 
       const next = run(state);
 
-      const cur = next.calculatedWidgets['i'].current as InputWidget<any, string>;
-      expect(cur.on?.change).toBe('go:go');
+      const current = next.calculatedWidgets['i'].current as InputWidget<any, string>;
+      expect(current.on?.change).toBe('valueChanged');
+    });
+
+    it('uses the on value of an active state', () => {
+      const source = {
+        kind: 'input',
+        uid: 'i',
+        type: 'textinput',
+        path: 'x',
+        on: { change: 'valueChanged', 'change.editing': 'valueChangedWhileEditing' },
+      } satisfies InputWidget<any, 'editing'>;
+      seed(state, 'i', source);
+      state.currentStates = ['editing'];
+
+      const next = run(state);
+
+      const current = next.calculatedWidgets['i'].current as InputWidget<any, string>;
+      expect(current.on?.change).toBe('valueChangedWhileEditing');
+    });
+
+    it('does not read an on value as a template', () => {
+      const source = {
+        kind: 'action',
+        uid: 'a',
+        type: 'button',
+        on: { click: 'save{{$form.mode}}' },
+      } satisfies ActionWidget<string>;
+      seed(state, 'a', source);
+      state.data = { mode: 'Draft' };
+
+      const next = run(state);
+
+      const current = next.calculatedWidgets['a'].current as ActionWidget<string>;
+      expect(current.on?.click).toBe('save{{$form.mode}}');
     });
 
     it('LayoutWidget on.* is NOT computed (parity quirk)', () => {
@@ -997,148 +970,6 @@ describe('calculateWidgetProps', () => {
       const next = run(state);
 
       expect('on' in next.calculatedWidgets['l'].current).toBe(false);
-    });
-  });
-
-  // ---------------------------------------------------------------------------
-  // FunctionWidget
-  // ---------------------------------------------------------------------------
-
-  describe('FunctionWidget', () => {
-    it('is invoked on each call, source ref is preserved, uid is set', () => {
-      const source: FunctionWidget<string> = Object.assign(
-        () =>
-          ({
-            kind: 'display',
-            uid: 'ignored',
-            type: 'heading',
-            props: { text: 'fn!' },
-          }) satisfies DisplayWidget<string>,
-        { uid: 'f', type: 'heading' },
-      );
-      seed(state, 'f', source);
-
-      const first = run(state);
-      const second = run(first);
-
-      expect(first.calculatedWidgets['f'].source).toBe(source);
-      expect(first.calculatedWidgets['f'].current.uid).toBe('f');
-      // An equal config keeps the reference, see the ref preservation section.
-      expect(second.calculatedWidgets['f']).toBe(first.calculatedWidgets['f']);
-    });
-
-    it('a config that differs from the previous one yields a new DerivedWidget ref', () => {
-      const source: FunctionWidget<string> = Object.assign(
-        (api: { $form: any } | undefined) =>
-          ({
-            kind: 'display',
-            uid: 'ignored',
-            type: 'heading',
-            props: { text: api?.$form.title },
-          }) satisfies DisplayWidget<string>,
-        { uid: 'f', type: 'heading' },
-      );
-      seed(state, 'f', source);
-      state.data = { title: 'first' };
-
-      const first = run(state);
-      const second = run({ ...first, data: { title: 'second' } });
-
-      expect(second.calculatedWidgets['f']).not.toBe(first.calculatedWidgets['f']);
-      expect(second.calculatedWidgets['f'].current.props?.['text']).toBe('second');
-    });
-
-    it('stamps current.path from source.path and keeps the reference on a recompute', () => {
-      // A row function widget returns the template path while its source carries the row path.
-      const source: FunctionWidget<string> = Object.assign(
-        () =>
-          ({
-            kind: 'input',
-            uid: 'ignored',
-            type: 'textinput',
-            path: 'users.items.name',
-          }) satisfies InputWidget<unknown, string>,
-        { uid: 'name[1]', type: 'textinput', path: 'users.1.name' },
-      );
-      seed(state, 'name[1]', source);
-
-      const first = run(state);
-      const second = run(first);
-
-      const current = first.calculatedWidgets['name[1]'].current as InputWidget<unknown, string>;
-      expect(current.uid).toBe('name[1]');
-      expect(current.path).toBe('users.1.name');
-      // The stamp happens before the comparison, so an equal recompute keeps the reference.
-      expect(second.calculatedWidgets['name[1]']).toBe(first.calculatedWidgets['name[1]']);
-    });
-
-    it('does not write uid or path into an object the function returns from a cache', () => {
-      // A memoized function returns the same object for every row. The uid and path writes then
-      // modify an object the user owns, and two rows overwrite each other.
-      const cached = {
-        kind: 'input',
-        uid: 'cached',
-        type: 'textinput',
-        path: 'users.items.name',
-      } as InputWidget<unknown, string>;
-      const makeSource = (uid: string, path: string): FunctionWidget<string> =>
-        Object.assign(() => cached, { uid, type: 'textinput', path });
-      seed(state, 'name[0]', makeSource('name[0]', 'users.0.name'));
-      seed(state, 'name[1]', makeSource('name[1]', 'users.1.name'));
-
-      const next = run(state);
-
-      expect(cached.uid).toBe('cached');
-      expect(cached.path).toBe('users.items.name');
-      const first = next.calculatedWidgets['name[0]'].current as InputWidget<unknown, string>;
-      const second = next.calculatedWidgets['name[1]'].current as InputWidget<unknown, string>;
-      expect(first.uid).toBe('name[0]');
-      expect(first.path).toBe('users.0.name');
-      expect(second.uid).toBe('name[1]');
-      expect(second.path).toBe('users.1.name');
-    });
-
-    it('detects a prop change on an object the function returns from a cache', () => {
-      const cached = {
-        kind: 'display',
-        uid: 'cached',
-        type: 'heading',
-        props: { text: 'first' },
-      } as unknown as DisplayWidget<string>;
-      const source: FunctionWidget<string> = Object.assign(() => cached, {
-        uid: 'f',
-        type: 'heading',
-      });
-      seed(state, 'f', source);
-
-      const first = run(state);
-      cached.props = { text: 'second' };
-      const second = run(first);
-
-      // Without a copy the stored entry is the cached object itself. The comparison then compares
-      // that object with itself, so subscribers keep the old reference for a widget that changed.
-      expect(second.calculatedWidgets['f']).not.toBe(first.calculatedWidgets['f']);
-      expect(second.calculatedWidgets['f'].current.props?.['text']).toBe('second');
-    });
-
-    it('leaves current.path alone when the source has no path', () => {
-      const source: FunctionWidget<string> = Object.assign(
-        () =>
-          ({
-            kind: 'input',
-            uid: 'ignored',
-            type: 'textinput',
-            path: 'email',
-          }) satisfies InputWidget<unknown, string>,
-        { uid: 'f', type: 'textinput' },
-      );
-      seed(state, 'f', source);
-
-      const next = run(state);
-
-      expect((next.calculatedWidgets['f'].current as InputWidget<unknown, string>).path).toBe(
-        'email',
-      );
     });
   });
 
@@ -1334,47 +1165,6 @@ describe('calculateWidgetProps', () => {
       expect(second.calculatedWidgets['a']).toBe(first.calculatedWidgets['a']);
     });
 
-    it('a prop function returning a fresh but equal array keeps the DerivedWidget ref', () => {
-      const source = {
-        kind: 'input',
-        uid: 'i',
-        type: 'select',
-        path: 'choice',
-        props: {
-          options: ({ $form }: { $form: any }) => [{ label: $form.name, value: 1 }],
-        },
-      } satisfies InputWidget<any, string>;
-      seed(state, 'i', source);
-      state.data = { name: 'joan' };
-
-      const first = run(state);
-      const second = run(first);
-
-      expect(second.calculatedWidgets['i']).toBe(first.calculatedWidgets['i']);
-    });
-
-    it('a prop function returning a different array yields a new DerivedWidget ref', () => {
-      const source = {
-        kind: 'input',
-        uid: 'i',
-        type: 'select',
-        path: 'choice',
-        props: {
-          options: ({ $form }: { $form: any }) => [{ label: $form.name, value: 1 }],
-        },
-      } satisfies InputWidget<any, string>;
-      seed(state, 'i', source);
-      state.data = { name: 'joan' };
-
-      const first = run(state);
-      const second = run({ ...first, data: { name: 'ada' } });
-
-      expect(second.calculatedWidgets['i']).not.toBe(first.calculatedWidgets['i']);
-      expect(
-        (second.calculatedWidgets['i'].current as InputWidget<any, string>).props?.['options'],
-      ).toEqual([{ label: 'ada', value: 1 }]);
-    });
-
     it('layout with stable structure -> same DerivedWidget ref across calls', () => {
       const child = { kind: 'display', uid: 'c', type: 'heading' } satisfies DisplayWidget<string>;
       const source = {
@@ -1495,23 +1285,6 @@ describe('calculateWidgetProps', () => {
       if (next.formHealth.status === 'errored') {
         expect(next.formHealth.code).toBe(40);
       }
-    });
-
-    it('sets formHealth to errored with code 12 when a prop function throws a plain error', () => {
-      const source = {
-        kind: 'display',
-        uid: 'd',
-        type: 'heading',
-        props: {
-          text: () => {
-            throw new Error('boom');
-          },
-        },
-      } as unknown as DisplayWidget<string>;
-      seed(state, 'd', source);
-
-      const next = run(state);
-      expect(next.formHealth).toEqual({ status: 'errored', code: 12, message: '[12] boom' });
     });
   });
 
@@ -1901,46 +1674,6 @@ describe('calculateWidgetProps', () => {
       run(state, translator);
 
       expect(translator.calls[0]?.params).toEqual({ qty: 2, row: 1 });
-    });
-
-    it('passes $item and $index to a WidgetPropertyFunction prop', () => {
-      seedLineItems();
-      const source = {
-        kind: 'display',
-        uid: 'row-total[1]',
-        type: 'heading',
-        props: {
-          text: (params: any) => `Row ${params.$index}: ${params.$item.quantity}`,
-        },
-      } as unknown as DisplayWidget<string>;
-      seed(state, 'row-total[1]', source);
-
-      const next = run(state);
-
-      expect(
-        (next.calculatedWidgets['row-total[1]'].current as DisplayWidget<string>).props?.['text'],
-      ).toBe('Row 1: 3');
-    });
-
-    it('passes $item and $index to a FunctionWidget source', () => {
-      seedLineItems();
-      const source = Object.assign(
-        (params: any) =>
-          ({
-            kind: 'display',
-            uid: 'row-total[0]',
-            type: 'heading',
-            props: { text: `Row ${params?.$index}: ${params?.$item?.unitPrice}` },
-          }) as DisplayWidget<string>,
-        { uid: 'row-total[0]', type: 'heading' },
-      ) as unknown as FunctionWidget<string>;
-      seed(state, 'row-total[0]', source);
-
-      const next = run(state);
-
-      expect(
-        (next.calculatedWidgets['row-total[0]'].current as DisplayWidget<string>).props?.['text'],
-      ).toBe('Row 0: 10');
     });
 
     it('leaves $item undefined for widgets outside any repeater', () => {

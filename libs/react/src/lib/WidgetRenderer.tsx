@@ -1,10 +1,10 @@
-import { type NonFunctionWidget, type WithWidget, errorCodes } from '@golemui/core';
+import { type FormWidget, type WithWidget, errorCodes } from '@golemui/core';
 import { useEffect, useRef, useState } from 'react';
 import WidgetErrorBoundary from './WidgetErrorBoundary';
 import { useReactFormContext } from './ReactFormContext';
 
 type Props = {
-  widget: NonFunctionWidget<string>;
+  widget: FormWidget<string>;
 };
 
 type WidgetComponent = React.ComponentType<WithWidget>;

@@ -7,7 +7,7 @@ import {
   type OnInit,
 } from '@angular/core';
 import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular';
-import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
+import type { FormWidget, LayoutWidget, WithWidget } from '@golemui/core';
 import type { GuiToggleEventDetail } from '@golemui/gui-components';
 import type { AccordionEventDetail } from '@golemui/gui-components/internals';
 import {
@@ -70,7 +70,7 @@ export class AccordionComponent implements OnInit, OnDestroy, WithWidget {
    * from the store with the indexes already applied, so the lookup adds this accordion's own.
    * Returns `undefined` when the section's child is hidden, the children only hold visible ones.
    */
-  getChild(uid: string): NonFunctionWidget<string> | undefined {
+  getChild(uid: string): FormWidget<string> | undefined {
     const childUid = `${uid}${this.rowIndexSuffix}`;
     return this.adapter.templateData().children.find((section) => section.uid === childUid);
   }

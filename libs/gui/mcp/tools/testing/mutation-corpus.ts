@@ -192,7 +192,6 @@ const WIDGET_MUTATIONS: WidgetMutation[] = [
   },
   { name: 'no-type', apply: editWidget((w) => void delete w['type']) },
   { name: 'type-not-a-string', apply: editWidget((w) => void (w['type'] = 5)) },
-  { name: 'schemaless-type', apply: () => ({ kind: 'display', type: 'renderer' }) },
   // Kind and required props.
   { name: 'no-kind', apply: editWidget((w) => void delete w['kind']) },
   { name: 'wrong-kind', apply: editWidget((w) => void (w['kind'] = 'bogus')) },

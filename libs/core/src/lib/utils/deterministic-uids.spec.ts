@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { type FunctionWidget, type LayoutWidget, type NonFunctionWidget } from '../form-widget';
+import { type LayoutWidget } from '../form-widget';
 import { assignDeterministicUids } from './deterministic-uids';
 
 const makeRoot = (children: unknown[]): LayoutWidget<string> =>
@@ -36,26 +36,6 @@ describe('assignDeterministicUids', () => {
     assignDeterministicUids(root);
 
     expect(collectUids(root)).toEqual(['#0', '#0.0', '#0.0.t', '#0.0.t.0']);
-  });
-
-  it('gives a function widget the f segment', () => {
-    const fn: FunctionWidget<string> = () =>
-      ({ kind: 'display', type: 'heading' }) as NonFunctionWidget<string>;
-    const root = makeRoot([fn]);
-
-    assignDeterministicUids(root);
-
-    expect(fn.uid).toBe('#0.0.f');
-  });
-
-  it('keeps a function widget uid from the first call when the function is used again', () => {
-    const fn: FunctionWidget<string> = () =>
-      ({ kind: 'display', type: 'heading' }) as NonFunctionWidget<string>;
-    assignDeterministicUids(makeRoot([fn]));
-
-    assignDeterministicUids(makeRoot([{ kind: 'display', type: 'heading' }, fn]));
-
-    expect(fn.uid).toBe('#0.0.f');
   });
 
   it('keeps the uids that the form definition already has', () => {

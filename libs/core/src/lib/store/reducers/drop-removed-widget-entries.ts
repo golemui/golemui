@@ -49,7 +49,7 @@ export const dropRemovedWidgetEntries = (state: State): State => {
   };
 };
 
-/** The path of every input, plus the path a function widget carries when it is a control. */
+/** The path of every input. */
 function collectLivePaths(resolvedSources: State['resolvedSources']): Set<DotPath> {
   const paths = new Set<DotPath>();
   for (const widget of Object.values(resolvedSources)) {

@@ -286,13 +286,13 @@ describe('Dropdown schema validation', () => {
     it('should fail on invalid items type', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error items should be an array
           {
             uid: 'dd-1',
             path: 'country',
             kind: 'input',
             type: 'dropdown',
             props: {
+              // @ts-expect-error items should be an array
               items: 'not an array',
             },
           },

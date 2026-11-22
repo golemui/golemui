@@ -174,13 +174,13 @@ describe('DateTimeCalendar schema validation', () => {
     it('should fail on a disabled time range missing its end', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, disabled time ranges need both start and end
           {
             uid: 'dtc-3',
             path: 'appointmentAt',
             kind: 'input',
             type: 'dateTimeCalendar',
             props: {
+              // @ts-expect-error Expected, disabled time ranges need both start and end
               disabledTimeRanges: [{ start: '13:00:00' }],
             },
           },

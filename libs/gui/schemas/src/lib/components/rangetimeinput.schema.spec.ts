@@ -167,13 +167,13 @@ describe('RangeTimeInput schema validation', () => {
     it('should fail on invalid type for icon', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, icon should be a string
           {
             uid: 'rti-2',
             path: 'timeRanges',
             kind: 'input',
             type: 'rangeTimeInput',
             props: {
+              // @ts-expect-error Expected, icon should be a string
               icon: 123,
             },
           },
@@ -223,12 +223,12 @@ describe('RangeTimeInput schema validation', () => {
     it('should fail on a non-boolean allowEdit', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, allowEdit should be a boolean
           {
             path: 'timeRanges',
             kind: 'input',
             type: 'rangeTimeInput',
             props: {
+              // @ts-expect-error Expected, allowEdit should be a boolean
               allowEdit: 'yes',
             },
           },

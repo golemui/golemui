@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { isInputWidget, type FunctionWidget, type NonFunctionWidget } from '../form-widget';
+import { type FormWidget, isInputWidget } from '../form-widget';
 import { type RepeaterRow, type State } from '../store/model';
 import {
   extractRepeaterIndexes,
@@ -10,10 +10,8 @@ import {
 } from './repeater';
 
 // Mock the external dependency to easily control the execution branch.
-// isFunctionWidget keeps its real behavior so function widgets take their branch.
 vi.mock('../form-widget', () => ({
   isInputWidget: vi.fn(),
-  isFunctionWidget: vi.fn((widget: unknown) => typeof widget === 'function'),
 }));
 
 /** The rows `expandSources` records for a row widget, from `[declaredItemPath, itemPath]` pairs. */
@@ -35,7 +33,7 @@ describe('makeRepeaterItemConfig', () => {
 
       const mockWidget = {
         uid: 'base-widget',
-      } as unknown as NonFunctionWidget<string>;
+      } as unknown as FormWidget<string>;
 
       const result = makeRepeaterItemConfig(mockWidget, [0, 5]);
 
@@ -54,7 +52,7 @@ describe('makeRepeaterItemConfig', () => {
       const mockWidget = {
         uid: 'user-name',
         path: 'users.items.name',
-      } as unknown as NonFunctionWidget<string>;
+      } as unknown as FormWidget<string>;
 
       const result = makeRepeaterItemConfig(mockWidget, [2]);
 
@@ -70,7 +68,7 @@ describe('makeRepeaterItemConfig', () => {
       const mockWidget = {
         uid: 'user-address-street',
         path: 'users.items.addresses.items.street',
-      } as unknown as NonFunctionWidget<string>;
+      } as unknown as FormWidget<string>;
 
       const result = makeRepeaterItemConfig(mockWidget, [1, 3]);
 
@@ -86,7 +84,7 @@ describe('makeRepeaterItemConfig', () => {
       const mockWidget = {
         uid: 'line-total',
         path: 'lines.items.itemsTotal',
-      } as unknown as NonFunctionWidget<string>;
+      } as unknown as FormWidget<string>;
 
       expect(makeRepeaterItemConfig(mockWidget, [4])).toEqual({
         uid: 'line-total[4]',
@@ -100,7 +98,7 @@ describe('makeRepeaterItemConfig', () => {
       const mockWidget = {
         uid: 'item-name',
         path: 'items.items.name',
-      } as unknown as NonFunctionWidget<string>;
+      } as unknown as FormWidget<string>;
 
       expect(makeRepeaterItemConfig(mockWidget, [2])).toEqual({
         uid: 'item-name[2]',
@@ -109,51 +107,11 @@ describe('makeRepeaterItemConfig', () => {
     });
   });
 
-  describe('Function widgets', () => {
-    it('should wrap the function so it stays callable and materialize uid, type and path', () => {
-      vi.mocked(isInputWidget).mockReturnValue(false);
-
-      const resolvedWidget = { kind: 'display', type: 'markdownText' };
-      const original = Object.assign(
-        vi.fn(() => resolvedWidget),
-        { uid: 'row-total', type: 'markdownText', path: 'users.items.total' },
-      ) as unknown as FunctionWidget<string>;
-
-      const result = makeRepeaterItemConfig(original, [1]) as FunctionWidget<string>;
-
-      expect(typeof result).toBe('function');
-      expect(result).not.toBe(original);
-      expect(result.uid).toBe('row-total[1]');
-      expect(result.type).toBe('markdownText');
-      expect(result.path).toBe('users.1.total');
-
-      const api = { $form: {}, errors: undefined, touched: undefined, translate: undefined };
-      expect(result(api)).toBe(resolvedWidget);
-      expect(original).toHaveBeenCalledWith(api);
-
-      // Ensure the original function was not mutated
-      expect(original.uid).toBe('row-total');
-      expect(original.path).toBe('users.items.total');
-    });
-
-    it('should not materialize a path when the function widget has none', () => {
-      const original = Object.assign(vi.fn(), {
-        uid: 'fn-widget',
-        type: 'markdownText',
-      }) as unknown as FunctionWidget<string>;
-
-      const result = makeRepeaterItemConfig(original, [0]) as FunctionWidget<string>;
-
-      expect(result.uid).toBe('fn-widget[0]');
-      expect(result.path).toBeUndefined();
-    });
-  });
-
   describe('Error handling', () => {
     it('should throw an error if repeaterIndexes is an empty array', () => {
       const mockWidget = {
         uid: 'base-widget',
-      } as unknown as NonFunctionWidget<string>;
+      } as unknown as FormWidget<string>;
 
       expect(() => makeRepeaterItemConfig(mockWidget, [])).toThrowError(
         'Repeater indexes cannot be an empty array',
@@ -166,7 +124,7 @@ describe('makeRepeaterItemConfig', () => {
       const mockWidget = {
         uid: 'user-name',
         path: 'users.items.name', // 1 token
-      } as unknown as NonFunctionWidget<string>;
+      } as unknown as FormWidget<string>;
 
       // Providing 2 indexes for 1 token
       expect(() => makeRepeaterItemConfig(mockWidget, [0, 1])).toThrowError(
@@ -180,7 +138,7 @@ describe('makeRepeaterItemConfig', () => {
       const mockWidget = {
         uid: 'user-address-street',
         path: 'users.items.addresses.items.street', // 2 tokens
-      } as unknown as NonFunctionWidget<string>;
+      } as unknown as FormWidget<string>;
 
       // Providing 1 index for 2 tokens
       expect(() => makeRepeaterItemConfig(mockWidget, [0])).toThrowError(
@@ -194,7 +152,7 @@ describe('makeRepeaterItemConfig', () => {
       const mockWidget = {
         uid: 'line-name',
         path: 'invoice.items.items.name',
-      } as unknown as NonFunctionWidget<string>;
+      } as unknown as FormWidget<string>;
 
       // expandSources resolves this path by position, see expand-sources.spec.ts.
       expect(() => makeRepeaterItemConfig(mockWidget, [0])).toThrowError(
@@ -321,7 +279,7 @@ describe('transformWidgetWhenExpressions', () => {
       exclude: { when: '$form.users.items.done' },
       disabled: { when: '$form.users.items.locked' },
       readonly: { when: '$form.users.items.frozen' },
-    } as unknown as NonFunctionWidget<string>;
+    } as unknown as FormWidget<string>;
 
     const result = transformWidgetWhenExpressions(widget, rowsOf(['users.items', 'users.1']));
 
@@ -345,7 +303,7 @@ describe('transformWidgetWhenExpressions', () => {
       include: { in: ['editing'] },
       exclude: { from: ['summary'] },
       disabled: true,
-    } as unknown as NonFunctionWidget<string>;
+    } as unknown as FormWidget<string>;
 
     const result = transformWidgetWhenExpressions(widget, rowsOf(['users.items', 'users.0']));
 
@@ -363,7 +321,7 @@ describe('transformWidgetWhenExpressions', () => {
     const widget = {
       uid: 'row-note[0]',
       props: { md: 'hello' },
-    } as unknown as NonFunctionWidget<string>;
+    } as unknown as FormWidget<string>;
 
     const result = transformWidgetWhenExpressions(widget, rowsOf(['users.items', 'users.0']));
 

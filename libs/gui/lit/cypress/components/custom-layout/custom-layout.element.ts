@@ -1,4 +1,4 @@
-import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
+import type { LayoutWidget, WithWidget } from '@golemui/core';
 import { LayoutWidgetAdapter, type LitFormContext, formContext, layoutContext } from '@golemui/lit';
 import { consume, provide } from '@lit/context';
 import { html, LitElement } from 'lit';
@@ -36,7 +36,7 @@ export class CustomLayoutElement extends LitElement implements WithWidget {
   }
 
   override render() {
-    const children = (this.adapter.templateData.children ?? []) as NonFunctionWidget<string>[];
+    const children = this.adapter.templateData.children ?? [];
     return html`<section id=${this.widget.uid} data-cy="custom-layout">
       <h4 data-cy="custom-layout-title">${this.adapter.templateData.title}</h4>
       ${repeat(

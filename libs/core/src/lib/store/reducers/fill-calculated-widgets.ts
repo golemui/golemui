@@ -1,4 +1,4 @@
-import { type NonFunctionWidget } from '../../form-widget';
+import { type FormWidget } from '../../form-widget';
 import { type State } from '../model';
 
 /**
@@ -23,7 +23,7 @@ export const fillCalculatedWidgets = (state: State): State => {
     } else {
       calculatedWidgets[uid] = {
         source: state.resolvedSources[uid],
-        current: {} as NonFunctionWidget<string>,
+        current: {} as FormWidget<string>,
       };
       changed = true;
     }

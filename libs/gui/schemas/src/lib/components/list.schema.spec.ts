@@ -213,13 +213,13 @@ describe('List schema validation', () => {
     it('should fail on invalid items type', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, invalid items type
           {
             uid: 'list-1',
             path: 'tags',
             kind: 'input',
             type: 'list',
             props: {
+              // @ts-expect-error Expected, invalid items type
               items: 'not an array',
             },
           },

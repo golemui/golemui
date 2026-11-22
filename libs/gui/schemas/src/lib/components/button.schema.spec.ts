@@ -118,11 +118,11 @@ describe('Button schema validation', () => {
     it('should fail on invalid variant enum', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, invalid variant
           {
             kind: 'action',
             type: 'button',
             props: {
+              // @ts-expect-error Expected, invalid variant
               variant: 'solid',
             },
           },
@@ -140,11 +140,11 @@ describe('Button schema validation', () => {
     it('should fail on invalid iconPosition enum', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, invalid iconPosition
           {
             kind: 'action',
             type: 'button',
             props: {
+              // @ts-expect-error Expected, invalid iconPosition
               iconPosition: 'top',
             },
           },
@@ -164,10 +164,10 @@ describe('Button schema validation', () => {
     it('should fail on invalid actionType enum', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, invalid iconPosition
           {
             kind: 'action',
             type: 'button',
+            // @ts-expect-error Expected, invalid iconPosition
             actionType: 'banana ice cream',
           },
         ],

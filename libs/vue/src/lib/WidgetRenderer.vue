@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type NonFunctionWidget, errorCodes } from '@golemui/core';
+import { type FormWidget, errorCodes } from '@golemui/core';
 import { onMounted, onUnmounted, ref, shallowRef, type Component } from 'vue';
 import WidgetErrorBoundary from './WidgetErrorBoundary.vue';
 import { useVueFormContext } from './provideFormContext';
@@ -7,7 +7,7 @@ import { useVueFormContext } from './provideFormContext';
 // Repeater rows arrive from the store with their indexes already applied to `uid` and `path`,
 // so there is no index handling here.
 const props = defineProps<{
-  widget: NonFunctionWidget<string>;
+  widget: FormWidget<string>;
 }>();
 
 const formContext = useVueFormContext();

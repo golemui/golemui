@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, type OnDestroy, type OnInit } from '@angular/core';
 import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular';
-import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
+import type { FormWidget, LayoutWidget, WithWidget } from '@golemui/core';
 import {
   type FlexProps,
   gridCellClasses,
@@ -30,7 +30,7 @@ export class GridComponent implements OnInit, OnDestroy, WithWidget {
 
   protected readonly gridClasses = gridClasses;
 
-  protected cellClasses(child: NonFunctionWidget<string>): string {
+  protected cellClasses(child: FormWidget<string>): string {
     return gridCellClasses(this.grid(), child.size);
   }
 
