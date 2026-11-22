@@ -1,3 +1,29 @@
+## 3.0.0-alpha.0 (2026-11-22)
+
+### 🚀 Features
+
+- ⚠️  remove functions from form definitions ([#612](https://github.com/golemui/golemui/pull/612))
+- ⚠️  remove the gui.* builder and the @golemui/dx package ([#610](https://github.com/golemui/golemui/pull/610))
+
+### ⚠️  Breaking Changes
+
+- remove functions from form definitions  ([#612](https://github.com/golemui/golemui/pull/612))
+  A form definition cannot contain a function.
+  - `@golemui/core` rejects a function in a form definition: as a widget, as the value of a widget key such as `label`, `validator`, `disabled`, `defaultValue` or `on`, as an event name, as a prop or as a state. The form health is `errored` with code 22, and its message has the location of the function. Core no longer calls a widget function or a prop function. Write a computed text as a template (`'Hello {{ $form.name }}'`), a condition as a `when` rule, a value for one state as a suffixed key (`'label.company': 'Company name'`), and an event handler as an event name (`on: { click: 'save' }`) that the host handles in `formEvent`.
+  - `@golemui/core` no longer exports the types `NonFunctionWidget`, `FunctionWidgetParams` and `WidgetPropertyFunctionParams`. `FormWidget` is the union of the four widget kinds: use it in place of `NonFunctionWidget`.
+  - The `renderer` display widget is removed from `@golemui/gui-react`, `@golemui/gui-vue`, `@golemui/gui-lit`, `@golemui/gui-angular` and `@golemui/gui-shared`. Register a custom display widget with `customWidgetLoaders` in its place.
+- remove the gui.* builder and the @golemui/dx package  ([#610](https://github.com/golemui/golemui/pull/610))
+  the `gui.*` builder and the package `@golemui/dx` are removed. Write the form as a JSON document.
+  - Forms: convert a builder form with `toJsonFormDefinition` of 2.3.0 before the upgrade.
+  - `@golemui/gui-shared`: `gui`, `toJsonFormDefinition` and the builder types are removed.
+  - `GuiFormInitConfig`: `formSelectors` and `formConfig` are removed. `formDef` is the JSON document, as an object or as a string.
+  - Widget sets: the `resolveFormInput` hook is removed. The widget set types are in `@golemui/core/internals`.
+  - `@golemui/gui-mcp`: the tools `dx_list_factories`, `dx_get_spec` and `dx_check_code` and the command `check-dx` are removed.
+
+### ❤️ Thank You
+
+- Joan Llenas
+
 ## 2.3.0 (2026-11-17)
 
 This was a version bump only for core to align it with other projects, there were no code changes.
