@@ -5,7 +5,7 @@ import { actionWidgets, displayWidgets, inputWidgets, layoutWidgets } from './wi
 
 // The skill index is written by hand. It tells an agent where the reference page of each
 // widget type is, so a type that it does not list has no page for the agent.
-const skillIndexPath = join(__dirname, '../../../../../skills/golemui/references/widgets-index.md');
+const skillIndexPath = join(__dirname, '../../../../../skills/golemui/widgets-index.md');
 
 // `renderer` takes a render function, so a JSON form cannot hold it. `flex` is deprecated.
 const typesWithoutIndexEntry = new Set<string>(['renderer', 'flex']);
