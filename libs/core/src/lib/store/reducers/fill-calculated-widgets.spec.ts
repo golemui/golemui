@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { type FormWidget, type NonFunctionWidget } from '../../form-widget';
+import { type FormWidget } from '../../form-widget';
 import { createInitialState, type State } from '../model';
 import { fillCalculatedWidgets } from './fill-calculated-widgets';
 
@@ -21,7 +21,7 @@ const sourcesOf = (...widgets: FormWidget<string>[]): State['resolvedSources'] =
 
 const derived = (widget: FormWidget<string>): State['calculatedWidgets'][string] => ({
   source: widget,
-  current: { ...(widget as NonFunctionWidget<string>) },
+  current: { ...widget },
 });
 
 describe('fillCalculatedWidgets', () => {

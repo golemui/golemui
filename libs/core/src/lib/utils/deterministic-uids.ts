@@ -1,24 +1,11 @@
-import {
-  type FormWidget,
-  isFunctionWidget,
-  isInputWidget,
-  isLayoutWidget,
-  type LayoutWidget,
-} from '../form-widget';
-import {
-  childPositionUid,
-  functionWidgetPositionUid,
-  ROOT_POSITION_UID,
-  templatePositionUid,
-} from './widget-uid';
+import { type FormWidget, isInputWidget, isLayoutWidget, type LayoutWidget } from '../form-widget';
+import { childPositionUid, ROOT_POSITION_UID, templatePositionUid } from './widget-uid';
 
 /**
  * Assigns a position-based uid to every widget in the tree that has none, e.g. '#0.2.t.1'
- * (dot-separated indexes, 't' for a repeater template, a final 'f' for a function widget).
+ * (dot-separated indexes, 't' for a repeater template).
  * The format must never contain '[<digits>]' because repeater item uids append '[index]'
  * and are parsed back with a regex.
- * A function widget's uid is written onto the function object itself, so a function reused
- * across decodes keeps the uid of its first decode.
  *
  * @example
  * const decodedForm = formDefDecoder.parse(rawFormDef);
@@ -29,12 +16,6 @@ export function assignDeterministicUids(root: FormWidget<string>): void {
 }
 
 function assignUidByPosition(widget: FormWidget<string>, positionUid: string): void {
-  if (isFunctionWidget(widget)) {
-    if (!widget.uid) {
-      widget.uid = functionWidgetPositionUid(positionUid);
-    }
-    return;
-  }
   if (!widget.uid) {
     widget.uid = positionUid;
   }

@@ -218,32 +218,31 @@ from there. An exception instead stops the whole app or the framework render.
   the form loads -> code 23, and the message says to pass `{ form: [...] }`.
 - Example: an authoring tool saves a repeater before the author adds its template ->
   `{ "kind": "input", "type": "repeater", "path": "contacts" }` gives code 22.
-- Example: a row function reads `$item` without `?.`. The form calls the function once without a
-  row when it builds the form:
+- Example: an app writes the definition as an object and puts a function in it. A function is
+  not allowed as a widget, as the value of a widget key such as `label`, `validator` or `on`, or
+  as a prop:
 
   ```ts
-  const cityInput = ({ $item }) => ({
-    kind: 'input',
-    type: 'dropdown',
-    path: 'users.items.city',
-    label: 'City',
-    validator: { type: 'string' },
-    props: { items: citiesOf($item.country) },
-  });
-
   const formDef = {
     form: [
       {
         kind: 'input',
-        type: 'repeater',
-        path: 'users',
-        props: { template: { kind: 'layout', type: 'grid', children: [cityInput] } },
+        type: 'textinput',
+        path: 'name',
+        label: ({ $form }) => ($form.isCompany ? 'Company name' : 'Full name'),
       },
     ],
   };
   ```
 
-  -> code 22.
+  -> code 22 with the label `form.children[0].label`. The form never calls the function. A
+  definition is JSON, so this label is `"label": "Full name", "label.company": "Company name"`
+  with a state `company`. The form does not look for a function inside a prop value or inside
+  a validator object: a function there reaches the widget or the validators of the host as it
+  is, and the form never calls it.
+
+- Example: a read of the definition object throws, for example a getter of a prop -> code 22
+  with the message `The form definition cannot be read:` and the text of the error.
 
 - Example: a JSON form uses the custom rule `{ "type": "custom", "iban": true }`, and the app
   forgot to register `iban` in `customValidators`. Or a registered rule returns a schema with an
@@ -933,11 +932,11 @@ event in its `formEvent` handler.
 
 - Scenario: a widget set built directly on `@golemui/core` chooses the event name with a function:
   `on: { click: ({ $form }) => ($form.isDraft ? 'saveDraft' : 'publish') }`.
-- Example: use one event name, for example
+- Example: that definition gives code 22 with the label `form.children[0].on.click` (rule 8).
+  Use one event name, for example
   `{ "kind": "action", "type": "button", "label": "Publish", "on": { "click": "publish" } }`,
   and read `event.data.isDraft` in the host `formEvent` handler.
-- Status: not yet. The core types and the decoder accept a function in `on`, and
-  `FormEvent.name` is then the function itself.
+- Status: follows.
 
 ### 35. `$log` works in every expression
 

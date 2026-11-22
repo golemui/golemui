@@ -223,7 +223,7 @@ function makeDerive(
  * Runs the derive. When a submit attempt already validated everything (`allControlsValidated`),
  * an input that this derive makes appear (a new repeater row, a revealed field) is touched and
  * validated right away so its errors show without interaction, then the derive runs once more so
- * `$errors`, `$formIsInvalid` and function widgets see the new validation result.
+ * `$errors` and `$formIsInvalid` see the new validation result.
  *
  * Every exit computes `isFormValid`, because a derive can hide or show an input.
  */

@@ -1,5 +1,5 @@
 import { distinctUntilChanged, map, type Observable } from 'rxjs';
-import { type FormWidget, isLayoutWidget, type NonFunctionWidget } from '../form-widget';
+import { type FormWidget, isLayoutWidget } from '../form-widget';
 import { type DotPath, type Uid } from '../shared';
 import { get } from '../utils/object';
 import { extractRepeaterIndexes, isRepeaterWidget, toRepeaterItemUid } from '../utils/repeater';
@@ -21,7 +21,7 @@ export type WidgetViewModel<T = unknown> = {
    * The fully calculated widget (`calculatedWidgets[uid].current`), `undefined` while the widget
    * is hidden or absent from the current derive.
    */
-  widget: NonFunctionWidget<string> | undefined;
+  widget: FormWidget<string> | undefined;
 
   /**
    * A layout widget's visible children, with repeater row indexes already applied to each child's
@@ -36,7 +36,7 @@ export type WidgetViewModel<T = unknown> = {
    * a row's position in this list is also its index in the value. The one exception is an errored
    * derive, where a row the failed derive never resolved is left out until the form recovers.
    */
-  rows: NonFunctionWidget<string>[];
+  rows: FormWidget<string>[];
 
   /** The BCP 47 language tag of the current locale. */
   lang: string;
@@ -162,7 +162,7 @@ type Slices = [
 ];
 
 const NO_CHILDREN: FormWidget<string>[] = [];
-const NO_ROWS: NonFunctionWidget<string>[] = [];
+const NO_ROWS: FormWidget<string>[] = [];
 const NO_ERRORS: string[] = [];
 
 function collectSlices(state: State, uid: Uid): Slices {
@@ -237,12 +237,12 @@ function widgetPath(state: State, uid: Uid): DotPath | undefined {
 function stampedChildren(
   state: State,
   uid: Uid,
-  current: NonFunctionWidget<string> | undefined,
+  current: FormWidget<string> | undefined,
 ): FormWidget<string>[] {
   if (current === undefined || !isLayoutWidget(current)) {
     return NO_CHILDREN;
   }
-  const children = current.children as FormWidget<string>[];
+  const children: FormWidget<string>[] = current.children;
   const rowIndexes = extractRepeaterIndexes(uid);
   if (rowIndexes.length === 0) {
     return children;
@@ -266,9 +266,9 @@ function stampedChildren(
 function repeaterRows(
   state: State,
   uid: Uid,
-  current: NonFunctionWidget<string> | undefined,
+  current: FormWidget<string> | undefined,
   value: unknown,
-): NonFunctionWidget<string>[] {
+): FormWidget<string>[] {
   if (current === undefined || !Array.isArray(value)) {
     return NO_ROWS;
   }
@@ -283,7 +283,7 @@ function repeaterRows(
       const rowUid = toRepeaterItemUid(templateUid, [...ownIndexes, rowIndex]);
       return state.resolvedSources[rowUid];
     })
-    .filter((row): row is NonFunctionWidget<string> => row !== undefined);
+    .filter((row): row is FormWidget<string> => row !== undefined);
 }
 
 function mergedErrors(

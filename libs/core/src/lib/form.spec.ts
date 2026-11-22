@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { formDefDecoder } from './form';
-import { type FunctionWidget, type InputWidget } from './form-widget';
 
 // Widgets without an explicit uid must get a stable, position-based uid so that decoding the same JSON twice
 // (StrictMode re-initialize, a re-fetched form definition) produces the exact same uids everywhere,
@@ -94,70 +93,59 @@ describe('formDefDecoder - deterministic uids', () => {
   });
 });
 
-// A function widget's uid is stored on the function object. It must be position-based, never random,
-// so that two processes decoding the same definition (a server render and the client hydrating it)
-// agree on it without sharing the function object
-describe('formDefDecoder - deterministic function widget uids', () => {
-  // Fresh function objects on every call, like a second process decoding the same source
-  const makeRawFormDefWithFunction = (): Record<string, any> => ({
+describe('formDefDecoder - a function in the definition', () => {
+  const message =
+    'A form definition is JSON and cannot contain a function. Write a widget as an object, a computed text as a "{{ }}" template, a condition as a "when" rule, a value for one state as a key with a state suffix, and an event handler as an event name.';
+
+  const makeRawFormDef = (secondChild: unknown): Record<string, any> => ({
     form: {
       kind: 'layout',
       type: 'flex',
-      children: [
-        { kind: 'input', type: 'text', path: 'name' },
-        () => ({ kind: 'display', type: 'text', props: { text: 'from a function' } }),
-      ],
+      children: [{ kind: 'input', type: 'text', path: 'name' }, secondChild],
     },
   });
 
-  it('assigns the same position uid across decodes of fresh function objects', () => {
-    const firstDecode = formDefDecoder.parse(makeRawFormDefWithFunction());
-    const secondDecode = formDefDecoder.parse(makeRawFormDefWithFunction());
+  it('gives one issue with the path of a widget that is a function', () => {
+    const result = formDefDecoder.decode(
+      makeRawFormDef(() => ({ kind: 'display', type: 'text', props: { text: 'from a function' } })),
+    );
 
-    expect(firstDecode.form.children[1].uid).toBe(secondDecode.form.children[1].uid);
+    expect(result.isOk()).toBe(false);
+    expect(result).toMatchObject({ issues: [{ message, path: ['form', 'children', 1] }] });
   });
 
-  it("marks the function widget uid with a final 'f' segment", () => {
-    const decoded = formDefDecoder.parse(makeRawFormDefWithFunction());
-    expect(decoded.form.children[1].uid).toBe('#0.1.f');
+  it('gives the path of a prop that is a function', () => {
+    const result = formDefDecoder.decode(
+      makeRawFormDef({ kind: 'display', type: 'text', props: { text: () => 'from a function' } }),
+    );
+
+    expect(result).toMatchObject({
+      issues: [{ message, path: ['form', 'children', 1, 'props', 'text'] }],
+    });
   });
 
-  it('keeps the first uid when the same function object is decoded again at another position', () => {
-    const raw = makeRawFormDefWithFunction();
-    const sharedFunction = raw['form'].children[1];
-    formDefDecoder.parse(raw);
-
-    const rawWithFunctionFirst: Record<string, any> = {
-      form: { kind: 'layout', type: 'flex', children: [sharedFunction] },
-    };
-    const decoded = formDefDecoder.parse(rawWithFunctionFirst);
-
-    expect(decoded.form.children[0].uid).toBe('#0.1.f');
+  it('throws from parse with the location and the message', () => {
+    expect(() => formDefDecoder.parse(makeRawFormDef(() => ({})))).toThrowError(
+      `form.children[1]: ${message}`,
+    );
   });
 
-  it('keeps a uid supplied by the widget the function returns', () => {
-    const raw: Record<string, any> = {
-      form: {
-        kind: 'layout',
-        type: 'flex',
-        children: [() => ({ kind: 'display', type: 'text', uid: 'explicitUid', props: {} })],
-      },
-    };
-    const decoded = formDefDecoder.parse(raw);
+  it('keeps a function inside a prop value', () => {
+    const formatLabel = () => 'A';
+    const items = [{ label: formatLabel }];
 
-    expect(decoded.form.children[0].uid).toBe('explicitUid');
+    const decoded = formDefDecoder.parse(
+      makeRawFormDef({ kind: 'display', type: 'text', props: { items } }),
+    );
+
+    expect(decoded.form.children[1].props?.['items']).toBe(items);
   });
 
-  it('writes the uid, type and path of the returned widget on the function object', () => {
-    const notes: FunctionWidget<string> = () =>
-      ({ kind: 'input', type: 'textinput', uid: 'notes', path: 'notes' }) as InputWidget<
-        any,
-        string
-      >;
-    formDefDecoder.parse({ form: { kind: 'layout', type: 'flex', children: [notes] } });
+  it('decodes the same definition when the widget is an object', () => {
+    const result = formDefDecoder.decode(
+      makeRawFormDef({ kind: 'display', type: 'text', props: { text: 'from an object' } }),
+    );
 
-    expect(notes.uid).toBe('notes');
-    expect(notes.type).toBe('textinput');
-    expect(notes.path).toBe('notes');
+    expect(result.isOk()).toBe(true);
   });
 });

@@ -1,11 +1,8 @@
 import {
   type FormWidget,
-  type FunctionWidget,
   type InputWidget,
-  isFunctionWidget,
   isInputWidget,
   type LayoutWidget,
-  type NonFunctionWidget,
 } from '../form-widget';
 import { type DotPath, type FormEventRow, type Uid } from '../shared';
 import { type RepeaterItemScope, type RepeaterRow, type State } from '../store/model';
@@ -23,7 +20,7 @@ export type RepeaterTemplateWidget = InputWidget<string> & {
 };
 
 export const isRepeaterWidget = (widget: FormWidget<string>): widget is RepeaterTemplateWidget =>
-  !isFunctionWidget(widget) && widget.type === 'repeater';
+  widget.type === 'repeater';
 
 /** `"abc[0][1]"` -> `[0, 1]`, `"abc"` -> `[]`. */
 export const extractRepeaterIndexes = (uid: string): number[] =>
@@ -68,8 +65,8 @@ export type ExpandedSources = {
  *
  * `resolvedSources` holds the `flatForm` widgets by reference plus, for every repeater row, one entry
  * per template widget (the row layout node included) with the row indexes written into `uid` and `path`.
- * Nested repeater containers are entries too and are recursed with their concrete path. Function widgets
- * stay callable (see {@link makeRepeaterItemConfig}), `when` expressions are not rewritten here.
+ * Nested repeater containers are entries too and are recursed with their concrete path. `when`
+ * expressions are not rewritten here.
  *
  * `repeaterItemScopes` maps every row widget uid to the innermost item that owns it, and
  * `repeaterRows` to every row that owns it, outermost first.
@@ -119,7 +116,7 @@ function expandRepeaterRows(
   }
   const templateWidgets = flattenForm([repeater.props.template as FormWidget<never>]);
 
-  rowValues.forEach((rowValue, rowIndex) => {
+  rowValues.forEach((_rowValue, rowIndex) => {
     const itemPath = `${repeater.path}.${rowIndex}`;
     const rows: RepeaterRow[] = [
       ...outerRows,
@@ -133,51 +130,12 @@ function expandRepeaterRows(
       expanded.repeaterItemScopes[item.uid as Uid] = itemScope;
       expanded.repeaterRows[item.uid as Uid] = rows;
 
-      const nested = asNestedRepeater(templateWidget, item, rows, data, rowValue, rowIndex);
-      if (nested) {
-        expandRepeaterRows(nested.repeater, nested.declaredPath, rows, data, expanded);
+      // A nested repeater: the item has the concrete path, the template widget the declared one.
+      if (isRepeaterWidget(templateWidget) && isRepeaterWidget(item)) {
+        expandRepeaterRows(item, templateWidget.path, rows, data, expanded);
       }
     }
   });
-}
-
-/**
- * Returns the nested repeater with concrete uid and path, plus the path its template declares, when a
- * template widget is one, otherwise undefined.
- * A function widget is called once here only to find out whether it produces a repeater.
- */
-function asNestedRepeater(
-  templateWidget: FormWidget<string>,
-  item: FormWidget<string>,
-  rows: RepeaterRow[],
-  data: Record<string, any>,
-  rowValue: unknown,
-  rowIndex: number,
-): { repeater: RepeaterTemplateWidget; declaredPath: DotPath } | undefined {
-  if (isRepeaterWidget(templateWidget) && isRepeaterWidget(item)) {
-    return { repeater: item, declaredPath: templateWidget.path };
-  }
-  if (!isFunctionWidget(templateWidget)) {
-    return undefined;
-  }
-  const resolved = templateWidget({
-    $form: data,
-    $item: rowValue,
-    $index: rowIndex,
-    errors: undefined,
-    touched: undefined,
-    translate: undefined,
-  });
-  if (resolved.type !== 'repeater') {
-    return undefined;
-  }
-  // The function may return a cached object. Copy it before writing the uid,
-  // so the write never reaches the object the function owns.
-  const resolvedWithUid = { ...resolved, uid: templateWidget.uid as string };
-  return {
-    repeater: materializeRowWidget(resolvedWithUid, rows) as RepeaterTemplateWidget,
-    declaredPath: (resolved as RepeaterTemplateWidget).path,
-  };
 }
 
 /**
@@ -197,9 +155,6 @@ function materializeRowWidget(widget: FormWidget<string>, rows: RepeaterRow[]): 
  * Derives a concrete widget config for a specific repeater item by materializing the provided indexes into the
  * widget's `uid` (and `path` for input widgets).
  *
- * Function widgets are wrapped in a new function that delegates to the original, so they stay callable while
- * carrying the materialized `uid` and `path`.
- *
  * Every path segment named `items`, except the first, is a row token, filled in order. With indexes
  * alone a property named `items` cannot be told apart from a token, so such a path throws.
  * `expandSources` places rows by position and has no such limit.
@@ -217,14 +172,6 @@ function materializeRowWidget(widget: FormWidget<string>, rows: RepeaterRow[]): 
  * makeRepeaterItemConfig(widget, [2, 0]) // { uid: 'dev-name[2][0]', path: 'teams.2.devs.0.name' }
  */
 export function makeRepeaterItemConfig(
-  widget: NonFunctionWidget<string>,
-  repeaterIndexes: number[],
-): NonFunctionWidget<string>;
-export function makeRepeaterItemConfig(
-  widget: FormWidget<string>,
-  repeaterIndexes: number[],
-): FormWidget<string>;
-export function makeRepeaterItemConfig(
   widget: FormWidget<string>,
   repeaterIndexes: number[],
 ): FormWidget<string> {
@@ -238,16 +185,7 @@ function materializeWidget(
   repeaterIndexes: number[],
   materializePath: (path: DotPath) => string,
 ): FormWidget<string> {
-  const uid = toRepeaterItemUid(widget.uid as Uid, repeaterIndexes);
-  if (isFunctionWidget(widget)) {
-    const materialized: FunctionWidget<string> = (api) => widget(api);
-    materialized.uid = uid;
-    materialized.type = widget.type;
-    if (widget.path !== undefined) {
-      materialized.path = materializePath(widget.path);
-    }
-    return materialized;
-  }
+  const uid = toRepeaterItemUid(widget.uid, repeaterIndexes);
   if (isInputWidget(widget)) {
     return {
       ...widget,
@@ -400,9 +338,9 @@ const WHEN_FIELDS = ['include', 'exclude', 'disabled', 'readonly'] as const;
  * //   -> { include: { when: '$form.lineItems.1.active' } }
  */
 export function transformWidgetWhenExpressions(
-  widget: NonFunctionWidget<string>,
+  widget: FormWidget<string>,
   rows: RepeaterRow[],
-): NonFunctionWidget<string> {
+): FormWidget<string> {
   const hasAnyWhenExpression = WHEN_FIELDS.some((field) =>
     hasWhenExpression((widget as Record<string, unknown>)[field]),
   );
@@ -422,7 +360,7 @@ export function transformWidgetWhenExpressions(
     }
   }
 
-  return transformed as NonFunctionWidget<string>;
+  return transformed as FormWidget<string>;
 }
 
 function hasWhenExpression(value: unknown): value is { when: string } {

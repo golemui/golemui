@@ -199,44 +199,14 @@ describe('initialize - deterministic uids across re-initializes', () => {
       expect(uid).toBeTruthy();
     }
   });
-
-  it('keeps the same uid for a function widget across re-initializes', () => {
-    const fnWidget = () => ({
-      kind: 'display' as const,
-      type: 'text',
-      uid: '',
-      props: { text: 'from a function' },
-    });
-    const formDef = { form: [fnWidget] };
-
-    const firstKeys = Object.keys(init(formDef).flatForm);
-    const secondKeys = Object.keys(init(formDef).flatForm);
-
-    expect(firstKeys).toEqual(secondKeys);
-  });
 });
 
-// FunctionWidgetParams contract says ($form is always an object) check that
-// `$form.field` reads return undefined, not crash because `$form` is `undefined`.
-describe('initialize - function widget decode probe', () => {
+describe('initialize - the dispatched form definition', () => {
   const init = (formDef: Record<string, any>) =>
     initialize(createInitialState('en-US'), {
       type: 'INITIALIZE',
       payload: { formName: 'f', formDef },
     });
-
-  it('decodes a function widget that reads `$form.field` without optional chaining', () => {
-    const fnWidget = ({ $form }: any) => ({
-      uid: 'agreed',
-      kind: 'input' as const,
-      type: 'checkbox',
-      path: 'agreed',
-      label: $form.rtlMode ? 'RTL' : 'LTR',
-    });
-    const result = init({ form: [fnWidget] });
-    expect(result.formHealth.status).toBe('ok');
-    expect(result.flatForm['agreed']).toBeDefined();
-  });
 
   it('leaves the dispatched formDef object untouched when it converts the array form', () => {
     const widget = { uid: 'name', kind: 'input' as const, type: 'text', path: 'name' };
@@ -248,6 +218,41 @@ describe('initialize - function widget decode probe', () => {
     // The caller keeps using the object it dispatched, so INITIALIZE must not rewrite it.
     expect(Array.isArray(formDef.form)).toBe(true);
     expect(formDef.form).toEqual([widget]);
+  });
+
+  it.each([
+    [
+      'a key of a widget',
+      {
+        form: [
+          {
+            kind: 'input',
+            type: 'text',
+            path: 'name',
+            get label(): string {
+              throw new Error('getter failed');
+            },
+          },
+        ],
+      },
+    ],
+    [
+      'the widget list',
+      {
+        get form(): unknown[] {
+          throw new Error('getter failed');
+        },
+      },
+    ],
+  ])('gives code 22 and no exception when the read of %s throws', (_place, formDef) => {
+    const result = init(formDef);
+
+    expect(result.formHealth).toEqual({
+      status: 'errored',
+      code: errorCodes.initializeUnknownError,
+      message: '[22] The form definition cannot be read: getter failed',
+    });
+    expect(result.flatForm).toEqual({});
   });
 });
 
@@ -279,12 +284,6 @@ describe('initialize - forbidden path segments', () => {
     if (result.formHealth.status === 'errored') {
       expect(result.formHealth.message).toContain('.path:');
     }
-  });
-
-  it('errors at decode for a function widget that returns a forbidden path', () => {
-    const fnWidget = () => ({ kind: 'input' as const, type: 'text', path: 'a.__proto__.b' });
-
-    expectPathError(init({ form: [fnWidget] }), '__proto__');
   });
 
   it('accepts a path whose segments only contain a forbidden word', () => {
