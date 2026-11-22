@@ -10,7 +10,7 @@ import {
   type Type,
   ViewContainerRef,
 } from '@angular/core';
-import { type NonFunctionWidget, type WithWidget, errorCodes } from '@golemui/core';
+import { type FormWidget, type WithWidget, errorCodes } from '@golemui/core';
 import { toDomId } from '@golemui/core/internals';
 import { AngularFormContext } from '../context/form.context';
 
@@ -24,7 +24,7 @@ import { AngularFormContext } from '../context/form.context';
   standalone: true,
 })
 export class WidgetDirective implements OnInit, OnDestroy {
-  widget = input.required<NonFunctionWidget<string>>();
+  widget = input.required<FormWidget<string>>();
 
   private formContext: AngularFormContext<Type<WithWidget>> = inject(AngularFormContext);
   private platformId = inject(PLATFORM_ID);

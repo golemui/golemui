@@ -1,13 +1,9 @@
-import {
-  type NonFunctionWidget,
-  type WidgetViewModel,
-  assertNoPropCollisions,
-} from '@golemui/core';
+import { type FormWidget, type WidgetViewModel, assertNoPropCollisions } from '@golemui/core';
 import { type Ref } from 'vue';
 
 export type WithFlattenedProps<
-  F extends NonFunctionWidget<string>,
-  ExtraProps extends NonFunctionWidget<string>['props'],
+  F extends FormWidget<string>,
+  ExtraProps extends FormWidget<string>['props'],
 > = F & ExtraProps & { lang: string; deps: Record<string, unknown> };
 
 /**
