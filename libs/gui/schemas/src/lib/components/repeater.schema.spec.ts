@@ -350,19 +350,21 @@ describe('Repeater schema validation', () => {
     it('should fail on invalid type for limit', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, invalid type for limit
           {
             uid: 'rep-1',
             path: 'items',
+            // @ts-expect-error Expected, the kind of a repeater is 'input'
             kind: 'array',
             type: 'repeater',
             props: {
               template: {
                 uid: 'tpl-1',
+                // @ts-expect-error Expected, the template of a repeater is a layout
                 kind: 'input',
                 type: 'textinput',
                 path: 'value',
               },
+              // @ts-expect-error Expected, invalid type for limit
               limit: 'five',
             },
           },

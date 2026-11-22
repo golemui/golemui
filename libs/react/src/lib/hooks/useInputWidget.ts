@@ -1,4 +1,4 @@
-import { type InputWidget, type NonFunctionWidget } from '@golemui/core';
+import { type FormWidget, type InputWidget } from '@golemui/core';
 import { useCallback, useEffect, useRef } from 'react';
 import { useReactFormContext } from '../ReactFormContext';
 import { mergeViewModelIntoTemplateData, type WithFlattenedProps } from './internal/template-data';
@@ -12,7 +12,7 @@ type InputTemplateData<T, ExtraProps extends Record<string, any>> = WithFlattene
   /**
    * Repeater inputs only: one row layout node per row of the array value, uid and path already indexed
    */
-  rows?: NonFunctionWidget<string>[];
+  rows?: FormWidget<string>[];
 };
 
 export function useInputWidget<T, ExtraProps extends Record<string, any>>(

@@ -3,7 +3,6 @@ import type {
   FormInitConfig,
   InputWidget,
   LayoutWidget,
-  NonFunctionWidget,
   ValidatorFn,
   WithWidget,
 } from '@golemui/core';
@@ -57,9 +56,7 @@ function StubGrid(widgetInstance: WithWidget) {
   return createElement(
     'stub-grid',
     null,
-    (children as NonFunctionWidget<string>[]).map((child) =>
-      createElement(WidgetRenderer, { key: child.uid, widget: child }),
-    ),
+    children.map((child) => createElement(WidgetRenderer, { key: child.uid, widget: child })),
   );
 }
 

@@ -8,7 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular';
-import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
+import type { FormWidget, LayoutWidget, WithWidget } from '@golemui/core';
 import type { GuiTabChangeEventDetail } from '@golemui/gui-components';
 import type { TabsEventDetail } from '@golemui/gui-components/internals';
 import {
@@ -55,7 +55,7 @@ export class TabsComponent implements OnInit, OnDestroy, WithWidget {
    * from the store with the indexes already applied, so the lookup adds this tabs layout's own.
    * Returns `undefined` when the tab's child is hidden, the children only hold visible ones.
    */
-  getChild(tabUid: string): NonFunctionWidget<string> | undefined {
+  getChild(tabUid: string): FormWidget<string> | undefined {
     const childUid = `${tabUid}${this.rowIndexSuffix}`;
     return this.adapter.templateData().children.find((child) => child.uid === childUid);
   }

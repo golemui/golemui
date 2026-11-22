@@ -1,7 +1,6 @@
 import type { ErrorObject } from 'ajv';
 import {
   customWidgetKinds,
-  schemalessWidgetTypes,
   templateWidgetTypes,
   validatorTypes,
   widgetKindByType,
@@ -34,10 +33,6 @@ const STRING_FORMATS = [
   'duration',
 ];
 const WIDGET_TYPES = Object.keys(widgetKindByType);
-
-// Built-in types with no component schema (e.g. `renderer`). The published schema
-// rejects them, so they must get a hard error, not a warning or a fuzzy match.
-const SCHEMALESS_WIDGET_TYPES: ReadonlySet<string> = new Set(schemalessWidgetTypes);
 
 // The state variants of a repeater template, as the repeater schema's patternProperties has them.
 const TEMPLATE_STATE_KEY = /^template\.[^.]+$/;
@@ -241,12 +236,6 @@ function formatError(err: ErrorObject): FormattedError {
       message = `Expected type ${Array.isArray(expected) ? expected.join('|') : expected} at \`${path}\`, got ${describe(err.data)}`;
       break;
     }
-    case 'schemalessType': {
-      const type = (err.params as { type?: string }).type;
-      message = `Widget type \`${type}\` at \`${path}\` is a built-in with no JSON representation, so it cannot appear in a JSON form definition`;
-      suggestion = `Use a custom display widget in its place, or remove it from the JSON.`;
-      break;
-    }
     case 'position': {
       const { widget } = err.params as PositionParams;
       suggestion =
@@ -385,21 +374,6 @@ function collectWidgetErrors(
     for (const e of chunkRefValidator.errors ?? []) {
       out.push({ ...e, instancePath: widgetPath + e.instancePath });
     }
-    return;
-  }
-
-  // Schema-less built-ins (e.g. `renderer`) must fail hard. Checked before the fuzzy
-  // match, which could otherwise resolve `renderer` to `repeater` (within edit distance).
-  const declaredType = (widget as { type?: unknown } | undefined)?.type;
-  if (typeof declaredType === 'string' && SCHEMALESS_WIDGET_TYPES.has(declaredType)) {
-    out.push({
-      keyword: 'schemalessType',
-      instancePath: `${widgetPath}/type`,
-      schemaPath: '',
-      params: { type: declaredType },
-      message: `Widget type \`${declaredType}\` has no JSON representation`,
-    } as unknown as ErrorObject);
-    recurseIntoChildren(widget, widgetPath, context);
     return;
   }
 

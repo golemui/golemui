@@ -3,7 +3,6 @@ import type {
   DisplayWidget,
   Form,
   FormWidget,
-  FunctionWidgetParams,
   InputWidget,
   LayoutWidget,
   ReactiveExpression,
@@ -75,6 +74,8 @@ type ExtractStates<S> = S extends Record<string, ReactiveExpression> ? keyof S :
 /**
  * Make the uid propery optional on all widgets
  */
+// A function type must stay a function type. When the object branch below maps one, a prop with a
+// fixed list of texts accepts every text. The type tests of `golem-form.spec.ts` check it.
 type DeepPartialUid<T> = T extends (...args: infer A) => infer R
   ? (...args: A) => DeepPartialUid<R>
   : T extends any[]
@@ -151,7 +152,7 @@ class GolemFormBuilder<
  *       path: 'name',
  *       label: 'Label',
  *       'label.registering': '',
- *       props: { placeholder: (api) => api.$form.name, 'placeholder.registering': 'asas' },
+ *       props: { placeholder: '{{$form.name}}', 'placeholder.registering': 'asas' },
  *     },
  *     // Custom widget usage
  *     {
@@ -159,12 +160,12 @@ class GolemFormBuilder<
  *       type: 'heading',
  *       props: { text: 'User Details', level: 1 },
  *     },
- *     (api) => ({
+ *     {
  *       kind: 'input',
  *       type: 'textinput',
  *       path: 'something',
- *       label: api?.$form.name ? api?.$form.name : 'No name yet',
- *     }),
+ *       label: '{{$form.name ? $form.name : "No name yet"}}',
+ *     },
  *     {
  *       kind: 'layout',
  *       type: 'grid',
@@ -221,7 +222,6 @@ type GolemWidget<
   | GuiDateTimePicker<FormType, States, V>
   | GuiDropdown<FormType, States, V>
   | GuiFileUpload<FormType, States, V>
-  | GuiFunctionWidget<FormType, States, V, CustomWidget>
   | GuiList<FormType, States, V>
   | GuiMarkdown<FormType, States, V>
   | GuiMarkdownText<FormType, States>
@@ -243,7 +243,6 @@ type GolemWidget<
   | GuiRangeSlider<FormType, States, V>
   | GuiRangeTimeInput<FormType, States, V>
   | GuiRangeTimePicker<FormType, States, V>
-  // | GuiRenderer<FormType, States>
   | GuiRepeater<FormType, States, V, CustomWidget>
   | GuiSelect<FormType, States, V>
   | GuiSlider<FormType, States, V>
@@ -358,15 +357,6 @@ type GuiFileUpload<FormType extends Record<string, any>, States extends string, 
   FileUploadProps,
   V
 > & { type: 'fileUpload' };
-
-type GuiFunctionWidget<
-  FormType extends Record<string, any>,
-  States extends string,
-  V,
-  CustomWidget extends FormWidget<any, FormType>,
-> = (
-  api?: FunctionWidgetParams<FormType>,
-) => Exclude<GolemWidget<FormType, States, V, CustomWidget>, () => any>;
 
 type GuiList<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   OptionValue,
@@ -531,13 +521,6 @@ type GuiRangeTimePicker<
 > = InputWidget<TimeRange[], States, FormType, RangeTimePickerProps, V> & {
   type: 'rangeTimePicker';
 };
-
-// TODO: how to do this one?
-// type GuiRenderer<FormType extends Record<string, any>=any, States extends string> = Core.DisplayWidget<
-//   States,
-//   FormType,
-//   Props.RangeCalendarProps
-// > & { type: 'renderer' };
 
 type GuiRepeater<
   FormType extends Record<string, any>,

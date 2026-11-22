@@ -12,6 +12,7 @@ import {
 import { type Action } from './store/actions';
 import { type Middleware, type State } from './store/model';
 import { type ExpressionPolicy } from './utils/check-expression';
+import { noFunction } from './utils/decoder';
 import { assignDeterministicUids } from './utils/deterministic-uids';
 
 // --------------------------------
@@ -92,10 +93,16 @@ export interface FormInitConfig<ComponentType = unknown> {
   meta?: Record<string, any>;
 }
 
-export const formDefDecoder = object({
-  states: optional(record(string())),
-  form: lazy(() => layoutWidgetDecoder),
-}).map((formDef) => {
-  assignDeterministicUids(formDef.form);
-  return formDef;
-});
+/**
+ * Decodes a form definition. A function is an issue as the document, the states, a state, the
+ * widget list, a widget, the value of a widget key, an event name or a prop.
+ */
+export const formDefDecoder = noFunction(
+  object({
+    states: noFunction(optional(record(noFunction(string())))),
+    form: noFunction(lazy(() => layoutWidgetDecoder)),
+  }).map((formDef) => {
+    assignDeterministicUids(formDef.form);
+    return formDef;
+  }),
+);

@@ -1,15 +1,12 @@
 import {
   type ActionWidget,
   type FormWidget,
-  type FunctionWidget,
   type InputWidget,
   isActionWidget,
   isDisplayWidget,
-  isFunctionWidget,
   isInputWidget,
   isLayoutWidget,
   type LayoutWidget,
-  type NonFunctionWidget,
 } from '../../form-widget';
 import {
   type I18nParams,
@@ -24,7 +21,7 @@ import { calculateValidationVariables, type ValidationVariables } from '../../ut
 import { compileExpression, ExpressionRejectedError } from '../../utils/justin';
 import { get, isPlainObject, set, setOwnKey } from '../../utils/object';
 import { extractRepeaterIndexes, isRepeaterWidget } from '../../utils/repeater';
-import { type DerivedWidget, type RepeaterItemScope, type State } from '../model';
+import { type DerivedWidget, type State } from '../model';
 import { deepEqual, hasWhen } from './utils';
 import { errorCodes, errorMessage } from '../../errors';
 
@@ -97,86 +94,29 @@ function calculateAll(
     }
 
     const prev = state.calculatedWidgets[uid];
-    const source = prev.source;
     const itemScope = state.repeaterItemScopes[uid];
-
-    if (isFunctionWidget(source)) {
-      result[uid] = computeFunctionWidget(prev, uid, source, state, localization, itemScope);
-      continue;
-    }
 
     // Widgets inside a repeater item see that item through $item / $index
     const widgetCtx = itemScope
       ? { ...ctx, $item: get(ctx.$form, itemScope.itemPath), $index: itemScope.index }
       : ctx;
 
-    result[uid] = computeNonFunctionWidget(
-      prev as DerivedWidget<NonFunctionWidget<string>>,
-      source,
-      state,
-      widgetCtx,
-    );
+    result[uid] = computeWidget(prev, state, widgetCtx);
   }
 
   return result;
 }
 
 // -----------------------------------------------------------------------------
-// FunctionWidget path
+// Compute by kind
 // -----------------------------------------------------------------------------
 
-function computeFunctionWidget(
+function computeWidget(
   prev: DerivedWidget<FormWidget<string>>,
-  uid: string,
-  source: FunctionWidget<string>,
-  state: State,
-  localization: I18nTranslator,
-  itemScope?: RepeaterItemScope,
-): DerivedWidget<FormWidget<string>> {
-  // The function may return a cached object. Copy it before writing uid and path,
-  // so the write never reaches the object the function owns.
-  const current = {
-    ...source({
-      $form: state.data,
-      errors: source.path ? state.validations[source.path] : undefined,
-      touched: source.path ? state.touchedControls[source.path] : undefined,
-      translate: localization.translate,
-      $item: itemScope ? get(state.data, itemScope.itemPath) : undefined,
-      $index: itemScope?.index,
-    }),
-  };
-  current.uid = uid;
-  // A row function widget returns the template path, the source carries the row path.
-  if (source.path !== undefined) {
-    (current as InputWidget<unknown, string>).path = source.path;
-  }
-
-  // An override wins over the value the function returned, the same precedence `applyPropsField`
-  // gives it for every other widget.
-  const overrides = state.widgetPropOverrides[uid];
-  if (overrides !== undefined) {
-    current.props = { ...current.props, ...overrides };
-  }
-
-  // A function widget builds a new config object on every call, so compare the content
-  // to avoid handing subscribers a new reference for an unchanged widget.
-  if (prev.current && deepEqual(prev.current, current)) {
-    return prev;
-  }
-
-  return { source, current };
-}
-
-// -----------------------------------------------------------------------------
-// NonFunctionWidget (compute by kind)
-// -----------------------------------------------------------------------------
-
-function computeNonFunctionWidget(
-  prev: DerivedWidget<NonFunctionWidget<string>>,
-  source: NonFunctionWidget<string>,
   state: State,
   ctx: ResolverCtx,
-): DerivedWidget<NonFunctionWidget<string>> {
+): DerivedWidget<FormWidget<string>> {
+  const source = prev.source;
   const tracker = new ChangeTracker(source, prev.current);
 
   // Identity fields never come from expressions/overrides/suffixes, copy directly.
@@ -251,7 +191,7 @@ function computeLayoutFields(t: ChangeTracker, ctx: ResolverCtx): void {
 // -----------------------------------------------------------------------------
 
 function computePropsFields(
-  source: NonFunctionWidget<string>,
+  source: FormWidget<string>,
   tracker: ChangeTracker,
   ctx: ResolverCtx,
   state: State,
@@ -355,8 +295,8 @@ function applyPropsField(t: ChangeTracker, ctx: ResolverCtx, subProp: string): v
     resolved = resolveNestedTranslations(resolved, ctx);
   }
 
-  // widgetPropOverrides takes precedence over everything - applied AFTER function evaluation,
-  // i18n translation, and template substitution.
+  // widgetPropOverrides takes precedence over everything - applied AFTER i18n translation and
+  // template substitution.
   const override = ctx.widgetPropOverrides[t.source.uid]?.[subProp];
   if (override !== undefined) {
     resolved = override;
@@ -365,31 +305,15 @@ function applyPropsField(t: ChangeTracker, ctx: ResolverCtx, subProp: string): v
   t.write(`props.${subProp}`, resolved);
 }
 
+// An event name is never a template, so the picked value is written as it is.
 function applyOnField(t: ChangeTracker, ctx: ResolverCtx, subProp: string): void {
   const sourceOn = (t.source as { on?: Record<string, unknown> }).on;
-  const raw = pickSuffixedValue(sourceOn, subProp, ctx.sortedStates);
-  t.write(`on.${subProp}`, resolveOnValue(raw, ctx));
+  t.write(`on.${subProp}`, pickSuffixedValue(sourceOn, subProp, ctx.sortedStates));
 }
 
 // -----------------------------------------------------------------------------
 // Value-type resolvers - pure: (value, ctx) -> value.
 // -----------------------------------------------------------------------------
-
-type WidgetFn = (api: {
-  $form: any;
-  translate: I18nTranslator['translate'];
-  $item?: any;
-  $index?: number;
-}) => unknown;
-
-function resolveFunctionProp(fn: WidgetFn, ctx: ResolverCtx): unknown {
-  return fn({
-    $form: ctx.$form,
-    translate: ctx.localization.translate,
-    $item: ctx.$item,
-    $index: ctx.$index,
-  });
-}
 
 function resolveTranslationConfig(tc: TranslationConfig, ctx: ResolverCtx): string {
   return ctx.localization.translate(tc.key, resolveI18nParams(tc.params, ctx), tc.default);
@@ -428,11 +352,8 @@ function resolveString(input: string, ctx: ResolverCtx): string {
   });
 }
 
-/** function | TranslationConfig | string-template | passthrough. */
+/** TranslationConfig | string-template | passthrough. */
 function resolveValue(value: unknown, ctx: ResolverCtx): unknown {
-  if (typeof value === 'function') {
-    return resolveFunctionProp(value as WidgetFn, ctx);
-  }
   if (isTranslationConfig(value)) {
     return resolveTranslationConfig(value, ctx);
   }
@@ -477,8 +398,8 @@ function isNestedTranslationConfig(value: Record<string, unknown>): value is Tra
 
 /**
  * Translates the translation configs nested in a prop's arrays and plain objects, at any depth.
- * Only translation configs: nested strings are not interpolated and nested functions are not
- * called. Copy on write: a value holding no translation config comes back as the same reference.
+ * Only translation configs: nested strings are not interpolated. Copy on write: a value holding
+ * no translation config comes back as the same reference.
  */
 function resolveNestedTranslations(value: unknown, ctx: ResolverCtx): unknown {
   if (!isWalkable(value) || holdsNoTranslation.has(value)) {
@@ -511,34 +432,18 @@ function resolveNestedTranslations(value: unknown, ctx: ResolverCtx): unknown {
   return copy;
 }
 
-/** For `disabled` / `readonly` - function | {when}->widgetFlags | string | passthrough. */
+/** For `disabled` / `readonly` - {when}->widgetFlags | string | passthrough. */
 function resolveBoolOrWhen(
   value: unknown,
   ctx: ResolverCtx,
   uid: string,
   field: 'disabled' | 'readonly',
 ): unknown {
-  if (typeof value === 'function') {
-    return resolveFunctionProp(value as WidgetFn, ctx);
-  }
   if (hasWhen(value)) {
     return ctx.widgetFlags[uid]?.[field];
   }
   if (typeof value === 'string') {
     return resolveString(value, ctx);
-  }
-  return value;
-}
-
-/**
- * For `on.<handler>` - function | passthrough.
- *
- * Event handler strings (e.g. `"submit"`) are never scoped-path templates,
- * so no resolution is needed beyond calling a function value if present.
- */
-function resolveOnValue(value: unknown, ctx: ResolverCtx): unknown {
-  if (typeof value === 'function') {
-    return resolveFunctionProp(value as WidgetFn, ctx);
   }
   return value;
 }
@@ -624,7 +529,7 @@ function evaluateI18nParam(param: string, ctx: ResolverCtx): unknown {
 // `previous` for change detection.
 // -----------------------------------------------------------------------------
 
-class ChangeTracker<F extends NonFunctionWidget<string> = NonFunctionWidget<string>> {
+class ChangeTracker<F extends FormWidget<string> = FormWidget<string>> {
   readonly source: F;
   readonly previous: F;
   readonly current: F;

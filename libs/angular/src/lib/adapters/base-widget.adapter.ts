@@ -1,7 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { inject, PLATFORM_ID, type Type, type WritableSignal } from '@angular/core';
 import {
-  type NonFunctionWidget,
+  type FormWidget,
   type WidgetViewModel,
   type WithWidget,
   assertNoPropCollisions,
@@ -11,7 +11,7 @@ import { toDomId } from '@golemui/core/internals';
 import { Subject, takeUntil } from 'rxjs';
 import { AngularFormContext } from '../context/form.context';
 
-export abstract class BaseWidgetAdapter<F extends NonFunctionWidget> {
+export abstract class BaseWidgetAdapter<F extends FormWidget> {
   protected context = inject(AngularFormContext);
   // Field initializer: `init()` runs outside the injection context.
   protected isBrowser = isPlatformBrowser(inject(PLATFORM_ID));

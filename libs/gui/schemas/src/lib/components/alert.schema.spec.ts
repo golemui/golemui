@@ -189,9 +189,9 @@ describe('Alert schema validation', () => {
     it('should invalidate when "type" is incorrect', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, type must be 'alert'
           {
             kind: 'display',
+            // @ts-expect-error Expected, type must be 'alert'
             type: 'something',
             props: { text: 'Invalid type' },
           },
@@ -259,12 +259,12 @@ describe('Alert schema validation', () => {
     it('should invalidate when "props.level" has an unrecognized enum value', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, invalid value for level.
           {
             kind: 'display',
             type: 'alert',
             props: {
               text: 'Critical meltdown',
+              // @ts-expect-error Expected, invalid value for level.
               level: 'superbad',
             },
           },

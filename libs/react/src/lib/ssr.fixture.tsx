@@ -6,7 +6,6 @@ import type {
   InputWidget,
   LayoutWidget,
   Middleware,
-  NonFunctionWidget,
   State,
   ValidatorFn,
   WithWidget,
@@ -92,7 +91,7 @@ function StubFlex(widgetInstance: WithWidget) {
 
   return (
     <div className="stub-flex" id={uid}>
-      {(children as NonFunctionWidget<string>[]).map((child) => (
+      {children.map((child) => (
         <WidgetRenderer key={child.uid} widget={child} />
       ))}
     </div>

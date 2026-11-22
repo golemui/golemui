@@ -194,13 +194,13 @@ describe('FileUpload schema validation', () => {
     it('should fail on invalid type for accept', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, invalid type for accept
           {
             uid: 'file-1',
             path: 'cv',
             kind: 'input',
             type: 'fileUpload',
             props: {
+              // @ts-expect-error Expected, invalid type for accept
               accept: 'image/*',
             },
           },
@@ -218,7 +218,6 @@ describe('FileUpload schema validation', () => {
     it('should fail on a defaultValue with an unknown status', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, invalid status
           {
             uid: 'file-1',
             path: 'cv',
@@ -229,6 +228,7 @@ describe('FileUpload schema validation', () => {
               name: 'cv.pdf',
               size: 1,
               type: 'application/pdf',
+              // @ts-expect-error Expected, invalid status
               status: 'done',
             },
           },

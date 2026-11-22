@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
+import type { LayoutWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/vue';
 import type { GuiTabChangeEventDetail } from '@golemui/gui-components';
 import {
@@ -34,7 +34,7 @@ watch(
 const panels = computed(() => {
   const tabs = templateData.value.tabs ?? [];
   const active = activeTab.value ?? tabs[0]?.uid;
-  const sections = children.value as NonFunctionWidget<string>[];
+  const sections = children.value;
 
   return tabs
     .map((tab) => ({

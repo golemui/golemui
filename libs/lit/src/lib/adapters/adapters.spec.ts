@@ -4,10 +4,10 @@ import {
   type FormEvent,
   type FormHealth,
   type FormInitConfig,
+  type FormWidget,
   identityTranslator,
   type InputWidget,
   type Middleware,
-  type NonFunctionWidget,
   preloadFormWidgets,
   type State,
   type ValidatorFn,
@@ -88,7 +88,7 @@ class WidgetsWithoutLayoutElement extends LitElement {
   @provide({ context: formContext })
   context = new LitFormContext<WithWidget>();
 
-  widgets: NonFunctionWidget<string>[] = [];
+  widgets: FormWidget<string>[] = [];
 
   override createRenderRoot() {
     return this;
@@ -149,7 +149,7 @@ const mountWidgetsWithoutLayout = async (
   context.store.dispatch({ type: 'INITIALIZE', payload: { formName: 'adapters', formDef } });
   context.store.dispatch({ type: 'SET_DATA', payload: { data } });
   const sources = context.store.getState().resolvedSources;
-  host.widgets = uids.map((uid) => sources[uid] as NonFunctionWidget<string>);
+  host.widgets = uids.map((uid) => sources[uid]);
   document.body.append(host);
   await afterLitRenderSchedule();
   const setData = async (nextData: Record<string, unknown>) => {

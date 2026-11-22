@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { type FormWidget, type FunctionWidget } from '../../form-widget';
+import { type FormWidget } from '../../form-widget';
 import { createInitialState, type State } from '../model';
 import { dropRemovedWidgetEntries } from './drop-removed-widget-entries';
 
@@ -23,13 +23,6 @@ const displayChild = (uid: string) =>
     type: 'markdownText',
     props: {},
   }) as unknown as FormWidget<string>;
-
-const functionInput = (uid: string, path: string) => {
-  const widget: FunctionWidget<string> = () => inputChild(uid, path) as any;
-  widget.uid = uid;
-  widget.path = path;
-  return widget as unknown as FormWidget<string>;
-};
 
 const sourcesOf = (...widgets: FormWidget<string>[]): State['resolvedSources'] =>
   Object.fromEntries(widgets.map((widget) => [widget.uid as string, widget]));
@@ -65,15 +58,6 @@ describe('dropRemovedWidgetEntries', () => {
     expect(result.touchedControls).toEqual({ 'users.0.name': true });
     expect(result.validations).toEqual({ 'users.0.name': null });
     expect(result.injectedValidations).toEqual({ 'users.0.name': null });
-  });
-
-  it('counts the path of a function widget as live', () => {
-    state.resolvedSources = sourcesOf(functionInput('note[0]', 'users.0.note'));
-    state.touchedControls = { 'users.0.note': true, 'users.1.note': true };
-
-    const result = dropRemovedWidgetEntries(state);
-
-    expect(result.touchedControls).toEqual({ 'users.0.note': true });
   });
 
   it('keeps every entry of a widget that is still there, whatever its flags say', () => {

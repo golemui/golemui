@@ -1,4 +1,4 @@
-import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
+import type { LayoutWidget, WithWidget } from '@golemui/core';
 import { LayoutWidgetAdapter, type LitFormContext, formContext, layoutContext } from '@golemui/lit';
 import {
   type FlexProps,
@@ -44,7 +44,7 @@ export class GridElement extends LitElement implements WithWidget {
 
   override render() {
     const grid = resolveGrid(this.widget.type, this.adapter.templateData);
-    const children = (this.adapter.templateData.children || []) as NonFunctionWidget<string>[];
+    const children = this.adapter.templateData.children || [];
 
     return html`
       <div class=${gridClasses(grid)} id=${this.adapter.domId}>

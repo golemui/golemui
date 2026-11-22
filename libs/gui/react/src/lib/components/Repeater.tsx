@@ -1,5 +1,5 @@
 import { GuiErrorsReact, GuiLabelReact } from '../web-components';
-import type { InputWidget, NonFunctionWidget, Validator, WithWidget } from '@golemui/core';
+import type { FormWidget, InputWidget, Validator, WithWidget } from '@golemui/core';
 import {
   findRepeaterRowFocus,
   focusAfterRowRemoval,
@@ -56,7 +56,7 @@ export function Repeater(widgetInstance: WithWidget) {
     errors,
     isTouched,
     onBlur,
-  } = useInputWidget<Record<string, unknown>[], RepeaterProps<NonFunctionWidget<string>>>(widget);
+  } = useInputWidget<Record<string, unknown>[], RepeaterProps<FormWidget<string>>>(widget);
 
   const repeaterRef = useRef<HTMLDivElement>(null);
 

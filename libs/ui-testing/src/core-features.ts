@@ -27,7 +27,6 @@ export * from './lib/core-features/include-exclude.cy';
 export * from './lib/core-features/label.cy';
 export * from './lib/core-features/middlewares.cy';
 export * from './lib/core-features/probe-inputs.cy';
-export * from './lib/core-features/reactive-functions.cy';
 export * from './lib/core-features/readonly.cy';
 export * from './lib/core-features/render-identity.cy';
 export * from './lib/core-features/required.cy';

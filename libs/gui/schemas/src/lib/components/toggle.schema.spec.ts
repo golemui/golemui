@@ -180,13 +180,13 @@ describe('Toggle schema validation', () => {
     it('should fail on invalid togglePosition enum', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, invlaid togglePosition value
           {
             uid: 'tgl-1',
             path: 'active',
             kind: 'input',
             type: 'toggle',
             props: {
+              // @ts-expect-error Expected, invlaid togglePosition value
               togglePosition: 'something',
             },
           },

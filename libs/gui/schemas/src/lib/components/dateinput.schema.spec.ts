@@ -154,13 +154,13 @@ describe('Dateinput schema validation', () => {
     it('should fail on invalid type for icon', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, icon should be a string
           {
             uid: 'di-1',
             path: 'bday',
             kind: 'input',
             type: 'dateInput',
             props: {
+              // @ts-expect-error Expected, icon should be a string
               icon: 123,
             },
           },

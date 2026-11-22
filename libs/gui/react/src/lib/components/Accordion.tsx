@@ -1,4 +1,4 @@
-import type { LayoutWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
+import type { LayoutWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
 import type { GuiToggleEventDetail } from '@golemui/gui-components';
 import {
@@ -58,7 +58,7 @@ export function Accordion(widgetInstance: WithWidget) {
           const isOpen = !!activeSections[section.uid];
           const child = children.find(
             (candidate) => candidate.uid === `${section.uid}${rowIndexSuffix}`,
-          ) as NonFunctionWidget<string> | undefined;
+          );
 
           return (
             <GuiAccordionItemReact

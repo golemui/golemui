@@ -228,12 +228,12 @@ describe('RangeTimePicker schema validation', () => {
     it('should fail on a non-boolean allowEdit', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, allowEdit should be a boolean
           {
             path: 'timeRanges',
             kind: 'input',
             type: 'rangeTimePicker',
             props: {
+              // @ts-expect-error Expected, allowEdit should be a boolean
               allowEdit: 'yes',
             },
           },

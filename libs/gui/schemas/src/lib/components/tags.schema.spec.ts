@@ -174,13 +174,14 @@ describe('Tags schema validation', () => {
     it('should fail on invalid type for trim', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, invalid type for trim
           {
             uid: 'tags-1',
             path: 'keywords',
             kind: 'input',
+            // @ts-expect-error The typed form helper has no tags widget
             type: 'tags',
             props: {
+              // @ts-expect-error Expected, invalid type for trim
               trim: 'yes',
             },
           },
@@ -198,13 +199,14 @@ describe('Tags schema validation', () => {
     it('should fail on unknown prop', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, unknown prop
           {
             uid: 'tags-1',
             path: 'keywords',
             kind: 'input',
+            // @ts-expect-error The typed form helper has no tags widget
             type: 'tags',
             props: {
+              // @ts-expect-error Expected, unknown prop
               foo: 'bar',
             },
           },

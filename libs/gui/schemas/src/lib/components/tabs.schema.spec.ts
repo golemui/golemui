@@ -126,7 +126,6 @@ describe('Tabs schema validation', () => {
     it('should fail on invalid renderMode enum', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, invalid enum
           {
             uid: 'tab-container',
             kind: 'layout',
@@ -141,6 +140,7 @@ describe('Tabs schema validation', () => {
             ],
             props: {
               tabs: [],
+              // @ts-expect-error Expected, invalid enum
               renderMode: 'lazy', // Expected: "all" | "activeOnly"
             },
           },

@@ -15,17 +15,9 @@ import {
   succeed,
   type FromDecoder,
 } from 'ts.data.json';
-import { errorMessage } from './errors';
 import { type Localizable, type TranslationConfig } from './i18n';
-import {
-  type DotPath,
-  type FunctionWidgetParams,
-  type ReactiveExpression,
-  type Uid,
-  type UiState,
-  type WidgetPropertyFunction,
-} from './shared';
-import { objectWithSuffix } from './utils/decoder';
+import { type DotPath, type ReactiveExpression, type Uid, type UiState } from './shared';
+import { functionInDefinitionMessage, noFunction, objectWithSuffix } from './utils/decoder';
 import { forbiddenPathSegmentIssue } from './utils/object';
 import { type AllSuffixable, type SomeSuffixable } from './utils/suffixable';
 import { derivedInputUid } from './utils/widget-uid';
@@ -42,33 +34,45 @@ import { derivedInputUid } from './utils/widget-uid';
  */
 export type WidgetType = string;
 
-type ReactiveWidgetPropertyValue<T, FormType extends Record<string, any> = any> =
-  | ReactiveExpression
-  | WidgetPropertyFunction<T, FormType>
-  | T;
+type ReactiveWidgetPropertyValue<T> = ReactiveExpression | T;
 
 /**
  * An event expression is basically a way to send an event `loadData` for the forms engine runtime to process.
  */
 type EventExpression = string;
 
-export type On<
-  StateKeys extends UiState = never,
-  FormType extends Record<string, any> = any,
-> = AllSuffixable<
+/**
+ * The events of a widget. Each value is the name of the event that the form sends to the host.
+ *
+ * @typeParam StateKeys - The state names that a suffixed key can use.
+ *
+ * @example
+ * ```typescript
+ * const on: On<'editing'> = { click: 'save', 'click.editing': 'saveDraft' };
+ * ```
+ */
+export type On<StateKeys extends UiState = never> = AllSuffixable<
   {
-    load?: ReactiveWidgetPropertyValue<EventExpression, FormType>;
-    click?: ReactiveWidgetPropertyValue<EventExpression, FormType>;
-    change?: ReactiveWidgetPropertyValue<EventExpression, FormType>;
-    filter?: ReactiveWidgetPropertyValue<EventExpression, FormType>;
-    blur?: ReactiveWidgetPropertyValue<EventExpression, FormType>;
+    load?: EventExpression;
+    click?: EventExpression;
+    change?: EventExpression;
+    filter?: EventExpression;
+    blur?: EventExpression;
   },
   StateKeys
 >;
 
+/**
+ * The fields that every widget kind has.
+ *
+ * @typeParam StateKeys - The state names that a suffixed key can use.
+ * @typeParam _FormType - The shape of the form data. No field reads it. It stays so that the
+ *   type arguments after it keep their positions.
+ * @typeParam Props - The props of the widget type.
+ */
 export type BaseWidget<
   StateKeys extends UiState = never,
-  FormType extends Record<string, any> = any,
+  _FormType extends Record<string, any> = any,
   Props extends Record<string, any> = any,
 > = {
   // kind: 'display' | 'action' | 'input' | 'layout';
@@ -82,23 +86,17 @@ export type BaseWidget<
    * Non-core properties e.g. text, level...
    * props can be suffixed with state keys. e.g. { props: {text: 'Login', 'text.register': 'Register'} }
    */
-  props?: AllSuffixable<MakeProps<Props, FormType>, StateKeys>;
+  props?: AllSuffixable<MakeProps<Props>, StateKeys>;
 };
 
-type MakeProps<
-  Props extends Record<string, any> = any,
-  FormType extends Record<string, any> = any,
-> = {
+type MakeProps<Props extends Record<string, any> = any> = {
   [K in keyof Props]: Props[K] extends string | (string | undefined)
     ? // We reconstruct the union to preserve literals.
       // 1. Props[K]: Keeps e.g. 'horizontal' | 'vertical'
       // 2. Exclude<Localizable, string>: Adds the object part of Localizable { key: ... }
       // 3. (string & {}): Adds generic string support WITHOUT swallowing the literals
-      | Props[K]
-        | WidgetPropertyFunction<Props[K], FormType>
-        | Exclude<Localizable, string>
-        | (string & {})
-    : Props[K] | WidgetPropertyFunction<Props[K], FormType>;
+      Props[K] | Exclude<Localizable, string> | (string & {})
+    : Props[K];
 };
 
 export type DisplayWidget<
@@ -115,9 +113,9 @@ export type ActionWidget<
   BaseWidget<StateKeys, FormType, Props> & {
     kind: 'action';
     actionType?: 'button' | 'submit';
-    label?: ReactiveWidgetPropertyValue<Localizable, FormType>;
+    label?: ReactiveWidgetPropertyValue<Localizable>;
     disabled?: boolean | { when: ReactiveExpression };
-    on?: On<StateKeys, FormType>;
+    on?: On<StateKeys>;
   },
   'disabled' | 'label' | 'size',
   StateKeys
@@ -133,13 +131,13 @@ export type InputWidget<
   BaseWidget<StateKeys, FormType, Props> & {
     kind: 'input';
     path: DotPath;
-    label?: ReactiveWidgetPropertyValue<Localizable, FormType>;
+    label?: ReactiveWidgetPropertyValue<Localizable>;
     disabled?: boolean | { when: ReactiveExpression };
     readonly?: boolean | { when: ReactiveExpression };
-    on?: On<StateKeys, FormType>;
+    on?: On<StateKeys>;
     defaultValue?: T;
     // TODO: this shouldn't be a ReactiveWidgetPropertyValue because it cannot be a string
-    validator?: ReactiveWidgetPropertyValue<V, FormType>;
+    validator?: ReactiveWidgetPropertyValue<V>;
   },
   'disabled' | 'readonly' | 'label' | 'validator' | 'size',
   StateKeys
@@ -153,7 +151,6 @@ type LayoutChildren<
   | InputWidget<any, StateKeys, FormType>
   | LayoutWidget<StateKeys, FormType>
   | ActionWidget<StateKeys, FormType>
-  | FunctionWidget<StateKeys, FormType>
 )[];
 
 export type LayoutWidget<
@@ -164,7 +161,7 @@ export type LayoutWidget<
 > = SomeSuffixable<
   BaseWidget<StateKeys, FormType, Props> & {
     kind: 'layout';
-    on?: On<StateKeys, FormType>;
+    on?: On<StateKeys>;
     // ⚠️ This should be FormWidget, but types cannot reference themselves. Keep in sync!
     children: Children;
   },
@@ -172,8 +169,18 @@ export type LayoutWidget<
   StateKeys
 >;
 
+/**
+ * A widget of a form definition: a display, an input, a layout or an action widget. A widget is
+ * an object, never a function.
+ *
+ * @typeParam StateKeys - The state names that a suffixed key can use.
+ * @typeParam FormType - The shape of the form data. No field reads it. It stays so that
+ *   `Validator` keeps its position.
+ * @typeParam Validator - The validator type of an input widget of this union. An input inside
+ *   the `children` of a layout has the default type.
+ */
 // ⚠️ When updating, update LayoutWidget['children'] too!
-export type NonFunctionWidget<
+export type FormWidget<
   StateKeys extends UiState = never,
   FormType extends Record<string, any> = any,
   Validator = any,
@@ -182,30 +189,6 @@ export type NonFunctionWidget<
   | InputWidget<any, StateKeys, FormType, any, Validator>
   | LayoutWidget<StateKeys, FormType>
   | ActionWidget<StateKeys, FormType>;
-
-// TODO: we should remove StateKeys because FunctionWidget don't support states
-export type FunctionWidget<
-  StateKeys extends UiState = never,
-  FormType extends Record<string, any> = any,
-  Validator = any,
-> = {
-  uid?: Uid;
-  type?: string;
-  path?: string; // when this is a control, this will have a path, otherwise undefined
-  /**
-   * Function that calculates the widget definition.
-   * Function Widgets are called at least once with `undefined`.
-   */
-  (api?: FunctionWidgetParams<FormType>): NonFunctionWidget<StateKeys, FormType, Validator>;
-};
-
-export type FormWidget<
-  StateKeys extends UiState = never,
-  FormType extends Record<string, any> = any,
-  Validator = any,
-> =
-  | NonFunctionWidget<StateKeys, FormType, Validator>
-  | FunctionWidget<StateKeys, FormType, Validator>;
 
 // --------------------------------
 //
@@ -218,16 +201,14 @@ export const isDisplayWidget = <
   FormType extends Record<string, any> = any,
 >(
   widget: FormWidget<StateKeys, FormType>,
-): widget is DisplayWidget<StateKeys, FormType> =>
-  typeof widget !== 'function' && widget.kind === 'display';
+): widget is DisplayWidget<StateKeys, FormType> => widget.kind === 'display';
 
 export const isActionWidget = <
   StateKeys extends string,
   FormType extends Record<string, any> = any,
 >(
   widget: FormWidget<StateKeys, FormType>,
-): widget is ActionWidget<StateKeys, FormType> =>
-  typeof widget !== 'function' && widget.kind === 'action';
+): widget is ActionWidget<StateKeys, FormType> => widget.kind === 'action';
 
 export const isInputWidget = <
   T,
@@ -235,23 +216,14 @@ export const isInputWidget = <
   FormType extends Record<string, any> = any,
 >(
   widget: FormWidget<StateKeys, FormType>,
-): widget is InputWidget<T, StateKeys, FormType> =>
-  typeof widget !== 'function' && widget.kind === 'input';
+): widget is InputWidget<T, StateKeys, FormType> => widget.kind === 'input';
 
 export const isLayoutWidget = <
   StateKeys extends string,
   FormType extends Record<string, any> = any,
 >(
   widget: FormWidget<StateKeys, FormType>,
-): widget is LayoutWidget<StateKeys, FormType> =>
-  typeof widget !== 'function' && widget.kind === 'layout';
-
-export const isFunctionWidget = <
-  StateKeys extends string,
-  FormType extends Record<string, any> = any,
->(
-  widget: FormWidget<StateKeys, FormType>,
-): widget is FunctionWidget<StateKeys, FormType> => typeof widget === 'function';
+): widget is LayoutWidget<StateKeys, FormType> => widget.kind === 'layout';
 
 // --------------------------------
 //
@@ -277,24 +249,12 @@ const excludeDecoder = oneOf<From | When>([fromDecoder, whenDecoder]);
 // disable / readonly
 const boolWhenDecoder = oneOf<boolean | When>([boolean(), whenDecoder]);
 
-// all widget properties that support states can potentially be a WidgetPropertyFunction
-const widgetPropFnDecoder: Decoder<WidgetPropertyFunction<any>> = new Decoder((json: unknown) => {
-  const jsonTypeof = typeof json;
-  if (jsonTypeof === 'function') {
-    return ok(json as WidgetPropertyFunction<any>);
-  } else {
-    return err([{ message: `Expected a function, got '${jsonTypeof}'`, path: [] }]);
-  }
-});
-const decodeWidgetPropOrWidgetPropFn = <T>(decoder: Decoder<T>) =>
-  oneOf<T | WidgetPropertyFunction<any>>([decoder, widgetPropFnDecoder]);
-
 const onDecoder = objectWithSuffix({
-  load: { suffixed: true, decoder: decodeWidgetPropOrWidgetPropFn(optional(string())) },
-  click: { suffixed: true, decoder: decodeWidgetPropOrWidgetPropFn(optional(string())) },
-  change: { suffixed: true, decoder: decodeWidgetPropOrWidgetPropFn(optional(string())) },
-  filter: { suffixed: true, decoder: decodeWidgetPropOrWidgetPropFn(optional(string())) },
-  blur: { suffixed: true, decoder: decodeWidgetPropOrWidgetPropFn(optional(string())) },
+  load: { suffixed: true, decoder: optional(string()) },
+  click: { suffixed: true, decoder: optional(string()) },
+  change: { suffixed: true, decoder: optional(string()) },
+  filter: { suffixed: true, decoder: optional(string()) },
+  blur: { suffixed: true, decoder: optional(string()) },
 });
 
 const translationConfigDecoder = object<TranslationConfig>({
@@ -306,6 +266,21 @@ const localizableDecoder = oneOf<Localizable>([string(), translationConfigDecode
 
 // Missing uids are assigned later by assignDeterministicUids (see formDefDecoder)
 const uidDecoder = optional(string());
+
+// Nothing calls a prop that is a function, so it is an issue. A function deeper inside a prop
+// value is not checked: what a list or an object of a prop holds belongs to the widget.
+const propsDecoder = optional(
+  new Decoder<Record<string, any>>((json: unknown) => {
+    if (typeof json === 'object' && json !== null) {
+      for (const key of Object.keys(json)) {
+        if (typeof (json as Record<string, unknown>)[key] === 'function') {
+          return err([{ message: functionInDefinitionMessage, path: [key] }]);
+        }
+      }
+    }
+    return ok(json as Record<string, any>);
+  }),
+);
 
 // The path writers throw on these segments too. Rejecting them at decode names the widget in the
 // form health message, and the `unset` of a hidden input at submit never throws.
@@ -324,7 +299,7 @@ const displayWidgetDecoder = objectWithSuffix<DisplayWidget<string>>({
   size: { suffixed: true, decoder: optional(number()) },
   include: { decoder: optional(includeDecoder) },
   exclude: { decoder: optional(excludeDecoder) },
-  props: { decoder: optional(succeed()) },
+  props: { decoder: propsDecoder },
 });
 
 const actionWidgetDecoder = objectWithSuffix<ActionWidget<string>>({
@@ -337,53 +312,10 @@ const actionWidgetDecoder = objectWithSuffix<ActionWidget<string>>({
   size: { suffixed: true, decoder: optional(number()) },
   include: { decoder: optional(includeDecoder) },
   exclude: { decoder: optional(excludeDecoder) },
-  label: {
-    suffixed: true,
-    decoder: decodeWidgetPropOrWidgetPropFn(optional(localizableDecoder)),
-  },
+  label: { suffixed: true, decoder: optional(localizableDecoder) },
   disabled: { suffixed: true, decoder: optional(boolWhenDecoder) },
   on: { decoder: optional(onDecoder) },
-  props: { decoder: optional(succeed()) },
-});
-
-const functionWidgetDecoder: Decoder<FunctionWidget<string>> = new Decoder((json: unknown) => {
-  const jsonTypeof = typeof json;
-  if (jsonTypeof === 'function') {
-    const fnWidget = json as FunctionWidget<string>;
-    let widget: ReturnType<FunctionWidget<string>>;
-    try {
-      // Widget functions expect an empty object for `$form`, otherwise the evaluation crashes
-      widget = fnWidget({
-        $form: {},
-        errors: undefined,
-        touched: undefined,
-        translate: undefined,
-      });
-    } catch (error) {
-      return err([
-        {
-          message: `The widget function threw when the form called it with an empty $form and no $item: ${errorMessage(error)}`,
-          path: [],
-        },
-      ]);
-    }
-    if (widget === null || typeof widget !== 'object' || Array.isArray(widget)) {
-      return err([{ message: 'Expected the widget function to return a widget object', path: [] }]);
-    }
-    // The uid is stored on the function object itself so re-decoding the same function keeps the same uid.
-    // An empty uid gets a position uid later (see assignDeterministicUids), so a server and a client process decoding the same definition agree on it.
-    const path = (widget as InputWidget<unknown>).path; // this could be undefined, and it's ok.
-    const pathIssue = typeof path === 'string' ? forbiddenPathSegmentIssue(path) : undefined;
-    if (pathIssue !== undefined) {
-      return err([{ message: pathIssue, path: [] }]);
-    }
-    fnWidget.uid = fnWidget.uid || widget.uid;
-    fnWidget.type = widget.type;
-    fnWidget.path = path;
-    return ok(fnWidget);
-  } else {
-    return err([{ message: `Expected a function, got '${jsonTypeof}'`, path: [] }]);
-  }
+  props: { decoder: propsDecoder },
 });
 
 const inputWidgetDecoder = objectWithSuffix<InputWidget<any, string>>({
@@ -396,17 +328,11 @@ const inputWidgetDecoder = objectWithSuffix<InputWidget<any, string>>({
   disabled: { suffixed: true, decoder: optional(boolWhenDecoder) },
   readonly: { suffixed: true, decoder: optional(boolWhenDecoder) },
   on: { decoder: optional(onDecoder) },
-  props: { decoder: optional(succeed()) },
-  label: {
-    suffixed: true,
-    decoder: decodeWidgetPropOrWidgetPropFn(optional(localizableDecoder)),
-  },
+  props: { decoder: propsDecoder },
+  label: { suffixed: true, decoder: optional(localizableDecoder) },
   path: { decoder: inputPathDecoder },
   defaultValue: { decoder: optional(succeed()) },
-  validator: {
-    suffixed: true,
-    decoder: decodeWidgetPropOrWidgetPropFn(optional(succeed())),
-  },
+  validator: { suffixed: true, decoder: optional(succeed()) },
 }).flatMap(
   (ctrl) =>
     new Decoder<InputWidget<any, string>>(() => {
@@ -433,26 +359,17 @@ const inputWidgetDecoder = objectWithSuffix<InputWidget<any, string>>({
     }),
 );
 
-type FormWidgetDecoder = Decoder<
-  | DisplayWidget<string>
-  | ActionWidget<string>
-  | InputWidget<any, string>
-  | LayoutWidget<string>
-  | FunctionWidget<string>
->;
-const formWidgetDecoder = lazy((): FormWidgetDecoder => {
-  const objectWidgetDecoder = discriminatedUnion('kind', {
-    input: inputWidgetDecoder,
-    layout: layoutWidgetDecoder,
-    display: displayWidgetDecoder,
-    action: actionWidgetDecoder,
-  });
-  return new Decoder<FormWidget<string>>((json: unknown) =>
-    typeof json === 'function'
-      ? functionWidgetDecoder.decode(json)
-      : objectWidgetDecoder.decode(json),
-  );
-});
+const formWidgetDecoder = lazy(
+  (): Decoder<FormWidget<string>> =>
+    noFunction(
+      discriminatedUnion('kind', {
+        input: inputWidgetDecoder,
+        layout: layoutWidgetDecoder,
+        display: displayWidgetDecoder,
+        action: actionWidgetDecoder,
+      }),
+    ),
+);
 
 export const layoutWidgetDecoder = objectWithSuffix<LayoutWidget<string>>({
   kind: { decoder: literal('layout') },
@@ -461,7 +378,7 @@ export const layoutWidgetDecoder = objectWithSuffix<LayoutWidget<string>>({
   size: { suffixed: true, decoder: optional(number()) },
   include: { decoder: optional(includeDecoder) },
   exclude: { decoder: optional(excludeDecoder) },
-  props: { decoder: optional(succeed()) },
+  props: { decoder: propsDecoder },
   on: { decoder: optional(onDecoder) },
   children: { decoder: array(formWidgetDecoder) },
 });

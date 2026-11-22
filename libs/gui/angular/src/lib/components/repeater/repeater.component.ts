@@ -12,7 +12,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { InputWidgetAdapter, WidgetDirective } from '@golemui/angular';
-import type { InputWidget, NonFunctionWidget, WithWidget } from '@golemui/core';
+import type { FormWidget, InputWidget, WithWidget } from '@golemui/core';
 import {
   findRepeaterRowFocus,
   focusAfterRowRemoval,
@@ -38,10 +38,8 @@ import { deferHydrationAttr } from '../../utils/defer-hydration';
 })
 export class RepeaterComponent implements OnInit, OnDestroy, WithWidget {
   widget!: InputWidget<Record<string, unknown>[]>;
-  protected adapter: InputWidgetAdapter<
-    Record<string, unknown>[],
-    RepeaterProps<NonFunctionWidget>
-  > = inject(InputWidgetAdapter);
+  protected adapter: InputWidgetAdapter<Record<string, unknown>[], RepeaterProps<FormWidget>> =
+    inject(InputWidgetAdapter);
   protected readonly deferHydration = deferHydrationAttr();
 
   isFocused = false;

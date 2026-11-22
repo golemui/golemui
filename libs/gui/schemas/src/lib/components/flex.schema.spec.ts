@@ -124,7 +124,6 @@ describe('Flex schema validation', () => {
     it('should fail on invalid enum for direction', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, direction is invalid
           {
             uid: 'flex-1',
             kind: 'layout',
@@ -138,6 +137,7 @@ describe('Flex schema validation', () => {
               },
             ],
             props: {
+              // @ts-expect-error Expected, direction is invalid
               direction: 'diagonal',
             },
           },

@@ -178,13 +178,13 @@ describe('Markdown schema validation', () => {
     it('should fail on invalid type for hint', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, hint should be a string or localizable object
           {
             uid: 'md-1',
             path: 'content',
             kind: 'input',
             type: 'markdown',
             props: {
+              // @ts-expect-error Expected, hint should be a string or localizable object
               hint: 123,
             },
           },

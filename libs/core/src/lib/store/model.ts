@@ -1,5 +1,5 @@
 import { type Form, formDefDecoder } from '../form';
-import type { FormWidget, FunctionWidget } from '../form-widget';
+import type { FormWidget } from '../form-widget';
 import { type DotPath, type Uid, type ValidationStatus } from '../shared';
 
 // ------------------------------
@@ -25,7 +25,7 @@ export type State = {
   /**
    * `flatForm` plus one entry per repeater row widget, keyed by concrete uid.
    * Row entries carry the row indexes in `uid` and (for inputs) `path`, and include the row layout node
-   * and nested repeater containers. Function widgets stay callable, `when` expressions are not rewritten.
+   * and nested repeater containers. `when` expressions are not rewritten.
    * Pure function of `(flatForm, data)`, built by `expandSources` on every reducer pipeline run.
    * Read by the derive passes, the view model, `dropRemovedWidgetEntries`, `overrideWidgetProp`
    * and `pruneHiddenData`.
@@ -246,5 +246,5 @@ export type DerivedWidget<F extends FormWidget<string>> = {
   /** The source widget from which the derived value is computed */
   source: F;
   /** The most recently computed, fully resolved widget */
-  current: Exclude<F, FunctionWidget<string>>;
+  current: F;
 };

@@ -1,4 +1,4 @@
-import { type InputWidget, type NonFunctionWidget, widgetViewModel$ } from '@golemui/core';
+import { type FormWidget, type InputWidget, widgetViewModel$ } from '@golemui/core';
 import { toDomId } from '@golemui/core/internals';
 import { onMounted, onScopeDispose, ref, type Ref } from 'vue';
 import { useVueFormContext } from '../provideFormContext';
@@ -24,7 +24,7 @@ export interface UseInputWidgetReturn<T, ExtraProps extends Record<string, any>>
        * Repeater inputs only: one row layout node per row of the array value, uid and path
        * already indexed.
        */
-      rows?: NonFunctionWidget<string>[];
+      rows?: FormWidget<string>[];
     }
   >;
   errors: Ref<string[]>;

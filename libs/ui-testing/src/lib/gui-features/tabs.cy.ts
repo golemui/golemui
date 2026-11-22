@@ -15,8 +15,10 @@ export const runTabsComponentTests = (baseMountFn: MountComponentFn) => {
     const getFormDefinition = (
       props: Record<string, unknown> = {},
       thirdPanelInclude?: { when: string },
+      states?: Record<string, string>,
     ) =>
       defineForm({
+        ...(states ? { states } : {}),
         form: [
           {
             uid: TABS_UID,
@@ -90,16 +92,24 @@ export const runTabsComponentTests = (baseMountFn: MountComponentFn) => {
         .and('have.attr', 'aria-labelledby', `${testDomId(TABS_UID)}_tab_secondPanel`);
     });
 
-    it('reads the tabs from the calculated props when a property function produces them', () => {
-      // The raw prop value is the function itself, only the calculated props hold the array
+    it('reads the tabs from the calculated props when an active state changes them', () => {
+      // The raw prop has two tabs. Only the calculated props hold the three tabs of the active state.
       mountFn({
-        formDef: getFormDefinition({
-          tabs: () => [
-            { uid: 'firstPanel', label: 'First' },
-            { uid: 'secondPanel', label: 'Second' },
-            { uid: 'thirdPanel', label: 'Third' },
-          ],
-        }),
+        formDef: getFormDefinition(
+          {
+            tabs: [
+              { uid: 'firstPanel', label: 'First' },
+              { uid: 'secondPanel', label: 'Second' },
+            ],
+            'tabs.threeTabs': [
+              { uid: 'firstPanel', label: 'First' },
+              { uid: 'secondPanel', label: 'Second' },
+              { uid: 'thirdPanel', label: 'Third' },
+            ],
+          },
+          undefined,
+          { threeTabs: 'true' },
+        ),
       });
 
       cy.get('[role="tab"]').should('have.length', 3);

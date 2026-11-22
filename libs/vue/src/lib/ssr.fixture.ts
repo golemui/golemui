@@ -5,7 +5,6 @@ import type {
   FormInitConfig,
   InputWidget,
   LayoutWidget,
-  NonFunctionWidget,
   ValidatorFn,
   WithWidget,
 } from '@golemui/core';
@@ -92,9 +91,7 @@ const StubFlex = defineComponent({
         'div',
         // Reads templateData like a real layout, so a templateData change renders it again.
         { class: 'stub-flex', id: uid.value, 'data-label': templateData.value.label },
-        (children.value as NonFunctionWidget<string>[]).map((child) =>
-          h(WidgetRenderer, { key: child.uid, widget: child }),
-        ),
+        children.value.map((child) => h(WidgetRenderer, { key: child.uid, widget: child })),
       );
     };
   },

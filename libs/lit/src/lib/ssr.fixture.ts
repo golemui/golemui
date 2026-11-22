@@ -3,10 +3,10 @@ import type {
   ActionWidget,
   DisplayWidget,
   FormInitConfig,
+  FormWidget,
   InputWidget,
   LayoutWidget,
   Middleware,
-  NonFunctionWidget,
   State,
   ValidatorFn,
   WithWidget,
@@ -81,7 +81,7 @@ export const renderRecords: RenderRecord[] = [];
  * `recordedAdapters`, and renders again on every templateData change. Each completed render is
  * recorded in `renderRecords`.
  */
-abstract class StubWidgetElement<Widget extends NonFunctionWidget>
+abstract class StubWidgetElement<Widget extends FormWidget>
   extends LitElement
   implements WithWidget
 {
@@ -140,7 +140,7 @@ class StubFlexElement extends StubWidgetElement<LayoutWidget> {
   adapter = new LayoutWidgetAdapter();
 
   override render() {
-    const children = (this.adapter.templateData.children ?? []) as NonFunctionWidget<string>[];
+    const children = this.adapter.templateData.children ?? [];
     return html`<div class="stub-flex" id=${this.widget.uid}>
       ${children.map((child) => html`<gui-widget .widget=${child}></gui-widget>`)}
     </div>`;
@@ -152,7 +152,7 @@ class StubRepeaterElement extends StubWidgetElement<InputWidget<unknown[]>> {
   adapter = new InputWidgetAdapter<unknown[], Record<string, any>>();
 
   override render() {
-    const rows = (this.adapter.templateData.rows ?? []) as NonFunctionWidget<string>[];
+    const rows = this.adapter.templateData.rows ?? [];
     return html`<div class="stub-repeater" id=${this.widget.uid}>
       ${rows.map((row) => html`<gui-widget .widget=${row}></gui-widget>`)}
     </div>`;

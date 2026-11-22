@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { InputWidget, NonFunctionWidget, Validator, WithWidget } from '@golemui/core';
+import type { FormWidget, InputWidget, Validator, WithWidget } from '@golemui/core';
 import {
   findRepeaterRowFocus,
   focusAfterRowRemoval,
@@ -24,7 +24,7 @@ const {
   errors,
   isTouched,
   onBlur,
-} = useInputWidget<Record<string, unknown>[], RepeaterProps<NonFunctionWidget<string>>>(widget);
+} = useInputWidget<Record<string, unknown>[], RepeaterProps<FormWidget<string>>>(widget);
 
 const required = computed(() => (templateData.value.validator as Validator)?.required);
 const showErrors = computed(() => isTouched.value && errors.value && errors.value.length > 0);

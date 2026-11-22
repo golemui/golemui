@@ -187,12 +187,12 @@ describe('Currency schema validation', () => {
     it('should fail on invalid enum/type for step', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error Expected, step should be a number
           {
             path: 'amount',
             kind: 'input',
             type: 'currency',
             props: {
+              // @ts-expect-error Expected, step should be a number
               step: 'one',
             },
           },

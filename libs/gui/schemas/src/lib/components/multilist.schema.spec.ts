@@ -179,12 +179,12 @@ describe('MultiList schema validation', () => {
     it('should fail on a scalar defaultValue', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error defaultValue must be an array
           {
             uid: 'ml-1',
             path: 'toppings',
             kind: 'input',
             type: 'multiList',
+            // @ts-expect-error defaultValue must be an array
             defaultValue: 'cheese',
             props: { items: [] },
           },
@@ -202,13 +202,13 @@ describe('MultiList schema validation', () => {
     it('should fail on invalid items type', () => {
       const formDef = golemForm().create({
         form: [
-          // @ts-expect-error items should be an array
           {
             uid: 'ml-1',
             path: 'toppings',
             kind: 'input',
             type: 'multiList',
             props: {
+              // @ts-expect-error items should be an array
               items: 'not an array',
             },
           },

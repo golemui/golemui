@@ -191,7 +191,6 @@ function customWidgetCases(): Record<string, unknown> {
     'kind-is-not-allowed': { form: [{ kind: 'weird', type: 'myWidget' }] },
     'kind-is-missing': { form: [{ type: 'myWidget' }] },
     'type-is-missing': { form: [{ kind: 'input', path: 'field' }] },
-    'renderer-without-a-schema': { form: [{ kind: 'display', type: 'renderer' }] },
     'type-is-a-typo': { form: [{ kind: 'input', type: 'textimput', path: 'field' }] },
   };
 }

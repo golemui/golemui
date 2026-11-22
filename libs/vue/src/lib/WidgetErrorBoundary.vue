@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { NonFunctionWidget } from '@golemui/core';
+import type { FormWidget } from '@golemui/core';
 import { onErrorCaptured, ref } from 'vue';
 
 defineProps<{
-  widget: NonFunctionWidget<string>;
+  widget: FormWidget<string>;
 }>();
 
 const error = ref<Error | null>(null);

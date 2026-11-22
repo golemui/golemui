@@ -2,7 +2,7 @@ import { type StandardSchemaV1 } from '@standard-schema/spec';
 import { BehaviorSubject } from 'rxjs';
 import { describe, expect, it } from 'vitest';
 import { type ValidatorFn } from '../form-validator';
-import { type LayoutWidget, type NonFunctionWidget } from '../form-widget';
+import { type LayoutWidget } from '../form-widget';
 import { identityTranslator } from '../i18n';
 import { type ExpressionFunctions, type ValidateOn } from '../shared';
 import { type Action } from './actions';
@@ -577,14 +577,14 @@ describe('createWidgetViewModelReader', () => {
 
     const firstRowBefore = read(state, 'rowTotal[0]');
     const secondRowBefore = read(state, 'rowTotal[1]');
-    expect((secondRowBefore.widget as NonFunctionWidget<string>).props?.['text']).toBe('Row 2: 5');
+    expect(secondRowBefore.widget?.props?.['text']).toBe('Row 2: 5');
 
     state = reduce(state, setWidgetData('lineItems.1.quantity', 9));
 
     expect(read(state, 'rowTotal[0]')).toBe(firstRowBefore);
     const secondRowAfter = read(state, 'rowTotal[1]');
     expect(secondRowAfter).not.toBe(secondRowBefore);
-    expect((secondRowAfter.widget as NonFunctionWidget<string>).props?.['text']).toBe('Row 2: 9');
+    expect(secondRowAfter.widget?.props?.['text']).toBe('Row 2: 9');
   });
 });
 

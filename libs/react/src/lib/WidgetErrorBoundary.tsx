@@ -1,4 +1,4 @@
-import type { NonFunctionWidget } from '@golemui/core';
+import type { FormWidget } from '@golemui/core';
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 /**
@@ -15,11 +15,11 @@ import { Component, type ErrorInfo, type ReactNode } from 'react';
  *   </Text>
  * );
  */
-export type WidgetErrorFallback = (error: Error, widget: NonFunctionWidget<string>) => ReactNode;
+export type WidgetErrorFallback = (error: Error, widget: FormWidget<string>) => ReactNode;
 
 interface Props {
   children: ReactNode;
-  widget: NonFunctionWidget<string, any>;
+  widget: FormWidget<string, any>;
   /** Replacement UI for a widget that threw. Defaults to {@link DefaultWidgetErrorFallback}, which renders DOM elements. */
   fallback?: WidgetErrorFallback;
 }

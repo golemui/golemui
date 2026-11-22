@@ -1,7 +1,5 @@
-import { type ActionWidget, type NonFunctionWidget } from './form-widget';
-import { type I18nTranslator } from './i18n';
+import { type ActionWidget, type FormWidget } from './form-widget';
 import { type INJECT_VALIDATION_ISSUES, type OVERRIDE_WIDGET_PROP } from './store/actions';
-import { type ImmutableRecord } from './utils/types';
 
 /**
  * The UI state name.
@@ -64,41 +62,6 @@ export type ValidationStatus = null | string[];
  */
 export type $Errors = {
   [key: string]: ValidationStatus | $Errors;
-};
-
-export type WidgetPropertyFunctionParams<FormType extends Record<string, any>> = {
-  $form: ImmutableRecord<FormType>;
-  translate?: I18nTranslator['translate'];
-  /**
-   * The current repeater item. Bound only when the widget is inside a repeater `props.template`, for nested repeaters it is the innermost enclosing item.
-   */
-  $item?: any;
-  /**
-   * Zero-based position of the current repeater item. Bound only when the widget is inside a repeater `props.template`.
-   */
-  $index?: number;
-};
-
-/**
- * A WidgetPropertyFunction is a widget function that is evaluated and then substituted by the produced value.
- */
-export type WidgetPropertyFunction<T, FormType extends Record<string, any> = any> = (
-  api: WidgetPropertyFunctionParams<FormType>,
-) => T;
-
-export type FunctionWidgetParams<FormType> = {
-  $form: ImmutableRecord<FormType>;
-  errors: ValidationStatus | undefined;
-  touched: boolean | undefined;
-  translate: I18nTranslator['translate'] | undefined;
-  /**
-   * The current repeater item. Bound only when the widget is inside a repeater `props.template`, for nested repeaters it is the innermost enclosing item.
-   */
-  $item?: any;
-  /**
-   * Zero-based position of the current repeater item. Bound only when the widget is inside a repeater `props.template`.
-   */
-  $index?: number;
 };
 
 /**
@@ -199,7 +162,7 @@ export type ControlTemplateData<T, V = any> = {
    * A repeater's rows: one row layout node per entry of its array value, with the row indexes
    * already applied to every uid and path. Only set for repeater inputs.
    */
-  rows?: NonFunctionWidget<string>[];
+  rows?: FormWidget<string>[];
 };
 
 /**
@@ -215,7 +178,7 @@ export type LayoutTemplateData = {
    * size: 2
    */
   size?: number;
-  children: NonFunctionWidget<string>[];
+  children: FormWidget<string>[];
 };
 
 /**

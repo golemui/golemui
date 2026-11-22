@@ -148,17 +148,19 @@ export const runAccordionComponentTests = (baseMountFn: MountComponentFn) => {
   describe('Accordion Component with calculated props', () => {
     const ACCORDION_UID = 'calculatedAccordion';
 
-    it('reads singleOpen from the calculated props when a property function produces it', () => {
-      // The raw prop value is the function itself (truthy), only the calculated props hold `false`
+    it('reads singleOpen from the calculated props when an active state changes it', () => {
+      // The raw prop is true. Only the calculated props hold false, the value of the active state.
       mountFn({
         formDef: defineForm({
+          states: { severalOpen: 'true' },
           form: [
             {
               uid: ACCORDION_UID,
               kind: 'layout',
               type: 'accordion',
               props: {
-                singleOpen: () => false,
+                singleOpen: true,
+                'singleOpen.severalOpen': false,
                 defaultOpen: { firstSection: true },
                 sections: [
                   { uid: 'firstSection', label: 'First' },
