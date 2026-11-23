@@ -48,6 +48,7 @@ export type {
   ExpressionFunctions,
   FormEvent,
   FormEventRow,
+  FormEventWidget,
   FormSubmitEvent,
   LayoutTemplateData,
   ReactiveExpression,

@@ -283,6 +283,8 @@ export const runEventsComponentTests = (baseMountFn: MountComponentFn) => {
             path: 'teams.0.developers.1',
           });
           expect(events[1].data['teams'][0].developers[1].name).to.equal('Grace');
+          // The reused row component sends the uid of its new row.
+          expect(events[1].widget).to.deep.equal({ uid: 'pickDev[0][1]', type: 'button' });
         });
       });
 
@@ -300,6 +302,11 @@ export const runEventsComponentTests = (baseMountFn: MountComponentFn) => {
             path: 'teams.1.developers.0',
           });
           expect(events[0].data['teams'][1].developers[0].name).to.equal('Linus!');
+          expect(events[0].widget).to.deep.equal({
+            uid: 'devName[1][0]',
+            type: 'textinput',
+            path: 'teams.1.developers.0.name',
+          });
         });
       });
 

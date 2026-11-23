@@ -102,6 +102,8 @@ export type FormEvent<T = any> = {
   data: Record<string, T>;
   /** The detail provided by the widget at the moment the event was dispatched. */
   detail?: any;
+  /** The widget that sent the event. */
+  widget: FormEventWidget;
   /** The repeater row of the widget that sent the event. Undefined outside a repeater. */
   row?: FormEventRow;
   /** Actions that the client can execute to interact with the forms engine from the application scope */
@@ -123,7 +125,22 @@ export type FormEventRow = {
   path: DotPath;
 };
 
-export type FormSubmitEvent<T = any> = Omit<FormEvent<T>, 'name' | 'detail' | 'row'>;
+/**
+ * The widget that sent a form event. Inside a repeater, `uid` and `path` are the ones of the row.
+ * @example
+ * // The name input of the second row of a `users` repeater
+ * { uid: 'user-name[1]', type: 'textinput', path: 'users.1.name' }
+ */
+export type FormEventWidget = {
+  /** The uid the form gave the widget. */
+  uid: Uid;
+  /** The widget type, e.g. `textinput` or `button`. */
+  type: string;
+  /** The data path of an input. Undefined for the other widget kinds. */
+  path?: DotPath;
+};
+
+export type FormSubmitEvent<T = any> = Omit<FormEvent<T>, 'name' | 'detail' | 'widget' | 'row'>;
 
 /**
  * The DOM event names dispatched by `<gui-core-form>`, and therefore the names the Lit
