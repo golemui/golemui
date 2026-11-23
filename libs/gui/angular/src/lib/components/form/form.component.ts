@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { type AfterViewInit, Component, input, output, type Type, viewChild } from '@angular/core';
 import { type AngularWidgetSet, provideWidgetSet, WidgetSetFormComponent } from '@golemui/angular';
-import type { FormEvent, FormHealth, FormSubmitEvent } from '@golemui/core';
+import { cloneObject, type FormEvent, type FormHealth, type FormSubmitEvent } from '@golemui/core';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { initValidators } from '@golemui/gui-validators';
 import { widgetLoaders } from '../../widget.loaders';
@@ -27,6 +27,9 @@ export class FormComponent implements AfterViewInit {
 
   private innerForm = viewChild(WidgetSetFormComponent);
   // The inner form does not exist before the view, so these calls wait for it.
+  // The view child exists before the first change detection binds its inputs, so its config
+  // cannot be read before the view is ready. setData and getData wait for that.
+  private viewReady = false;
   private dataBeforeView: Record<string, any> | undefined;
   private metaBeforeView: Record<string, any> | undefined;
   private healthBeforeView: FormHealth | undefined;
@@ -36,6 +39,7 @@ export class FormComponent implements AfterViewInit {
   formSubmit = output<FormSubmitEvent>();
 
   ngAfterViewInit(): void {
+    this.viewReady = true;
     if (this.dataBeforeView) {
       this.innerForm()?.setData(this.dataBeforeView);
       this.dataBeforeView = undefined;
@@ -50,9 +54,21 @@ export class FormComponent implements AfterViewInit {
     }
   }
 
+  /**
+   * Returns a copy of the form data, as a form event would carry it now: without the values of
+   * hidden inputs. Before the form has started, it returns the data the form will start with.
+   */
+  getData(): Record<string, any> {
+    const innerForm = this.innerForm();
+    if (innerForm && this.viewReady) {
+      return innerForm.getData();
+    }
+    return cloneObject(this.dataBeforeView ?? this.config().data ?? {});
+  }
+
   setData(data: Record<string, any>): void {
     const innerForm = this.innerForm();
-    if (innerForm) {
+    if (innerForm && this.viewReady) {
       innerForm.setData(data);
     } else {
       this.dataBeforeView = data;

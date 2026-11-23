@@ -80,12 +80,14 @@ export const mountFramework = (options: MountOptions) => {
   ).then(() => {
     const el = document.querySelector('gui-form') as HTMLElement & {
       config: GuiFormInitConfig;
+      getData: FormHandle['getData'];
       setData: FormHandle['setData'];
       setMeta: FormHandle['setMeta'];
       setHealth: FormHandle['setHealth'];
       requestUpdate: () => void;
     };
     options.onFormReady?.({
+      getData: () => el.getData(),
       setData: (data) => el.setData(data),
       setMeta: (meta) => el.setMeta(meta),
       setHealth: (health) => el.setHealth(health),

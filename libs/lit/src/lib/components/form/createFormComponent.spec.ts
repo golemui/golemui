@@ -373,6 +373,45 @@ describe('a call on a form element built by createFormComponent after a new conf
   });
 });
 
+describe('getData on a form element built by createFormComponent', () => {
+  it('returns the config data before the first update', () => {
+    const wrapper = createWrapper();
+    wrapper.config = { formDef, data: { firstName: 'Ada' } };
+
+    expect(wrapper.getData()).toEqual({ firstName: 'Ada' });
+  });
+
+  it('returns the data of a setData call made before the first update', () => {
+    const wrapper = createWrapper();
+
+    wrapper.setData({ firstName: 'Bob' });
+
+    expect(wrapper.getData()).toEqual({ firstName: 'Bob' });
+  });
+
+  it('returns the data of the core form after the start', async () => {
+    const wrapper = createWrapper();
+    document.body.append(wrapper);
+    await afterLitRenderSchedule();
+
+    wrapper.setData({ firstName: 'Bob' });
+
+    expect(wrapper.getData()).toEqual({ firstName: 'Bob' });
+  });
+
+  it('returns the data of a new config before the next update', async () => {
+    const wrapper = createWrapper();
+    document.body.append(wrapper);
+    await afterLitRenderSchedule();
+
+    wrapper.config = { formDef, data: { firstName: 'Dana' } };
+
+    expect(wrapper.getData()).toEqual({ firstName: 'Dana' });
+    await afterLitRenderSchedule();
+    expect(wrapper.getData()).toEqual({ firstName: 'Dana' });
+  });
+});
+
 describe('a form element built by createFormComponent', () => {
   it('passes the autocomplete HTML attribute to the inner form element', async () => {
     const wrapper = createWrapper();

@@ -22,7 +22,8 @@ the form component accepts: https://golemui.com/json/features/overview.md
   so the host can tell the rows apart.
   https://golemui.com/json/features/events.md
 - **Runtime methods** — imperative API on the form component instance (read/patch values,
-  trigger validation, react to runtime changes). `setData`, `setMeta` and `setHealth`;
+  trigger validation, react to runtime changes). `getData`, `setData`, `setMeta` and
+  `setHealth`;
   `setHealth({ status: 'errored', code, message })` freezes the form and shows the
   `formHealthBoundary` until `setHealth({ status: 'ok' })` (codes below 1000 belong to the core).
   Per-framework handles: `framework-setup.md`.

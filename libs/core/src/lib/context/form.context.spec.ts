@@ -613,6 +613,47 @@ describe('FormContext.emitSubmitEvent', () => {
   });
 });
 
+describe('FormContext.getData', () => {
+  const formDef = {
+    states: { vip: '$form.vip === true' },
+    form: [
+      { uid: 'name', kind: 'input', type: 'textinput', path: 'name', on: { change: 'changed' } },
+      { uid: 'secret', kind: 'input', type: 'textinput', path: 'secret', include: { in: ['vip'] } },
+    ],
+  };
+
+  it('returns the data of an event sent at the same moment', () => {
+    const { context, events, emitFrom } = createForm(formDef, {
+      vip: false,
+      name: 'Ada',
+      secret: 'x',
+    });
+
+    emitFrom('change', 'name');
+
+    expect(context.getData()).toEqual({ vip: false, name: 'Ada' });
+    expect(context.getData()).toEqual(events[0].data);
+  });
+
+  it('returns the data after a setData', () => {
+    const { context } = createForm(formDef, { name: 'Ada' });
+
+    context.store.dispatch({ type: 'SET_DATA', payload: { data: { vip: true, secret: 'y' } } });
+
+    expect(context.getData()).toEqual({ vip: true, secret: 'y' });
+  });
+
+  it('returns a copy that the caller can change without changing the form', () => {
+    const { context } = createForm(formDef, { name: 'Ada', tags: ['a'] });
+
+    const data = context.getData();
+    data['name'] = 'Linus';
+    data['tags'].push('b');
+
+    expect(context.getData()).toEqual({ name: 'Ada', tags: ['a'] });
+  });
+});
+
 describe('FormContext.initialize', () => {
   const formDef = {
     form: [

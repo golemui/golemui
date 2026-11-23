@@ -11,12 +11,13 @@ import {
   type Type,
   viewChild,
 } from '@angular/core';
-import type {
-  FormEvent,
-  FormHealth,
-  FormInitConfig,
-  FormSubmitEvent,
-  WithWidget,
+import {
+  cloneObject,
+  type FormEvent,
+  type FormHealth,
+  type FormInitConfig,
+  type FormSubmitEvent,
+  type WithWidget,
 } from '@golemui/core';
 import {
   buildWidgetSetForm,
@@ -77,6 +78,9 @@ export class WidgetSetFormComponent implements AfterViewInit {
   private widgetSet = inject(GOLEMUI_WIDGET_SET);
   private coreForm = viewChild(FormCoreComponent);
   // The core form does not exist before the view, so these calls wait for it.
+  // The view child exists before the first change detection binds its inputs, so its config
+  // cannot be read before the view is ready. setData and getData wait for that.
+  private viewReady = false;
   private dataBeforeView: Record<string, any> | undefined;
   private metaBeforeView: Record<string, any> | undefined;
   private healthBeforeView: FormHealth | undefined;
@@ -104,6 +108,7 @@ export class WidgetSetFormComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    this.viewReady = true;
     if (this.dataBeforeView) {
       this.coreForm()?.setData(this.dataBeforeView);
       this.dataBeforeView = undefined;
@@ -118,9 +123,21 @@ export class WidgetSetFormComponent implements AfterViewInit {
     }
   }
 
+  /**
+   * Returns a copy of the form data, as a form event would carry it now: without the values of
+   * hidden inputs. Before the form has started, it returns the data the form will start with.
+   */
+  getData(): Record<string, any> {
+    const coreForm = this.coreForm();
+    if (coreForm && this.viewReady) {
+      return coreForm.getData();
+    }
+    return cloneObject(this.dataBeforeView ?? this.config().data ?? {});
+  }
+
   setData(data: Record<string, any>): void {
     const coreForm = this.coreForm();
-    if (coreForm) {
+    if (coreForm && this.viewReady) {
       coreForm.setData(data);
     } else {
       this.dataBeforeView = data;

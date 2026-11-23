@@ -1,4 +1,4 @@
-import type { FormHealth, FormInitConfig, WithWidget } from '@golemui/core';
+import { cloneObject, type FormHealth, type FormInitConfig, type WithWidget } from '@golemui/core';
 import {
   buildWidgetSetForm,
   type WidgetSetDefinition,
@@ -21,6 +21,11 @@ export interface WidgetSetFormElement<
   autocomplete: string | undefined;
   /** Wraps the form and renders the error UI for an errored FormHealth. Defaults to a red banner. */
   formHealthBoundary?: FormHealthBoundary;
+  /**
+   * Returns a copy of the form data, as a form event would carry it now: without the values of
+   * hidden inputs. Before the form has started, it returns the data the form will start with.
+   */
+  getData(): Record<string, any>;
   setData(data: Record<string, any>): void;
   setMeta(meta: Record<string, any>): void;
   /** Sets the form health. An errored health shows the boundary and freezes the form until `{ status: 'ok' }`. */
@@ -82,6 +87,13 @@ export function createFormComponent<
 
     private get coreForm(): CoreFormElement | null {
       return this.renderRoot.querySelector('gui-core-form');
+    }
+
+    getData(): Record<string, any> {
+      if (!this.hasUpdated || this.newConfigWaitsForRender) {
+        return cloneObject(this.dataBeforeRender ?? this.config?.data ?? {});
+      }
+      return this.coreForm?.getData() ?? cloneObject(this.config?.data ?? {});
     }
 
     setData(data: Record<string, any>): void {

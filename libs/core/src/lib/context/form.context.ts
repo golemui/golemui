@@ -114,6 +114,14 @@ export class FormContext<ComponentType> {
     };
   }
 
+  /**
+   * Returns the data a form event would carry now: a copy of the form data without the values of
+   * hidden inputs.
+   */
+  getData(): Record<string, any> {
+    return pruneHiddenData(this.store.getState());
+  }
+
   emitSubmitEvent() {
     this.store.dispatch({
       type: 'VALIDATE_ALL',

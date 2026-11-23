@@ -146,6 +146,7 @@ export const mountFramework = (options: MountOptions) => {
       .should('not.be.null')
       .then(() => {
         options.onFormReady!({
+          getData: () => formRef.current!.getData(),
           setData: (data) => formRef.current!.setData(data),
           setMeta: (meta) => formRef.current!.setMeta(meta),
           setHealth: (health) => formRef.current!.setHealth(health),

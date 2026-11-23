@@ -264,10 +264,14 @@ error of the form itself, for example an error in the form definition. It does n
 validity of the data. Its first value is `{ status: 'ok' }`, or the error
 (`{ status: 'errored', code, message }`) when the form definition has one.
 
-## Runtime methods — setData, setMeta, setHealth
+## Runtime methods — getData, setData, setMeta, setHealth
 
-The form component has three methods. A call made before the form has started is kept.
+The form component has four methods. A call made before the form has started is kept.
 
+- `getData()` returns a copy of the form data, the `data` a form event would carry now: the
+  values of hidden inputs are left out. Before the form has started, it returns the data the form
+  will start with (the last `setData` call, else `config.data`, else `{}`). To keep what the user
+  typed across a new config, pass `getData()` as the `data` of the new config.
 - `setData(data)` / `setMeta(meta)` replace the form data / meta.
 - `setHealth(health: FormHealth)` sets the form health from outside, for an error the form cannot
   see (e.g. the server is unreachable). `{ status: 'errored', code, message }` freezes the form,

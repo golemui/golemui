@@ -102,3 +102,26 @@ describe('setData and setMeta on gui-form before the form starts', () => {
     expect(coreStoreState(fixture).data).toEqual({ firstName: 'Bob' });
   });
 });
+
+describe('getData on gui-form', () => {
+  it('returns the config data before the inner form exists', () => {
+    expect(createForm().componentInstance.getData()).toEqual({ firstName: 'Ada' });
+  });
+
+  it('returns the data of a setData call made before the inner form exists', () => {
+    const fixture = createForm();
+
+    fixture.componentInstance.setData({ firstName: 'Bob' });
+
+    expect(fixture.componentInstance.getData()).toEqual({ firstName: 'Bob' });
+  });
+
+  it('returns the data of the form after the start', () => {
+    const fixture = createForm();
+    fixture.detectChanges();
+
+    fixture.componentInstance.setData({ firstName: 'Bob' });
+
+    expect(fixture.componentInstance.getData()).toEqual({ firstName: 'Bob' });
+  });
+});

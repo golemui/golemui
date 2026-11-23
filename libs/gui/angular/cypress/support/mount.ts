@@ -130,6 +130,7 @@ export const mountFramework = (options: MountOptions) => {
     fixture.detectChanges();
     let currentConfig = config;
     options.onFormReady?.({
+      getData: () => fixture.componentRef.instance.getData(),
       setData: (data) => fixture.componentRef.instance.setData(data),
       setMeta: (meta) => fixture.componentRef.instance.setMeta(meta),
       setHealth: (health) => fixture.componentRef.instance.setHealth(health),
