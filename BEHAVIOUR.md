@@ -1005,6 +1005,46 @@ expression param gives its result, also when the result is `null` or `undefined`
   translator receives `{ middle: null }`. The text `$form.middleName` never reaches the user.
 - Status: follows.
 
+### 37. A form event names the widget that sent it
+
+Every form event carries `widget`: the `uid` and the `type` of the widget that sent it, and its
+data `path` when the widget is an input. Inside a repeater, `uid` and `path` are the ones of the
+row. The submit event has no `widget`.
+
+- Scenario: a form that a model writes has one generic `load` handler for many inputs. The host
+  cannot give each input its own event name, so it reads the sender from the event.
+- Example:
+
+  ```json
+  {
+    "uid": "users",
+    "kind": "input",
+    "type": "repeater",
+    "path": "users",
+    "props": {
+      "template": {
+        "kind": "layout",
+        "type": "grid",
+        "children": [
+          {
+            "uid": "name",
+            "kind": "input",
+            "type": "textinput",
+            "path": "users.items.name",
+            "on": { "change": "changed" }
+          }
+        ]
+      }
+    }
+  }
+  ```
+
+  -> the user types in the second row, and the event has
+  `widget: { uid: 'name[1]', type: 'textinput', path: 'users.1.name' }`. A button has no `path`
+  key: `widget: { uid: 'save', type: 'button' }`.
+
+- Status: follows.
+
 ## Rules for form authors
 
 ### 38. Menu item values are unique

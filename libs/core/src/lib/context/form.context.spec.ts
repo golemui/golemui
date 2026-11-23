@@ -230,6 +230,78 @@ describe('FormContext.emitEvent', () => {
     });
   });
 
+  describe('widget', () => {
+    it('names an input outside a repeater by its uid, type and path', () => {
+      const formDef = {
+        form: [
+          {
+            uid: 'email',
+            kind: 'input',
+            type: 'textinput',
+            path: 'contact.email',
+            on: { change: 'emailChanged' },
+          },
+        ],
+      };
+      const { events, emitFrom } = createForm(formDef, { contact: { email: 'ada@example.com' } });
+
+      emitFrom('change', 'email');
+
+      expect(events[0].widget).toEqual({ uid: 'email', type: 'textinput', path: 'contact.email' });
+    });
+
+    it('names an input of a repeater row by the uid and the path of the row', () => {
+      const formDef = makeUsersFormDef([
+        {
+          uid: 'email',
+          kind: 'input',
+          type: 'textinput',
+          path: 'users.items.email',
+          on: { change: 'emailChanged' },
+        },
+      ]);
+      const { events, emitFrom } = createForm(formDef, threeUsers());
+
+      emitFrom('change', 'email[1]');
+
+      expect(events[0].widget).toEqual({
+        uid: 'email[1]',
+        type: 'textinput',
+        path: 'users.1.email',
+      });
+    });
+
+    it('names an action without a path key', () => {
+      const { events, emitFrom } = createForm(makeUsersFormDef(), threeUsers());
+
+      emitFrom('click', 'userMenu[2]');
+
+      expect(events[0].widget).toEqual({ uid: 'userMenu[2]', type: 'button' });
+      expect(events[0].widget).not.toHaveProperty('path');
+    });
+
+    it('names a layout without a path key', () => {
+      const { events, emitFrom } = createForm(makeUsersFormDef(), threeUsers());
+
+      emitFrom('change', 'userRow[0]');
+
+      expect(events[0].widget).toEqual({ uid: 'userRow[0]', type: 'grid' });
+    });
+
+    it('names the widget for a handler with a state suffix', () => {
+      const formDef = {
+        states: { editing: "$form.mode === 'edit'" },
+        form: [button('save', { click: 'saveClicked', 'click.editing': 'saveEditClicked' })],
+      };
+      const { events, emitFrom } = createForm(formDef, { mode: 'edit' });
+
+      emitFrom('click', 'save');
+
+      expect(events[0].name).toBe('saveEditClicked');
+      expect(events[0].widget).toEqual({ uid: 'save', type: 'button' });
+    });
+  });
+
   describe('handlers with a state suffix', () => {
     const makeStatesFormDef = (states: Record<string, string>) => ({
       states,
@@ -484,7 +556,7 @@ describe('FormContext.emitEvent', () => {
 });
 
 describe('FormContext.emitSubmitEvent', () => {
-  it('should not add a row key to the submit event', () => {
+  it('should not add a widget or a row key to the submit event', () => {
     const { context } = createForm(makeUsersFormDef(), threeUsers());
     const submitEvents: FormSubmitEvent[] = [];
     context.submit$.subscribe((event) => submitEvents.push(event));
@@ -492,6 +564,7 @@ describe('FormContext.emitSubmitEvent', () => {
     context.emitSubmitEvent();
 
     expect(submitEvents).toHaveLength(1);
+    expect(submitEvents[0]).not.toHaveProperty('widget');
     expect(submitEvents[0]).not.toHaveProperty('row');
   });
 
