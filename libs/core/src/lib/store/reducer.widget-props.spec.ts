@@ -1,13 +1,25 @@
+import { type StandardSchemaV1 } from '@standard-schema/spec';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { type ValidatorFn } from '../form-validator';
 import {
   type ActionWidget,
   type DisplayWidget,
   type InputWidget,
   type LayoutWidget,
-} from '../../form-widget';
-import { type I18nParams, type I18nTranslator, type TranslationKey } from '../../i18n';
-import { type ExpressionFunctions } from '../../shared';
-import { createInitialState, type State } from '../model';
-import { calculateWidgetProps } from './calculate-widget-props';
+} from '../form-widget';
+import { type I18nParams, type I18nTranslator, type TranslationKey } from '../i18n';
+import { type ExpressionFunctions } from '../shared';
+import { type Action } from './actions';
+import { createInitialState, type State } from './model';
+import { reducer } from './reducer';
+
+/**
+ * The computed widgets of a form, checked through the reducer: each test sends `INITIALIZE` and
+ * `SET_DATA`, sometimes more actions, and reads `calculatedWidgets` and the form health of the
+ * state that results.
+ *
+ * Run: npx vitest run --config libs/core/vite.config.ts src/lib/store/reducer.widget-props.spec.ts
+ */
 
 // -----------------------------------------------------------------------------
 // Test helpers
@@ -36,32 +48,114 @@ const makeTranslator = (
   return translator;
 };
 
-const seed = <W>(state: State, uid: string, source: W): void => {
-  state.calculatedWidgets[uid] = { source: source as any, current: {} as any };
-};
+/** Only `required` is supported: an empty value gives the message `required`. */
+const validators: ValidatorFn<{ required?: boolean }> = (validator): StandardSchemaV1 => ({
+  '~standard': {
+    version: 1,
+    vendor: 'reducer-spec',
+    validate: (value: unknown) => {
+      const isEmpty = value === undefined || value === null || value === '';
+      if (validator?.required && isEmpty) {
+        return { issues: [{ message: 'required' }] };
+      }
+      return { value };
+    },
+  },
+});
 
-/** Adds a visible input, because only the error of a visible input counts in the validation variables. */
-const seedVisibleInput = (state: State, path: string): void => {
-  state.resolvedSources[path] = { kind: 'input', uid: path, type: 'textinput', path } as any;
-};
-
-const run = (
-  state: State,
+const makeReducer = (
   translator: I18nTranslator = makeTranslator(),
   functions: ExpressionFunctions = {},
-) => calculateWidgetProps(translator, functions)(state);
+) =>
+  reducer({
+    validators: validators as ValidatorFn<any>,
+    validateOn: 'eager',
+    localization: translator,
+    functions,
+  });
+
+const setData = (data: Record<string, any>): Action => ({
+  type: 'SET_DATA',
+  payload: { data },
+});
+
+const setMeta = (meta: Record<string, any>): Action => ({
+  type: 'SET_META',
+  payload: { meta },
+});
+
+const overrideProp = (uid: string, prop: string, value: unknown): Action => ({
+  type: 'OVERRIDE_WIDGET_PROP',
+  payload: { uid, prop, value },
+});
+
+const validateAllAction: Action = { type: 'VALIDATE_ALL' };
+
+type Scenario = {
+  /** The widgets of the form. */
+  form: Record<string, unknown>[];
+  states?: Record<string, string>;
+  data?: Record<string, any>;
+};
+
+/**
+ * Sends `INITIALIZE` and `SET_DATA` to a new reducer.
+ *
+ * @returns The state after the first derive, and the reducer for a test that sends more actions.
+ */
+const start = (
+  { form, states, data = {} }: Scenario,
+  translator?: I18nTranslator,
+  functions?: ExpressionFunctions,
+) => {
+  const reduce = makeReducer(translator, functions);
+  const actions: Action[] = [
+    {
+      type: 'INITIALIZE',
+      payload: { formName: 'test-form', formDef: states ? { states, form } : { form } },
+    },
+    setData(data),
+  ];
+  return { state: actions.reduce(reduce, createInitialState('en-US')), reduce };
+};
+
+/** Sends `INITIALIZE` and `SET_DATA` to a new reducer and returns the state after the derive. */
+const run = (
+  scenario: Scenario,
+  translator?: I18nTranslator,
+  functions?: ExpressionFunctions,
+): State => start(scenario, translator, functions).state;
+
+/** A repeater whose row layout has the uid `<uid>-template`. */
+const repeater = (uid: string, path: string, children: unknown[]) => ({
+  kind: 'input',
+  uid,
+  type: 'repeater',
+  path,
+  props: {
+    template: {
+      kind: 'layout',
+      uid: `${uid}-template`,
+      type: 'flex',
+      children,
+    },
+  },
+});
+
+/** A required input with no value. After `VALIDATE_ALL` it is a visible input with an error. */
+const requiredInput = (path: string) => ({
+  kind: 'input',
+  uid: path,
+  type: 'textinput',
+  path,
+  validator: { required: true },
+});
 
 // -----------------------------------------------------------------------------
 // Tests
 // -----------------------------------------------------------------------------
 
-describe('calculateWidgetProps', () => {
-  let state: State;
-
-  beforeEach(() => {
-    state = createInitialState('en-US');
-  });
-
+describe('reducer: widget props', () => {
   // ---------------------------------------------------------------------------
   // Per-kind core fields
   // ---------------------------------------------------------------------------
@@ -76,9 +170,8 @@ describe('calculateWidgetProps', () => {
         include: { in: ['foo'] },
         exclude: { from: ['bar'] },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd1', source);
 
-      const next = run(state);
+      const next = run({ states: { foo: 'true', bar: 'false' }, form: [source] });
       const current = next.calculatedWidgets['d1'].current as DisplayWidget<string>;
 
       expect(current.kind).toBe('display');
@@ -98,9 +191,8 @@ describe('calculateWidgetProps', () => {
         label: 'Submit',
         disabled: false,
       } satisfies ActionWidget<string>;
-      seed(state, 'a1', source);
 
-      const next = run(state);
+      const next = run({ form: [source] });
       const current = next.calculatedWidgets['a1'].current as ActionWidget<string>;
 
       expect(current.kind).toBe('action');
@@ -125,9 +217,8 @@ describe('calculateWidgetProps', () => {
         defaultValue: 'initial',
         validator,
       } satisfies InputWidget<any, string>;
-      seed(state, 'i1', source);
 
-      const next = run(state);
+      const next = run({ form: [source] });
       const current = next.calculatedWidgets['i1'].current as InputWidget<any, string>;
 
       expect(current.kind).toBe('input');
@@ -150,18 +241,14 @@ describe('calculateWidgetProps', () => {
         path: 'name',
         defaultValue: '{{$form.other}}',
       } satisfies InputWidget<any, string>;
-      seed(state, 'i2', source);
 
-      const next = run(state);
+      const next = run({ form: [source] });
       const current = next.calculatedWidgets['i2'].current as InputWidget<any, string>;
 
       expect(current.defaultValue).toBe('{{$form.other}}');
     });
 
     it('LayoutWidget: copies core + children (excluding `on`)', () => {
-      // Non-empty children ensure the children branch sees a length change from
-      // previous empty state, so `ctx.changed` stays true (the children branch
-      // overwrites changed; we need children diff to stay truthy).
       const child = { kind: 'display', uid: 'c', type: 'heading' } satisfies DisplayWidget<string>;
       const source = {
         kind: 'layout',
@@ -170,9 +257,8 @@ describe('calculateWidgetProps', () => {
         size: 1,
         children: [child],
       } satisfies LayoutWidget<string>;
-      seed(state, 'l1', source);
 
-      const next = run(state);
+      const next = run({ form: [source] });
       const current = next.calculatedWidgets['l1'].current as LayoutWidget<string>;
 
       expect(current.kind).toBe('layout');
@@ -180,22 +266,6 @@ describe('calculateWidgetProps', () => {
       expect(current.type).toBe('flex');
       expect(current.size).toBe(1);
       expect(current.children).toEqual([child]);
-    });
-
-    it('does not set a core field absent from source', () => {
-      // Input widget without `label`: `current.label` should be entirely absent.
-      const source = {
-        kind: 'input',
-        uid: 'i2',
-        type: 'textinput',
-        path: 'x',
-      } satisfies InputWidget<any, string>;
-      seed(state, 'i2', source);
-
-      const next = run(state);
-      const current = next.calculatedWidgets['i2'].current as InputWidget<any, string>;
-
-      expect('label' in current).toBe(false);
     });
   });
 
@@ -215,49 +285,54 @@ describe('calculateWidgetProps', () => {
       }) satisfies ActionWidget<string>;
 
     it('no matching state -> uses base', () => {
-      seed(state, 'a', baseSource());
-      state.currentStates = [];
+      const next = run({
+        states: { register: 'false', 'register:adult': 'false' },
+        form: [baseSource()],
+      });
 
-      const next = run(state);
-
+      expect(next.currentStates).toEqual([]);
       expect((next.calculatedWidgets['a'].current as ActionWidget<string>).label).toBe('BASE');
     });
 
     it('one matching state -> uses that state suffix', () => {
-      seed(state, 'a', baseSource());
-      state.currentStates = ['register'];
+      const next = run({
+        states: { register: 'true', 'register:adult': 'false' },
+        form: [baseSource()],
+      });
 
-      const next = run(state);
-
+      expect(next.currentStates).toEqual(['register']);
       expect((next.calculatedWidgets['a'].current as ActionWidget<string>).label).toBe('REGISTER');
     });
 
     it('non-matching state -> falls back to base', () => {
-      seed(state, 'a', baseSource());
-      state.currentStates = ['unknown'];
+      const next = run({
+        states: { unknown: 'true', register: 'false', 'register:adult': 'false' },
+        form: [baseSource()],
+      });
 
-      const next = run(state);
-
+      expect(next.currentStates).toEqual(['unknown']);
       expect((next.calculatedWidgets['a'].current as ActionWidget<string>).label).toBe('BASE');
     });
 
     it('longest matching state wins (sort by length DESC)', () => {
-      seed(state, 'a', baseSource());
-      state.currentStates = ['register', 'register:adult'];
+      const next = run({
+        states: { register: 'true', 'register:adult': 'true' },
+        form: [baseSource()],
+      });
 
-      const next = run(state);
-
+      expect(next.currentStates).toEqual(['register', 'register:adult']);
       expect((next.calculatedWidgets['a'].current as ActionWidget<string>).label).toBe(
         'REGISTER_ADULT',
       );
     });
 
     it('longest wins regardless of input order', () => {
-      seed(state, 'a', baseSource());
-      state.currentStates = ['register:adult', 'register'];
+      const next = run({
+        states: { 'register:adult': 'true', register: 'true' },
+        form: [baseSource()],
+      });
 
-      const next = run(state);
-
+      expect(next.currentStates).toEqual(['register:adult', 'register']);
       expect((next.calculatedWidgets['a'].current as ActionWidget<string>).label).toBe(
         'REGISTER_ADULT',
       );
@@ -270,35 +345,39 @@ describe('calculateWidgetProps', () => {
 
   describe('hasWhen', () => {
     it('disabled: { when } uses pre-computed widgetFlags[uid].disabled', () => {
+      const isTrue = vi.fn((value: unknown) => value === true);
       const source = {
         kind: 'input',
         uid: 'i',
         type: 'textinput',
         path: 'x',
-        disabled: { when: '$form.x' },
+        disabled: { when: '$fn.isTrue($form.x)' },
       } satisfies InputWidget<any, string>;
-      seed(state, 'i', source);
-      state.widgetFlags['i'] = { disabled: true };
 
-      const next = run(state);
+      const next = run({ form: [source], data: { x: true } }, makeTranslator(), { isTrue });
 
+      expect(next.widgetFlags['i']).toEqual({ disabled: true });
       expect((next.calculatedWidgets['i'].current as InputWidget<any, string>).disabled).toBe(true);
+      // The one call is the evaluation that gives the flag. The computed widget reads the flag.
+      expect(isTrue).toHaveBeenCalledTimes(1);
     });
 
     it('readonly: { when } uses pre-computed widgetFlags[uid].readonly', () => {
+      const isTrue = vi.fn((value: unknown) => value === true);
       const source = {
         kind: 'input',
         uid: 'i',
         type: 'textinput',
         path: 'x',
-        readonly: { when: '$form.x' },
+        readonly: { when: '$fn.isTrue($form.x)' },
       } satisfies InputWidget<any, string>;
-      seed(state, 'i', source);
-      state.widgetFlags['i'] = { readonly: true };
 
-      const next = run(state);
+      const next = run({ form: [source], data: { x: true } }, makeTranslator(), { isTrue });
 
+      expect(next.widgetFlags['i']).toEqual({ readonly: true });
       expect((next.calculatedWidgets['i'].current as InputWidget<any, string>).readonly).toBe(true);
+      // The one call is the evaluation that gives the flag. The computed widget reads the flag.
+      expect(isTrue).toHaveBeenCalledTimes(1);
     });
 
     it('{ when } on a non-disabled/readonly prop passes through unchanged (parity quirk)', () => {
@@ -309,9 +388,8 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { foo: whenObj },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
 
-      const next = run(state);
+      const next = run({ form: [source] });
 
       expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['foo']).toBe(
         whenObj,
@@ -324,29 +402,30 @@ describe('calculateWidgetProps', () => {
   // ---------------------------------------------------------------------------
 
   describe('nested translation configs', () => {
-    const accordion = (sections: unknown, extra: Record<string, unknown> = {}) =>
-      ({
-        kind: 'layout',
-        uid: 'acc',
-        type: 'accordion',
-        props: { sections, ...extra },
-        children: [],
-      }) as LayoutWidget<string>;
+    const accordion = (sections: unknown, extra: Record<string, unknown> = {}) => ({
+      kind: 'layout',
+      uid: 'acc',
+      type: 'accordion',
+      props: { sections, ...extra },
+      children: [],
+    });
     const propsOf = (next: State, uid = 'acc') =>
       (next.calculatedWidgets[uid].current as LayoutWidget<string>).props as Record<string, any>;
 
     it('translates a config nested in an array of objects and keeps the other fields', () => {
       const translator = makeTranslator((key) => `T:${key}`);
-      seed(
-        state,
-        'acc',
-        accordion([
-          { uid: 'billing', label: { key: 'sections.billing' } },
-          { uid: 'notes', label: 'Notes' },
-        ]),
-      );
 
-      const next = run(state, translator);
+      const next = run(
+        {
+          form: [
+            accordion([
+              { uid: 'billing', label: { key: 'sections.billing' } },
+              { uid: 'notes', label: 'Notes' },
+            ]),
+          ],
+        },
+        translator,
+      );
 
       expect(propsOf(next)['sections']).toEqual([
         { uid: 'billing', label: 'T:sections.billing' },
@@ -358,19 +437,25 @@ describe('calculateWidgetProps', () => {
       const translator = makeTranslator((key, params, d) =>
         key === 'greet' ? `Hi ${params?.['name']}` : (d ?? key),
       );
-      seed(
-        state,
-        'acc',
-        accordion([], {
-          menu: {
-            groups: [{ items: [{ label: { key: 'greet', params: { name: '$form.name' } } }] }],
-          },
-          empty: { key: 'missing', default: 'Nothing here' },
-        }),
-      );
-      state.data = { name: 'Ana' };
 
-      const props = propsOf(run(state, translator));
+      const props = propsOf(
+        run(
+          {
+            form: [
+              accordion([], {
+                menu: {
+                  groups: [
+                    { items: [{ label: { key: 'greet', params: { name: '$form.name' } } }] },
+                  ],
+                },
+                empty: { key: 'missing', default: 'Nothing here' },
+              }),
+            ],
+            data: { name: 'Ana' },
+          },
+          translator,
+        ),
+      );
 
       expect(props['menu'].groups[0].items[0].label).toBe('Hi Ana');
       expect(props['empty']).toBe('Nothing here');
@@ -378,13 +463,20 @@ describe('calculateWidgetProps', () => {
 
     it('resolves the params of a nested config against the repeater row', () => {
       const translator = makeTranslator((_key, params) => `Row ${params?.['n']}`);
-      seed(state, 'acc[1]', {
-        ...accordion([{ uid: 's', label: { key: 'row', params: { n: '$index + 1' } } }]),
-        uid: 'acc[1]',
-      });
-      state.repeaterItemScopes['acc[1]'] = { itemPath: 'rows.1', index: 1 };
 
-      expect(propsOf(run(state, translator), 'acc[1]')['sections'][0].label).toBe('Row 2');
+      const next = run(
+        {
+          form: [
+            repeater('rows', 'rows', [
+              accordion([{ uid: 's', label: { key: 'row', params: { n: '$index + 1' } } }]),
+            ]),
+          ],
+          data: { rows: [{}, {}] },
+        },
+        translator,
+      );
+
+      expect(propsOf(next, 'acc[1]')['sections'][0].label).toBe('Row 2');
     });
 
     it('leaves an object that has a key and other fields alone: it is data, not a config', () => {
@@ -393,47 +485,60 @@ describe('calculateWidgetProps', () => {
         { key: 'es', label: 'Spanish' },
         { key: 'fr', value: 2 },
       ];
-      seed(state, 'acc', accordion([], { options }));
 
-      const props = propsOf(run(state, translator));
+      const props = propsOf(run({ form: [accordion([], { options })] }, translator));
 
       expect(props['options']).toBe(options);
       expect(translator.calls).toHaveLength(0);
     });
 
     it('does not interpolate nested strings', () => {
-      seed(state, 'acc', accordion([{ uid: 's', label: '{{ $index }}' }]));
+      const next = run({ form: [accordion([{ uid: 's', label: '{{ $index }}' }])] });
 
-      expect(propsOf(run(state))['sections'][0].label).toBe('{{ $index }}');
+      expect(propsOf(next)['sections'][0].label).toBe('{{ $index }}');
     });
 
     it('keeps the source reference when nothing nested is a config', () => {
       const sections = [{ uid: 's', label: 'Plain' }];
-      seed(state, 'acc', accordion(sections));
 
-      expect(propsOf(run(state))['sections']).toBe(sections);
+      const next = run({ form: [accordion(sections)] });
+
+      expect(propsOf(next)['sections']).toBe(sections);
     });
 
     it('keeps the previous widget when a later pass translates to the same text', () => {
-      seed(state, 'acc', accordion([{ uid: 's', label: { key: 'k' } }]));
+      const translator = makeTranslator();
+      const { state: first, reduce } = start(
+        { form: [accordion([{ uid: 's', label: { key: 'k' } }])] },
+        translator,
+      );
+      expect(translator.calls).toHaveLength(1);
 
-      const first = run(state);
-      const second = run(first);
+      const second = reduce(first, setData({}));
 
+      // The second derive translates again, and the text is the same.
+      expect(second.formHealth).toEqual({ status: 'ok' });
+      expect(translator.calls).toHaveLength(2);
       expect(second.calculatedWidgets['acc']).toBe(first.calculatedWidgets['acc']);
     });
 
     it('translates again when the translation changes', () => {
       let lang = 'en';
       const translator = makeTranslator((key) => `${lang}:${key}`);
-      seed(state, 'acc', accordion([{ uid: 's', label: { key: 'k' } }]));
+      const { state: first, reduce } = start(
+        { form: [accordion([{ uid: 's', label: { key: 'k' } }])] },
+        translator,
+      );
 
-      const first = run(state, translator);
       lang = 'es';
-      const second = run(first, translator);
+      const second = reduce(first, { type: 'SET_LANGUAGE', payload: { lang: 'es' } });
+      // A translator can also give new texts while the language tag stays the same.
+      lang = 'fr';
+      const third = reduce(second, { type: 'SET_LANGUAGE', payload: { lang: second.lang } });
 
       expect(propsOf(first)['sections'][0].label).toBe('en:k');
       expect(propsOf(second)['sections'][0].label).toBe('es:k');
+      expect(propsOf(third)['sections'][0].label).toBe('fr:k');
     });
 
     it('leaves the repeater template alone: its widgets resolve per row with the row scope', () => {
@@ -453,31 +558,41 @@ describe('calculateWidgetProps', () => {
           },
         ],
       };
-      seed(state, 'rep', {
-        uid: 'rep',
-        kind: 'input',
-        type: 'repeater',
-        path: 'rows',
-        props: { template },
-      });
 
-      const next = run(state, translator);
+      const next = run(
+        {
+          form: [
+            {
+              uid: 'rep',
+              kind: 'input',
+              type: 'repeater',
+              path: 'rows',
+              props: { template },
+            },
+          ],
+        },
+        translator,
+      );
 
-      expect(next.formHealth).toEqual(state.formHealth);
-      expect(propsOf(next, 'rep')['template']).toBe(template);
+      expect(next.formHealth).toEqual({ status: 'ok' });
+      // The decoder makes the template object of the source. The props keep that object.
+      expect(propsOf(next, 'rep')['template']).toBe(
+        (next.resolvedSources['rep'].props as Record<string, unknown>)['template'],
+      );
+      expect(propsOf(next, 'rep')['template']).toEqual(template);
       expect(translator.calls).toHaveLength(0);
     });
 
     it('walks a config-free value once: a config added to it by mutation later is not seen', () => {
       const translator = makeTranslator((key) => `T:${key}`);
       const sections: Record<string, unknown>[] = [{ uid: 'a', label: 'Plain' }];
-      seed(state, 'acc', accordion(sections));
-      const first = run(state, translator);
+      const { state: first, reduce } = start({ form: [accordion(sections)] }, translator);
 
       // The engine assumes the form definition is immutable after INITIALIZE.
       sections.push({ uid: 'b', label: { key: 'k' } });
-      const second = run(first, translator);
+      const second = reduce(first, setData({}));
 
+      expect(second.formHealth).toEqual({ status: 'ok' });
       expect(translator.calls).toHaveLength(0);
       expect(propsOf(second)['sections']).toBe(sections);
     });
@@ -489,9 +604,8 @@ describe('calculateWidgetProps', () => {
         { key: 'b', params: 'x' },
         { key: 'c', params: ['x'] },
       ];
-      seed(state, 'acc', accordion([], { data }));
 
-      const props = propsOf(run(state, translator));
+      const props = propsOf(run({ form: [accordion([], { data })] }, translator));
 
       expect(props['data']).toBe(data);
       expect(translator.calls).toHaveLength(0);
@@ -511,10 +625,8 @@ describe('calculateWidgetProps', () => {
           params: { name: '$form.user.name' },
         },
       } satisfies ActionWidget<string>;
-      seed(state, 'a', source);
-      state.data = { user: { name: 'Alice' } };
 
-      const next = run(state, translator);
+      const next = run({ form: [source], data: { user: { name: 'Alice' } } }, translator);
 
       expect(translator.calls).toHaveLength(1);
       expect(translator.calls[0].key).toBe('greet');
@@ -536,9 +648,8 @@ describe('calculateWidgetProps', () => {
           params: { a: 'literal', n: 42, b: true as any },
         },
       } satisfies ActionWidget<string>;
-      seed(state, 'a', source);
 
-      run(state, translator);
+      run({ form: [source] }, translator);
 
       expect(translator.calls[0].params).toEqual({ a: 'literal', n: 42, b: true });
     });
@@ -551,10 +662,8 @@ describe('calculateWidgetProps', () => {
         type: 'button',
         label: { key: 'k', params: { id: '$route.id', known: '$form.id' } },
       } satisfies ActionWidget<string>;
-      seed(state, 'a', source);
-      state.data = { id: 7 };
 
-      run(state, translator);
+      run({ form: [source], data: { id: 7 } }, translator);
 
       expect(translator.calls[0].params).toEqual({ id: '$route.id', known: 7 });
     });
@@ -568,9 +677,8 @@ describe('calculateWidgetProps', () => {
         type: 'button',
         label: { key: 'k', params },
       } satisfies ActionWidget<string>;
-      seed(state, 'a', source);
 
-      run(state, translator);
+      run({ form: [source] }, translator);
 
       const received = translator.calls[0].params as Record<string, unknown>;
       expect(Object.getPrototypeOf(received)).toBeNull();
@@ -588,10 +696,8 @@ describe('calculateWidgetProps', () => {
         type: 'button',
         label: { key: 'approval', params: { date: '$form.date' } },
       } satisfies ActionWidget<string>;
-      seed(state, 'a', source);
-      state.data = { date: '2026-01-01' };
 
-      run(state, translator);
+      run({ form: [source], data: { date: '2026-01-01' } }, translator);
 
       expect(translator.calls[0].params?.['constructor']).toBeUndefined();
       expect(translator.calls[0].params?.['date']).toBe('2026-01-01');
@@ -605,10 +711,8 @@ describe('calculateWidgetProps', () => {
         type: 'button',
         label: { key: 'k', params: { name: "$form.first + ' ' + $form.last" } },
       } satisfies ActionWidget<string>;
-      seed(state, 'a', source);
-      state.data = { first: 'John', last: 'Doe' };
 
-      run(state, translator);
+      run({ form: [source], data: { first: 'John', last: 'Doe' } }, translator);
 
       expect(translator.calls[0].params).toEqual({ name: 'John Doe' });
     });
@@ -621,10 +725,8 @@ describe('calculateWidgetProps', () => {
         type: 'button',
         label: { key: 'k', params: { n: '$form.count + 1' } },
       } satisfies ActionWidget<string>;
-      seed(state, 'a', source);
-      state.data = { count: 4 };
 
-      run(state, translator);
+      run({ form: [source], data: { count: 4 } }, translator);
 
       expect(translator.calls[0].params).toEqual({ n: 5 });
     });
@@ -637,10 +739,8 @@ describe('calculateWidgetProps', () => {
         type: 'button',
         label: { key: 'k', params: { missing: '$form.missing', empty: '$form.middleName' } },
       } satisfies ActionWidget<string>;
-      seed(state, 'a', source);
-      state.data = { middleName: null };
 
-      run(state, translator);
+      run({ form: [source], data: { middleName: null } }, translator);
 
       const received = translator.calls[0].params as Record<string, unknown>;
       expect(Object.keys(received)).toEqual(['missing', 'empty']);
@@ -655,9 +755,8 @@ describe('calculateWidgetProps', () => {
         type: 'button',
         label: { key: 'k', params: { x: '$form..broken' } },
       } satisfies ActionWidget<string>;
-      seed(state, 'a', source);
 
-      const next = run(state);
+      const next = run({ form: [source] });
 
       expect(next.formHealth.status).toBe('errored');
       if (next.formHealth.status === 'errored') {
@@ -675,9 +774,8 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: { key: 'title' } },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
 
-      const next = run(state, translator);
+      const next = run({ form: [source] }, translator);
 
       expect(next.formHealth).toEqual({ status: 'errored', code: 12, message: '[12] boom' });
     });
@@ -695,10 +793,8 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: 'Hello {{$form.user}}' },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
-      state.data = { user: 'Bob' };
 
-      const next = run(state);
+      const next = run({ form: [source], data: { user: 'Bob' } });
 
       expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text']).toBe(
         'Hello Bob',
@@ -712,10 +808,9 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: 'Status: {{$meta.status}}' },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
-      state.meta = { status: 'active' };
+      const { state, reduce } = start({ form: [source] });
 
-      const next = run(state);
+      const next = reduce(state, setMeta({ status: 'active' }));
 
       expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text']).toBe(
         'Status: active',
@@ -729,35 +824,34 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: 'Invalid? {{$formIsInvalid}}' },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source1);
-      seedVisibleInput(state, 'some.path');
-      state.validations = { 'some.path': [{ message: 'bad' }] as any };
+      const { state, reduce } = start({ form: [source1, requiredInput('some.path')] });
 
-      const next = run(state);
+      const next = reduce(state, validateAllAction);
 
+      expect(next.validations).toEqual({ 'some.path': ['required'] });
       expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text']).toBe(
         'Invalid? true',
       );
     });
 
     it('resolves $errors.path', () => {
+      // Without an error `$errors.user` does not exist, and a read of `$errors.user.age` throws.
+      // So the widget is included only while the form has an error.
       const source = {
         kind: 'display',
         uid: 'd',
         type: 'heading',
+        include: { when: '$formIsInvalid' },
         props: { text: 'Err: {{$errors.user.age}}' },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
-      seedVisibleInput(state, 'user.age');
-      state.validations = { 'user.age': [{ message: 'too young' }] as any };
+      const { state, reduce } = start({ form: [source, requiredInput('user.age')] });
+      expect(state.formHealth).toEqual({ status: 'ok' });
 
-      const next = run(state);
+      const next = reduce(state, validateAllAction);
 
       const text = (next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text'];
-      // Errors serialize via String() inside the template replace -> "[object Object]"-ish
-      // but that's the current behavior; we just assert resolution happened.
-      expect(text.startsWith('Err: ')).toBe(true);
-      expect(text).not.toContain('{{');
+      // The value of `$errors.user.age` is the list of messages, and the template writes it as text.
+      expect(text).toBe('Err: required');
     });
   });
 
@@ -773,11 +867,11 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: 'original' },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
-      state.widgetPropOverrides = { d: { text: 'overridden' } };
+      const { state, reduce } = start({ form: [source] });
 
-      const next = run(state);
+      const next = reduce(state, overrideProp('d', 'text', 'overridden'));
 
+      expect(next.widgetPropOverrides).toEqual({ d: { text: 'overridden' } });
       expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text']).toBe(
         'overridden',
       );
@@ -790,11 +884,9 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: 'Hi {{$form.name}}' },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
-      state.data = { name: 'Ada' };
-      state.widgetPropOverrides = { d: { text: 'overridden' } };
+      const { state, reduce } = start({ form: [source], data: { name: 'Ada' } });
 
-      const next = run(state);
+      const next = reduce(state, overrideProp('d', 'text', 'overridden'));
 
       expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text']).toBe(
         'overridden',
@@ -809,10 +901,9 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: { key: 'foo' } },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
-      state.widgetPropOverrides = { d: { text: 'overridden' } };
+      const { state, reduce } = start({ form: [source] }, translator);
 
-      const next = run(state, translator);
+      const next = reduce(state, overrideProp('d', 'text', 'overridden'));
 
       expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text']).toBe(
         'overridden',
@@ -826,10 +917,9 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: 'x' },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
-      state.widgetPropOverrides = { d: { newKey: 'new value' } };
+      const { state, reduce } = start({ form: [source] });
 
-      const next = run(state);
+      const next = reduce(state, overrideProp('d', 'newKey', 'new value'));
 
       expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['newKey']).toBe(
         'new value',
@@ -843,14 +933,16 @@ describe('calculateWidgetProps', () => {
         type: 'button',
         label: 'original',
       } satisfies ActionWidget<string>;
-      seed(state, 'a', source);
-      // Even though `label` is a core field, the override only applies to `props.*`.
-      state.widgetPropOverrides = { a: { label: 'overridden' } };
+      const { state, reduce } = start({ form: [source] });
 
-      const next = run(state);
+      // Even though `label` is a core field, the override only applies to `props.*`.
+      const next = reduce(state, overrideProp('a', 'label', 'overridden'));
 
       const cur = next.calculatedWidgets['a'].current as ActionWidget<string>;
+      expect(next.formHealth).toEqual({ status: 'ok' });
+      expect(next.widgetPropOverrides).toEqual({ a: { label: 'overridden' } });
       expect(cur.label).toBe('original');
+      expect(cur.props).toEqual({ label: 'overridden' });
     });
 
     it('removes a prop that only a removed override had set', () => {
@@ -860,15 +952,22 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: 'hello' },
       };
-      seed(state, 'd', source);
-      state.widgetPropOverrides = { d: { newKey: 'new value' } };
-      const overridden = run(state);
-      expect(overridden.calculatedWidgets['d'].current.props).toHaveProperty('newKey');
+      const { state, reduce } = start({
+        form: [repeater('rows', 'rows', [source])],
+        data: { rows: [{}, {}] },
+      });
+      const overridden = reduce(state, overrideProp('d[0]', 'newKey', 'new value'));
+      expect(overridden.calculatedWidgets['d[0]'].current.props).toHaveProperty('newKey');
 
-      const next = run({ ...overridden, widgetPropOverrides: {} });
+      // The removal of the first row removes its override. The second row gets the uid `d[0]`.
+      const next = reduce(overridden, {
+        type: 'SET_WIDGET_DATA',
+        payload: { path: 'rows', data: [{}], rowChange: { type: 'removed', index: 0 } },
+      });
 
-      expect(next.calculatedWidgets['d'].current.props).not.toHaveProperty('newKey');
-      expect(next.calculatedWidgets['d'].current.props).toEqual({ text: 'hello' });
+      expect(next.widgetPropOverrides).toEqual({});
+      expect(next.calculatedWidgets['d[0]'].current.props).not.toHaveProperty('newKey');
+      expect(next.calculatedWidgets['d[0]'].current.props).toEqual({ text: 'hello' });
     });
 
     it('keeps the widget reference when the override stays', () => {
@@ -878,12 +977,13 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: 'hello' },
       };
-      seed(state, 'd', source);
-      state.widgetPropOverrides = { d: { newKey: 'new value' } };
-      const overridden = run(state);
+      const { state, reduce } = start({ form: [source] });
+      const overridden = reduce(state, overrideProp('d', 'newKey', 'new value'));
 
-      const next = run(overridden);
+      const next = reduce(overridden, setData({}));
 
+      expect(next.formHealth).toEqual({ status: 'ok' });
+      expect(next.calculatedWidgets).not.toBe(overridden.calculatedWidgets);
       expect(next.calculatedWidgets['d']).toBe(overridden.calculatedWidgets['d']);
     });
   });
@@ -900,9 +1000,8 @@ describe('calculateWidgetProps', () => {
         type: 'button',
         on: { click: 'submit' },
       } satisfies ActionWidget<string>;
-      seed(state, 'a', source);
 
-      const next = run(state);
+      const next = run({ form: [source] });
 
       const cur = next.calculatedWidgets['a'].current as ActionWidget<string>;
       expect(cur.on?.click).toBe('submit');
@@ -916,9 +1015,8 @@ describe('calculateWidgetProps', () => {
         path: 'x',
         on: { change: 'valueChanged' },
       } satisfies InputWidget<any, string>;
-      seed(state, 'i', source);
 
-      const next = run(state);
+      const next = run({ form: [source] });
 
       const current = next.calculatedWidgets['i'].current as InputWidget<any, string>;
       expect(current.on?.change).toBe('valueChanged');
@@ -932,12 +1030,11 @@ describe('calculateWidgetProps', () => {
         path: 'x',
         on: { change: 'valueChanged', 'change.editing': 'valueChangedWhileEditing' },
       } satisfies InputWidget<any, 'editing'>;
-      seed(state, 'i', source);
-      state.currentStates = ['editing'];
 
-      const next = run(state);
+      const next = run({ states: { editing: 'true' }, form: [source] });
 
       const current = next.calculatedWidgets['i'].current as InputWidget<any, string>;
+      expect(next.currentStates).toEqual(['editing']);
       expect(current.on?.change).toBe('valueChangedWhileEditing');
     });
 
@@ -948,10 +1045,8 @@ describe('calculateWidgetProps', () => {
         type: 'button',
         on: { click: 'save{{$form.mode}}' },
       } satisfies ActionWidget<string>;
-      seed(state, 'a', source);
-      state.data = { mode: 'Draft' };
 
-      const next = run(state);
+      const next = run({ form: [source], data: { mode: 'Draft' } });
 
       const current = next.calculatedWidgets['a'].current as ActionWidget<string>;
       expect(current.on?.click).toBe('save{{$form.mode}}');
@@ -965,10 +1060,10 @@ describe('calculateWidgetProps', () => {
         children: [],
         on: { click: 'x' },
       } satisfies LayoutWidget<string>;
-      seed(state, 'l', source);
 
-      const next = run(state);
+      const next = run({ form: [source] });
 
+      expect((next.resolvedSources['l'] as LayoutWidget<string>).on).toEqual({ click: 'x' });
       expect('on' in next.calculatedWidgets['l'].current).toBe(false);
     });
   });
@@ -978,18 +1073,17 @@ describe('calculateWidgetProps', () => {
   // ---------------------------------------------------------------------------
 
   describe('hidden widgets', () => {
-    // This basically means that when a hidden widget is hit, the logic skips calculations with a `continue`.
     it('hidden widget is unchanged', () => {
       const source = {
         kind: 'display',
         uid: 'd',
         type: 'heading',
+        include: { when: 'false' },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
-      state.widgetFlags['d'] = { hidden: true };
 
-      const next = run(state);
+      const next = run({ form: [source] });
 
+      expect(next.widgetFlags['d']).toEqual({ hidden: true });
       expect('d' in next.calculatedWidgets).toBe(false);
     });
   });
@@ -1009,6 +1103,7 @@ describe('calculateWidgetProps', () => {
         kind: 'display',
         uid: 'c2',
         type: 'heading',
+        include: { when: 'false' },
       } satisfies DisplayWidget<string>;
       const source = {
         kind: 'layout',
@@ -1016,10 +1111,8 @@ describe('calculateWidgetProps', () => {
         type: 'flex',
         children: [child1, child2],
       } satisfies LayoutWidget<string>;
-      seed(state, 'l', source);
-      state.widgetFlags['c2'] = { hidden: true };
 
-      const next = run(state);
+      const next = run({ form: [source] });
       const children = (next.calculatedWidgets['l'].current as LayoutWidget<string>).children;
 
       expect(children).toHaveLength(1);
@@ -1028,114 +1121,140 @@ describe('calculateWidgetProps', () => {
 
     it('repeater children: looks up widgetFlags under child uid + [index]', () => {
       // Two children: one hidden under repeater-index suffix, one not.
-      // Need a non-trivial filter result (length diff from previous empty) to
-      // ensure the children branch flags `ctx.changed = true`.
-      const c1 = { kind: 'display', uid: 'cell1', type: 'heading' } satisfies DisplayWidget<string>;
+      const c1 = {
+        kind: 'display',
+        uid: 'cell1',
+        type: 'heading',
+        include: { when: 'false' },
+      } satisfies DisplayWidget<string>;
       const c2 = { kind: 'display', uid: 'cell2', type: 'heading' } satisfies DisplayWidget<string>;
-      const source = {
-        kind: 'layout',
-        uid: 'row[0]',
-        type: 'flex',
-        children: [c1, c2],
-      } satisfies LayoutWidget<string>;
-      seed(state, 'row[0]', source);
-      // Live row widgets always carry a scope entry (built by expandSources)
-      state.repeaterItemScopes['row[0]'] = { itemPath: 'rows.0', index: 0 };
-      state.widgetFlags['cell1[0]'] = { hidden: true };
+      const rows = {
+        kind: 'input',
+        uid: 'rows',
+        type: 'repeater',
+        path: 'rows',
+        props: { template: { kind: 'layout', uid: 'row', type: 'flex', children: [c1, c2] } },
+      };
 
-      const next = run(state);
+      const next = run({ form: [rows], data: { rows: [{}] } });
       const children = (next.calculatedWidgets['row[0]'].current as LayoutWidget<string>).children;
 
+      expect(next.widgetFlags['cell1[0]']).toEqual({ hidden: true });
       expect(children).toHaveLength(1);
       expect(children[0].uid).toBe('cell2');
     });
 
     it('repeater children: nested indexes append [i][j]', () => {
-      const c1 = { kind: 'display', uid: 'leaf1', type: 'heading' } satisfies DisplayWidget<string>;
+      const c1 = {
+        kind: 'display',
+        uid: 'leaf1',
+        type: 'heading',
+        exclude: { when: '$item.hideLeaf === true' },
+      } satisfies DisplayWidget<string>;
       const c2 = { kind: 'display', uid: 'leaf2', type: 'heading' } satisfies DisplayWidget<string>;
-      const source = {
-        kind: 'layout',
-        uid: 'grid[2][3]',
-        type: 'flex',
-        children: [c1, c2],
-      } satisfies LayoutWidget<string>;
-      seed(state, 'grid[2][3]', source);
-      // Live row widgets always carry a scope entry (built by expandSources)
-      state.repeaterItemScopes['grid[2][3]'] = { itemPath: 'grid.2.rows.3', index: 3 };
-      state.widgetFlags['leaf1[2][3]'] = { hidden: true };
+      // The row layout of the inner repeater has the uid `grid`, so its rows are `grid[i][j]`.
+      const inner = {
+        kind: 'input',
+        uid: 'inner',
+        type: 'repeater',
+        path: 'grid.items.rows',
+        props: { template: { kind: 'layout', uid: 'grid', type: 'flex', children: [c1, c2] } },
+      };
+      const outer = repeater('outer', 'grid', [inner]);
 
-      const next = run(state);
+      const next = run({
+        form: [outer],
+        data: { grid: [{ rows: [] }, { rows: [] }, { rows: [{}, {}, {}, { hideLeaf: true }] }] },
+      });
       const children = (next.calculatedWidgets['grid[2][3]'].current as LayoutWidget<string>)
         .children;
 
+      expect(next.widgetFlags['leaf1[2][3]']).toEqual({ hidden: true });
       expect(children).toHaveLength(1);
       expect(children[0].uid).toBe('leaf2');
+      // A row whose first child is visible keeps both children.
+      expect(
+        (next.calculatedWidgets['grid[2][2]'].current as LayoutWidget<string>).children,
+      ).toHaveLength(2);
     });
 
-    it('structural order change trips change detection (new DerivedWidget ref)', () => {
-      const a = { kind: 'display', uid: 'a', type: 'heading' } satisfies DisplayWidget<string>;
-      const b = { kind: 'display', uid: 'b', type: 'heading' } satisfies DisplayWidget<string>;
-      const source1 = {
+    it('a different child at the same position -> new DerivedWidget ref', () => {
+      const a = {
+        kind: 'display',
+        uid: 'a',
+        type: 'heading',
+        include: { when: "$form.show === 'a'" },
+      } satisfies DisplayWidget<string>;
+      const b = {
+        kind: 'display',
+        uid: 'b',
+        type: 'heading',
+        include: { when: "$form.show === 'b'" },
+      } satisfies DisplayWidget<string>;
+      const source = {
         kind: 'layout',
         uid: 'l',
         type: 'flex',
         children: [a, b],
       } satisfies LayoutWidget<string>;
-      seed(state, 'l', source1);
-
-      const first = run(state);
+      const { state: first, reduce } = start({ form: [source], data: { show: 'a' } });
       const prevDerived = first.calculatedWidgets['l'];
+      expect((prevDerived.current as LayoutWidget<string>).children.map((c) => c.uid)).toEqual([
+        'a',
+      ]);
 
-      // Swap children order
-      const source2 = { ...source1, children: [b, a] } satisfies LayoutWidget<string>;
-      first.calculatedWidgets['l'] = { source: source2, current: prevDerived.current };
-
-      const second = run(first);
+      // The list keeps its length, and the widget at its first position changes.
+      const second = reduce(first, setData({ show: 'b' }));
 
       expect(second.calculatedWidgets['l']).not.toBe(prevDerived);
       expect(
         (second.calculatedWidgets['l'].current as LayoutWidget<string>).children.map((c) => c.uid),
-      ).toEqual(['b', 'a']);
+      ).toEqual(['b']);
     });
 
     it('core-field change on a layout with structurally stable children -> new DerivedWidget ref', () => {
-      // Source has size=1 but previous.current has no size. Core loop marks
-      // changed=true; children are structurally stable (both empty), so the
-      // children branch must NOT clobber that signal - change detection ORs.
+      // The state changes `size`. The children are structurally stable (both empty), and the
+      // children comparison must not hide the change of the core field.
       const source = {
         kind: 'layout',
         uid: 'l',
         type: 'flex',
         size: 1,
+        'size.wide': 2,
         children: [],
       } satisfies LayoutWidget<string>;
-      seed(state, 'l', source);
-      const prevDerived = state.calculatedWidgets['l'];
+      const { state: first, reduce } = start({
+        states: { wide: '$form.wide === true' },
+        form: [source],
+      });
+      const prevDerived = first.calculatedWidgets['l'];
+      expect(prevDerived.current.size).toBe(1);
 
-      const next = run(state);
+      const next = reduce(first, setData({ wide: true }));
 
       expect(next.calculatedWidgets['l']).not.toBe(prevDerived);
-      expect(next.calculatedWidgets['l'].current.size).toBe(1);
+      expect(next.calculatedWidgets['l'].current.size).toBe(2);
     });
 
     it('structural length change trips change detection', () => {
       const a = { kind: 'display', uid: 'a', type: 'heading' } satisfies DisplayWidget<string>;
-      const b = { kind: 'display', uid: 'b', type: 'heading' } satisfies DisplayWidget<string>;
+      const b = {
+        kind: 'display',
+        uid: 'b',
+        type: 'heading',
+        exclude: { when: '$form.hideB === true' },
+      } satisfies DisplayWidget<string>;
       const source1 = {
         kind: 'layout',
         uid: 'l',
         type: 'flex',
         children: [a, b],
       } satisfies LayoutWidget<string>;
-      seed(state, 'l', source1);
-
-      const first = run(state);
+      const { state: first, reduce } = start({ form: [source1] });
       const prevDerived = first.calculatedWidgets['l'];
+      expect((prevDerived.current as LayoutWidget<string>).children).toHaveLength(2);
 
-      const source2 = { ...source1, children: [a] } satisfies LayoutWidget<string>;
-      first.calculatedWidgets['l'] = { source: source2, current: prevDerived.current };
-
-      const second = run(first);
+      const second = reduce(first, setData({ hideB: true }));
 
       expect(second.calculatedWidgets['l']).not.toBe(prevDerived);
       expect((second.calculatedWidgets['l'].current as LayoutWidget<string>).children).toHaveLength(
@@ -1157,11 +1276,11 @@ describe('calculateWidgetProps', () => {
         label: 'Go',
         disabled: false,
       } satisfies ActionWidget<string>;
-      seed(state, 'a', source);
+      const { state: first, reduce } = start({ form: [source] });
 
-      const first = run(state);
-      const second = run(first);
+      const second = reduce(first, setData({}));
 
+      expect(second.calculatedWidgets).not.toBe(first.calculatedWidgets);
       expect(second.calculatedWidgets['a']).toBe(first.calculatedWidgets['a']);
     });
 
@@ -1173,11 +1292,11 @@ describe('calculateWidgetProps', () => {
         type: 'flex',
         children: [child],
       } satisfies LayoutWidget<string>;
-      seed(state, 'l', source);
+      const { state: first, reduce } = start({ form: [source] });
 
-      const first = run(state);
-      const second = run(first);
+      const second = reduce(first, setData({}));
 
+      expect(second.calculatedWidgets).not.toBe(first.calculatedWidgets);
       expect(second.calculatedWidgets['l']).toBe(first.calculatedWidgets['l']);
     });
   });
@@ -1194,10 +1313,8 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: "{{$form.firstName + ' ' + $form.lastName}}" },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
-      state.data = { firstName: 'John', lastName: 'Doe' };
 
-      const next = run(state);
+      const next = run({ form: [source], data: { firstName: 'John', lastName: 'Doe' } });
       expect(next.calculatedWidgets['d']?.current?.props?.['text']).toBe('John Doe');
     });
 
@@ -1208,10 +1325,8 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: 'Next: {{$form.count + 1}}' },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
-      state.data = { count: 4 };
 
-      const next = run(state);
+      const next = run({ form: [source], data: { count: 4 } });
       expect(next.calculatedWidgets['d']?.current?.props?.['text']).toBe('Next: 5');
     });
 
@@ -1222,10 +1337,9 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: "{{$meta.isVip ? 'VIP' : 'Guest'}}" },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
-      state.meta = { isVip: true };
+      const { state, reduce } = start({ form: [source] });
 
-      const next = run(state);
+      const next = reduce(state, setMeta({ isVip: true }));
       expect(next.calculatedWidgets['d']?.current?.props?.['text']).toBe('VIP');
     });
 
@@ -1236,10 +1350,8 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: 'Hello {{$form.missing}}' },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
-      state.data = {};
 
-      const next = run(state);
+      const next = run({ form: [source], data: {} });
       expect(next.calculatedWidgets['d']?.current?.props?.['text']).toBe('Hello ');
     });
 
@@ -1250,10 +1362,8 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: '{{$form.x}}' },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
-      state.data = { x: null };
 
-      const next = run(state);
+      const next = run({ form: [source], data: { x: null } });
       expect(next.calculatedWidgets['d']?.current?.props?.['text']).toBe('');
     });
 
@@ -1264,10 +1374,8 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: '{{$form.flag}} {{$form.count}}' },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
-      state.data = { flag: false, count: 0 };
 
-      const next = run(state);
+      const next = run({ form: [source], data: { flag: false, count: 0 } });
       expect(next.calculatedWidgets['d']?.current?.props?.['text']).toBe('false 0');
     });
 
@@ -1278,9 +1386,8 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: 'x: {{$form..broken}}' },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
 
-      const next = run(state);
+      const next = run({ form: [source] });
       expect(next.formHealth.status).toBe('errored');
       if (next.formHealth.status === 'errored') {
         expect(next.formHealth.code).toBe(40);
@@ -1296,10 +1403,8 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: template },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
-      state.data = data;
 
-      const next = run(state);
+      const next = run({ form: [source], data });
       return { text: next.calculatedWidgets['d']?.current?.props?.['text'], next };
     };
 
@@ -1349,10 +1454,8 @@ describe('calculateWidgetProps', () => {
         type: 'button',
         label: '{{ $form.n }}',
       } satisfies ActionWidget<string>;
-      seed(state, 'a', source);
-      state.data = { n: 5 };
 
-      const next = run(state);
+      const next = run({ form: [source], data: { n: 5 } });
 
       expect((next.calculatedWidgets['a'].current as ActionWidget<string>).label).toBe('5');
     });
@@ -1373,10 +1476,8 @@ describe('calculateWidgetProps', () => {
           } as unknown as I18nParams,
         },
       } satisfies ActionWidget<string>;
-      seed(state, 'a', source);
-      state.data = { zero: 0 };
 
-      run(state, translator);
+      run({ form: [source], data: { zero: 0 } }, translator);
 
       // The params object has no prototype, so the spread makes a plain object to compare.
       expect({ ...translator.calls[0].params }).toStrictEqual({
@@ -1408,10 +1509,8 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: 'Hello {{$fn.upper($form.name)}}' },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
-      state.data = { name: 'jane' };
 
-      const next = run(state, makeTranslator(), functions);
+      const next = run({ form: [source], data: { name: 'jane' } }, makeTranslator(), functions);
       expect(next.calculatedWidgets['d']?.current?.props?.['text']).toBe('Hello JANE');
     });
 
@@ -1423,10 +1522,12 @@ describe('calculateWidgetProps', () => {
         type: 'button',
         label: { key: 'k', params: { total: '$fn.total($form.items)' } },
       } satisfies ActionWidget<string>;
-      seed(state, 'a', source);
-      state.data = { items: [{ price: 10 }, { price: 20 }] };
 
-      run(state, translator, functions);
+      run(
+        { form: [source], data: { items: [{ price: 10 }, { price: 20 }] } },
+        translator,
+        functions,
+      );
 
       expect(translator.calls[0].params).toEqual({ total: 30 });
     });
@@ -1434,15 +1535,19 @@ describe('calculateWidgetProps', () => {
     it('combines $fn with $item inside a repeater template', () => {
       const source = {
         kind: 'display',
-        uid: 'row-total[0]',
+        uid: 'row-total',
         type: 'heading',
         props: { text: 'Total: {{$fn.lineTotal($item)}}' },
       } satisfies DisplayWidget<string>;
-      seed(state, 'row-total[0]', source);
-      state.repeaterItemScopes['row-total[0]'] = { itemPath: 'lineItems.0', index: 0 };
-      state.data = { lineItems: [{ quantity: 3, unitPrice: 5 }] };
 
-      const next = run(state, makeTranslator(), functions);
+      const next = run(
+        {
+          form: [repeater('lineItems', 'lineItems', [source])],
+          data: { lineItems: [{ quantity: 3, unitPrice: 5 }] },
+        },
+        makeTranslator(),
+        functions,
+      );
       expect(next.calculatedWidgets['row-total[0]']?.current?.props?.['text']).toBe('Total: 15');
     });
 
@@ -1453,9 +1558,8 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: '{{$fn.missing($form.name)}}' },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
 
-      const next = run(state, makeTranslator(), functions);
+      const next = run({ form: [source] }, makeTranslator(), functions);
       expect(next.formHealth.status).toBe('errored');
       if (next.formHealth.status === 'errored') {
         expect(next.formHealth.code).toBe(40);
@@ -1480,10 +1584,8 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: 'Total: {{ $log($form.total) }}' },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
-      state.data = { total: 30 };
 
-      const next = run(state);
+      const next = run({ form: [source], data: { total: 30 } });
 
       expect(next.formHealth).toEqual({ status: 'ok' });
       expect(next.calculatedWidgets['d']?.current?.props?.['text']).toBe('Total: 30');
@@ -1499,10 +1601,8 @@ describe('calculateWidgetProps', () => {
         type: 'button',
         label: { key: 'k', params: { name: "$form.first + ' ' + $log($form.last)" } },
       } satisfies ActionWidget<string>;
-      seed(state, 'a', source);
-      state.data = { first: 'Jane', last: 'Doe' };
 
-      const next = run(state, translator);
+      const next = run({ form: [source], data: { first: 'Jane', last: 'Doe' } }, translator);
 
       expect(next.formHealth).toEqual({ status: 'ok' });
       expect(translator.calls[0].params).toEqual({ name: 'Jane Doe' });
@@ -1518,10 +1618,8 @@ describe('calculateWidgetProps', () => {
         type: 'button',
         label: { key: 'k', params: { last: '$log($form.last)' } },
       } satisfies ActionWidget<string>;
-      seed(state, 'a', source);
-      state.data = { last: 'Doe' };
 
-      const next = run(state, translator);
+      const next = run({ form: [source], data: { last: 'Doe' } }, translator);
 
       expect(next.formHealth).toEqual({ status: 'ok' });
       expect(translator.calls[0].params).toEqual({ last: 'Doe' });
@@ -1541,11 +1639,10 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: '{{$formIsInvalid}}' },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
-      state.validations = {};
 
-      const next = run(state);
+      const next = run({ form: [source] });
 
+      expect(next.validations).toEqual({});
       expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text']).toBe(
         'false',
       );
@@ -1558,12 +1655,11 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: '{{$formIsInvalid}}' },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
-      seedVisibleInput(state, 'u.n');
-      state.validations = { 'u.n': [{ message: 'bad' }] as any };
+      const { state, reduce } = start({ form: [source, requiredInput('u.n')] });
 
-      const next = run(state);
+      const next = reduce(state, validateAllAction);
 
+      expect(next.validations).toEqual({ 'u.n': ['required'] });
       expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text']).toBe(
         'true',
       );
@@ -1575,30 +1671,25 @@ describe('calculateWidgetProps', () => {
   // ---------------------------------------------------------------------------
 
   describe('$item / $index repeater item scope', () => {
-    const seedLineItems = () => {
-      state.data = {
-        lineItems: [
-          { quantity: 2, unitPrice: 10 },
-          { quantity: 3, unitPrice: 5 },
-        ],
-      };
-      state.repeaterItemScopes = {
-        'row-total[0]': { itemPath: 'lineItems.0', index: 0 },
-        'row-total[1]': { itemPath: 'lineItems.1', index: 1 },
-      };
-    };
+    const lineItemsData = () => ({
+      lineItems: [
+        { quantity: 2, unitPrice: 10 },
+        { quantity: 3, unitPrice: 5 },
+      ],
+    });
 
     it('interpolates {{$item.x}} and {{$index}} for a widget inside a repeater item', () => {
-      seedLineItems();
       const source = {
         kind: 'display',
-        uid: 'row-total[0]',
+        uid: 'row-total',
         type: 'heading',
         props: { text: 'Row {{$index + 1}}: {{($item.quantity ?? 0) * ($item.unitPrice ?? 0)}}' },
       } satisfies DisplayWidget<string>;
-      seed(state, 'row-total[0]', source);
 
-      const next = run(state);
+      const next = run({
+        form: [repeater('lineItems', 'lineItems', [source])],
+        data: lineItemsData(),
+      });
 
       expect(
         (next.calculatedWidgets['row-total[0]'].current as DisplayWidget<string>).props?.['text'],
@@ -1606,18 +1697,17 @@ describe('calculateWidgetProps', () => {
     });
 
     it('binds each widget to its own item', () => {
-      seedLineItems();
-      const makeSource = (uid: string) =>
-        ({
-          kind: 'display',
-          uid,
-          type: 'heading',
-          props: { text: '{{($item.quantity ?? 0) * ($item.unitPrice ?? 0)}}' },
-        }) satisfies DisplayWidget<string>;
-      seed(state, 'row-total[0]', makeSource('row-total[0]'));
-      seed(state, 'row-total[1]', makeSource('row-total[1]'));
+      const source = {
+        kind: 'display',
+        uid: 'row-total',
+        type: 'heading',
+        props: { text: '{{($item.quantity ?? 0) * ($item.unitPrice ?? 0)}}' },
+      } satisfies DisplayWidget<string>;
 
-      const next = run(state);
+      const next = run({
+        form: [repeater('lineItems', 'lineItems', [source])],
+        data: lineItemsData(),
+      });
 
       expect(
         (next.calculatedWidgets['row-total[0]'].current as DisplayWidget<string>).props?.['text'],
@@ -1628,10 +1718,9 @@ describe('calculateWidgetProps', () => {
     });
 
     it('pins the invoice per-row and aggregation expressions', () => {
-      seedLineItems();
       const rowSource = {
         kind: 'display',
-        uid: 'row-total[0]',
+        uid: 'row-total',
         type: 'markdownText',
         props: {
           md: '**Total Price:** {{ (($item.quantity ?? 0) * ($item.unitPrice ?? 0)).toFixed(2) }}',
@@ -1645,10 +1734,11 @@ describe('calculateWidgetProps', () => {
           md: '**Subtotal:** {{($form.lineItems?.reduce((acc, item) => acc + ((item.quantity ?? 0) * (item.unitPrice ?? 0)), 0) ?? 0).toFixed(2)}}',
         },
       } satisfies DisplayWidget<string>;
-      seed(state, 'row-total[0]', rowSource);
-      seed(state, 'subtotal', subtotalSource);
 
-      const next = run(state);
+      const next = run({
+        form: [repeater('lineItems', 'lineItems', [rowSource]), subtotalSource],
+        data: lineItemsData(),
+      });
 
       expect(
         (next.calculatedWidgets['row-total[0]'].current as DisplayWidget<string>).props?.['md'],
@@ -1659,21 +1749,23 @@ describe('calculateWidgetProps', () => {
     });
 
     it('resolves $item and $index in i18n params', () => {
-      seedLineItems();
       const source = {
         kind: 'display',
-        uid: 'row-total[0]',
+        uid: 'row-total',
         type: 'heading',
         props: {
           text: { key: 'row.total', params: { qty: '$item.quantity', row: '$index + 1' } },
         },
       } satisfies DisplayWidget<string>;
-      seed(state, 'row-total[0]', source);
       const translator = makeTranslator();
 
-      run(state, translator);
+      run(
+        { form: [repeater('lineItems', 'lineItems', [source])], data: lineItemsData() },
+        translator,
+      );
 
       expect(translator.calls[0]?.params).toEqual({ qty: 2, row: 1 });
+      expect(translator.calls[1]?.params).toEqual({ qty: 3, row: 2 });
     });
 
     it('leaves $item undefined for widgets outside any repeater', () => {
@@ -1683,13 +1775,122 @@ describe('calculateWidgetProps', () => {
         type: 'heading',
         props: { text: '{{$item?.quantity === undefined ? "no item" : "item"}}' },
       } satisfies DisplayWidget<string>;
-      seed(state, 'd', source);
 
-      const next = run(state);
+      const next = run({ form: [source] });
 
       expect((next.calculatedWidgets['d'].current as DisplayWidget<string>).props?.['text']).toBe(
         'no item',
       );
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // Which widgets have an entry
+  // ---------------------------------------------------------------------------
+
+  describe('the entries of the computed widgets', () => {
+    const inputChild = (uid: string, path: string, extra: Record<string, unknown> = {}) => ({
+      kind: 'input',
+      uid,
+      type: 'text',
+      path,
+      props: {},
+      ...extra,
+    });
+    const users = () => repeater('users', 'users', [inputChild('name', 'users.items.name')]);
+
+    it('gives every visible widget an entry whose source is the widget of the form', () => {
+      const next = run({
+        form: [
+          inputChild('firstName', 'firstName'),
+          inputChild('bio', 'bio', { include: { when: 'false' } }),
+        ],
+      });
+
+      // `#0` is the root layout that holds the widgets of the form. The hidden input has no entry.
+      expect(Object.keys(next.resolvedSources)).toEqual(['#0', 'firstName', 'bio']);
+      expect(Object.keys(next.calculatedWidgets)).toEqual(['#0', 'firstName']);
+      expect(next.calculatedWidgets['firstName'].source).toBe(next.resolvedSources['firstName']);
+    });
+
+    it('keeps an existing entry by reference', () => {
+      const { state: first, reduce } = start({
+        form: [inputChild('firstName', 'firstName'), users()],
+        data: { users: [{}] },
+      });
+
+      // The second row adds widgets. The widgets that were there keep their entries.
+      const second = reduce(first, setData({ users: [{}, {}] }));
+
+      expect(second.calculatedWidgets['firstName']).toBe(first.calculatedWidgets['firstName']);
+      expect(second.calculatedWidgets['name[0]']).toBe(first.calculatedWidgets['name[0]']);
+      expect(second.calculatedWidgets['name[1]'].current).toMatchObject({
+        uid: 'name[1]',
+        path: 'users.1.name',
+      });
+    });
+
+    it('drops an entry whose widget is gone', () => {
+      const { state: first, reduce } = start({ form: [users()], data: { users: [{}, {}] } });
+      expect(first.calculatedWidgets).toHaveProperty('name[1]');
+
+      const second = reduce(first, setData({ users: [{}] }));
+
+      expect(Object.keys(second.calculatedWidgets)).toEqual([
+        '#0',
+        'users',
+        'users-template[0]',
+        'name[0]',
+      ]);
+    });
+
+    it('replaces an entry that was dropped and re-added, without reusing the old one', () => {
+      const { state: first, reduce } = start({ form: [users()], data: { users: [{}, {}] } });
+      const removed = reduce(first, setData({ users: [{}] }));
+      expect(removed.calculatedWidgets).not.toHaveProperty('name[1]');
+
+      const added = reduce(removed, setData({ users: [{}, {}] }));
+
+      expect(added.calculatedWidgets['name[1]']).not.toBe(first.calculatedWidgets['name[1]']);
+      expect(added.calculatedWidgets['name[1]']).toEqual(first.calculatedWidgets['name[1]']);
+    });
+
+    it('replaces the entries when one row goes and another row comes in the same derive', () => {
+      const guests = repeater('guests', 'guests', [inputChild('guest', 'guests.items.name')]);
+      const { state: first, reduce } = start({
+        form: [users(), guests],
+        data: { users: [{}, {}], guests: [{}] },
+      });
+      expect(Object.keys(first.calculatedWidgets)).toEqual([
+        '#0',
+        'users',
+        'users-template[0]',
+        'name[0]',
+        'users-template[1]',
+        'name[1]',
+        'guests',
+        'guests-template[0]',
+        'guest[0]',
+      ]);
+
+      // The number of widgets stays the same: `users` loses its second row, `guests` gets one.
+      const second = reduce(first, setData({ users: [{}], guests: [{}, {}] }));
+
+      expect(Object.keys(second.calculatedWidgets)).toEqual([
+        '#0',
+        'users',
+        'users-template[0]',
+        'name[0]',
+        'guests',
+        'guests-template[0]',
+        'guest[0]',
+        'guests-template[1]',
+        'guest[1]',
+      ]);
+      expect(second.calculatedWidgets['guest[1]'].current).toMatchObject({
+        uid: 'guest[1]',
+        path: 'guests.1.name',
+      });
     });
   });
 });

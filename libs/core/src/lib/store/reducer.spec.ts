@@ -21,9 +21,8 @@ import { createInitialState, type State } from './model';
 import { reducer } from './reducer';
 
 /**
- * End-to-end reducer spec. Unlike the per-reducer specs, which place widgets into
- * `state.calculatedWidgets` by hand, this drives the REAL reducer through realistic action
- * sequences and asserts the resulting state.
+ * End-to-end reducer spec. This drives the REAL reducer through realistic action sequences and
+ * asserts the resulting state.
  *
  * The store computes the whole widget set from the data on every input-changing action (one
  * derive), so nothing here mounts a component: `calculatedWidgets` holds every visible widget as
