@@ -1005,7 +1005,7 @@ expression param gives its result, also when the result is `null` or `undefined`
   translator receives `{ middle: null }`. The text `$form.middleName` never reaches the user.
 - Status: follows.
 
-### 37. A form event names the widget that sent it
+### 38. A form event names the widget that sent it
 
 Every form event carries `widget`: the `uid` and the `type` of the widget that sent it, and its
 data `path` when the widget is an input. Inside a repeater, `uid` and `path` are the ones of the
@@ -1047,7 +1047,7 @@ row. The submit event has no `widget`.
 
 ## Rules for form authors
 
-### 38. Menu item values are unique
+### 39. Menu item values are unique
 
 Two items with the same `value` in one menu are not supported. The form does not check it, and
 the items can render or select wrong.
