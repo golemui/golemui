@@ -1,0 +1,233 @@
+{
+  "afterStart": {
+    "formHealth": {
+      "status": "ok"
+    },
+    "isFormValid": true,
+    "touched": false,
+    "allControlsValidated": false,
+    "currentStates": [],
+    "data": {
+      "textinput": "[undefined]",
+      "dateInput": "[undefined]",
+      "currencyIconRightWithUSD": "[undefined]",
+      "radiogroups": {
+        "requiredUnselected": "[undefined]"
+      },
+      "isNewUserHint": "[undefined]",
+      "number": "[undefined]"
+    },
+    "validations": {},
+    "touchedControls": {},
+    "widgetFlags": {},
+    "resolvedSources": {
+      "#0": "layout grid",
+      "textinput-textinput": "input textinput textinput",
+      "dateInput-dateInput": "input dateInput dateInput",
+      "currencyIconRightWithUSD-currency": "input currency currencyIconRightWithUSD",
+      "radiogroups.requiredUnselected-radiogroup": "input radiogroup radiogroups.requiredUnselected",
+      "isNewUserHint-checkbox": "input checkbox isNewUserHint",
+      "number-number": "input number number",
+      "register-submit": "action button"
+    },
+    "repeaterItemScopes": {},
+    "repeaterRows": {},
+    "calculatedWidgets": {
+      "#0": {
+        "uid": "#0",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "textinput-textinput",
+          "dateInput-dateInput",
+          "currencyIconRightWithUSD-currency",
+          "radiogroups.requiredUnselected-radiogroup",
+          "isNewUserHint-checkbox",
+          "number-number",
+          "register-submit"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "textinput-textinput": {
+        "uid": "textinput-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "validator": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 8,
+          "required": true
+        },
+        "path": "textinput",
+        "props": {
+          "placeholder": "Please enter your phone number"
+        },
+        "keysWithUndefined": "size include exclude label disabled readonly defaultValue"
+      },
+      "dateInput-dateInput": {
+        "uid": "dateInput-dateInput",
+        "type": "dateInput",
+        "kind": "input",
+        "validator": {
+          "type": "string",
+          "required": true,
+          "format": "date"
+        },
+        "path": "dateInput",
+        "props": {
+          "icon": "calendar_month"
+        },
+        "keysWithUndefined": "size include exclude label disabled readonly defaultValue"
+      },
+      "currencyIconRightWithUSD-currency": {
+        "uid": "currencyIconRightWithUSD-currency",
+        "type": "currency",
+        "kind": "input",
+        "validator": {
+          "type": "number",
+          "required": true,
+          "minimum": 100
+        },
+        "path": "currencyIconRightWithUSD",
+        "props": {
+          "placeholder": "Please enter price in USD"
+        },
+        "keysWithUndefined": "size include exclude label disabled readonly defaultValue"
+      },
+      "radiogroups.requiredUnselected-radiogroup": {
+        "uid": "radiogroups.requiredUnselected-radiogroup",
+        "type": "radiogroup",
+        "kind": "input",
+        "validator": {
+          "type": "string",
+          "required": true
+        },
+        "path": "radiogroups.requiredUnselected",
+        "props": {
+          "options": [
+            "hello",
+            "bye"
+          ]
+        },
+        "keysWithUndefined": "size include exclude label disabled readonly defaultValue"
+      },
+      "isNewUserHint-checkbox": {
+        "uid": "isNewUserHint-checkbox",
+        "type": "checkbox",
+        "kind": "input",
+        "label": "I accept the terms and conditions",
+        "validator": {
+          "type": "boolean",
+          "required": true
+        },
+        "path": "isNewUserHint",
+        "props": {
+          "checkboxPosition": "left"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "number-number": {
+        "uid": "number-number",
+        "type": "number",
+        "kind": "input",
+        "label": "Temperature",
+        "validator": {
+          "type": "number",
+          "minimum": -45,
+          "maximum": 42,
+          "required": true
+        },
+        "path": "number",
+        "props": {
+          "placeholder": "ºC",
+          "minimum": -45,
+          "maximum": 42,
+          "step": 0.5,
+          "autoGrow": true
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "register-submit": {
+        "uid": "register-submit",
+        "type": "button",
+        "kind": "action",
+        "label": "Validate and submit form",
+        "on": {
+          "load": "[undefined]",
+          "click": "submit",
+          "change": "[undefined]",
+          "filter": "[undefined]",
+          "blur": "[undefined]"
+        },
+        "keysWithUndefined": "size include exclude disabled actionType"
+      }
+    }
+  },
+  "afterSubmit": {
+    "isFormValid": false,
+    "touched": true,
+    "allControlsValidated": true,
+    "validations": {
+      "allEntries": {
+        "currencyIconRightWithUSD": [
+          "required"
+        ],
+        "dateInput": [
+          "required"
+        ],
+        "isNewUserHint": [
+          "required"
+        ],
+        "number": [
+          "required"
+        ],
+        "radiogroups.requiredUnselected": [
+          "required"
+        ],
+        "textinput": [
+          "required"
+        ]
+      }
+    },
+    "touchedControls": {
+      "allEntries": {
+        "currencyIconRightWithUSD": true,
+        "dateInput": true,
+        "isNewUserHint": true,
+        "number": true,
+        "radiogroups.requiredUnselected": true,
+        "textinput": true
+      }
+    }
+  },
+  "afterData": {
+    "data": {
+      "details": {
+        "clientName": "",
+        "date": null,
+        "isRemote": false,
+        "notes": ""
+      },
+      "textinput": "[undefined]",
+      "dateInput": "[undefined]",
+      "currencyIconRightWithUSD": "[undefined]",
+      "radiogroups": {
+        "requiredUnselected": "[undefined]"
+      },
+      "isNewUserHint": "[undefined]",
+      "number": "[undefined]"
+    }
+  },
+  "afterEmptyData": {
+    "data": {
+      "textinput": "[undefined]",
+      "dateInput": "[undefined]",
+      "currencyIconRightWithUSD": "[undefined]",
+      "radiogroups": {
+        "requiredUnselected": "[undefined]"
+      },
+      "isNewUserHint": "[undefined]",
+      "number": "[undefined]"
+    }
+  }
+}

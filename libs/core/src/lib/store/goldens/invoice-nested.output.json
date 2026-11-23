@@ -1,0 +1,1144 @@
+{
+  "afterStart": {
+    "formHealth": {
+      "status": "ok"
+    },
+    "isFormValid": true,
+    "touched": false,
+    "allControlsValidated": false,
+    "currentStates": [],
+    "data": {
+      "projects": "[undefined]"
+    },
+    "validations": {},
+    "touchedControls": {},
+    "widgetFlags": {
+      "#0.4.0": {
+        "disabled": false
+      }
+    },
+    "resolvedSources": {
+      "#0": "layout grid",
+      "#0.0": "display markdownText",
+      "#0.1": "display markdownText",
+      "projects-repeater": "input repeater projects",
+      "#0.3": "display alert",
+      "#0.4": "layout grid",
+      "#0.4.0": "action button"
+    },
+    "repeaterItemScopes": {},
+    "repeaterRows": {},
+    "calculatedWidgets": {
+      "#0": {
+        "uid": "#0",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "#0.0",
+          "#0.1",
+          "projects-repeater",
+          "#0.3",
+          "#0.4"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.0": {
+        "uid": "#0.0",
+        "type": "markdownText",
+        "kind": "display",
+        "props": {
+          "md": "## Freelance invoice by project"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.1": {
+        "uid": "#0.1",
+        "type": "markdownText",
+        "kind": "display",
+        "props": {
+          "md": "Bill each project's tasks (hours x rate). This is a repeater of tasks nested inside a repeater of projects, so `$item` and `$index` always resolve to the innermost item: the task."
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "projects-repeater": {
+        "uid": "projects-repeater",
+        "type": "repeater",
+        "kind": "input",
+        "label": "Projects",
+        "validator": {
+          "type": "array",
+          "required": true,
+          "minItems": 1
+        },
+        "path": "projects",
+        "props": {
+          "addLabel": "Add project",
+          "removeLabel": "Remove project",
+          "title": "Project",
+          "template": {
+            "rowTemplateUid": "#0.2.t"
+          }
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "#0.3": {
+        "uid": "#0.3",
+        "type": "alert",
+        "kind": "display",
+        "props": {
+          "level": "success",
+          "text": "Total due: $0.00"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.4": {
+        "uid": "#0.4",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "row",
+          "justify": "end"
+        },
+        "children": [
+          "#0.4.0"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.4.0": {
+        "uid": "#0.4.0",
+        "type": "button",
+        "kind": "action",
+        "label": "Send invoice",
+        "disabled": false,
+        "actionType": "submit",
+        "props": {
+          "variant": "filled"
+        },
+        "keysWithUndefined": "size include exclude"
+      }
+    }
+  },
+  "afterSubmit": {
+    "isFormValid": false,
+    "touched": true,
+    "allControlsValidated": true,
+    "validations": {
+      "allEntries": {
+        "projects": [
+          "required"
+        ]
+      }
+    },
+    "touchedControls": {
+      "allEntries": {
+        "projects": true
+      }
+    },
+    "widgetFlags": {
+      "allEntries": {
+        "#0.4.0": {
+          "disabled": true
+        }
+      }
+    },
+    "calculatedWidgets": {
+      "changedEntries": {
+        "#0.4.0": {
+          "uid": "#0.4.0",
+          "type": "button",
+          "kind": "action",
+          "label": "Send invoice",
+          "disabled": true,
+          "actionType": "submit",
+          "props": {
+            "variant": "filled"
+          },
+          "keysWithUndefined": "size include exclude"
+        }
+      }
+    }
+  },
+  "afterData": {
+    "isFormValid": true,
+    "data": {
+      "projects": [
+        {
+          "name": "Website redesign",
+          "tasks": [
+            {
+              "description": "Homepage design",
+              "hours": 12,
+              "rate": 95
+            },
+            {
+              "description": "Responsive layout",
+              "hours": 8,
+              "rate": 95
+            }
+          ]
+        },
+        {
+          "name": "Brand identity",
+          "tasks": [
+            {
+              "description": "Logo design",
+              "hours": 6,
+              "rate": 110
+            }
+          ]
+        }
+      ]
+    },
+    "validations": {
+      "allEntries": {
+        "projects": null,
+        "projects.0.name": null,
+        "projects.0.tasks": null,
+        "projects.0.tasks.0.description": null,
+        "projects.0.tasks.0.hours": null,
+        "projects.0.tasks.0.rate": null,
+        "projects.0.tasks.1.description": null,
+        "projects.0.tasks.1.hours": null,
+        "projects.0.tasks.1.rate": null,
+        "projects.1.name": null,
+        "projects.1.tasks": null,
+        "projects.1.tasks.0.description": null,
+        "projects.1.tasks.0.hours": null,
+        "projects.1.tasks.0.rate": null
+      }
+    },
+    "touchedControls": {
+      "changedEntries": {
+        "projects.0.name": true,
+        "projects.0.tasks": true,
+        "projects.0.tasks.0.description": true,
+        "projects.0.tasks.0.hours": true,
+        "projects.0.tasks.0.rate": true,
+        "projects.0.tasks.1.description": true,
+        "projects.0.tasks.1.hours": true,
+        "projects.0.tasks.1.rate": true,
+        "projects.1.name": true,
+        "projects.1.tasks": true,
+        "projects.1.tasks.0.description": true,
+        "projects.1.tasks.0.hours": true,
+        "projects.1.tasks.0.rate": true
+      }
+    },
+    "widgetFlags": {
+      "allEntries": {
+        "#0.2.t.1.t.3[0][0]": {
+          "hidden": false
+        },
+        "#0.2.t.1.t.3[0][1]": {
+          "hidden": false
+        },
+        "#0.2.t.1.t.3[1][0]": {
+          "hidden": false
+        },
+        "#0.4.0": {
+          "disabled": false
+        }
+      }
+    },
+    "resolvedSources": {
+      "keys": [
+        "#0",
+        "#0.0",
+        "#0.1",
+        "projects-repeater",
+        "#0.2.t[0]",
+        "projects.items.name-textinput[0]",
+        "projects.items.tasks-repeater[0]",
+        "#0.2.t.1.t[0][0]",
+        "projects.items.tasks.items.description-textinput[0][0]",
+        "projects.items.tasks.items.hours-number[0][0]",
+        "projects.items.tasks.items.rate-currency[0][0]",
+        "#0.2.t.1.t.3[0][0]",
+        "#0.2.t.1.t[0][1]",
+        "projects.items.tasks.items.description-textinput[0][1]",
+        "projects.items.tasks.items.hours-number[0][1]",
+        "projects.items.tasks.items.rate-currency[0][1]",
+        "#0.2.t.1.t.3[0][1]",
+        "#0.2.t.2[0]",
+        "#0.2.t[1]",
+        "projects.items.name-textinput[1]",
+        "projects.items.tasks-repeater[1]",
+        "#0.2.t.1.t[1][0]",
+        "projects.items.tasks.items.description-textinput[1][0]",
+        "projects.items.tasks.items.hours-number[1][0]",
+        "projects.items.tasks.items.rate-currency[1][0]",
+        "#0.2.t.1.t.3[1][0]",
+        "#0.2.t.2[1]",
+        "#0.3",
+        "#0.4",
+        "#0.4.0"
+      ],
+      "changedEntries": {
+        "#0.2.t[0]": "layout grid",
+        "projects.items.name-textinput[0]": "input textinput projects.0.name",
+        "projects.items.tasks-repeater[0]": "input repeater projects.0.tasks",
+        "#0.2.t.1.t[0][0]": "layout grid",
+        "projects.items.tasks.items.description-textinput[0][0]": "input textinput projects.0.tasks.0.description",
+        "projects.items.tasks.items.hours-number[0][0]": "input number projects.0.tasks.0.hours",
+        "projects.items.tasks.items.rate-currency[0][0]": "input currency projects.0.tasks.0.rate",
+        "#0.2.t.1.t.3[0][0]": "display markdownText",
+        "#0.2.t.1.t[0][1]": "layout grid",
+        "projects.items.tasks.items.description-textinput[0][1]": "input textinput projects.0.tasks.1.description",
+        "projects.items.tasks.items.hours-number[0][1]": "input number projects.0.tasks.1.hours",
+        "projects.items.tasks.items.rate-currency[0][1]": "input currency projects.0.tasks.1.rate",
+        "#0.2.t.1.t.3[0][1]": "display markdownText",
+        "#0.2.t.2[0]": "display alert",
+        "#0.2.t[1]": "layout grid",
+        "projects.items.name-textinput[1]": "input textinput projects.1.name",
+        "projects.items.tasks-repeater[1]": "input repeater projects.1.tasks",
+        "#0.2.t.1.t[1][0]": "layout grid",
+        "projects.items.tasks.items.description-textinput[1][0]": "input textinput projects.1.tasks.0.description",
+        "projects.items.tasks.items.hours-number[1][0]": "input number projects.1.tasks.0.hours",
+        "projects.items.tasks.items.rate-currency[1][0]": "input currency projects.1.tasks.0.rate",
+        "#0.2.t.1.t.3[1][0]": "display markdownText",
+        "#0.2.t.2[1]": "display alert"
+      }
+    },
+    "repeaterItemScopes": {
+      "allEntries": {
+        "#0.2.t.1.t.3[0][0]": {
+          "itemPath": "projects.0.tasks.0",
+          "index": 0
+        },
+        "#0.2.t.1.t.3[0][1]": {
+          "itemPath": "projects.0.tasks.1",
+          "index": 1
+        },
+        "#0.2.t.1.t.3[1][0]": {
+          "itemPath": "projects.1.tasks.0",
+          "index": 0
+        },
+        "#0.2.t.1.t[0][0]": {
+          "itemPath": "projects.0.tasks.0",
+          "index": 0
+        },
+        "#0.2.t.1.t[0][1]": {
+          "itemPath": "projects.0.tasks.1",
+          "index": 1
+        },
+        "#0.2.t.1.t[1][0]": {
+          "itemPath": "projects.1.tasks.0",
+          "index": 0
+        },
+        "#0.2.t.2[0]": {
+          "itemPath": "projects.0",
+          "index": 0
+        },
+        "#0.2.t.2[1]": {
+          "itemPath": "projects.1",
+          "index": 1
+        },
+        "#0.2.t[0]": {
+          "itemPath": "projects.0",
+          "index": 0
+        },
+        "#0.2.t[1]": {
+          "itemPath": "projects.1",
+          "index": 1
+        },
+        "projects.items.name-textinput[0]": {
+          "itemPath": "projects.0",
+          "index": 0
+        },
+        "projects.items.name-textinput[1]": {
+          "itemPath": "projects.1",
+          "index": 1
+        },
+        "projects.items.tasks-repeater[0]": {
+          "itemPath": "projects.0",
+          "index": 0
+        },
+        "projects.items.tasks-repeater[1]": {
+          "itemPath": "projects.1",
+          "index": 1
+        },
+        "projects.items.tasks.items.description-textinput[0][0]": {
+          "itemPath": "projects.0.tasks.0",
+          "index": 0
+        },
+        "projects.items.tasks.items.description-textinput[0][1]": {
+          "itemPath": "projects.0.tasks.1",
+          "index": 1
+        },
+        "projects.items.tasks.items.description-textinput[1][0]": {
+          "itemPath": "projects.1.tasks.0",
+          "index": 0
+        },
+        "projects.items.tasks.items.hours-number[0][0]": {
+          "itemPath": "projects.0.tasks.0",
+          "index": 0
+        },
+        "projects.items.tasks.items.hours-number[0][1]": {
+          "itemPath": "projects.0.tasks.1",
+          "index": 1
+        },
+        "projects.items.tasks.items.hours-number[1][0]": {
+          "itemPath": "projects.1.tasks.0",
+          "index": 0
+        },
+        "projects.items.tasks.items.rate-currency[0][0]": {
+          "itemPath": "projects.0.tasks.0",
+          "index": 0
+        },
+        "projects.items.tasks.items.rate-currency[0][1]": {
+          "itemPath": "projects.0.tasks.1",
+          "index": 1
+        },
+        "projects.items.tasks.items.rate-currency[1][0]": {
+          "itemPath": "projects.1.tasks.0",
+          "index": 0
+        }
+      }
+    },
+    "repeaterRows": {
+      "allEntries": {
+        "#0.2.t.1.t.3[0][0]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.0",
+            "index": 0
+          },
+          {
+            "declaredItemPath": "projects.items.tasks.items",
+            "itemPath": "projects.0.tasks.0",
+            "index": 0
+          }
+        ],
+        "#0.2.t.1.t.3[0][1]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.0",
+            "index": 0
+          },
+          {
+            "declaredItemPath": "projects.items.tasks.items",
+            "itemPath": "projects.0.tasks.1",
+            "index": 1
+          }
+        ],
+        "#0.2.t.1.t.3[1][0]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.1",
+            "index": 1
+          },
+          {
+            "declaredItemPath": "projects.items.tasks.items",
+            "itemPath": "projects.1.tasks.0",
+            "index": 0
+          }
+        ],
+        "#0.2.t.1.t[0][0]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.0",
+            "index": 0
+          },
+          {
+            "declaredItemPath": "projects.items.tasks.items",
+            "itemPath": "projects.0.tasks.0",
+            "index": 0
+          }
+        ],
+        "#0.2.t.1.t[0][1]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.0",
+            "index": 0
+          },
+          {
+            "declaredItemPath": "projects.items.tasks.items",
+            "itemPath": "projects.0.tasks.1",
+            "index": 1
+          }
+        ],
+        "#0.2.t.1.t[1][0]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.1",
+            "index": 1
+          },
+          {
+            "declaredItemPath": "projects.items.tasks.items",
+            "itemPath": "projects.1.tasks.0",
+            "index": 0
+          }
+        ],
+        "#0.2.t.2[0]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.0",
+            "index": 0
+          }
+        ],
+        "#0.2.t.2[1]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.1",
+            "index": 1
+          }
+        ],
+        "#0.2.t[0]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.0",
+            "index": 0
+          }
+        ],
+        "#0.2.t[1]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.1",
+            "index": 1
+          }
+        ],
+        "projects.items.name-textinput[0]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.0",
+            "index": 0
+          }
+        ],
+        "projects.items.name-textinput[1]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.1",
+            "index": 1
+          }
+        ],
+        "projects.items.tasks-repeater[0]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.0",
+            "index": 0
+          }
+        ],
+        "projects.items.tasks-repeater[1]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.1",
+            "index": 1
+          }
+        ],
+        "projects.items.tasks.items.description-textinput[0][0]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.0",
+            "index": 0
+          },
+          {
+            "declaredItemPath": "projects.items.tasks.items",
+            "itemPath": "projects.0.tasks.0",
+            "index": 0
+          }
+        ],
+        "projects.items.tasks.items.description-textinput[0][1]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.0",
+            "index": 0
+          },
+          {
+            "declaredItemPath": "projects.items.tasks.items",
+            "itemPath": "projects.0.tasks.1",
+            "index": 1
+          }
+        ],
+        "projects.items.tasks.items.description-textinput[1][0]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.1",
+            "index": 1
+          },
+          {
+            "declaredItemPath": "projects.items.tasks.items",
+            "itemPath": "projects.1.tasks.0",
+            "index": 0
+          }
+        ],
+        "projects.items.tasks.items.hours-number[0][0]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.0",
+            "index": 0
+          },
+          {
+            "declaredItemPath": "projects.items.tasks.items",
+            "itemPath": "projects.0.tasks.0",
+            "index": 0
+          }
+        ],
+        "projects.items.tasks.items.hours-number[0][1]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.0",
+            "index": 0
+          },
+          {
+            "declaredItemPath": "projects.items.tasks.items",
+            "itemPath": "projects.0.tasks.1",
+            "index": 1
+          }
+        ],
+        "projects.items.tasks.items.hours-number[1][0]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.1",
+            "index": 1
+          },
+          {
+            "declaredItemPath": "projects.items.tasks.items",
+            "itemPath": "projects.1.tasks.0",
+            "index": 0
+          }
+        ],
+        "projects.items.tasks.items.rate-currency[0][0]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.0",
+            "index": 0
+          },
+          {
+            "declaredItemPath": "projects.items.tasks.items",
+            "itemPath": "projects.0.tasks.0",
+            "index": 0
+          }
+        ],
+        "projects.items.tasks.items.rate-currency[0][1]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.0",
+            "index": 0
+          },
+          {
+            "declaredItemPath": "projects.items.tasks.items",
+            "itemPath": "projects.0.tasks.1",
+            "index": 1
+          }
+        ],
+        "projects.items.tasks.items.rate-currency[1][0]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.1",
+            "index": 1
+          },
+          {
+            "declaredItemPath": "projects.items.tasks.items",
+            "itemPath": "projects.1.tasks.0",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "calculatedWidgets": {
+      "changedEntries": {
+        "#0.2.t[0]": {
+          "uid": "#0.2.t[0]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "direction": "column",
+            "gap": "sm"
+          },
+          "children": [
+            "projects.items.name-textinput",
+            "projects.items.tasks-repeater",
+            "#0.2.t.2"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "projects.items.name-textinput[0]": {
+          "uid": "projects.items.name-textinput[0]",
+          "type": "textinput",
+          "kind": "input",
+          "label": "Project name",
+          "validator": {
+            "type": "string",
+            "required": true,
+            "minLength": 1
+          },
+          "path": "projects.0.name",
+          "props": {
+            "placeholder": "e.g. Website redesign"
+          },
+          "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+        },
+        "projects.items.tasks-repeater[0]": {
+          "uid": "projects.items.tasks-repeater[0]",
+          "type": "repeater",
+          "kind": "input",
+          "label": "Tasks",
+          "validator": {
+            "type": "array",
+            "required": true,
+            "minItems": 1
+          },
+          "path": "projects.0.tasks",
+          "props": {
+            "addLabel": "Add task",
+            "removeLabel": "Remove",
+            "title": "Task",
+            "template": {
+              "rowTemplateUid": "#0.2.t.1.t"
+            }
+          },
+          "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+        },
+        "#0.2.t.1.t[0][0]": {
+          "uid": "#0.2.t.1.t[0][0]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "direction": "row",
+            "gap": "sm"
+          },
+          "children": [
+            "projects.items.tasks.items.description-textinput",
+            "projects.items.tasks.items.hours-number",
+            "projects.items.tasks.items.rate-currency",
+            "#0.2.t.1.t.3"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "projects.items.tasks.items.description-textinput[0][0]": {
+          "uid": "projects.items.tasks.items.description-textinput[0][0]",
+          "type": "textinput",
+          "kind": "input",
+          "size": 5,
+          "label": "Task",
+          "validator": {
+            "type": "string",
+            "required": true,
+            "minLength": 1
+          },
+          "path": "projects.0.tasks.0.description",
+          "keysWithUndefined": "include exclude disabled readonly defaultValue"
+        },
+        "projects.items.tasks.items.hours-number[0][0]": {
+          "uid": "projects.items.tasks.items.hours-number[0][0]",
+          "type": "number",
+          "kind": "input",
+          "size": 2,
+          "label": "Hours",
+          "validator": {
+            "type": "number",
+            "required": true,
+            "minimum": 0
+          },
+          "path": "projects.0.tasks.0.hours",
+          "props": {
+            "minimum": 0,
+            "step": 0.5
+          },
+          "keysWithUndefined": "include exclude disabled readonly defaultValue"
+        },
+        "projects.items.tasks.items.rate-currency[0][0]": {
+          "uid": "projects.items.tasks.items.rate-currency[0][0]",
+          "type": "currency",
+          "kind": "input",
+          "size": 3,
+          "label": "Hourly rate",
+          "validator": {
+            "type": "number",
+            "required": true
+          },
+          "path": "projects.0.tasks.0.rate",
+          "props": {
+            "currency": "USD",
+            "minimumFractionDigits": 2,
+            "maximumFractionDigits": 2
+          },
+          "keysWithUndefined": "include exclude disabled readonly defaultValue"
+        },
+        "#0.2.t.1.t.3[0][0]": {
+          "uid": "#0.2.t.1.t.3[0][0]",
+          "type": "markdownText",
+          "kind": "display",
+          "size": 2,
+          "include": {
+            "when": "$item.hours !== undefined"
+          },
+          "props": {
+            "md": "**Task 1**  \n$1140.00"
+          },
+          "keysWithUndefined": "exclude"
+        },
+        "#0.2.t.1.t[0][1]": {
+          "uid": "#0.2.t.1.t[0][1]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "direction": "row",
+            "gap": "sm"
+          },
+          "children": [
+            "projects.items.tasks.items.description-textinput",
+            "projects.items.tasks.items.hours-number",
+            "projects.items.tasks.items.rate-currency",
+            "#0.2.t.1.t.3"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "projects.items.tasks.items.description-textinput[0][1]": {
+          "uid": "projects.items.tasks.items.description-textinput[0][1]",
+          "type": "textinput",
+          "kind": "input",
+          "size": 5,
+          "label": "Task",
+          "validator": {
+            "type": "string",
+            "required": true,
+            "minLength": 1
+          },
+          "path": "projects.0.tasks.1.description",
+          "keysWithUndefined": "include exclude disabled readonly defaultValue"
+        },
+        "projects.items.tasks.items.hours-number[0][1]": {
+          "uid": "projects.items.tasks.items.hours-number[0][1]",
+          "type": "number",
+          "kind": "input",
+          "size": 2,
+          "label": "Hours",
+          "validator": {
+            "type": "number",
+            "required": true,
+            "minimum": 0
+          },
+          "path": "projects.0.tasks.1.hours",
+          "props": {
+            "minimum": 0,
+            "step": 0.5
+          },
+          "keysWithUndefined": "include exclude disabled readonly defaultValue"
+        },
+        "projects.items.tasks.items.rate-currency[0][1]": {
+          "uid": "projects.items.tasks.items.rate-currency[0][1]",
+          "type": "currency",
+          "kind": "input",
+          "size": 3,
+          "label": "Hourly rate",
+          "validator": {
+            "type": "number",
+            "required": true
+          },
+          "path": "projects.0.tasks.1.rate",
+          "props": {
+            "currency": "USD",
+            "minimumFractionDigits": 2,
+            "maximumFractionDigits": 2
+          },
+          "keysWithUndefined": "include exclude disabled readonly defaultValue"
+        },
+        "#0.2.t.1.t.3[0][1]": {
+          "uid": "#0.2.t.1.t.3[0][1]",
+          "type": "markdownText",
+          "kind": "display",
+          "size": 2,
+          "include": {
+            "when": "$item.hours !== undefined"
+          },
+          "props": {
+            "md": "**Task 2**  \n$760.00"
+          },
+          "keysWithUndefined": "exclude"
+        },
+        "#0.2.t.2[0]": {
+          "uid": "#0.2.t.2[0]",
+          "type": "alert",
+          "kind": "display",
+          "props": {
+            "level": "info",
+            "text": "Project subtotal: $1900.00"
+          },
+          "keysWithUndefined": "size include exclude"
+        },
+        "#0.2.t[1]": {
+          "uid": "#0.2.t[1]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "direction": "column",
+            "gap": "sm"
+          },
+          "children": [
+            "projects.items.name-textinput",
+            "projects.items.tasks-repeater",
+            "#0.2.t.2"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "projects.items.name-textinput[1]": {
+          "uid": "projects.items.name-textinput[1]",
+          "type": "textinput",
+          "kind": "input",
+          "label": "Project name",
+          "validator": {
+            "type": "string",
+            "required": true,
+            "minLength": 1
+          },
+          "path": "projects.1.name",
+          "props": {
+            "placeholder": "e.g. Website redesign"
+          },
+          "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+        },
+        "projects.items.tasks-repeater[1]": {
+          "uid": "projects.items.tasks-repeater[1]",
+          "type": "repeater",
+          "kind": "input",
+          "label": "Tasks",
+          "validator": {
+            "type": "array",
+            "required": true,
+            "minItems": 1
+          },
+          "path": "projects.1.tasks",
+          "props": {
+            "addLabel": "Add task",
+            "removeLabel": "Remove",
+            "title": "Task",
+            "template": {
+              "rowTemplateUid": "#0.2.t.1.t"
+            }
+          },
+          "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+        },
+        "#0.2.t.1.t[1][0]": {
+          "uid": "#0.2.t.1.t[1][0]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "direction": "row",
+            "gap": "sm"
+          },
+          "children": [
+            "projects.items.tasks.items.description-textinput",
+            "projects.items.tasks.items.hours-number",
+            "projects.items.tasks.items.rate-currency",
+            "#0.2.t.1.t.3"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "projects.items.tasks.items.description-textinput[1][0]": {
+          "uid": "projects.items.tasks.items.description-textinput[1][0]",
+          "type": "textinput",
+          "kind": "input",
+          "size": 5,
+          "label": "Task",
+          "validator": {
+            "type": "string",
+            "required": true,
+            "minLength": 1
+          },
+          "path": "projects.1.tasks.0.description",
+          "keysWithUndefined": "include exclude disabled readonly defaultValue"
+        },
+        "projects.items.tasks.items.hours-number[1][0]": {
+          "uid": "projects.items.tasks.items.hours-number[1][0]",
+          "type": "number",
+          "kind": "input",
+          "size": 2,
+          "label": "Hours",
+          "validator": {
+            "type": "number",
+            "required": true,
+            "minimum": 0
+          },
+          "path": "projects.1.tasks.0.hours",
+          "props": {
+            "minimum": 0,
+            "step": 0.5
+          },
+          "keysWithUndefined": "include exclude disabled readonly defaultValue"
+        },
+        "projects.items.tasks.items.rate-currency[1][0]": {
+          "uid": "projects.items.tasks.items.rate-currency[1][0]",
+          "type": "currency",
+          "kind": "input",
+          "size": 3,
+          "label": "Hourly rate",
+          "validator": {
+            "type": "number",
+            "required": true
+          },
+          "path": "projects.1.tasks.0.rate",
+          "props": {
+            "currency": "USD",
+            "minimumFractionDigits": 2,
+            "maximumFractionDigits": 2
+          },
+          "keysWithUndefined": "include exclude disabled readonly defaultValue"
+        },
+        "#0.2.t.1.t.3[1][0]": {
+          "uid": "#0.2.t.1.t.3[1][0]",
+          "type": "markdownText",
+          "kind": "display",
+          "size": 2,
+          "include": {
+            "when": "$item.hours !== undefined"
+          },
+          "props": {
+            "md": "**Task 1**  \n$660.00"
+          },
+          "keysWithUndefined": "exclude"
+        },
+        "#0.2.t.2[1]": {
+          "uid": "#0.2.t.2[1]",
+          "type": "alert",
+          "kind": "display",
+          "props": {
+            "level": "info",
+            "text": "Project subtotal: $660.00"
+          },
+          "keysWithUndefined": "size include exclude"
+        },
+        "#0.3": {
+          "uid": "#0.3",
+          "type": "alert",
+          "kind": "display",
+          "props": {
+            "level": "success",
+            "text": "Total due: $2560.00"
+          },
+          "keysWithUndefined": "size include exclude"
+        },
+        "#0.4.0": {
+          "uid": "#0.4.0",
+          "type": "button",
+          "kind": "action",
+          "label": "Send invoice",
+          "disabled": false,
+          "actionType": "submit",
+          "props": {
+            "variant": "filled"
+          },
+          "keysWithUndefined": "size include exclude"
+        }
+      }
+    }
+  },
+  "afterEmptyData": {
+    "data": {
+      "projects": "[undefined]"
+    },
+    "validations": {
+      "removedKeys": [
+        "projects.0.name",
+        "projects.0.tasks",
+        "projects.0.tasks.0.description",
+        "projects.0.tasks.0.hours",
+        "projects.0.tasks.0.rate",
+        "projects.0.tasks.1.description",
+        "projects.0.tasks.1.hours",
+        "projects.0.tasks.1.rate",
+        "projects.1.name",
+        "projects.1.tasks",
+        "projects.1.tasks.0.description",
+        "projects.1.tasks.0.hours",
+        "projects.1.tasks.0.rate"
+      ]
+    },
+    "touchedControls": {
+      "removedKeys": [
+        "projects.0.name",
+        "projects.0.tasks",
+        "projects.0.tasks.0.description",
+        "projects.0.tasks.0.hours",
+        "projects.0.tasks.0.rate",
+        "projects.0.tasks.1.description",
+        "projects.0.tasks.1.hours",
+        "projects.0.tasks.1.rate",
+        "projects.1.name",
+        "projects.1.tasks",
+        "projects.1.tasks.0.description",
+        "projects.1.tasks.0.hours",
+        "projects.1.tasks.0.rate"
+      ]
+    },
+    "widgetFlags": {
+      "removedKeys": [
+        "#0.2.t.1.t.3[0][0]",
+        "#0.2.t.1.t.3[0][1]",
+        "#0.2.t.1.t.3[1][0]"
+      ]
+    },
+    "resolvedSources": {
+      "removedKeys": [
+        "#0.2.t[0]",
+        "projects.items.name-textinput[0]",
+        "projects.items.tasks-repeater[0]",
+        "#0.2.t.1.t[0][0]",
+        "projects.items.tasks.items.description-textinput[0][0]",
+        "projects.items.tasks.items.hours-number[0][0]",
+        "projects.items.tasks.items.rate-currency[0][0]",
+        "#0.2.t.1.t.3[0][0]",
+        "#0.2.t.1.t[0][1]",
+        "projects.items.tasks.items.description-textinput[0][1]",
+        "projects.items.tasks.items.hours-number[0][1]",
+        "projects.items.tasks.items.rate-currency[0][1]",
+        "#0.2.t.1.t.3[0][1]",
+        "#0.2.t.2[0]",
+        "#0.2.t[1]",
+        "projects.items.name-textinput[1]",
+        "projects.items.tasks-repeater[1]",
+        "#0.2.t.1.t[1][0]",
+        "projects.items.tasks.items.description-textinput[1][0]",
+        "projects.items.tasks.items.hours-number[1][0]",
+        "projects.items.tasks.items.rate-currency[1][0]",
+        "#0.2.t.1.t.3[1][0]",
+        "#0.2.t.2[1]"
+      ]
+    },
+    "repeaterItemScopes": {
+      "allEntries": {}
+    },
+    "repeaterRows": {
+      "allEntries": {}
+    },
+    "calculatedWidgets": {
+      "removedKeys": [
+        "#0.2.t[0]",
+        "projects.items.name-textinput[0]",
+        "projects.items.tasks-repeater[0]",
+        "#0.2.t.1.t[0][0]",
+        "projects.items.tasks.items.description-textinput[0][0]",
+        "projects.items.tasks.items.hours-number[0][0]",
+        "projects.items.tasks.items.rate-currency[0][0]",
+        "#0.2.t.1.t.3[0][0]",
+        "#0.2.t.1.t[0][1]",
+        "projects.items.tasks.items.description-textinput[0][1]",
+        "projects.items.tasks.items.hours-number[0][1]",
+        "projects.items.tasks.items.rate-currency[0][1]",
+        "#0.2.t.1.t.3[0][1]",
+        "#0.2.t.2[0]",
+        "#0.2.t[1]",
+        "projects.items.name-textinput[1]",
+        "projects.items.tasks-repeater[1]",
+        "#0.2.t.1.t[1][0]",
+        "projects.items.tasks.items.description-textinput[1][0]",
+        "projects.items.tasks.items.hours-number[1][0]",
+        "projects.items.tasks.items.rate-currency[1][0]",
+        "#0.2.t.1.t.3[1][0]",
+        "#0.2.t.2[1]"
+      ],
+      "changedEntries": {
+        "#0.3": {
+          "uid": "#0.3",
+          "type": "alert",
+          "kind": "display",
+          "props": {
+            "level": "success",
+            "text": "Total due: $0.00"
+          },
+          "keysWithUndefined": "size include exclude"
+        }
+      }
+    }
+  }
+}

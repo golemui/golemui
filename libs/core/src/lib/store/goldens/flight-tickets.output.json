@@ -1,0 +1,153 @@
+{
+  "afterStart": {
+    "formHealth": {
+      "status": "ok"
+    },
+    "isFormValid": true,
+    "touched": false,
+    "allControlsValidated": false,
+    "currentStates": [],
+    "data": {
+      "from": "[undefined]",
+      "to": "[undefined]",
+      "passengers": 1,
+      "dates": "[undefined]"
+    },
+    "validations": {},
+    "touchedControls": {},
+    "widgetFlags": {},
+    "resolvedSources": {
+      "#0": "layout grid",
+      "tab15": "layout grid",
+      "from-dropdown": "input dropdown from",
+      "to-dropdown": "input dropdown to",
+      "passengers-number": "input number passengers",
+      "dates-rangeCalendar": "input rangeCalendar dates"
+    },
+    "repeaterItemScopes": {},
+    "repeaterRows": {},
+    "calculatedWidgets": {
+      "#0": {
+        "uid": "#0",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "tab15",
+          "dates-rangeCalendar"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "tab15": {
+        "uid": "tab15",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "row"
+        },
+        "children": [
+          "from-dropdown",
+          "to-dropdown",
+          "passengers-number"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "from-dropdown": {
+        "uid": "from-dropdown",
+        "type": "dropdown",
+        "kind": "input",
+        "size": 1,
+        "label": "From",
+        "path": "from",
+        "props": {
+          "height": 300,
+          "itemHeight": 60,
+          "itemRenderer": "airportItemRenderer",
+          "labelField": "name",
+          "valueField": "iata",
+          "inputDebounce": 300,
+          "items": []
+        },
+        "on": {
+          "load": "getFromAirports",
+          "click": "[undefined]",
+          "change": "[undefined]",
+          "filter": "getFromAirports",
+          "blur": "[undefined]"
+        },
+        "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+      },
+      "to-dropdown": {
+        "uid": "to-dropdown",
+        "type": "dropdown",
+        "kind": "input",
+        "size": 1,
+        "label": "To",
+        "path": "to",
+        "props": {
+          "height": 300,
+          "itemHeight": 60,
+          "itemRenderer": "airportItemRenderer",
+          "labelField": "name",
+          "valueField": "iata",
+          "inputDebounce": 300,
+          "items": []
+        },
+        "on": {
+          "load": "getToAirports",
+          "click": "[undefined]",
+          "change": "[undefined]",
+          "filter": "getToAirports",
+          "blur": "[undefined]"
+        },
+        "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+      },
+      "passengers-number": {
+        "uid": "passengers-number",
+        "type": "number",
+        "kind": "input",
+        "label": "Number of passengers",
+        "path": "passengers",
+        "defaultValue": 1,
+        "keysWithUndefined": "size include exclude disabled readonly validator"
+      },
+      "dates-rangeCalendar": {
+        "uid": "dates-rangeCalendar",
+        "type": "rangeCalendar",
+        "kind": "input",
+        "label": "Outbound/Return Dates",
+        "path": "dates",
+        "props": {
+          "prevMonthIcon": "chevron_left",
+          "nextMonthIcon": "chevron_right",
+          "minDate": "2026-05-13",
+          "maxDate": "2026-12-31",
+          "disabledRanges": [],
+          "numberOfMonths": 2
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      }
+    }
+  },
+  "afterSubmit": {
+    "touched": true,
+    "allControlsValidated": true,
+    "validations": {
+      "allEntries": {
+        "dates": null,
+        "from": null,
+        "passengers": null,
+        "to": null
+      }
+    },
+    "touchedControls": {
+      "allEntries": {
+        "dates": true,
+        "from": true,
+        "passengers": true,
+        "to": true
+      }
+    }
+  },
+  "afterData": {},
+  "afterEmptyData": {}
+}

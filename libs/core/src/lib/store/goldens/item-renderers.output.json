@@ -1,0 +1,453 @@
+{
+  "afterStart": {
+    "formHealth": {
+      "status": "ok"
+    },
+    "isFormValid": true,
+    "touched": false,
+    "allControlsValidated": false,
+    "currentStates": [],
+    "data": {
+      "dropdown-default-renderer": "[undefined]",
+      "dropdown-complex-renderer": "[undefined]",
+      "default-renderer": "[undefined]",
+      "complex-renderer": "[undefined]",
+      "user": {
+        "height": "170"
+      },
+      "registerMode": "[undefined]"
+    },
+    "validations": {},
+    "touchedControls": {},
+    "widgetFlags": {
+      "user.height-textinput": {
+        "hidden": true
+      }
+    },
+    "resolvedSources": {
+      "#0": "layout grid",
+      "dropdown-default-renderer-dropdown": "input dropdown dropdown-default-renderer",
+      "dropdown-complex-renderer-dropdown": "input dropdown dropdown-complex-renderer",
+      "default-renderer-list": "input list default-renderer",
+      "complex-renderer-list": "input list complex-renderer",
+      "user.height-textinput": "input textinput user.height",
+      "registerMode-checkbox": "input checkbox registerMode",
+      "#0.6": "action button"
+    },
+    "repeaterItemScopes": {},
+    "repeaterRows": {},
+    "calculatedWidgets": {
+      "#0": {
+        "uid": "#0",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "dropdown-default-renderer-dropdown",
+          "dropdown-complex-renderer-dropdown",
+          "default-renderer-list",
+          "complex-renderer-list",
+          "registerMode-checkbox",
+          "#0.6"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "dropdown-default-renderer-dropdown": {
+        "uid": "dropdown-default-renderer-dropdown",
+        "type": "dropdown",
+        "kind": "input",
+        "validator": {
+          "type": "string",
+          "required": true
+        },
+        "path": "dropdown-default-renderer",
+        "props": {
+          "itemHeight": 30,
+          "hint": "Virtual scroll list with 1000 items.",
+          "items": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99
+          ]
+        },
+        "keysWithUndefined": "size include exclude label disabled readonly defaultValue"
+      },
+      "dropdown-complex-renderer-dropdown": {
+        "uid": "dropdown-complex-renderer-dropdown",
+        "type": "dropdown",
+        "kind": "input",
+        "path": "dropdown-complex-renderer",
+        "props": {
+          "height": 150,
+          "itemHeight": 60,
+          "valueField": "value",
+          "itemRenderer": "complexListItemRenderer",
+          "items": [
+            {
+              "value": "one",
+              "title": "This is One",
+              "description": "Blah blah blah Lorem Ipsum"
+            },
+            {
+              "value": "two",
+              "title": "Two this is",
+              "description": "Ok, blah blah Ipsum Lorem"
+            },
+            {
+              "value": "three",
+              "title": "Three this is",
+              "description": "Lorem Ipsum blah blah blah"
+            },
+            {
+              "value": "four",
+              "title": "Four this is",
+              "description": "bluh bluh bluh"
+            },
+            {
+              "value": "five",
+              "title": "Five this is",
+              "description": "bleh bleh"
+            },
+            {
+              "value": "six",
+              "title": "Six this is",
+              "description": "blih blih blih"
+            }
+          ]
+        },
+        "keysWithUndefined": "size include exclude label disabled readonly validator defaultValue"
+      },
+      "default-renderer-list": {
+        "uid": "default-renderer-list",
+        "type": "list",
+        "kind": "input",
+        "validator": {
+          "type": "string",
+          "required": true
+        },
+        "path": "default-renderer",
+        "props": {
+          "itemHeight": 20,
+          "hint": "Virtual scroll list with 1000 items.",
+          "items": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99
+          ]
+        },
+        "keysWithUndefined": "size include exclude label disabled readonly defaultValue"
+      },
+      "complex-renderer-list": {
+        "uid": "complex-renderer-list",
+        "type": "list",
+        "kind": "input",
+        "path": "complex-renderer",
+        "props": {
+          "height": 150,
+          "itemHeight": 60,
+          "valueField": "value",
+          "itemRenderer": "complexListItemRenderer",
+          "items": [
+            {
+              "value": "one",
+              "title": "This is One",
+              "description": "Blah blah blah Lorem Ipsum"
+            },
+            {
+              "value": "two",
+              "title": "Two this is",
+              "description": "Ok, blah blah Ipsum Lorem"
+            },
+            {
+              "value": "three",
+              "title": "Three this is",
+              "description": "Lorem Ipsum blah blah blah"
+            },
+            {
+              "value": "four",
+              "title": "Four this is",
+              "description": "bluh bluh bluh"
+            },
+            {
+              "value": "five",
+              "title": "Five this is",
+              "description": "bleh bleh"
+            },
+            {
+              "value": "six",
+              "title": "Six this is",
+              "description": "blih blih blih"
+            }
+          ]
+        },
+        "keysWithUndefined": "size include exclude label disabled readonly validator defaultValue"
+      },
+      "registerMode-checkbox": {
+        "uid": "registerMode-checkbox",
+        "type": "checkbox",
+        "kind": "input",
+        "label": "Register",
+        "path": "registerMode",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "#0.6": {
+        "uid": "#0.6",
+        "type": "button",
+        "kind": "action",
+        "label": "Login",
+        "on": {
+          "load": "[undefined]",
+          "click": "submit",
+          "change": "[undefined]",
+          "filter": "[undefined]",
+          "blur": "[undefined]"
+        },
+        "keysWithUndefined": "size include exclude disabled actionType"
+      }
+    }
+  },
+  "afterSubmit": {
+    "isFormValid": false,
+    "touched": true,
+    "allControlsValidated": true,
+    "validations": {
+      "allEntries": {
+        "complex-renderer": null,
+        "default-renderer": [
+          "required"
+        ],
+        "dropdown-complex-renderer": null,
+        "dropdown-default-renderer": [
+          "required"
+        ],
+        "registerMode": null
+      }
+    },
+    "touchedControls": {
+      "allEntries": {
+        "complex-renderer": true,
+        "default-renderer": true,
+        "dropdown-complex-renderer": true,
+        "dropdown-default-renderer": true,
+        "registerMode": true
+      }
+    }
+  },
+  "afterData": {
+    "data": {
+      "complex-renderer": "one",
+      "dropdown-complex-renderer": "two",
+      "dropdown-default-renderer": "[undefined]",
+      "default-renderer": "[undefined]",
+      "user": {
+        "height": "170"
+      },
+      "registerMode": "[undefined]"
+    }
+  },
+  "afterEmptyData": {
+    "data": {
+      "dropdown-default-renderer": "[undefined]",
+      "dropdown-complex-renderer": "[undefined]",
+      "default-renderer": "[undefined]",
+      "complex-renderer": "[undefined]",
+      "user": {
+        "height": "170"
+      },
+      "registerMode": "[undefined]"
+    }
+  }
+}

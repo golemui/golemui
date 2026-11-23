@@ -1,0 +1,426 @@
+{
+  "afterStart": {
+    "formHealth": {
+      "status": "ok"
+    },
+    "isFormValid": true,
+    "touched": false,
+    "allControlsValidated": false,
+    "currentStates": [],
+    "data": {
+      "budget": 10000,
+      "passengers": 1,
+      "travellers": "[undefined]",
+      "includePets": "[undefined]",
+      "preferredDates": "[undefined]"
+    },
+    "validations": {},
+    "touchedControls": {},
+    "widgetFlags": {},
+    "resolvedSources": {
+      "#0": "layout grid",
+      "#0.0": "layout grid",
+      "budget": "input currency budget",
+      "passengers": "input number passengers",
+      "travelSections": "layout accordion",
+      "travellers": "input repeater travellers",
+      "extras": "layout tabs",
+      "pets": "layout grid",
+      "includePets": "input toggle includePets",
+      "preferredDates": "input rangeCalendar preferredDates"
+    },
+    "repeaterItemScopes": {},
+    "repeaterRows": {},
+    "calculatedWidgets": {
+      "#0": {
+        "uid": "#0",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "#0.0",
+          "travelSections"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.0": {
+        "uid": "#0.0",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "row",
+          "gap": "xl"
+        },
+        "children": [
+          "budget",
+          "passengers"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "budget": {
+        "uid": "budget",
+        "type": "currency",
+        "kind": "input",
+        "size": 1,
+        "label": "translated[travelPlanner.field.budget] (default: Travel Budget)",
+        "validator": {
+          "type": "number",
+          "required": true,
+          "minimum": 100
+        },
+        "path": "budget",
+        "defaultValue": 10000,
+        "props": {
+          "step": 100,
+          "placeholder": "US"
+        },
+        "keysWithUndefined": "include exclude disabled readonly"
+      },
+      "passengers": {
+        "uid": "passengers",
+        "type": "number",
+        "kind": "input",
+        "label": "translated[travelPlanner.field.passengers] (default: Passengers)",
+        "validator": {
+          "type": "number",
+          "required": true,
+          "minimum": 1,
+          "maximum": 10
+        },
+        "path": "passengers",
+        "defaultValue": 1,
+        "props": {
+          "minimum": 1,
+          "maximum": 10
+        },
+        "keysWithUndefined": "size include exclude disabled readonly"
+      },
+      "travelSections": {
+        "uid": "travelSections",
+        "type": "accordion",
+        "kind": "layout",
+        "props": {
+          "defaultOpen": {
+            "travellers": true,
+            "extras": true
+          },
+          "sections": [
+            {
+              "uid": "travellers",
+              "label": "translated[travelPlanner.section.travellers]"
+            },
+            {
+              "uid": "extras",
+              "label": "translated[travelPlanner.section.extras] (default: Extras)"
+            }
+          ]
+        },
+        "children": [
+          "travellers",
+          "extras"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "travellers": {
+        "uid": "travellers",
+        "type": "repeater",
+        "kind": "input",
+        "label": "translated[travelPlanner.field.travellers] (default: Travellers)",
+        "path": "travellers",
+        "props": {
+          "addLabel": "Add traveller",
+          "removeLabel": "Remove",
+          "template": {
+            "rowTemplateUid": "#0.1.0.t"
+          }
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "extras": {
+        "uid": "extras",
+        "type": "tabs",
+        "kind": "layout",
+        "props": {
+          "tabs": [
+            {
+              "uid": "pets",
+              "label": "translated[travelPlanner.tab.pets]"
+            },
+            {
+              "uid": "preferredDates",
+              "label": "translated[travelPlanner.tab.dates] (default: Dates)"
+            }
+          ]
+        },
+        "children": [
+          "pets",
+          "preferredDates"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "pets": {
+        "uid": "pets",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "row",
+          "justify": "start"
+        },
+        "children": [
+          "includePets"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "includePets": {
+        "uid": "includePets",
+        "type": "toggle",
+        "kind": "input",
+        "label": "translated[travelPlanner.field.includePets.label] (default: Include Pets)",
+        "path": "includePets",
+        "props": {
+          "togglePosition": "left",
+          "hint": "translated[travelPlanner.field.includePets.hint] (default: Only hosts with pets will be included in the search results.)"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "preferredDates": {
+        "uid": "preferredDates",
+        "type": "rangeCalendar",
+        "kind": "input",
+        "size": 1,
+        "label": "translated[travelPlanner.field.preferredDates.label] (default: Select Preferred Dates)",
+        "path": "preferredDates",
+        "props": {
+          "numberOfMonths": 2,
+          "prevMonthIcon": "chevron_left",
+          "nextMonthIcon": "chevron_right",
+          "prevMonthAriaLabel": "translated[travelPlanner.field.preferredDates.prevMonthAriaLabel] (default: Previous Month)",
+          "nextMonthAriaLabel": "translated[travelPlanner.field.preferredDates.nextMonthAriaLabel] (default: Next Month)"
+        },
+        "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+      }
+    }
+  },
+  "afterSubmit": {
+    "touched": true,
+    "allControlsValidated": true,
+    "validations": {
+      "allEntries": {
+        "budget": null,
+        "includePets": null,
+        "passengers": null,
+        "preferredDates": null,
+        "travellers": null
+      }
+    },
+    "touchedControls": {
+      "allEntries": {
+        "budget": true,
+        "includePets": true,
+        "passengers": true,
+        "preferredDates": true,
+        "travellers": true
+      }
+    }
+  },
+  "afterData": {
+    "data": {
+      "travellers": [
+        {
+          "name": "Ana"
+        },
+        {
+          "name": "Bo"
+        }
+      ],
+      "details": {
+        "clientName": "",
+        "date": null,
+        "isRemote": false,
+        "notes": ""
+      },
+      "budget": 10000,
+      "passengers": 1,
+      "includePets": "[undefined]",
+      "preferredDates": "[undefined]"
+    },
+    "validations": {
+      "changedEntries": {
+        "travellers.0.name": null,
+        "travellers.1.name": null
+      }
+    },
+    "touchedControls": {
+      "changedEntries": {
+        "travellers.0.name": true,
+        "travellers.1.name": true
+      }
+    },
+    "resolvedSources": {
+      "keys": [
+        "#0",
+        "#0.0",
+        "budget",
+        "passengers",
+        "travelSections",
+        "travellers",
+        "#0.1.0.t[0]",
+        "travellers.items.name-textinput[0]",
+        "#0.1.0.t[1]",
+        "travellers.items.name-textinput[1]",
+        "extras",
+        "pets",
+        "includePets",
+        "preferredDates"
+      ],
+      "changedEntries": {
+        "#0.1.0.t[0]": "layout grid",
+        "travellers.items.name-textinput[0]": "input textinput travellers.0.name",
+        "#0.1.0.t[1]": "layout grid",
+        "travellers.items.name-textinput[1]": "input textinput travellers.1.name"
+      }
+    },
+    "repeaterItemScopes": {
+      "allEntries": {
+        "#0.1.0.t[0]": {
+          "itemPath": "travellers.0",
+          "index": 0
+        },
+        "#0.1.0.t[1]": {
+          "itemPath": "travellers.1",
+          "index": 1
+        },
+        "travellers.items.name-textinput[0]": {
+          "itemPath": "travellers.0",
+          "index": 0
+        },
+        "travellers.items.name-textinput[1]": {
+          "itemPath": "travellers.1",
+          "index": 1
+        }
+      }
+    },
+    "repeaterRows": {
+      "allEntries": {
+        "#0.1.0.t[0]": [
+          {
+            "declaredItemPath": "travellers.items",
+            "itemPath": "travellers.0",
+            "index": 0
+          }
+        ],
+        "#0.1.0.t[1]": [
+          {
+            "declaredItemPath": "travellers.items",
+            "itemPath": "travellers.1",
+            "index": 1
+          }
+        ],
+        "travellers.items.name-textinput[0]": [
+          {
+            "declaredItemPath": "travellers.items",
+            "itemPath": "travellers.0",
+            "index": 0
+          }
+        ],
+        "travellers.items.name-textinput[1]": [
+          {
+            "declaredItemPath": "travellers.items",
+            "itemPath": "travellers.1",
+            "index": 1
+          }
+        ]
+      }
+    },
+    "calculatedWidgets": {
+      "changedEntries": {
+        "#0.1.0.t[0]": {
+          "uid": "#0.1.0.t[0]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "direction": "row",
+            "gap": "sm"
+          },
+          "children": [
+            "travellers.items.name-textinput"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "travellers.items.name-textinput[0]": {
+          "uid": "travellers.items.name-textinput[0]",
+          "type": "textinput",
+          "kind": "input",
+          "label": "translated[travelPlanner.row.traveller] {\"who\":\"Ana\"}",
+          "path": "travellers.0.name",
+          "defaultValue": "",
+          "keysWithUndefined": "size include exclude disabled readonly validator"
+        },
+        "#0.1.0.t[1]": {
+          "uid": "#0.1.0.t[1]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "direction": "row",
+            "gap": "sm"
+          },
+          "children": [
+            "travellers.items.name-textinput"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "travellers.items.name-textinput[1]": {
+          "uid": "travellers.items.name-textinput[1]",
+          "type": "textinput",
+          "kind": "input",
+          "label": "translated[travelPlanner.row.traveller] {\"who\":\"Bo\"}",
+          "path": "travellers.1.name",
+          "defaultValue": "",
+          "keysWithUndefined": "size include exclude disabled readonly validator"
+        }
+      }
+    }
+  },
+  "afterEmptyData": {
+    "data": {
+      "budget": 10000,
+      "passengers": 1,
+      "travellers": "[undefined]",
+      "includePets": "[undefined]",
+      "preferredDates": "[undefined]"
+    },
+    "validations": {
+      "removedKeys": [
+        "travellers.0.name",
+        "travellers.1.name"
+      ]
+    },
+    "touchedControls": {
+      "removedKeys": [
+        "travellers.0.name",
+        "travellers.1.name"
+      ]
+    },
+    "resolvedSources": {
+      "removedKeys": [
+        "#0.1.0.t[0]",
+        "travellers.items.name-textinput[0]",
+        "#0.1.0.t[1]",
+        "travellers.items.name-textinput[1]"
+      ]
+    },
+    "repeaterItemScopes": {
+      "allEntries": {}
+    },
+    "repeaterRows": {
+      "allEntries": {}
+    },
+    "calculatedWidgets": {
+      "removedKeys": [
+        "#0.1.0.t[0]",
+        "travellers.items.name-textinput[0]",
+        "#0.1.0.t[1]",
+        "travellers.items.name-textinput[1]"
+      ]
+    }
+  }
+}

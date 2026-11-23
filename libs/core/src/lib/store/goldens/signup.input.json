@@ -1,0 +1,247 @@
+{
+  "formDef": {
+    "states": {
+      "paidPlan": "$form.tier === 'pro' || $form.tier === 'enterprise'"
+    },
+    "form": [
+      {
+        "kind": "layout",
+        "type": "tabs",
+        "props": {
+          "tabs": [
+            {
+              "label": "Tests",
+              "uid": "tests"
+            }
+          ],
+          "renderMode": "all"
+        },
+        "children": [
+          {
+            "kind": "layout",
+            "type": "grid",
+            "uid": "tests",
+            "props": {
+              "direction": "column"
+            },
+            "children": [
+              {
+                "kind": "input",
+                "type": "textinput",
+                "uid": "email",
+                "path": "email",
+                "label": "Email",
+                "validator": {
+                  "type": "string",
+                  "required": true,
+                  "format": "email",
+                  "messages": {
+                    "required": "Please enter your email address",
+                    "format": "That doesn't look like an email — try name@company.com"
+                  }
+                },
+                "props": {
+                  "placeholder": "name@company.com"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "password",
+                "uid": "password",
+                "path": "password",
+                "label": "Password",
+                "validator": {
+                  "type": "string",
+                  "required": true,
+                  "minLength": 8,
+                  "pattern": "^(?=.*[A-Za-z])(?=.*\\d).+$",
+                  "messages": {
+                    "required": "Please choose a password",
+                    "minLength": "Password must be at least 8 characters",
+                    "pattern": "Password must contain both letters and numbers"
+                  }
+                },
+                "props": {
+                  "placeholder": "password"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "radiogroup",
+                "uid": "tier",
+                "path": "tier",
+                "label": "Account tier",
+                "defaultValue": "free",
+                "validator": {
+                  "type": "string",
+                  "required": true
+                },
+                "props": {
+                  "options": [
+                    {
+                      "value": "free",
+                      "label": "Free"
+                    },
+                    {
+                      "value": "pro",
+                      "label": "Pro"
+                    },
+                    {
+                      "value": "enterprise",
+                      "label": "Enterprise"
+                    }
+                  ]
+                }
+              },
+              {
+                "kind": "display",
+                "type": "alert",
+                "include": {
+                  "in": [
+                    "paidPlan"
+                  ]
+                },
+                "props": {
+                  "text": "Company details"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "textinput",
+                "uid": "company.name",
+                "path": "company.name",
+                "label": "Company name",
+                "validator": {
+                  "type": "string",
+                  "required": true,
+                  "minLength": 2,
+                  "messages": {
+                    "required": "Please enter your company name",
+                    "minLength": "Company name must be at least 2 characters"
+                  }
+                },
+                "include": {
+                  "in": [
+                    "paidPlan"
+                  ]
+                },
+                "props": {
+                  "placeholder": "company.name"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "textinput",
+                "uid": "company.vatId",
+                "path": "company.vatId",
+                "label": "VAT / Tax ID (optional)",
+                "validator": {
+                  "type": "string"
+                },
+                "include": {
+                  "in": [
+                    "paidPlan"
+                  ]
+                },
+                "props": {
+                  "placeholder": "company.vatId"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "number",
+                "uid": "company.seats",
+                "path": "company.seats",
+                "label": "Seats",
+                "validator": {
+                  "type": "number",
+                  "required": true,
+                  "minimum": 5,
+                  "maximum": 1000,
+                  "multipleOf": 1,
+                  "messages": {
+                    "minimum": "Paid plans start at 5 seats — enter 5 or more",
+                    "maximum": "Paid plans max out at 1000 seats — contact sales for larger teams",
+                    "multipleOf": "Seats must be a whole number"
+                  }
+                },
+                "include": {
+                  "in": [
+                    "paidPlan"
+                  ]
+                },
+                "props": {
+                  "placeholder": "company.seats"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "checkbox",
+                "uid": "productUpdates",
+                "path": "productUpdates",
+                "label": "Send me product updates",
+                "defaultValue": false
+              },
+              {
+                "kind": "input",
+                "type": "radiogroup",
+                "uid": "updateFrequency",
+                "path": "updateFrequency",
+                "label": "How often should we email you?",
+                "defaultValue": "monthly",
+                "validator": {
+                  "type": "string",
+                  "required": true
+                },
+                "include": {
+                  "when": "$form.productUpdates === true"
+                },
+                "props": {
+                  "options": [
+                    {
+                      "value": "weekly",
+                      "label": "Weekly"
+                    },
+                    {
+                      "value": "monthly",
+                      "label": "Monthly"
+                    },
+                    {
+                      "value": "quarterly",
+                      "label": "Quarterly"
+                    }
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "checkbox",
+                "uid": "terms",
+                "path": "terms",
+                "label": "I accept the Terms of Service and Privacy Policy",
+                "defaultValue": false,
+                "validator": {
+                  "type": "boolean",
+                  "const": true,
+                  "messages": {
+                    "const": "You must accept the terms to create an account"
+                  }
+                }
+              },
+              {
+                "kind": "action",
+                "type": "button",
+                "label": "Create account",
+                "actionType": "submit",
+                "disabled": {
+                  "when": "$formIsInvalid"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "data": {}
+}

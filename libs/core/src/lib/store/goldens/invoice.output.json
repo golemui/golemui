@@ -1,0 +1,487 @@
+{
+  "afterStart": {
+    "formHealth": {
+      "status": "ok"
+    },
+    "isFormValid": true,
+    "touched": false,
+    "allControlsValidated": false,
+    "currentStates": [],
+    "data": {
+      "company": {
+        "name": "[undefined]",
+        "id": "[undefined]"
+      },
+      "client": {
+        "name": "[undefined]",
+        "id": "[undefined]"
+      },
+      "invoice": {
+        "number": "[undefined]",
+        "date": "[undefined]",
+        "currency": "[undefined]",
+        "vatNumber": "[undefined]"
+      },
+      "lineItems": "[undefined]"
+    },
+    "validations": {},
+    "touchedControls": {},
+    "widgetFlags": {
+      "#0.9.0": {
+        "disabled": false
+      },
+      "invoice.vatNumber-textinput": {
+        "hidden": true
+      }
+    },
+    "resolvedSources": {
+      "#0": "layout grid",
+      "#0.0": "display markdownText",
+      "#0.1": "layout grid",
+      "#0.1.0": "display markdownText",
+      "#0.1.1": "display markdownText",
+      "company.name-textinput": "input textinput company.name",
+      "client.name-textinput": "input textinput client.name",
+      "company.id-textinput": "input textinput company.id",
+      "client.id-textinput": "input textinput client.id",
+      "#0.2": "display markdownText",
+      "#0.3": "layout grid",
+      "invoice.number-textinput": "input textinput invoice.number",
+      "invoice.date-datePicker": "input datePicker invoice.date",
+      "invoice.currency-select": "input select invoice.currency",
+      "invoice.vatNumber-textinput": "input textinput invoice.vatNumber",
+      "#0.4": "display markdownText",
+      "lineItems-repeater": "input repeater lineItems",
+      "#0.6": "display markdownText",
+      "#0.7": "layout grid",
+      "#0.7.0": "display markdownText",
+      "#0.7.1": "display markdownText",
+      "#0.7.2": "display markdownText",
+      "#0.7.3": "display markdownText",
+      "#0.8": "display alert",
+      "#0.9": "layout grid",
+      "#0.9.0": "action button"
+    },
+    "repeaterItemScopes": {},
+    "repeaterRows": {},
+    "calculatedWidgets": {
+      "#0": {
+        "uid": "#0",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "#0.0",
+          "#0.1",
+          "#0.2",
+          "#0.3",
+          "#0.4",
+          "lineItems-repeater",
+          "#0.6",
+          "#0.7",
+          "#0.8",
+          "#0.9"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.0": {
+        "uid": "#0.0",
+        "type": "markdownText",
+        "kind": "display",
+        "props": {
+          "md": "## Invoice"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.1": {
+        "uid": "#0.1",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "columns": 12,
+          "direction": "row",
+          "gap": "lg"
+        },
+        "children": [
+          "#0.1.0",
+          "#0.1.1",
+          "company.name-textinput",
+          "client.name-textinput",
+          "company.id-textinput",
+          "client.id-textinput"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.1.0": {
+        "uid": "#0.1.0",
+        "type": "markdownText",
+        "kind": "display",
+        "size": 6,
+        "props": {
+          "md": "**From**"
+        },
+        "keysWithUndefined": "include exclude"
+      },
+      "#0.1.1": {
+        "uid": "#0.1.1",
+        "type": "markdownText",
+        "kind": "display",
+        "size": 6,
+        "props": {
+          "md": "**Bill To**"
+        },
+        "keysWithUndefined": "include exclude"
+      },
+      "company.name-textinput": {
+        "uid": "company.name-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "size": 6,
+        "label": "Company Name",
+        "validator": {
+          "type": "string",
+          "required": true,
+          "minLength": 1
+        },
+        "path": "company.name",
+        "props": {
+          "placeholder": "Acme Inc."
+        },
+        "keysWithUndefined": "include exclude disabled readonly defaultValue"
+      },
+      "client.name-textinput": {
+        "uid": "client.name-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "size": 6,
+        "label": "Invoiced To Name",
+        "validator": {
+          "type": "string",
+          "required": true,
+          "minLength": 1
+        },
+        "path": "client.name",
+        "props": {
+          "placeholder": "Client name"
+        },
+        "keysWithUndefined": "include exclude disabled readonly defaultValue"
+      },
+      "company.id-textinput": {
+        "uid": "company.id-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "size": 6,
+        "label": "Company ID",
+        "validator": {
+          "type": "string",
+          "required": true,
+          "minLength": 1
+        },
+        "path": "company.id",
+        "props": {
+          "placeholder": "Tax ID / Reg. no."
+        },
+        "keysWithUndefined": "include exclude disabled readonly defaultValue"
+      },
+      "client.id-textinput": {
+        "uid": "client.id-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "size": 6,
+        "label": "Invoiced To ID",
+        "validator": {
+          "type": "string",
+          "required": true,
+          "minLength": 1
+        },
+        "path": "client.id",
+        "props": {
+          "placeholder": "Tax ID / Reg. no."
+        },
+        "keysWithUndefined": "include exclude disabled readonly defaultValue"
+      },
+      "#0.2": {
+        "uid": "#0.2",
+        "type": "markdownText",
+        "kind": "display",
+        "props": {
+          "md": "#### Invoice details"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.3": {
+        "uid": "#0.3",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "columns": 12,
+          "direction": "row",
+          "gap": "md"
+        },
+        "children": [
+          "invoice.number-textinput",
+          "invoice.date-datePicker",
+          "invoice.currency-select"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "invoice.number-textinput": {
+        "uid": "invoice.number-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "size": 3,
+        "label": "Invoice Number",
+        "validator": {
+          "type": "string",
+          "required": true,
+          "minLength": 1
+        },
+        "path": "invoice.number",
+        "props": {
+          "placeholder": "INV-0001"
+        },
+        "keysWithUndefined": "include exclude disabled readonly defaultValue"
+      },
+      "invoice.date-datePicker": {
+        "uid": "invoice.date-datePicker",
+        "type": "datePicker",
+        "kind": "input",
+        "size": 3,
+        "label": "Date",
+        "validator": {
+          "type": "string",
+          "required": true,
+          "format": "date"
+        },
+        "path": "invoice.date",
+        "keysWithUndefined": "include exclude disabled readonly defaultValue"
+      },
+      "invoice.currency-select": {
+        "uid": "invoice.currency-select",
+        "type": "select",
+        "kind": "input",
+        "size": 3,
+        "label": "Invoice Currency",
+        "validator": {
+          "type": "string",
+          "required": true
+        },
+        "path": "invoice.currency",
+        "props": {
+          "placeholder": "Select currency",
+          "options": [
+            {
+              "label": "EUR",
+              "value": "EUR"
+            },
+            {
+              "label": "USD",
+              "value": "USD"
+            }
+          ]
+        },
+        "keysWithUndefined": "include exclude disabled readonly defaultValue"
+      },
+      "#0.4": {
+        "uid": "#0.4",
+        "type": "markdownText",
+        "kind": "display",
+        "props": {
+          "md": "#### Line Items"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "lineItems-repeater": {
+        "uid": "lineItems-repeater",
+        "type": "repeater",
+        "kind": "input",
+        "label": "Line Items",
+        "validator": {
+          "type": "array",
+          "required": true,
+          "minItems": 1
+        },
+        "path": "lineItems",
+        "props": {
+          "addLabel": "Add line item",
+          "removeLabel": "Remove",
+          "title": "Line Item",
+          "template": {
+            "rowTemplateUid": "#0.5.t"
+          }
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "#0.6": {
+        "uid": "#0.6",
+        "type": "markdownText",
+        "kind": "display",
+        "props": {
+          "md": "#### Totals"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.7": {
+        "uid": "#0.7",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "columns": 12,
+          "direction": "row",
+          "gap": "sm"
+        },
+        "children": [
+          "#0.7.0",
+          "#0.7.1",
+          "#0.7.2",
+          "#0.7.3"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.7.0": {
+        "uid": "#0.7.0",
+        "type": "markdownText",
+        "kind": "display",
+        "size": 9,
+        "props": {
+          "md": "**Subtotal (Taxable Base)**"
+        },
+        "keysWithUndefined": "include exclude"
+      },
+      "#0.7.1": {
+        "uid": "#0.7.1",
+        "type": "markdownText",
+        "kind": "display",
+        "size": 3,
+        "props": {
+          "md": "0.00"
+        },
+        "keysWithUndefined": "include exclude"
+      },
+      "#0.7.2": {
+        "uid": "#0.7.2",
+        "type": "markdownText",
+        "kind": "display",
+        "size": 9,
+        "props": {
+          "md": "**Currency Tax (2%)**"
+        },
+        "keysWithUndefined": "include exclude"
+      },
+      "#0.7.3": {
+        "uid": "#0.7.3",
+        "type": "markdownText",
+        "kind": "display",
+        "size": 3,
+        "props": {
+          "md": "0.00"
+        },
+        "keysWithUndefined": "include exclude"
+      },
+      "#0.8": {
+        "uid": "#0.8",
+        "type": "alert",
+        "kind": "display",
+        "props": {
+          "level": "success",
+          "text": "Grand Total: $0.00"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.9": {
+        "uid": "#0.9",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "row",
+          "justify": "end"
+        },
+        "children": [
+          "#0.9.0"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.9.0": {
+        "uid": "#0.9.0",
+        "type": "button",
+        "kind": "action",
+        "label": "Submit Invoice",
+        "disabled": false,
+        "actionType": "submit",
+        "props": {
+          "variant": "filled"
+        },
+        "keysWithUndefined": "size include exclude"
+      }
+    }
+  },
+  "afterSubmit": {
+    "isFormValid": false,
+    "touched": true,
+    "allControlsValidated": true,
+    "validations": {
+      "allEntries": {
+        "client.id": [
+          "required"
+        ],
+        "client.name": [
+          "required"
+        ],
+        "company.id": [
+          "required"
+        ],
+        "company.name": [
+          "required"
+        ],
+        "invoice.currency": [
+          "required"
+        ],
+        "invoice.date": [
+          "required"
+        ],
+        "invoice.number": [
+          "required"
+        ],
+        "lineItems": [
+          "required"
+        ]
+      }
+    },
+    "touchedControls": {
+      "allEntries": {
+        "client.id": true,
+        "client.name": true,
+        "company.id": true,
+        "company.name": true,
+        "invoice.currency": true,
+        "invoice.date": true,
+        "invoice.number": true,
+        "lineItems": true
+      }
+    },
+    "widgetFlags": {
+      "changedEntries": {
+        "#0.9.0": {
+          "disabled": true
+        }
+      }
+    },
+    "calculatedWidgets": {
+      "changedEntries": {
+        "#0.9.0": {
+          "uid": "#0.9.0",
+          "type": "button",
+          "kind": "action",
+          "label": "Submit Invoice",
+          "disabled": true,
+          "actionType": "submit",
+          "props": {
+            "variant": "filled"
+          },
+          "keysWithUndefined": "size include exclude"
+        }
+      }
+    }
+  },
+  "afterData": {},
+  "afterEmptyData": {}
+}

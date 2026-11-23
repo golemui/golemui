@@ -1,0 +1,374 @@
+{
+  "afterStart": {
+    "formHealth": {
+      "status": "ok"
+    },
+    "isFormValid": true,
+    "touched": false,
+    "allControlsValidated": false,
+    "currentStates": [],
+    "data": {
+      "login": {
+        "email": "[undefined]",
+        "password": "[undefined]",
+        "firstName": "[undefined]",
+        "lastName": "[undefined]"
+      },
+      "userCountry": "[undefined]",
+      "dateInput": "[undefined]",
+      "register": {
+        "email": "[undefined]"
+      },
+      "confirm": "[undefined]"
+    },
+    "validations": {},
+    "touchedControls": {},
+    "widgetFlags": {},
+    "resolvedSources": {
+      "#0": "layout grid",
+      "auth-demo": "layout tabs",
+      "login-flex": "layout grid",
+      "login-email": "input textinput login.email",
+      "login-password": "input textinput login.password",
+      "login-submit": "action button",
+      "register-flex": "layout grid",
+      "login-firstName": "input textinput login.firstName",
+      "login-lastName": "input textinput login.lastName",
+      "userCountry": "input dropdown userCountry",
+      "dateInput-dateInput": "input dateInput dateInput",
+      "reg-email": "input textinput register.email",
+      "confirm-checkbox": "input checkbox confirm",
+      "register-submit": "action button"
+    },
+    "repeaterItemScopes": {},
+    "repeaterRows": {},
+    "calculatedWidgets": {
+      "#0": {
+        "uid": "#0",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "auth-demo"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "auth-demo": {
+        "uid": "auth-demo",
+        "type": "tabs",
+        "kind": "layout",
+        "props": {
+          "defaultOpen": "login",
+          "tabs": [
+            {
+              "label": "Login",
+              "uid": "login-flex"
+            },
+            {
+              "label": "Register",
+              "uid": "register-flex"
+            }
+          ]
+        },
+        "children": [
+          "login-flex",
+          "register-flex"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "login-flex": {
+        "uid": "login-flex",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "gap": "md",
+          "direction": "column"
+        },
+        "children": [
+          "login-email",
+          "login-password",
+          "login-submit"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "login-email": {
+        "uid": "login-email",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Email Address",
+        "path": "login.email",
+        "props": {
+          "placeholder": "example@domain.com"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "login-password": {
+        "uid": "login-password",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Password",
+        "path": "login.password",
+        "props": {
+          "placeholder": "Enter your password..."
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "login-submit": {
+        "uid": "login-submit",
+        "type": "button",
+        "kind": "action",
+        "label": "Login",
+        "keysWithUndefined": "size include exclude disabled actionType"
+      },
+      "register-flex": {
+        "uid": "register-flex",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "gap": "md",
+          "direction": "column"
+        },
+        "children": [
+          "login-firstName",
+          "login-lastName",
+          "userCountry",
+          "dateInput-dateInput",
+          "reg-email",
+          "confirm-checkbox",
+          "register-submit"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "login-firstName": {
+        "uid": "login-firstName",
+        "type": "textinput",
+        "kind": "input",
+        "label": "First Name",
+        "path": "login.firstName",
+        "props": {
+          "placeholder": "John"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "login-lastName": {
+        "uid": "login-lastName",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Last Name",
+        "path": "login.lastName",
+        "props": {
+          "placeholder": "Doe"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "userCountry": {
+        "uid": "userCountry",
+        "type": "dropdown",
+        "kind": "input",
+        "size": 4,
+        "label": "Country of Residence",
+        "path": "userCountry",
+        "props": {
+          "height": 300,
+          "itemHeight": 60,
+          "itemRenderer": "countryItemRenderer",
+          "placeholder": "translated[travelPlanner.field.userCountry.placeholder] (default: Select a Country)",
+          "labelField": "label",
+          "valueField": "id",
+          "items": [
+            {
+              "id": "AU",
+              "flag": "🇦🇺",
+              "label": "Australia"
+            },
+            {
+              "id": "BR",
+              "flag": "🇧🇷",
+              "label": "Brazil"
+            },
+            {
+              "id": "CA",
+              "flag": "🇨🇦",
+              "label": "Canada"
+            },
+            {
+              "id": "CN",
+              "flag": "🇨🇳",
+              "label": "China"
+            },
+            {
+              "id": "FR",
+              "flag": "🇫🇷",
+              "label": "France"
+            },
+            {
+              "id": "DE",
+              "flag": "🇩🇪",
+              "label": "Germany"
+            },
+            {
+              "id": "IN",
+              "flag": "🇮🇳",
+              "label": "India"
+            },
+            {
+              "id": "IT",
+              "flag": "🇮🇹",
+              "label": "Italy"
+            },
+            {
+              "id": "JP",
+              "flag": "🇯🇵",
+              "label": "Japan"
+            },
+            {
+              "id": "MX",
+              "flag": "🇲🇽",
+              "label": "Mexico"
+            },
+            {
+              "id": "KR",
+              "flag": "🇰🇷",
+              "label": "South Korea"
+            },
+            {
+              "id": "ES",
+              "flag": "🇪🇸",
+              "label": "Spain"
+            },
+            {
+              "id": "UK",
+              "flag": "🇺🇦",
+              "label": "Ukraine"
+            },
+            {
+              "id": "US",
+              "flag": "🇺🇸",
+              "label": "United States"
+            },
+            {
+              "id": "GB",
+              "flag": "🇬🇧",
+              "label": "United Kingdom"
+            }
+          ]
+        },
+        "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+      },
+      "dateInput-dateInput": {
+        "uid": "dateInput-dateInput",
+        "type": "dateInput",
+        "kind": "input",
+        "label": "Date of Birth",
+        "path": "dateInput",
+        "props": {
+          "icon": "calendar_month"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "reg-email": {
+        "uid": "reg-email",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Email Address",
+        "path": "register.email",
+        "props": {
+          "placeholder": "example@domain.com",
+          "hint": "We will send you a confirmation email to verify your account."
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "confirm-checkbox": {
+        "uid": "confirm-checkbox",
+        "type": "checkbox",
+        "kind": "input",
+        "label": "Accept Terms of Service and Privacy Policy",
+        "validator": {
+          "type": "boolean",
+          "required": true
+        },
+        "path": "confirm",
+        "props": {
+          "checkboxPosition": "left",
+          "hint": "I confirm I am 18 years of age or older. By clicking Create Account, I agree to the Terms of Service and Privacy Policy."
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "register-submit": {
+        "uid": "register-submit",
+        "type": "button",
+        "kind": "action",
+        "label": "Create Account",
+        "keysWithUndefined": "size include exclude disabled actionType"
+      }
+    }
+  },
+  "afterSubmit": {
+    "isFormValid": false,
+    "touched": true,
+    "allControlsValidated": true,
+    "validations": {
+      "allEntries": {
+        "confirm": [
+          "required"
+        ],
+        "dateInput": null,
+        "login.email": null,
+        "login.firstName": null,
+        "login.lastName": null,
+        "login.password": null,
+        "register.email": null,
+        "userCountry": null
+      }
+    },
+    "touchedControls": {
+      "allEntries": {
+        "confirm": true,
+        "dateInput": true,
+        "login.email": true,
+        "login.firstName": true,
+        "login.lastName": true,
+        "login.password": true,
+        "register.email": true,
+        "userCountry": true
+      }
+    }
+  },
+  "afterData": {
+    "data": {
+      "details": {
+        "clientName": "",
+        "date": null,
+        "isRemote": false,
+        "notes": ""
+      },
+      "login": {
+        "email": "[undefined]",
+        "password": "[undefined]",
+        "firstName": "[undefined]",
+        "lastName": "[undefined]"
+      },
+      "userCountry": "[undefined]",
+      "dateInput": "[undefined]",
+      "register": {
+        "email": "[undefined]"
+      },
+      "confirm": "[undefined]"
+    }
+  },
+  "afterEmptyData": {
+    "data": {
+      "login": {
+        "email": "[undefined]",
+        "password": "[undefined]",
+        "firstName": "[undefined]",
+        "lastName": "[undefined]"
+      },
+      "userCountry": "[undefined]",
+      "dateInput": "[undefined]",
+      "register": {
+        "email": "[undefined]"
+      },
+      "confirm": "[undefined]"
+    }
+  }
+}

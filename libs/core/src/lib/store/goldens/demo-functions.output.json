@@ -1,0 +1,715 @@
+{
+  "afterStart": {
+    "formHealth": {
+      "status": "ok"
+    },
+    "isFormValid": true,
+    "touched": false,
+    "allControlsValidated": false,
+    "currentStates": [],
+    "data": {
+      "currency": "[undefined]",
+      "lineItems": "[undefined]"
+    },
+    "validations": {},
+    "touchedControls": {},
+    "widgetFlags": {
+      "#0.4": {
+        "hidden": true
+      },
+      "#0.5": {
+        "hidden": false
+      },
+      "#0.6.0": {
+        "disabled": false
+      }
+    },
+    "resolvedSources": {
+      "#0": "layout grid",
+      "#0.0": "display markdownText",
+      "#0.1": "display markdownText",
+      "currency-select": "input select currency",
+      "lineItems-repeater": "input repeater lineItems",
+      "#0.4": "display alert",
+      "#0.5": "display alert",
+      "#0.6": "layout grid",
+      "#0.6.0": "action button"
+    },
+    "repeaterItemScopes": {},
+    "repeaterRows": {},
+    "calculatedWidgets": {
+      "#0": {
+        "uid": "#0",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "#0.0",
+          "#0.1",
+          "currency-select",
+          "lineItems-repeater",
+          "#0.5",
+          "#0.6"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.0": {
+        "uid": "#0.0",
+        "type": "markdownText",
+        "kind": "display",
+        "props": {
+          "md": "## Invoice with host functions"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.1": {
+        "uid": "#0.1",
+        "type": "markdownText",
+        "kind": "display",
+        "props": {
+          "md": "The totals below are computed by pure functions the host passes via `config.functions` and expressions call as `$fn.name(...)`. Compare with the invoice-nested demo, where the same math lives inline in the expressions."
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "currency-select": {
+        "uid": "currency-select",
+        "type": "select",
+        "kind": "input",
+        "label": "Currency",
+        "path": "currency",
+        "props": {
+          "options": [
+            {
+              "label": "USD",
+              "value": "USD"
+            },
+            {
+              "label": "EUR",
+              "value": "EUR"
+            }
+          ]
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "lineItems-repeater": {
+        "uid": "lineItems-repeater",
+        "type": "repeater",
+        "kind": "input",
+        "label": "Line items",
+        "validator": {
+          "type": "array",
+          "required": true,
+          "minItems": 1
+        },
+        "path": "lineItems",
+        "props": {
+          "addLabel": "Add line item",
+          "removeLabel": "Remove",
+          "title": "Line item",
+          "template": {
+            "rowTemplateUid": "#0.3.t"
+          }
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "#0.5": {
+        "uid": "#0.5",
+        "type": "alert",
+        "kind": "display",
+        "exclude": {
+          "when": "$fn.hasItems($form.lineItems)"
+        },
+        "props": {
+          "level": "warning",
+          "text": "Add at least one line item to see the grand total."
+        },
+        "keysWithUndefined": "size include"
+      },
+      "#0.6": {
+        "uid": "#0.6",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "row",
+          "justify": "end"
+        },
+        "children": [
+          "#0.6.0"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.6.0": {
+        "uid": "#0.6.0",
+        "type": "button",
+        "kind": "action",
+        "label": "Send invoice",
+        "disabled": false,
+        "actionType": "submit",
+        "props": {
+          "variant": "filled"
+        },
+        "keysWithUndefined": "size include exclude"
+      }
+    }
+  },
+  "afterSubmit": {
+    "isFormValid": false,
+    "touched": true,
+    "allControlsValidated": true,
+    "validations": {
+      "allEntries": {
+        "currency": null,
+        "lineItems": [
+          "required"
+        ]
+      }
+    },
+    "touchedControls": {
+      "allEntries": {
+        "currency": true,
+        "lineItems": true
+      }
+    },
+    "widgetFlags": {
+      "changedEntries": {
+        "#0.6.0": {
+          "disabled": true
+        }
+      }
+    },
+    "calculatedWidgets": {
+      "changedEntries": {
+        "#0.6.0": {
+          "uid": "#0.6.0",
+          "type": "button",
+          "kind": "action",
+          "label": "Send invoice",
+          "disabled": true,
+          "actionType": "submit",
+          "props": {
+            "variant": "filled"
+          },
+          "keysWithUndefined": "size include exclude"
+        }
+      }
+    }
+  },
+  "afterData": {
+    "isFormValid": true,
+    "data": {
+      "currency": "USD",
+      "lineItems": [
+        {
+          "description": "Design work",
+          "quantity": 4,
+          "unitPrice": 95
+        },
+        {
+          "description": "Development",
+          "quantity": 10,
+          "unitPrice": 120
+        }
+      ]
+    },
+    "validations": {
+      "changedEntries": {
+        "lineItems": null,
+        "lineItems.0.description": null,
+        "lineItems.0.quantity": null,
+        "lineItems.0.unitPrice": null,
+        "lineItems.1.description": null,
+        "lineItems.1.quantity": null,
+        "lineItems.1.unitPrice": null
+      }
+    },
+    "touchedControls": {
+      "changedEntries": {
+        "lineItems.0.description": true,
+        "lineItems.0.quantity": true,
+        "lineItems.0.unitPrice": true,
+        "lineItems.1.description": true,
+        "lineItems.1.quantity": true,
+        "lineItems.1.unitPrice": true
+      }
+    },
+    "widgetFlags": {
+      "allEntries": {
+        "#0.3.t.3[0]": {
+          "hidden": false
+        },
+        "#0.3.t.3[1]": {
+          "hidden": false
+        },
+        "#0.4": {
+          "hidden": false
+        },
+        "#0.5": {
+          "hidden": true
+        },
+        "#0.6.0": {
+          "disabled": false
+        }
+      }
+    },
+    "resolvedSources": {
+      "keys": [
+        "#0",
+        "#0.0",
+        "#0.1",
+        "currency-select",
+        "lineItems-repeater",
+        "#0.3.t[0]",
+        "lineItems.items.description-textinput[0]",
+        "lineItems.items.quantity-number[0]",
+        "lineItems.items.unitPrice-number[0]",
+        "#0.3.t.3[0]",
+        "#0.3.t[1]",
+        "lineItems.items.description-textinput[1]",
+        "lineItems.items.quantity-number[1]",
+        "lineItems.items.unitPrice-number[1]",
+        "#0.3.t.3[1]",
+        "#0.4",
+        "#0.5",
+        "#0.6",
+        "#0.6.0"
+      ],
+      "changedEntries": {
+        "#0.3.t[0]": "layout grid",
+        "lineItems.items.description-textinput[0]": "input textinput lineItems.0.description",
+        "lineItems.items.quantity-number[0]": "input number lineItems.0.quantity",
+        "lineItems.items.unitPrice-number[0]": "input number lineItems.0.unitPrice",
+        "#0.3.t.3[0]": "display markdownText",
+        "#0.3.t[1]": "layout grid",
+        "lineItems.items.description-textinput[1]": "input textinput lineItems.1.description",
+        "lineItems.items.quantity-number[1]": "input number lineItems.1.quantity",
+        "lineItems.items.unitPrice-number[1]": "input number lineItems.1.unitPrice",
+        "#0.3.t.3[1]": "display markdownText"
+      }
+    },
+    "repeaterItemScopes": {
+      "allEntries": {
+        "#0.3.t.3[0]": {
+          "itemPath": "lineItems.0",
+          "index": 0
+        },
+        "#0.3.t.3[1]": {
+          "itemPath": "lineItems.1",
+          "index": 1
+        },
+        "#0.3.t[0]": {
+          "itemPath": "lineItems.0",
+          "index": 0
+        },
+        "#0.3.t[1]": {
+          "itemPath": "lineItems.1",
+          "index": 1
+        },
+        "lineItems.items.description-textinput[0]": {
+          "itemPath": "lineItems.0",
+          "index": 0
+        },
+        "lineItems.items.description-textinput[1]": {
+          "itemPath": "lineItems.1",
+          "index": 1
+        },
+        "lineItems.items.quantity-number[0]": {
+          "itemPath": "lineItems.0",
+          "index": 0
+        },
+        "lineItems.items.quantity-number[1]": {
+          "itemPath": "lineItems.1",
+          "index": 1
+        },
+        "lineItems.items.unitPrice-number[0]": {
+          "itemPath": "lineItems.0",
+          "index": 0
+        },
+        "lineItems.items.unitPrice-number[1]": {
+          "itemPath": "lineItems.1",
+          "index": 1
+        }
+      }
+    },
+    "repeaterRows": {
+      "allEntries": {
+        "#0.3.t.3[0]": [
+          {
+            "declaredItemPath": "lineItems.items",
+            "itemPath": "lineItems.0",
+            "index": 0
+          }
+        ],
+        "#0.3.t.3[1]": [
+          {
+            "declaredItemPath": "lineItems.items",
+            "itemPath": "lineItems.1",
+            "index": 1
+          }
+        ],
+        "#0.3.t[0]": [
+          {
+            "declaredItemPath": "lineItems.items",
+            "itemPath": "lineItems.0",
+            "index": 0
+          }
+        ],
+        "#0.3.t[1]": [
+          {
+            "declaredItemPath": "lineItems.items",
+            "itemPath": "lineItems.1",
+            "index": 1
+          }
+        ],
+        "lineItems.items.description-textinput[0]": [
+          {
+            "declaredItemPath": "lineItems.items",
+            "itemPath": "lineItems.0",
+            "index": 0
+          }
+        ],
+        "lineItems.items.description-textinput[1]": [
+          {
+            "declaredItemPath": "lineItems.items",
+            "itemPath": "lineItems.1",
+            "index": 1
+          }
+        ],
+        "lineItems.items.quantity-number[0]": [
+          {
+            "declaredItemPath": "lineItems.items",
+            "itemPath": "lineItems.0",
+            "index": 0
+          }
+        ],
+        "lineItems.items.quantity-number[1]": [
+          {
+            "declaredItemPath": "lineItems.items",
+            "itemPath": "lineItems.1",
+            "index": 1
+          }
+        ],
+        "lineItems.items.unitPrice-number[0]": [
+          {
+            "declaredItemPath": "lineItems.items",
+            "itemPath": "lineItems.0",
+            "index": 0
+          }
+        ],
+        "lineItems.items.unitPrice-number[1]": [
+          {
+            "declaredItemPath": "lineItems.items",
+            "itemPath": "lineItems.1",
+            "index": 1
+          }
+        ]
+      }
+    },
+    "calculatedWidgets": {
+      "removedKeys": [
+        "#0.5"
+      ],
+      "changedEntries": {
+        "#0": {
+          "uid": "#0",
+          "type": "grid",
+          "kind": "layout",
+          "children": [
+            "#0.0",
+            "#0.1",
+            "currency-select",
+            "lineItems-repeater",
+            "#0.4",
+            "#0.6"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "#0.3.t[0]": {
+          "uid": "#0.3.t[0]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "direction": "row",
+            "gap": "sm"
+          },
+          "children": [
+            "lineItems.items.description-textinput",
+            "lineItems.items.quantity-number",
+            "lineItems.items.unitPrice-number",
+            "#0.3.t.3"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "lineItems.items.description-textinput[0]": {
+          "uid": "lineItems.items.description-textinput[0]",
+          "type": "textinput",
+          "kind": "input",
+          "size": 5,
+          "label": "Description",
+          "validator": {
+            "type": "string",
+            "required": true,
+            "minLength": 1
+          },
+          "path": "lineItems.0.description",
+          "keysWithUndefined": "include exclude disabled readonly defaultValue"
+        },
+        "lineItems.items.quantity-number[0]": {
+          "uid": "lineItems.items.quantity-number[0]",
+          "type": "number",
+          "kind": "input",
+          "size": 2,
+          "label": "Quantity",
+          "validator": {
+            "type": "number",
+            "required": true,
+            "minimum": 0
+          },
+          "path": "lineItems.0.quantity",
+          "props": {
+            "minimum": 0,
+            "step": 1
+          },
+          "keysWithUndefined": "include exclude disabled readonly defaultValue"
+        },
+        "lineItems.items.unitPrice-number[0]": {
+          "uid": "lineItems.items.unitPrice-number[0]",
+          "type": "number",
+          "kind": "input",
+          "size": 3,
+          "label": "Unit price",
+          "validator": {
+            "type": "number",
+            "required": true,
+            "minimum": 0
+          },
+          "path": "lineItems.0.unitPrice",
+          "props": {
+            "minimum": 0,
+            "step": 0.5
+          },
+          "keysWithUndefined": "include exclude disabled readonly defaultValue"
+        },
+        "#0.3.t.3[0]": {
+          "uid": "#0.3.t.3[0]",
+          "type": "markdownText",
+          "kind": "display",
+          "size": 2,
+          "include": {
+            "when": "$item.quantity !== undefined"
+          },
+          "props": {
+            "md": "**Line 1**  \nUSD 380.00"
+          },
+          "keysWithUndefined": "exclude"
+        },
+        "#0.3.t[1]": {
+          "uid": "#0.3.t[1]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "direction": "row",
+            "gap": "sm"
+          },
+          "children": [
+            "lineItems.items.description-textinput",
+            "lineItems.items.quantity-number",
+            "lineItems.items.unitPrice-number",
+            "#0.3.t.3"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "lineItems.items.description-textinput[1]": {
+          "uid": "lineItems.items.description-textinput[1]",
+          "type": "textinput",
+          "kind": "input",
+          "size": 5,
+          "label": "Description",
+          "validator": {
+            "type": "string",
+            "required": true,
+            "minLength": 1
+          },
+          "path": "lineItems.1.description",
+          "keysWithUndefined": "include exclude disabled readonly defaultValue"
+        },
+        "lineItems.items.quantity-number[1]": {
+          "uid": "lineItems.items.quantity-number[1]",
+          "type": "number",
+          "kind": "input",
+          "size": 2,
+          "label": "Quantity",
+          "validator": {
+            "type": "number",
+            "required": true,
+            "minimum": 0
+          },
+          "path": "lineItems.1.quantity",
+          "props": {
+            "minimum": 0,
+            "step": 1
+          },
+          "keysWithUndefined": "include exclude disabled readonly defaultValue"
+        },
+        "lineItems.items.unitPrice-number[1]": {
+          "uid": "lineItems.items.unitPrice-number[1]",
+          "type": "number",
+          "kind": "input",
+          "size": 3,
+          "label": "Unit price",
+          "validator": {
+            "type": "number",
+            "required": true,
+            "minimum": 0
+          },
+          "path": "lineItems.1.unitPrice",
+          "props": {
+            "minimum": 0,
+            "step": 0.5
+          },
+          "keysWithUndefined": "include exclude disabled readonly defaultValue"
+        },
+        "#0.3.t.3[1]": {
+          "uid": "#0.3.t.3[1]",
+          "type": "markdownText",
+          "kind": "display",
+          "size": 2,
+          "include": {
+            "when": "$item.quantity !== undefined"
+          },
+          "props": {
+            "md": "**Line 2**  \nUSD 1200.00"
+          },
+          "keysWithUndefined": "exclude"
+        },
+        "#0.4": {
+          "uid": "#0.4",
+          "type": "alert",
+          "kind": "display",
+          "include": {
+            "when": "$fn.hasItems($form.lineItems)"
+          },
+          "props": {
+            "level": "success",
+            "text": "Grand total: USD 1580.00"
+          },
+          "keysWithUndefined": "size exclude"
+        },
+        "#0.6.0": {
+          "uid": "#0.6.0",
+          "type": "button",
+          "kind": "action",
+          "label": "Send invoice",
+          "disabled": false,
+          "actionType": "submit",
+          "props": {
+            "variant": "filled"
+          },
+          "keysWithUndefined": "size include exclude"
+        }
+      }
+    }
+  },
+  "afterEmptyData": {
+    "data": {
+      "currency": "[undefined]",
+      "lineItems": "[undefined]"
+    },
+    "validations": {
+      "removedKeys": [
+        "lineItems.0.description",
+        "lineItems.0.quantity",
+        "lineItems.0.unitPrice",
+        "lineItems.1.description",
+        "lineItems.1.quantity",
+        "lineItems.1.unitPrice"
+      ]
+    },
+    "touchedControls": {
+      "removedKeys": [
+        "lineItems.0.description",
+        "lineItems.0.quantity",
+        "lineItems.0.unitPrice",
+        "lineItems.1.description",
+        "lineItems.1.quantity",
+        "lineItems.1.unitPrice"
+      ]
+    },
+    "widgetFlags": {
+      "removedKeys": [
+        "#0.3.t.3[0]",
+        "#0.3.t.3[1]"
+      ],
+      "changedEntries": {
+        "#0.4": {
+          "hidden": true
+        },
+        "#0.5": {
+          "hidden": false
+        }
+      }
+    },
+    "resolvedSources": {
+      "removedKeys": [
+        "#0.3.t[0]",
+        "lineItems.items.description-textinput[0]",
+        "lineItems.items.quantity-number[0]",
+        "lineItems.items.unitPrice-number[0]",
+        "#0.3.t.3[0]",
+        "#0.3.t[1]",
+        "lineItems.items.description-textinput[1]",
+        "lineItems.items.quantity-number[1]",
+        "lineItems.items.unitPrice-number[1]",
+        "#0.3.t.3[1]"
+      ]
+    },
+    "repeaterItemScopes": {
+      "allEntries": {}
+    },
+    "repeaterRows": {
+      "allEntries": {}
+    },
+    "calculatedWidgets": {
+      "removedKeys": [
+        "#0.3.t[0]",
+        "lineItems.items.description-textinput[0]",
+        "lineItems.items.quantity-number[0]",
+        "lineItems.items.unitPrice-number[0]",
+        "#0.3.t.3[0]",
+        "#0.3.t[1]",
+        "lineItems.items.description-textinput[1]",
+        "lineItems.items.quantity-number[1]",
+        "lineItems.items.unitPrice-number[1]",
+        "#0.3.t.3[1]",
+        "#0.4"
+      ],
+      "changedEntries": {
+        "#0": {
+          "uid": "#0",
+          "type": "grid",
+          "kind": "layout",
+          "children": [
+            "#0.0",
+            "#0.1",
+            "currency-select",
+            "lineItems-repeater",
+            "#0.5",
+            "#0.6"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "#0.5": {
+          "uid": "#0.5",
+          "type": "alert",
+          "kind": "display",
+          "exclude": {
+            "when": "$fn.hasItems($form.lineItems)"
+          },
+          "props": {
+            "level": "warning",
+            "text": "Add at least one line item to see the grand total."
+          },
+          "keysWithUndefined": "size include"
+        }
+      }
+    }
+  }
+}

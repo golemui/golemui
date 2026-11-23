@@ -1,0 +1,264 @@
+{
+  "afterStart": {
+    "formHealth": {
+      "status": "ok"
+    },
+    "isFormValid": true,
+    "touched": false,
+    "allControlsValidated": false,
+    "currentStates": [],
+    "data": {
+      "email": "[undefined]",
+      "password": "[undefined]",
+      "tier": "free",
+      "company": {
+        "name": "[undefined]",
+        "vatId": "[undefined]",
+        "seats": "[undefined]"
+      },
+      "productUpdates": false,
+      "updateFrequency": "monthly",
+      "terms": false
+    },
+    "validations": {},
+    "touchedControls": {},
+    "widgetFlags": {
+      "#0.0.0.10": {
+        "disabled": false
+      },
+      "#0.0.0.3": {
+        "hidden": true
+      },
+      "company.name": {
+        "hidden": true
+      },
+      "company.seats": {
+        "hidden": true
+      },
+      "company.vatId": {
+        "hidden": true
+      },
+      "updateFrequency": {
+        "hidden": true
+      }
+    },
+    "resolvedSources": {
+      "#0": "layout grid",
+      "#0.0": "layout tabs",
+      "tests": "layout grid",
+      "email": "input textinput email",
+      "password": "input password password",
+      "tier": "input radiogroup tier",
+      "#0.0.0.3": "display alert",
+      "company.name": "input textinput company.name",
+      "company.vatId": "input textinput company.vatId",
+      "company.seats": "input number company.seats",
+      "productUpdates": "input checkbox productUpdates",
+      "updateFrequency": "input radiogroup updateFrequency",
+      "terms": "input checkbox terms",
+      "#0.0.0.10": "action button"
+    },
+    "repeaterItemScopes": {},
+    "repeaterRows": {},
+    "calculatedWidgets": {
+      "#0": {
+        "uid": "#0",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "#0.0"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.0": {
+        "uid": "#0.0",
+        "type": "tabs",
+        "kind": "layout",
+        "props": {
+          "tabs": [
+            {
+              "label": "Tests",
+              "uid": "tests"
+            }
+          ],
+          "renderMode": "all"
+        },
+        "children": [
+          "tests"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "tests": {
+        "uid": "tests",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "column"
+        },
+        "children": [
+          "email",
+          "password",
+          "tier",
+          "productUpdates",
+          "terms",
+          "#0.0.0.10"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "email": {
+        "uid": "email",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Email",
+        "validator": {
+          "type": "string",
+          "required": true,
+          "format": "email",
+          "messages": {
+            "required": "Please enter your email address",
+            "format": "That doesn't look like an email — try name@company.com"
+          }
+        },
+        "path": "email",
+        "props": {
+          "placeholder": "name@company.com"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "password": {
+        "uid": "password",
+        "type": "password",
+        "kind": "input",
+        "label": "Password",
+        "validator": {
+          "type": "string",
+          "required": true,
+          "minLength": 8,
+          "pattern": "^(?=.*[A-Za-z])(?=.*\\d).+$",
+          "messages": {
+            "required": "Please choose a password",
+            "minLength": "Password must be at least 8 characters",
+            "pattern": "Password must contain both letters and numbers"
+          }
+        },
+        "path": "password",
+        "props": {
+          "placeholder": "password"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "tier": {
+        "uid": "tier",
+        "type": "radiogroup",
+        "kind": "input",
+        "label": "Account tier",
+        "validator": {
+          "type": "string",
+          "required": true
+        },
+        "path": "tier",
+        "defaultValue": "free",
+        "props": {
+          "options": [
+            {
+              "value": "free",
+              "label": "Free"
+            },
+            {
+              "value": "pro",
+              "label": "Pro"
+            },
+            {
+              "value": "enterprise",
+              "label": "Enterprise"
+            }
+          ]
+        },
+        "keysWithUndefined": "size include exclude disabled readonly"
+      },
+      "productUpdates": {
+        "uid": "productUpdates",
+        "type": "checkbox",
+        "kind": "input",
+        "label": "Send me product updates",
+        "path": "productUpdates",
+        "defaultValue": false,
+        "keysWithUndefined": "size include exclude disabled readonly validator"
+      },
+      "terms": {
+        "uid": "terms",
+        "type": "checkbox",
+        "kind": "input",
+        "label": "I accept the Terms of Service and Privacy Policy",
+        "validator": {
+          "type": "boolean",
+          "const": true,
+          "messages": {
+            "const": "You must accept the terms to create an account"
+          }
+        },
+        "path": "terms",
+        "defaultValue": false,
+        "keysWithUndefined": "size include exclude disabled readonly"
+      },
+      "#0.0.0.10": {
+        "uid": "#0.0.0.10",
+        "type": "button",
+        "kind": "action",
+        "label": "Create account",
+        "disabled": false,
+        "actionType": "submit",
+        "keysWithUndefined": "size include exclude"
+      }
+    }
+  },
+  "afterSubmit": {
+    "isFormValid": false,
+    "touched": true,
+    "allControlsValidated": true,
+    "validations": {
+      "allEntries": {
+        "email": [
+          "required"
+        ],
+        "password": [
+          "required"
+        ],
+        "productUpdates": null,
+        "terms": null,
+        "tier": null
+      }
+    },
+    "touchedControls": {
+      "allEntries": {
+        "email": true,
+        "password": true,
+        "productUpdates": true,
+        "terms": true,
+        "tier": true
+      }
+    },
+    "widgetFlags": {
+      "changedEntries": {
+        "#0.0.0.10": {
+          "disabled": true
+        }
+      }
+    },
+    "calculatedWidgets": {
+      "changedEntries": {
+        "#0.0.0.10": {
+          "uid": "#0.0.0.10",
+          "type": "button",
+          "kind": "action",
+          "label": "Create account",
+          "disabled": true,
+          "actionType": "submit",
+          "keysWithUndefined": "size include exclude"
+        }
+      }
+    }
+  },
+  "afterData": {},
+  "afterEmptyData": {}
+}

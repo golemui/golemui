@@ -1,0 +1,60 @@
+{
+  "formDef": {
+    "form": [
+      {
+        "uid": "login-flex",
+        "kind": "layout",
+        "type": "grid",
+        "props": {
+          "direction": "column"
+        },
+        "children": [
+          {
+            "kind": "display",
+            "type": "heading",
+            "props": {
+              "text": "Sign up",
+              "level": 3
+            }
+          },
+          {
+            "uid": "login-email",
+            "kind": "input",
+            "type": "textinput",
+            "path": "login.email",
+            "label": "Email",
+            "props": {
+              "placeholder": "example@domain.com"
+            }
+          },
+          {
+            "uid": "login-password",
+            "kind": "input",
+            "type": "password",
+            "path": "login.password",
+            "label": "Password",
+            "props": {
+              "placeholder": "Enter your password...",
+              "showPasswordIcon": "visibility",
+              "hidePasswordIcon": "visibility_off"
+            }
+          },
+          {
+            "uid": "login-subscribe",
+            "kind": "input",
+            "type": "checkbox",
+            "path": "login.subscribe",
+            "label": "Subscribe to the newsletter"
+          },
+          {
+            "uid": "login-submit",
+            "kind": "action",
+            "type": "button",
+            "label": "Sign up"
+          }
+        ]
+      }
+    ]
+  },
+  "data": {}
+}
