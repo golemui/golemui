@@ -1,3 +1,7 @@
+## 3.0.0-alpha.1 (2026-11-23)
+
+This was a version bump only for gui-components to align it with other projects, there were no code changes.
+
 ## 3.0.0-alpha.0 (2026-11-22)
 
 This was a version bump only for gui-components to align it with other projects, there were no code changes.

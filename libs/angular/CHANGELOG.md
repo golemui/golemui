@@ -1,3 +1,14 @@
+## 3.0.0-alpha.1 (2026-11-23)
+
+### 🚀 Features
+
+- add getData to the form components ([#627](https://github.com/golemui/golemui/pull/627))
+
+### ❤️ Thank You
+
+- Joan Llenas
+- Raúl Jiménez @Elecash
+
 ## 3.0.0-alpha.0 (2026-11-22)
 
 ### 🚀 Features
