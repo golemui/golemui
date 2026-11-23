@@ -1,0 +1,834 @@
+{
+  "afterStart": {
+    "formHealth": {
+      "status": "ok"
+    },
+    "isFormValid": true,
+    "touched": false,
+    "allControlsValidated": false,
+    "currentStates": [],
+    "data": {
+      "imoNumber": "[undefined]",
+      "vesselName": "[undefined]",
+      "isHazardous": "[undefined]",
+      "departurePort": "[undefined]",
+      "arrivalPort": "[undefined]",
+      "eta": "[undefined]",
+      "containers": "[undefined]",
+      "declarationText": "[undefined]",
+      "originCountry": "[undefined]",
+      "exportLicense": "[undefined]",
+      "hazardClass": "[undefined]",
+      "emergencyContact": "[undefined]",
+      "feeHandling": "[undefined]",
+      "feeStorage": "[undefined]",
+      "feeInspection": "[undefined]",
+      "premiumMarine": "[undefined]",
+      "premiumCargo": "[undefined]",
+      "premiumWar": "[undefined]"
+    },
+    "validations": {},
+    "touchedControls": {},
+    "widgetFlags": {
+      "emergency_contact": {
+        "hidden": true
+      },
+      "hazard_class": {
+        "hidden": true
+      },
+      "hazard_declaration": {
+        "hidden": true
+      }
+    },
+    "resolvedSources": {
+      "#0": "layout grid",
+      "header_layout": "layout grid",
+      "vessel_section": "layout grid",
+      "imo_number": "input textinput imoNumber",
+      "vessel_name": "input textinput vesselName",
+      "isHazardous": "input toggle isHazardous",
+      "voyage_details": "layout grid",
+      "departure_port": "input select departurePort",
+      "arrival_port": "input select arrivalPort",
+      "eta": "input datePicker eta",
+      "container_repeater": "input repeater containers",
+      "regulatory_compliance": "layout grid",
+      "customs_header": "display alert",
+      "declaration_text": "input textarea declarationText",
+      "origin_grid": "layout grid",
+      "origin_country": "input select originCountry",
+      "export_license": "input textinput exportLicense",
+      "hazard_declaration": "layout grid",
+      "hazard_class": "input select hazardClass",
+      "emergency_contact": "input textinput emergencyContact",
+      "financial_ledger": "layout tabs",
+      "tab_fees": "layout grid",
+      "fee_handling": "input currency feeHandling",
+      "fee_storage": "input currency feeStorage",
+      "fee_inspection": "input currency feeInspection",
+      "tab_insurance": "layout grid",
+      "premium_marine": "input currency premiumMarine",
+      "premium_cargo": "input currency premiumCargo",
+      "premium_war": "input currency premiumWar",
+      "footer_actions": "layout grid",
+      "btn_validate": "action button",
+      "btn_submit": "action button"
+    },
+    "repeaterItemScopes": {},
+    "repeaterRows": {},
+    "calculatedWidgets": {
+      "#0": {
+        "uid": "#0",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "header_layout",
+          "container_repeater",
+          "regulatory_compliance",
+          "financial_ledger",
+          "footer_actions"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "header_layout": {
+        "uid": "header_layout",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "column",
+          "gap": "md"
+        },
+        "children": [
+          "vessel_section",
+          "voyage_details"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "vessel_section": {
+        "uid": "vessel_section",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "row",
+          "gap": "md"
+        },
+        "children": [
+          "imo_number",
+          "vessel_name",
+          "isHazardous"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "imo_number": {
+        "uid": "imo_number",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Vessel IMO Number",
+        "validator": {
+          "type": "string",
+          "required": true
+        },
+        "path": "imoNumber",
+        "props": {
+          "placeholder": "e.g. IMO 9876543"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "vessel_name": {
+        "uid": "vessel_name",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Vessel Name",
+        "path": "vesselName",
+        "props": {
+          "placeholder": "Enter full ship name"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "isHazardous": {
+        "uid": "isHazardous",
+        "type": "toggle",
+        "kind": "input",
+        "label": "Hazardous Cargo Voyage?",
+        "path": "isHazardous",
+        "props": {
+          "hint": "Toggling this will apply 'Hazardous' constraints to all nested items."
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "voyage_details": {
+        "uid": "voyage_details",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "row",
+          "gap": "md"
+        },
+        "children": [
+          "departure_port",
+          "arrival_port",
+          "eta"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "departure_port": {
+        "uid": "departure_port",
+        "type": "select",
+        "kind": "input",
+        "size": 1,
+        "label": "Departure Port",
+        "path": "departurePort",
+        "props": {
+          "options": [
+            {
+              "label": "Rotterdam",
+              "value": "ROT"
+            },
+            {
+              "label": "Shanghai",
+              "value": "SHA"
+            },
+            {
+              "label": "Los Angeles",
+              "value": "LAX"
+            }
+          ]
+        },
+        "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+      },
+      "arrival_port": {
+        "uid": "arrival_port",
+        "type": "select",
+        "kind": "input",
+        "size": 1,
+        "label": "Arrival Port",
+        "path": "arrivalPort",
+        "props": {
+          "options": [
+            {
+              "label": "Hamburg",
+              "value": "HAM"
+            },
+            {
+              "label": "Singapore",
+              "value": "SIN"
+            },
+            {
+              "label": "New York",
+              "value": "NYC"
+            }
+          ]
+        },
+        "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+      },
+      "eta": {
+        "uid": "eta",
+        "type": "datePicker",
+        "kind": "input",
+        "size": 1,
+        "label": "Expected Arrival Date",
+        "path": "eta",
+        "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+      },
+      "container_repeater": {
+        "uid": "container_repeater",
+        "type": "repeater",
+        "kind": "input",
+        "label": "Containers",
+        "validator": {
+          "type": "array",
+          "required": true
+        },
+        "path": "containers",
+        "props": {
+          "addLabel": "Add Cargo Container",
+          "template": {
+            "rowTemplateUid": "container_item"
+          }
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "regulatory_compliance": {
+        "uid": "regulatory_compliance",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "column",
+          "gap": "md"
+        },
+        "children": [
+          "customs_header",
+          "declaration_text",
+          "origin_grid"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "customs_header": {
+        "uid": "customs_header",
+        "type": "alert",
+        "kind": "display",
+        "props": {
+          "text": "International Customs Declaration",
+          "level": "info"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "declaration_text": {
+        "uid": "declaration_text",
+        "type": "textarea",
+        "kind": "input",
+        "label": "Goods Description",
+        "path": "declarationText",
+        "props": {
+          "placeholder": "Full legal description of all goods contained..."
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "origin_grid": {
+        "uid": "origin_grid",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "row",
+          "gap": "sm"
+        },
+        "children": [
+          "origin_country",
+          "export_license"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "origin_country": {
+        "uid": "origin_country",
+        "type": "select",
+        "kind": "input",
+        "label": "Country of Primary Origin",
+        "path": "originCountry",
+        "props": {
+          "options": [
+            {
+              "label": "China",
+              "value": "CN"
+            },
+            {
+              "label": "USA",
+              "value": "US"
+            },
+            {
+              "label": "Germany",
+              "value": "DE"
+            }
+          ]
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "export_license": {
+        "uid": "export_license",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Export License ID",
+        "path": "exportLicense",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "financial_ledger": {
+        "uid": "financial_ledger",
+        "type": "tabs",
+        "kind": "layout",
+        "props": {
+          "tabs": [
+            {
+              "label": "Port Fees",
+              "uid": "tab_fees"
+            },
+            {
+              "label": "Insurance & Tax",
+              "uid": "tab_insurance"
+            }
+          ]
+        },
+        "children": [
+          "tab_fees",
+          "tab_insurance"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "tab_fees": {
+        "uid": "tab_fees",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "column",
+          "gap": "sm"
+        },
+        "children": [
+          "fee_handling",
+          "fee_storage",
+          "fee_inspection"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "fee_handling": {
+        "uid": "fee_handling",
+        "type": "currency",
+        "kind": "input",
+        "label": "Stevedoring/Handling",
+        "path": "feeHandling",
+        "props": {
+          "currency": "EUR"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "fee_storage": {
+        "uid": "fee_storage",
+        "type": "currency",
+        "kind": "input",
+        "label": "Demurrage & Storage",
+        "path": "feeStorage",
+        "props": {
+          "currency": "EUR"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "fee_inspection": {
+        "uid": "fee_inspection",
+        "type": "currency",
+        "kind": "input",
+        "label": "Customs Inspection Fee",
+        "path": "feeInspection",
+        "props": {
+          "currency": "EUR"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "tab_insurance": {
+        "uid": "tab_insurance",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "column",
+          "gap": "sm"
+        },
+        "children": [
+          "premium_marine",
+          "premium_cargo",
+          "premium_war"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "premium_marine": {
+        "uid": "premium_marine",
+        "type": "currency",
+        "kind": "input",
+        "label": "Marine Hull Premium",
+        "path": "premiumMarine",
+        "props": {
+          "currency": "USD"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "premium_cargo": {
+        "uid": "premium_cargo",
+        "type": "currency",
+        "kind": "input",
+        "label": "Cargo Protection",
+        "path": "premiumCargo",
+        "props": {
+          "currency": "USD"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "premium_war": {
+        "uid": "premium_war",
+        "type": "currency",
+        "kind": "input",
+        "label": "War/Strike Surcharge",
+        "path": "premiumWar",
+        "props": {
+          "currency": "USD"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "footer_actions": {
+        "uid": "footer_actions",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "row",
+          "gap": "sm"
+        },
+        "children": [
+          "btn_validate",
+          "btn_submit"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "btn_validate": {
+        "uid": "btn_validate",
+        "type": "button",
+        "kind": "action",
+        "label": "Full Performance Scan",
+        "props": {
+          "variant": "outlined"
+        },
+        "on": {
+          "load": "[undefined]",
+          "click": "validate",
+          "change": "[undefined]",
+          "filter": "[undefined]",
+          "blur": "[undefined]"
+        },
+        "keysWithUndefined": "size include exclude disabled actionType"
+      },
+      "btn_submit": {
+        "uid": "btn_submit",
+        "type": "button",
+        "kind": "action",
+        "label": "Submit Manifest",
+        "props": {
+          "variant": "filled"
+        },
+        "on": {
+          "load": "[undefined]",
+          "click": "submit",
+          "change": "[undefined]",
+          "filter": "[undefined]",
+          "blur": "[undefined]"
+        },
+        "keysWithUndefined": "size include exclude disabled actionType"
+      }
+    }
+  },
+  "afterSubmit": {
+    "isFormValid": false,
+    "touched": true,
+    "allControlsValidated": true,
+    "validations": {
+      "allEntries": {
+        "arrivalPort": null,
+        "containers": [
+          "required"
+        ],
+        "declarationText": null,
+        "departurePort": null,
+        "eta": null,
+        "exportLicense": null,
+        "feeHandling": null,
+        "feeInspection": null,
+        "feeStorage": null,
+        "imoNumber": [
+          "required"
+        ],
+        "isHazardous": null,
+        "originCountry": null,
+        "premiumCargo": null,
+        "premiumMarine": null,
+        "premiumWar": null,
+        "vesselName": null
+      }
+    },
+    "touchedControls": {
+      "allEntries": {
+        "arrivalPort": true,
+        "containers": true,
+        "declarationText": true,
+        "departurePort": true,
+        "eta": true,
+        "exportLicense": true,
+        "feeHandling": true,
+        "feeInspection": true,
+        "feeStorage": true,
+        "imoNumber": true,
+        "isHazardous": true,
+        "originCountry": true,
+        "premiumCargo": true,
+        "premiumMarine": true,
+        "premiumWar": true,
+        "vesselName": true
+      }
+    }
+  },
+  "afterData": {
+    "isFormValid": true,
+    "data": {
+      "imoNumber": "IMO-666",
+      "vesselName": "Demeter",
+      "departurePort": "SHA",
+      "arrivalPort": "HAM",
+      "containers": [
+        {
+          "isHazardous": false,
+          "containerId": "[undefined]",
+          "pallets": "[undefined]"
+        }
+      ],
+      "isHazardous": "[undefined]",
+      "eta": "[undefined]",
+      "declarationText": "[undefined]",
+      "originCountry": "[undefined]",
+      "exportLicense": "[undefined]",
+      "hazardClass": "[undefined]",
+      "emergencyContact": "[undefined]",
+      "feeHandling": "[undefined]",
+      "feeStorage": "[undefined]",
+      "feeInspection": "[undefined]",
+      "premiumMarine": "[undefined]",
+      "premiumCargo": "[undefined]",
+      "premiumWar": "[undefined]"
+    },
+    "validations": {
+      "changedEntries": {
+        "containers": null,
+        "containers.0.containerId": null,
+        "containers.0.pallets": null,
+        "imoNumber": null
+      }
+    },
+    "touchedControls": {
+      "changedEntries": {
+        "containers.0.containerId": true,
+        "containers.0.pallets": true
+      }
+    },
+    "widgetFlags": {
+      "changedEntries": {
+        "container_is_hazardous[0]": {
+          "hidden": true
+        }
+      }
+    },
+    "resolvedSources": {
+      "keys": [
+        "#0",
+        "header_layout",
+        "vessel_section",
+        "imo_number",
+        "vessel_name",
+        "isHazardous",
+        "voyage_details",
+        "departure_port",
+        "arrival_port",
+        "eta",
+        "container_repeater",
+        "container_item[0]",
+        "#0.1.t.0[0]",
+        "container_id[0]",
+        "container_is_hazardous[0]",
+        "pallet_repeater[0]",
+        "regulatory_compliance",
+        "customs_header",
+        "declaration_text",
+        "origin_grid",
+        "origin_country",
+        "export_license",
+        "hazard_declaration",
+        "hazard_class",
+        "emergency_contact",
+        "financial_ledger",
+        "tab_fees",
+        "fee_handling",
+        "fee_storage",
+        "fee_inspection",
+        "tab_insurance",
+        "premium_marine",
+        "premium_cargo",
+        "premium_war",
+        "footer_actions",
+        "btn_validate",
+        "btn_submit"
+      ],
+      "changedEntries": {
+        "container_item[0]": "layout grid",
+        "#0.1.t.0[0]": "layout grid",
+        "container_id[0]": "input textinput containers.0.containerId",
+        "container_is_hazardous[0]": "input toggle containers.0.isHazardous",
+        "pallet_repeater[0]": "input repeater containers.0.pallets"
+      }
+    },
+    "repeaterItemScopes": {
+      "allEntries": {
+        "#0.1.t.0[0]": {
+          "itemPath": "containers.0",
+          "index": 0
+        },
+        "container_id[0]": {
+          "itemPath": "containers.0",
+          "index": 0
+        },
+        "container_is_hazardous[0]": {
+          "itemPath": "containers.0",
+          "index": 0
+        },
+        "container_item[0]": {
+          "itemPath": "containers.0",
+          "index": 0
+        },
+        "pallet_repeater[0]": {
+          "itemPath": "containers.0",
+          "index": 0
+        }
+      }
+    },
+    "repeaterRows": {
+      "allEntries": {
+        "#0.1.t.0[0]": [
+          {
+            "declaredItemPath": "containers.items",
+            "itemPath": "containers.0",
+            "index": 0
+          }
+        ],
+        "container_id[0]": [
+          {
+            "declaredItemPath": "containers.items",
+            "itemPath": "containers.0",
+            "index": 0
+          }
+        ],
+        "container_is_hazardous[0]": [
+          {
+            "declaredItemPath": "containers.items",
+            "itemPath": "containers.0",
+            "index": 0
+          }
+        ],
+        "container_item[0]": [
+          {
+            "declaredItemPath": "containers.items",
+            "itemPath": "containers.0",
+            "index": 0
+          }
+        ],
+        "pallet_repeater[0]": [
+          {
+            "declaredItemPath": "containers.items",
+            "itemPath": "containers.0",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "calculatedWidgets": {
+      "changedEntries": {
+        "container_item[0]": {
+          "uid": "container_item[0]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "direction": "column",
+            "gap": "sm"
+          },
+          "children": [
+            "#0.1.t.0",
+            "pallet_repeater"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "#0.1.t.0[0]": {
+          "uid": "#0.1.t.0[0]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "direction": "row"
+          },
+          "children": [
+            "container_id"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "container_id[0]": {
+          "uid": "container_id[0]",
+          "type": "textinput",
+          "kind": "input",
+          "size": 1,
+          "label": "Container Serial",
+          "path": "containers.0.containerId",
+          "props": {
+            "placeholder": "ABCD-123456-0"
+          },
+          "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+        },
+        "pallet_repeater[0]": {
+          "uid": "pallet_repeater[0]",
+          "type": "repeater",
+          "kind": "input",
+          "label": "Pallets in Container",
+          "validator": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 10
+          },
+          "path": "containers.0.pallets",
+          "props": {
+            "addLabel": "Add Pallet",
+            "template": {
+              "rowTemplateUid": "pallet_item"
+            }
+          },
+          "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+        }
+      }
+    }
+  },
+  "afterEmptyData": {
+    "data": {
+      "imoNumber": "[undefined]",
+      "vesselName": "[undefined]",
+      "isHazardous": "[undefined]",
+      "departurePort": "[undefined]",
+      "arrivalPort": "[undefined]",
+      "eta": "[undefined]",
+      "containers": "[undefined]",
+      "declarationText": "[undefined]",
+      "originCountry": "[undefined]",
+      "exportLicense": "[undefined]",
+      "hazardClass": "[undefined]",
+      "emergencyContact": "[undefined]",
+      "feeHandling": "[undefined]",
+      "feeStorage": "[undefined]",
+      "feeInspection": "[undefined]",
+      "premiumMarine": "[undefined]",
+      "premiumCargo": "[undefined]",
+      "premiumWar": "[undefined]"
+    },
+    "validations": {
+      "removedKeys": [
+        "containers.0.containerId",
+        "containers.0.pallets"
+      ]
+    },
+    "touchedControls": {
+      "removedKeys": [
+        "containers.0.containerId",
+        "containers.0.pallets"
+      ]
+    },
+    "widgetFlags": {
+      "removedKeys": [
+        "container_is_hazardous[0]"
+      ]
+    },
+    "resolvedSources": {
+      "removedKeys": [
+        "container_item[0]",
+        "#0.1.t.0[0]",
+        "container_id[0]",
+        "container_is_hazardous[0]",
+        "pallet_repeater[0]"
+      ]
+    },
+    "repeaterItemScopes": {
+      "allEntries": {}
+    },
+    "repeaterRows": {
+      "allEntries": {}
+    },
+    "calculatedWidgets": {
+      "removedKeys": [
+        "container_item[0]",
+        "#0.1.t.0[0]",
+        "container_id[0]",
+        "pallet_repeater[0]"
+      ]
+    }
+  }
+}

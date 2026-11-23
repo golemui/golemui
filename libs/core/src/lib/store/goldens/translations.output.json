@@ -1,0 +1,241 @@
+{
+  "afterStart": {
+    "formHealth": {
+      "status": "ok"
+    },
+    "isFormValid": true,
+    "touched": false,
+    "allControlsValidated": false,
+    "currentStates": [
+      "systemMessage"
+    ],
+    "data": {
+      "details": {
+        "isRemote": "[undefined]",
+        "clientName": "[undefined]",
+        "date": "[undefined]"
+      },
+      "depositAmount": "[undefined]"
+    },
+    "validations": {},
+    "touchedControls": {},
+    "widgetFlags": {
+      "#0.2": {
+        "hidden": false
+      },
+      "depositAmount-currency": {
+        "hidden": false
+      }
+    },
+    "resolvedSources": {
+      "#0": "layout grid",
+      "#0.0": "display heading",
+      "#0.1": "display alert",
+      "#0.2": "display alert",
+      "details.isRemote-toggle": "input toggle details.isRemote",
+      "details.clientName-textinput": "input textinput details.clientName",
+      "details.date-calendar": "input calendar details.date",
+      "#0.6": "display alert",
+      "depositAmount-currency": "input currency depositAmount",
+      "#0.8": "action button",
+      "#0.9": "action button"
+    },
+    "repeaterItemScopes": {},
+    "repeaterRows": {},
+    "calculatedWidgets": {
+      "#0": {
+        "uid": "#0",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "#0.0",
+          "#0.1",
+          "#0.2",
+          "details.isRemote-toggle",
+          "details.clientName-textinput",
+          "details.date-calendar",
+          "#0.6",
+          "depositAmount-currency",
+          "#0.8",
+          "#0.9"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.0": {
+        "uid": "#0.0",
+        "type": "heading",
+        "kind": "display",
+        "props": {
+          "text": "translated[consultation.header.onsite]"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.1": {
+        "uid": "#0.1",
+        "type": "alert",
+        "kind": "display",
+        "props": {
+          "text": "Your connection status is: online",
+          "level": "success"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.2": {
+        "uid": "#0.2",
+        "type": "alert",
+        "kind": "display",
+        "include": {
+          "in": [
+            "systemMessage"
+          ]
+        },
+        "props": {
+          "text": "translated[consultation.system.message] {\"message\":\"System maintenance is scheduled for tomorrow\"}",
+          "level": "warning"
+        },
+        "keysWithUndefined": "size exclude"
+      },
+      "details.isRemote-toggle": {
+        "uid": "details.isRemote-toggle",
+        "type": "toggle",
+        "kind": "input",
+        "label": "translated[consultation.mode.label] (default: I prefer a remote Zoom meeting)",
+        "path": "details.isRemote",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "details.clientName-textinput": {
+        "uid": "details.clientName-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "label": "translated[consultation.field.name]",
+        "validator": {
+          "type": "string",
+          "required": true,
+          "minLength": 2
+        },
+        "path": "details.clientName",
+        "props": {
+          "placeholder": "translated[consultation.placeholder.name] (default: e.g. Jane Doe)"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "details.date-calendar": {
+        "uid": "details.date-calendar",
+        "type": "calendar",
+        "kind": "input",
+        "label": "translated[consultation.field.date] (default: Select a Date)",
+        "validator": {
+          "type": "string",
+          "required": true,
+          "format": "date-time"
+        },
+        "path": "details.date",
+        "props": {
+          "prevMonthIcon": "chevron_left",
+          "nextMonthIcon": "chevron_right"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "#0.6": {
+        "uid": "#0.6",
+        "type": "alert",
+        "kind": "display",
+        "props": {
+          "text": "translated[consultation.info.onsite] (default: Please arrive at our Main St. office 10 minutes early.)",
+          "level": "info"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "depositAmount-currency": {
+        "uid": "depositAmount-currency",
+        "type": "currency",
+        "kind": "input",
+        "exclude": {
+          "from": [
+            "remote"
+          ]
+        },
+        "label": "translated[consultation.field.deposit] (default: Room Reservation Deposit)",
+        "path": "depositAmount",
+        "props": {
+          "currency": "EUR"
+        },
+        "keysWithUndefined": "size include disabled readonly validator defaultValue"
+      },
+      "#0.8": {
+        "uid": "#0.8",
+        "type": "button",
+        "kind": "action",
+        "label": "translated[consultation.btn.submit] (default: Confirm Booking)",
+        "on": {
+          "load": "[undefined]",
+          "click": "handleSubmit",
+          "change": "[undefined]",
+          "filter": "[undefined]",
+          "blur": "[undefined]"
+        },
+        "keysWithUndefined": "size include exclude disabled actionType"
+      },
+      "#0.9": {
+        "uid": "#0.9",
+        "type": "button",
+        "kind": "action",
+        "label": "translated[consultation.btn.submit] (default: Confirm Booking)",
+        "on": {
+          "load": "[undefined]",
+          "click": "handleSubmit",
+          "change": "[undefined]",
+          "filter": "[undefined]",
+          "blur": "[undefined]"
+        },
+        "keysWithUndefined": "size include exclude disabled actionType"
+      }
+    }
+  },
+  "afterSubmit": {
+    "isFormValid": false,
+    "touched": true,
+    "allControlsValidated": true,
+    "validations": {
+      "allEntries": {
+        "depositAmount": null,
+        "details.clientName": [
+          "required"
+        ],
+        "details.date": [
+          "required"
+        ],
+        "details.isRemote": null
+      }
+    },
+    "touchedControls": {
+      "allEntries": {
+        "depositAmount": true,
+        "details.clientName": true,
+        "details.date": true,
+        "details.isRemote": true
+      }
+    }
+  },
+  "afterData": {
+    "data": {
+      "details": {
+        "clientName": "",
+        "date": null,
+        "isRemote": false,
+        "notes": ""
+      },
+      "depositAmount": "[undefined]"
+    }
+  },
+  "afterEmptyData": {
+    "data": {
+      "details": {
+        "isRemote": "[undefined]",
+        "clientName": "[undefined]",
+        "date": "[undefined]"
+      },
+      "depositAmount": "[undefined]"
+    }
+  }
+}

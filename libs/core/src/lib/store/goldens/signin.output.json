@@ -1,0 +1,274 @@
+{
+  "afterStart": {
+    "formHealth": {
+      "status": "ok"
+    },
+    "isFormValid": true,
+    "touched": false,
+    "allControlsValidated": false,
+    "currentStates": [],
+    "data": {
+      "user": {
+        "id": "[undefined]",
+        "name": "[undefined]",
+        "email": "[undefined]",
+        "password": "[undefined]",
+        "age": 0,
+        "height": "170",
+        "playBasketball": "[undefined]"
+      },
+      "confirm": "[undefined]",
+      "registerMode": "[undefined]",
+      "terms": "[undefined]",
+      "parentalApproval": "[undefined]"
+    },
+    "validations": {},
+    "touchedControls": {},
+    "widgetFlags": {
+      "confirm-textinput": {
+        "disabled": true
+      },
+      "parentalApproval-checkbox": {
+        "hidden": true
+      },
+      "terms-checkbox": {
+        "hidden": true
+      },
+      "user.age-number": {
+        "hidden": true
+      },
+      "user.height-textinput": {
+        "hidden": true
+      },
+      "user.playBasketball-checkbox": {
+        "hidden": true
+      }
+    },
+    "resolvedSources": {
+      "#0": "layout grid",
+      "user.id-textinput": "input textinput user.id",
+      "user.name-textinput": "input textinput user.name",
+      "user.email-textinput": "input textinput user.email",
+      "user.password-password": "input password user.password",
+      "confirm-textinput": "input textinput confirm",
+      "user.age-number": "input number user.age",
+      "user.height-textinput": "input textinput user.height",
+      "user.playBasketball-checkbox": "input checkbox user.playBasketball",
+      "registerMode-checkbox": "input checkbox registerMode",
+      "terms-checkbox": "input checkbox terms",
+      "parentalApproval-checkbox": "input checkbox parentalApproval",
+      "#0.11": "display alert",
+      "#0.12": "action button"
+    },
+    "repeaterItemScopes": {},
+    "repeaterRows": {},
+    "calculatedWidgets": {
+      "#0": {
+        "uid": "#0",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "user.id-textinput",
+          "user.name-textinput",
+          "user.email-textinput",
+          "user.password-password",
+          "confirm-textinput",
+          "registerMode-checkbox",
+          "#0.11",
+          "#0.12"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "user.id-textinput": {
+        "uid": "user.id-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "label": "User Id",
+        "readonly": true,
+        "path": "user.id",
+        "props": {
+          "placeholder": "asasad",
+          "icon": "[undefined]"
+        },
+        "keysWithUndefined": "size include exclude disabled validator defaultValue"
+      },
+      "user.name-textinput": {
+        "uid": "user.name-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "label": "User Name",
+        "validator": {
+          "type": "custom",
+          "allowedNames": [
+            "Joan",
+            "Raul"
+          ]
+        },
+        "path": "user.name",
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "user.email-textinput": {
+        "uid": "user.email-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "label": "User Email",
+        "validator": {
+          "type": "string",
+          "required": true,
+          "format": "email"
+        },
+        "path": "user.email",
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "user.password-password": {
+        "uid": "user.password-password",
+        "type": "password",
+        "kind": "input",
+        "label": "User Password",
+        "validator": {
+          "type": "string",
+          "required": true,
+          "minLength": 8,
+          "maxLength": 20,
+          "pattern": "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$"
+        },
+        "path": "user.password",
+        "props": {
+          "icon": "password",
+          "hint": "Requires an uppercase, lowercase, and a number",
+          "placeholder": "[undefined]",
+          "showPasswordIcon": "visibility",
+          "hidePasswordIcon": "visibility_off",
+          "showPasswordLabel": "SHOW",
+          "hidePasswordLabel": "HIDE"
+        },
+        "on": {
+          "load": "[undefined]",
+          "click": "[undefined]",
+          "change": "[undefined]",
+          "filter": "[undefined]",
+          "blur": "[undefined]"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "confirm-textinput": {
+        "uid": "confirm-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Confirm Password",
+        "disabled": true,
+        "path": "confirm",
+        "props": {
+          "placeholder": "[undefined]"
+        },
+        "on": {
+          "load": "[undefined]",
+          "click": "[undefined]",
+          "change": "checkPasswordMatch",
+          "filter": "[undefined]",
+          "blur": "[undefined]"
+        },
+        "keysWithUndefined": "size include exclude readonly validator defaultValue"
+      },
+      "registerMode-checkbox": {
+        "uid": "registerMode-checkbox",
+        "type": "checkbox",
+        "kind": "input",
+        "label": "Register",
+        "path": "registerMode",
+        "props": {
+          "checkboxPosition": "left"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "#0.11": {
+        "uid": "#0.11",
+        "type": "alert",
+        "kind": "display",
+        "props": {
+          "text": "Some fields need your attention",
+          "level": "warning"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.12": {
+        "uid": "#0.12",
+        "type": "button",
+        "kind": "action",
+        "label": "Login",
+        "disabled": false,
+        "on": {
+          "load": "[undefined]",
+          "click": "handleLogin",
+          "change": "[undefined]",
+          "filter": "[undefined]",
+          "blur": "[undefined]"
+        },
+        "keysWithUndefined": "size include exclude actionType"
+      }
+    }
+  },
+  "afterSubmit": {
+    "isFormValid": false,
+    "touched": true,
+    "allControlsValidated": true,
+    "validations": {
+      "allEntries": {
+        "confirm": null,
+        "registerMode": null,
+        "user.email": [
+          "required"
+        ],
+        "user.id": null,
+        "user.name": null,
+        "user.password": [
+          "required"
+        ]
+      }
+    },
+    "touchedControls": {
+      "allEntries": {
+        "confirm": true,
+        "registerMode": true,
+        "user.email": true,
+        "user.id": true,
+        "user.name": true,
+        "user.password": true
+      }
+    }
+  },
+  "afterData": {
+    "data": {
+      "user": {
+        "id": "ASDFGHJKL4567",
+        "name": "[undefined]",
+        "email": "[undefined]",
+        "password": "[undefined]",
+        "age": 0,
+        "height": "170",
+        "playBasketball": "[undefined]"
+      },
+      "confirm": "[undefined]",
+      "registerMode": "[undefined]",
+      "terms": "[undefined]",
+      "parentalApproval": "[undefined]"
+    }
+  },
+  "afterEmptyData": {
+    "data": {
+      "user": {
+        "id": "[undefined]",
+        "name": "[undefined]",
+        "email": "[undefined]",
+        "password": "[undefined]",
+        "age": 0,
+        "height": "170",
+        "playBasketball": "[undefined]"
+      },
+      "confirm": "[undefined]",
+      "registerMode": "[undefined]",
+      "terms": "[undefined]",
+      "parentalApproval": "[undefined]"
+    }
+  }
+}

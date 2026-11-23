@@ -1,0 +1,214 @@
+{
+  "formDef": {
+    "form": [
+      {
+        "kind": "layout",
+        "type": "grid",
+        "props": {
+          "direction": "row",
+          "gap": "xl"
+        },
+        "children": [
+          {
+            "uid": "budget",
+            "kind": "input",
+            "type": "currency",
+            "path": "budget",
+            "defaultValue": 10000,
+            "label": {
+              "key": "travelPlanner.field.budget",
+              "default": "Travel Budget"
+            },
+            "size": 1,
+            "props": {
+              "step": 100,
+              "placeholder": "US"
+            },
+            "validator": {
+              "type": "number",
+              "required": true,
+              "minimum": 100
+            }
+          },
+          {
+            "uid": "passengers",
+            "kind": "input",
+            "type": "number",
+            "path": "passengers",
+            "label": {
+              "key": "travelPlanner.field.passengers",
+              "default": "Passengers"
+            },
+            "defaultValue": 1,
+            "props": {
+              "minimum": 1,
+              "maximum": 10
+            },
+            "validator": {
+              "type": "number",
+              "required": true,
+              "minimum": 1,
+              "maximum": 10
+            }
+          }
+        ]
+      },
+      {
+        "uid": "travelSections",
+        "kind": "layout",
+        "type": "accordion",
+        "props": {
+          "defaultOpen": {
+            "travellers": true,
+            "extras": true
+          },
+          "sections": [
+            {
+              "uid": "travellers",
+              "label": {
+                "key": "travelPlanner.section.travellers"
+              }
+            },
+            {
+              "uid": "extras",
+              "label": {
+                "key": "travelPlanner.section.extras",
+                "default": "Extras"
+              }
+            }
+          ]
+        },
+        "children": [
+          {
+            "uid": "travellers",
+            "kind": "input",
+            "type": "repeater",
+            "path": "travellers",
+            "label": {
+              "key": "travelPlanner.field.travellers",
+              "default": "Travellers"
+            },
+            "props": {
+              "addLabel": "Add traveller",
+              "removeLabel": "Remove",
+              "template": {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row",
+                  "gap": "sm"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "travellers.items.name",
+                    "defaultValue": "",
+                    "label": {
+                      "key": "travelPlanner.row.traveller",
+                      "params": {
+                        "who": "$item.name"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "uid": "extras",
+            "kind": "layout",
+            "type": "tabs",
+            "props": {
+              "tabs": [
+                {
+                  "uid": "pets",
+                  "label": {
+                    "key": "travelPlanner.tab.pets"
+                  }
+                },
+                {
+                  "uid": "preferredDates",
+                  "label": {
+                    "key": "travelPlanner.tab.dates",
+                    "default": "Dates"
+                  }
+                }
+              ]
+            },
+            "children": [
+              {
+                "uid": "pets",
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row",
+                  "justify": "start"
+                },
+                "children": [
+                  {
+                    "uid": "includePets",
+                    "kind": "input",
+                    "type": "toggle",
+                    "path": "includePets",
+                    "label": {
+                      "key": "travelPlanner.field.includePets.label",
+                      "default": "Include Pets"
+                    },
+                    "props": {
+                      "togglePosition": "left",
+                      "hint": {
+                        "key": "travelPlanner.field.includePets.hint",
+                        "default": "Only hosts with pets will be included in the search results."
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "uid": "preferredDates",
+                "kind": "input",
+                "type": "rangeCalendar",
+                "path": "preferredDates",
+                "label": {
+                  "key": "travelPlanner.field.preferredDates.label",
+                  "default": "Select Preferred Dates"
+                },
+                "size": 1,
+                "props": {
+                  "numberOfMonths": 2,
+                  "prevMonthIcon": "chevron_left",
+                  "nextMonthIcon": "chevron_right",
+                  "prevMonthAriaLabel": {
+                    "key": "travelPlanner.field.preferredDates.prevMonthAriaLabel",
+                    "default": "Previous Month"
+                  },
+                  "nextMonthAriaLabel": {
+                    "key": "travelPlanner.field.preferredDates.nextMonthAriaLabel",
+                    "default": "Next Month"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "data": {
+    "travellers": [
+      {
+        "name": "Ana"
+      },
+      {
+        "name": "Bo"
+      }
+    ],
+    "details": {
+      "clientName": "",
+      "date": null,
+      "isRemote": false,
+      "notes": ""
+    }
+  }
+}

@@ -1,0 +1,5628 @@
+{
+  "formDef": {
+    "states": {
+      "limitReached": "$form.repeaters.users?.length === 5",
+      "hasSubregionSelect": "!!$form.selects.subregion",
+      "hasSubregionRadiogroup": "!!$form.radiogroups.subregion"
+    },
+    "form": [
+      {
+        "kind": "display",
+        "type": "heading",
+        "props": {
+          "text": "KITCHEN SINK",
+          "level": 1
+        }
+      },
+      {
+        "kind": "layout",
+        "type": "tabs",
+        "props": {
+          "defaultOpen": "tabAlert",
+          "tabs": [
+            {
+              "label": "Accordion Layout",
+              "uid": "tabAccordion"
+            },
+            {
+              "label": "Alert Component",
+              "uid": "tabAlert"
+            },
+            {
+              "label": "Button Component",
+              "uid": "tabButton"
+            },
+            {
+              "label": "Menu Component",
+              "uid": "tabMenu"
+            },
+            {
+              "label": "Calendar Component",
+              "uid": "tabCalendar"
+            },
+            {
+              "label": "Checkbox Component",
+              "uid": "tabCheckbox"
+            },
+            {
+              "label": "Currency Component",
+              "uid": "tabCurrency"
+            },
+            {
+              "label": "Custom Display Widget",
+              "uid": "tabCustomWidget"
+            },
+            {
+              "label": "Date Input Component",
+              "uid": "tabDateInput"
+            },
+            {
+              "label": "Date Picker Component",
+              "uid": "tabDatePicker"
+            },
+            {
+              "label": "Date Time Calendar Component",
+              "uid": "tabDateTimeCalendar"
+            },
+            {
+              "label": "Date Time Input Component",
+              "uid": "tabDateTimeInput"
+            },
+            {
+              "label": "Date Time Picker Component",
+              "uid": "tabDateTimePicker"
+            },
+            {
+              "label": "Dropdown Component",
+              "uid": "tabDropdown"
+            },
+            {
+              "label": "File Upload Component",
+              "uid": "tabFileUpload"
+            },
+            {
+              "label": "Flex Layout (deprecated)",
+              "uid": "tabFlex"
+            },
+            {
+              "label": "Grid Layout",
+              "uid": "tabGrid"
+            },
+            {
+              "label": "List Component",
+              "uid": "tabList"
+            },
+            {
+              "label": "Markdown Component",
+              "uid": "tabMarkdown"
+            },
+            {
+              "label": "Markdown Text Component",
+              "uid": "tabMarkdownText"
+            },
+            {
+              "label": "Multi Dropdown Component",
+              "uid": "tabMultiDropdown"
+            },
+            {
+              "label": "Multi List Component",
+              "uid": "tabMultiList"
+            },
+            {
+              "label": "Number Component",
+              "uid": "tabNumber"
+            },
+            {
+              "label": "Password Component",
+              "uid": "tabPassword"
+            },
+            {
+              "label": "Radiogroup Component",
+              "uid": "tabRadiogroup"
+            },
+            {
+              "label": "Checkbox Group Component",
+              "uid": "tabCheckboxGroup"
+            },
+            {
+              "label": "Rating Component",
+              "uid": "tabRating"
+            },
+            {
+              "label": "Range Calendar Component",
+              "uid": "tabRangeCalendar"
+            },
+            {
+              "label": "Range Date Input Component",
+              "uid": "tabRangeDateInput"
+            },
+            {
+              "label": "Range Time Input Component",
+              "uid": "tabRangeTimeInput"
+            },
+            {
+              "label": "Range Date Time Input Component",
+              "uid": "tabRangeDateTimeInput"
+            },
+            {
+              "label": "Range Date Time Calendar Component",
+              "uid": "tabRangeDateTimeCalendar"
+            },
+            {
+              "label": "Range Date Time Picker Component",
+              "uid": "tabRangeDateTimePicker"
+            },
+            {
+              "label": "Range Time Picker Component",
+              "uid": "tabRangeTimePicker"
+            },
+            {
+              "label": "Range Date Picker Component",
+              "uid": "tabRangeDatePicker"
+            },
+            {
+              "label": "OTP Component",
+              "uid": "tabOtp"
+            },
+            {
+              "label": "Range Slider Component",
+              "uid": "tabRangeSlider"
+            },
+            {
+              "label": "Repeater Component",
+              "uid": "tabRepeater"
+            },
+            {
+              "label": "Select Component",
+              "uid": "tabSelect"
+            },
+            {
+              "label": "Slider Component",
+              "uid": "tabSlider"
+            },
+            {
+              "label": "Tags Component",
+              "uid": "tabTags"
+            },
+            {
+              "label": "Textarea Component",
+              "uid": "tabTextarea"
+            },
+            {
+              "label": "Textinput Component",
+              "uid": "tabTextinput"
+            },
+            {
+              "label": "Time Picker Component",
+              "uid": "tabTimePicker"
+            },
+            {
+              "label": "Time Input Component",
+              "uid": "tabTimeInput"
+            },
+            {
+              "label": "Toggle Component",
+              "uid": "tabToggle"
+            }
+          ]
+        },
+        "on": {
+          "change": "onTabEvent"
+        },
+        "children": [
+          {
+            "uid": "tabAlert",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "display",
+                "type": "alert",
+                "props": {
+                  "text": "Some fields need your attention",
+                  "level": "warning"
+                }
+              },
+              {
+                "kind": "display",
+                "type": "alert",
+                "props": {
+                  "text": "Some fields need your attention",
+                  "level": "success"
+                }
+              },
+              {
+                "kind": "display",
+                "type": "alert",
+                "props": {
+                  "text": "Some fields need your attention",
+                  "level": "error"
+                }
+              },
+              {
+                "kind": "display",
+                "type": "alert",
+                "props": {
+                  "text": "Some fields need your attention",
+                  "level": "info"
+                }
+              },
+              {
+                "kind": "display",
+                "type": "alert",
+                "props": {
+                  "text": "Some fields need your attention"
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabButton",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "action",
+                "type": "button",
+                "label": "Save"
+              },
+              {
+                "kind": "action",
+                "type": "button",
+                "label": "Save",
+                "props": {
+                  "variant": "outlined"
+                }
+              },
+              {
+                "kind": "action",
+                "type": "button",
+                "label": "Save",
+                "props": {
+                  "variant": "link"
+                }
+              },
+              {
+                "kind": "action",
+                "type": "button",
+                "label": "Save",
+                "props": {
+                  "icon": "save"
+                }
+              },
+              {
+                "kind": "action",
+                "type": "button",
+                "label": "Save",
+                "props": {
+                  "icon": "save",
+                  "iconPosition": "right"
+                }
+              },
+              {
+                "kind": "action",
+                "type": "button",
+                "label": "Save",
+                "disabled": true
+              },
+              {
+                "kind": "action",
+                "type": "button",
+                "props": {
+                  "icon": "close",
+                  "variant": "outlined",
+                  "ariaLabel": "Close"
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabMenu",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "uid": "menuActions",
+                "kind": "action",
+                "type": "menu",
+                "label": "Actions",
+                "on": {
+                  "click": "onMenuAction"
+                },
+                "props": {
+                  "items": [
+                    {
+                      "label": "Edit",
+                      "value": "edit"
+                    },
+                    {
+                      "label": "Duplicate",
+                      "value": "duplicate"
+                    },
+                    {
+                      "separator": true
+                    },
+                    {
+                      "label": "Archive",
+                      "value": "archive",
+                      "disabled": true
+                    },
+                    {
+                      "label": "Delete",
+                      "value": "delete"
+                    }
+                  ]
+                }
+              },
+              {
+                "uid": "menuOutlined",
+                "kind": "action",
+                "type": "menu",
+                "label": "Actions",
+                "on": {
+                  "click": "onMenuAction"
+                },
+                "props": {
+                  "items": [
+                    {
+                      "label": "Edit",
+                      "value": "edit"
+                    },
+                    {
+                      "label": "Duplicate",
+                      "value": "duplicate"
+                    },
+                    {
+                      "separator": true
+                    },
+                    {
+                      "label": "Archive",
+                      "value": "archive",
+                      "disabled": true
+                    },
+                    {
+                      "label": "Delete",
+                      "value": "delete"
+                    }
+                  ],
+                  "variant": "outlined"
+                }
+              },
+              {
+                "uid": "menuLink",
+                "kind": "action",
+                "type": "menu",
+                "label": "Actions",
+                "on": {
+                  "click": "onMenuAction"
+                },
+                "props": {
+                  "items": [
+                    {
+                      "label": "Edit",
+                      "value": "edit"
+                    },
+                    {
+                      "label": "Duplicate",
+                      "value": "duplicate"
+                    },
+                    {
+                      "separator": true
+                    },
+                    {
+                      "label": "Archive",
+                      "value": "archive",
+                      "disabled": true
+                    },
+                    {
+                      "label": "Delete",
+                      "value": "delete"
+                    }
+                  ],
+                  "variant": "link"
+                }
+              },
+              {
+                "uid": "menuIcon",
+                "kind": "action",
+                "type": "menu",
+                "label": "More",
+                "on": {
+                  "click": "onMenuAction"
+                },
+                "props": {
+                  "items": [
+                    {
+                      "label": "Edit",
+                      "value": "edit"
+                    },
+                    {
+                      "label": "Duplicate",
+                      "value": "duplicate"
+                    },
+                    {
+                      "separator": true
+                    },
+                    {
+                      "label": "Archive",
+                      "value": "archive",
+                      "disabled": true
+                    },
+                    {
+                      "label": "Delete",
+                      "value": "delete"
+                    }
+                  ],
+                  "icon": "more_vert",
+                  "iconPosition": "right",
+                  "placement": "bottom-end"
+                }
+              },
+              {
+                "uid": "menuIconOnly",
+                "kind": "action",
+                "type": "menu",
+                "on": {
+                  "click": "onMenuAction"
+                },
+                "props": {
+                  "items": [
+                    {
+                      "label": "Edit",
+                      "value": "edit"
+                    },
+                    {
+                      "label": "Duplicate",
+                      "value": "duplicate"
+                    },
+                    {
+                      "separator": true
+                    },
+                    {
+                      "label": "Archive",
+                      "value": "archive",
+                      "disabled": true
+                    },
+                    {
+                      "label": "Delete",
+                      "value": "delete"
+                    }
+                  ],
+                  "ariaLabel": "Row actions",
+                  "icon": "more_vert",
+                  "variant": "outlined",
+                  "placement": "bottom-end"
+                }
+              },
+              {
+                "uid": "menuTop",
+                "kind": "action",
+                "type": "menu",
+                "label": "Opens above",
+                "on": {
+                  "click": "onMenuAction"
+                },
+                "props": {
+                  "items": [
+                    {
+                      "label": "Edit",
+                      "value": "edit"
+                    },
+                    {
+                      "label": "Duplicate",
+                      "value": "duplicate"
+                    },
+                    {
+                      "separator": true
+                    },
+                    {
+                      "label": "Archive",
+                      "value": "archive",
+                      "disabled": true
+                    },
+                    {
+                      "label": "Delete",
+                      "value": "delete"
+                    }
+                  ],
+                  "placement": "top-start"
+                }
+              },
+              {
+                "uid": "menuDisabled",
+                "kind": "action",
+                "type": "menu",
+                "label": "Actions",
+                "disabled": true,
+                "props": {
+                  "items": [
+                    {
+                      "label": "Edit",
+                      "value": "edit"
+                    },
+                    {
+                      "label": "Duplicate",
+                      "value": "duplicate"
+                    },
+                    {
+                      "separator": true
+                    },
+                    {
+                      "label": "Archive",
+                      "value": "archive",
+                      "disabled": true
+                    },
+                    {
+                      "label": "Delete",
+                      "value": "delete"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabMarkdownText",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "display",
+                "type": "markdownText",
+                "props": {
+                  "md": "# Welcome\n## Welcome\n### Welcome\n#### Welcome\n##### Welcome\n###### Welcome\n\nThis is a **markdownText** display widget. It renders _markdown_ content as formatted HTML. You can add links too like this one to [GolemUI](https://golemui.com).\n\n- Use it for structured text\n- Use it for rich content display\n- Use it for formatted instructions\n\n1. Use it for structured text\n2. Use it for rich content display\n3. Use it for formatted instructions\n\n> **Note:** Remember to provide a markdown parser via the form `dependencies` prop.\n\n```\nimport { markdownText } from '@golem/ui';\n\nconsole.log('Code blocks are also supported');\n```\n"
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabAccordion",
+            "kind": "layout",
+            "type": "accordion",
+            "props": {
+              "singleOpen": false,
+              "defaultOpen": {
+                "section1": true
+              },
+              "sections": [
+                {
+                  "label": "Personal Information",
+                  "uid": "section1"
+                },
+                {
+                  "label": "Shipping Address",
+                  "uid": "section2"
+                },
+                {
+                  "label": "Billing Address",
+                  "uid": "section3"
+                }
+              ]
+            },
+            "on": {
+              "change": "onAccordionEvent"
+            },
+            "children": [
+              {
+                "uid": "section1",
+                "kind": "layout",
+                "type": "grid",
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "shoppingCart.firstName",
+                    "label": "First name",
+                    "validator": {
+                      "type": "string",
+                      "required": true
+                    }
+                  },
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "shoppingCart.lastName",
+                    "label": "Last name",
+                    "validator": {
+                      "type": "string",
+                      "required": true
+                    }
+                  }
+                ]
+              },
+              {
+                "uid": "section2",
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "shoppingCart.shippingAddress",
+                    "label": "Shipping address",
+                    "validator": {
+                      "type": "string",
+                      "required": true
+                    }
+                  },
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "shoppingCart.shippingState",
+                    "label": "Shipping state",
+                    "validator": {
+                      "type": "string",
+                      "required": true
+                    }
+                  }
+                ]
+              },
+              {
+                "uid": "section3",
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "shoppingCart.billingAddress",
+                    "label": "Billing address",
+                    "validator": {
+                      "type": "string",
+                      "required": true
+                    }
+                  },
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "shoppingCart.billingState",
+                    "label": "Billing state",
+                    "validator": {
+                      "type": "string",
+                      "required": true
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uid": "tabFlex",
+            "kind": "layout",
+            "type": "flex",
+            "props": {
+              "direction": "row",
+              "direction.limitReached": "column"
+            },
+            "children": [
+              {
+                "uid": "col1",
+                "kind": "layout",
+                "type": "flex",
+                "size": 2,
+                "props": {
+                  "direction": "column"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "listName1",
+                    "label": "List Name",
+                    "size": 1,
+                    "validator": {
+                      "type": "string",
+                      "required": true
+                    }
+                  },
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "listOwner1",
+                    "label": "List Owner",
+                    "size": 2,
+                    "validator": {
+                      "type": "string",
+                      "required": true
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "input",
+                "type": "textinput",
+                "path": "listName2",
+                "label": "List Name",
+                "size": 1,
+                "validator": {
+                  "type": "string",
+                  "required": true
+                }
+              },
+              {
+                "kind": "input",
+                "type": "textinput",
+                "path": "listOwner2",
+                "label": "List Owner",
+                "size": 2,
+                "validator": {
+                  "type": "string",
+                  "required": true
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabGrid",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "display",
+                "type": "markdownText",
+                "props": {
+                  "md": "#### Row\nThe fields share the row by `size`. Their labels, controls and errors line up, whatever the length of a label."
+                }
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "listName",
+                    "label": "List Name",
+                    "size": 2,
+                    "props": {
+                      "hint": "This is a hint"
+                    },
+                    "validator": {
+                      "type": "string",
+                      "required": true
+                    }
+                  },
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "listOwner",
+                    "label": "List owner, as it appears on the team page",
+                    "validator": {
+                      "type": "string",
+                      "required": true
+                    }
+                  },
+                  {
+                    "kind": "input",
+                    "type": "checkbox",
+                    "path": "cb1",
+                    "label": "Public list",
+                    "props": {
+                      "hint": "Visible to the whole workspace"
+                    }
+                  },
+                  {
+                    "kind": "input",
+                    "type": "toggle",
+                    "path": "tg1",
+                    "label": "Notifications"
+                  }
+                ]
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "gridSearch",
+                    "label": "Search members",
+                    "size": 3
+                  },
+                  {
+                    "kind": "action",
+                    "type": "button",
+                    "label": "Search"
+                  }
+                ]
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "gridReport",
+                    "label": "Report name",
+                    "size": 2
+                  },
+                  {
+                    "kind": "input",
+                    "type": "radiogroup",
+                    "path": "gridPeriod",
+                    "label": "Period",
+                    "props": {
+                      "hint": "How often the report runs",
+                      "appearance": "segmented",
+                      "options": [
+                        {
+                          "label": "Day",
+                          "value": "day"
+                        },
+                        {
+                          "label": "Week",
+                          "value": "week"
+                        },
+                        {
+                          "label": "Month",
+                          "value": "month"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "display",
+                "type": "markdownText",
+                "props": {
+                  "md": "#### Columns\nThree columns with a `lg` gap: the street spans two of them."
+                }
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "columns": 3,
+                  "gap": "lg"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "address.street",
+                    "label": "Street",
+                    "size": 2
+                  },
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "address.number",
+                    "label": "Number"
+                  },
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "address.city",
+                    "label": "City"
+                  },
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "address.state",
+                    "label": "State"
+                  },
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "address.postcode",
+                    "label": "Postcode",
+                    "validator": {
+                      "type": "string",
+                      "required": true
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "display",
+                "type": "markdownText",
+                "props": {
+                  "md": "#### Auto columns\nAs many columns as fit, at least 12rem wide each."
+                }
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "columns": "auto"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "number",
+                    "path": "quarters.q1",
+                    "label": "Q1"
+                  },
+                  {
+                    "kind": "input",
+                    "type": "number",
+                    "path": "quarters.q2",
+                    "label": "Q2"
+                  },
+                  {
+                    "kind": "input",
+                    "type": "number",
+                    "path": "quarters.q3",
+                    "label": "Q3"
+                  },
+                  {
+                    "kind": "input",
+                    "type": "number",
+                    "path": "quarters.q4",
+                    "label": "Q4"
+                  }
+                ]
+              },
+              {
+                "kind": "display",
+                "type": "markdownText",
+                "props": {
+                  "md": "#### Justified row\nWith `justify`, the children keep their own width: here, buttons on the right."
+                }
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row",
+                  "justify": "end",
+                  "gap": "sm"
+                },
+                "children": [
+                  {
+                    "kind": "action",
+                    "type": "button",
+                    "label": "Cancel",
+                    "props": {
+                      "variant": "outlined"
+                    }
+                  },
+                  {
+                    "kind": "action",
+                    "type": "button",
+                    "label": "Save"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uid": "tabTextinput",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "textinput",
+                "path": "textinput",
+                "label": "Text input",
+                "props": {
+                  "autocomplete": "off"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "textinput",
+                "path": "textinputDisabled",
+                "label": "Disabled text input",
+                "disabled": true,
+                "readonly": true
+              },
+              {
+                "kind": "input",
+                "type": "textinput",
+                "path": "textinputPhone",
+                "label": "Phone number",
+                "props": {
+                  "placeholder": "Please enter your phone number"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "textinput",
+                "path": "textinputWithHint",
+                "label": "Text input with hint",
+                "props": {
+                  "hint": "This is a hint",
+                  "placeholder": "Please enter your phone number"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "textinput",
+                "path": "textinputWithIcon",
+                "label": "Text input with icon",
+                "props": {
+                  "icon": "phone_callback",
+                  "hint": "This is a hint",
+                  "placeholder": "Please enter your phone number"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "textinput",
+                "path": "textinputIconRight",
+                "label": "Required text input with icon",
+                "props": {
+                  "icon": "phone_callback",
+                  "hint": "This is a hint",
+                  "placeholder": "Please enter your phone number"
+                },
+                "validator": {
+                  "type": "string",
+                  "required": true
+                }
+              },
+              {
+                "kind": "input",
+                "type": "textinput",
+                "path": "textinputCustomValidator",
+                "label": "Name",
+                "props": {
+                  "hint": "Try a name other than John or Jane",
+                  "placeholder": "Enter a name"
+                },
+                "validator": {
+                  "type": "custom",
+                  "allowedNames": [
+                    "John",
+                    "Jane"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabPassword",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "password",
+                "path": "password",
+                "label": "Password",
+                "props": {
+                  "autocomplete": "off"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "password",
+                "path": "passwordDisabled",
+                "label": "Disabled password",
+                "disabled": true,
+                "readonly": true
+              },
+              {
+                "kind": "input",
+                "type": "password",
+                "path": "passwordPhone",
+                "label": "Password with placeholder",
+                "props": {
+                  "placeholder": "Please enter your phone number"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "password",
+                "path": "passwordWithHint",
+                "label": "Password with hint",
+                "props": {
+                  "hint": "This is a hint",
+                  "placeholder": "Please enter your phone number"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "password",
+                "path": "passwordWithIcon",
+                "label": "Password with icon",
+                "props": {
+                  "icon": "phone_callback",
+                  "hint": "This is a hint",
+                  "placeholder": "Please enter your phone number"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "password",
+                "path": "passwordIconRight",
+                "label": "Password with custom icons",
+                "props": {
+                  "icon": "lock",
+                  "showPasswordIcon": "visibility",
+                  "hidePasswordIcon": "visibility_off",
+                  "hint": "This is a hint",
+                  "placeholder": "Please enter your phone number"
+                },
+                "validator": {
+                  "type": "string",
+                  "required": true
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabNumber",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "number",
+                "path": "number",
+                "label": "Celsius",
+                "props": {
+                  "hint": "This is a hint",
+                  "placeholder": "ºC",
+                  "minimum": -45,
+                  "maximum": 42,
+                  "step": 0.5,
+                  "autoGrow": true,
+                  "autocomplete": "off"
+                },
+                "validator": {
+                  "type": "number",
+                  "minimum": -45,
+                  "maximum": 42,
+                  "required": true
+                }
+              },
+              {
+                "kind": "input",
+                "type": "number",
+                "path": "numberDisabled",
+                "label": "Disabled number",
+                "disabled": true,
+                "readonly": true
+              },
+              {
+                "kind": "input",
+                "type": "number",
+                "path": "percentage",
+                "label": "Percentage",
+                "props": {
+                  "placeholder": "%"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "number",
+                "path": "percentageWithHint",
+                "label": "Percentage",
+                "props": {
+                  "hint": "This is a hint",
+                  "placeholder": "%"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "number",
+                "path": "numberIcon",
+                "label": "Milliseconds",
+                "props": {
+                  "hint": "This is a hint",
+                  "placeholder": "ms"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "number",
+                "path": "numberIconRight",
+                "label": "Inches",
+                "props": {
+                  "hint": "This is a hint",
+                  "placeholder": "Inch"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "number",
+                "path": "height",
+                "label": "Height",
+                "props": {
+                  "hint": "In meters",
+                  "step": 0.01
+                },
+                "validator": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 2.5,
+                  "required": true
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabCurrency",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "currency",
+                "path": "currency",
+                "label": "Currency",
+                "props": {
+                  "autocomplete": "off"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "currency",
+                "path": "currencyDisabled",
+                "label": "Disabled currency",
+                "disabled": true,
+                "readonly": true
+              },
+              {
+                "kind": "input",
+                "type": "currency",
+                "path": "currencyMaximumFractionDigits",
+                "label": "Currency with maximum fraction digits",
+                "props": {
+                  "placeholder": "maximum 2 digits after the decimal point",
+                  "maximumFractionDigits": 2
+                }
+              },
+              {
+                "kind": "input",
+                "type": "currency",
+                "path": "currencyMinimumFractionDigits",
+                "label": "Currency with minimum fraction digits",
+                "props": {
+                  "placeholder": "minimum 4 digits after the decimal point",
+                  "minimumFractionDigits": 4
+                }
+              },
+              {
+                "kind": "input",
+                "type": "currency",
+                "path": "currencyWithIcon",
+                "label": "Currency with icon",
+                "props": {
+                  "icon": "phone_callback",
+                  "hint": "This is a hint",
+                  "placeholder": "Please enter price in USD"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "currency",
+                "path": "currencyIconRightWithEUR",
+                "label": "Currency in EUR",
+                "props": {
+                  "currency": "EUR",
+                  "icon": "phone_callback",
+                  "hint": "This is a hint",
+                  "placeholder": "Please enter price in EUR"
+                },
+                "validator": {
+                  "type": "number",
+                  "required": true,
+                  "minimum": 100
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabDateInput",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "dateInput",
+                "path": "dateInputEmpty",
+                "label": "Empty",
+                "props": {
+                  "icon": "calendar_month"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dateInput",
+                "path": "dateInputDefault",
+                "defaultValue": "2026-02-13",
+                "label": "With default value",
+                "props": {
+                  "icon": "calendar_month"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dateInput",
+                "path": "dateInputDisabled",
+                "defaultValue": "2026-02-13",
+                "disabled": true,
+                "label": "Disabled",
+                "props": {
+                  "icon": "calendar_month"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dateInput",
+                "path": "dateInputReadonly",
+                "defaultValue": "2026-02-13",
+                "readonly": true,
+                "label": "Read only",
+                "props": {
+                  "icon": "calendar_month"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dateInput",
+                "path": "dateInputValidation",
+                "label": "Required (validation)",
+                "props": {
+                  "minDate": "2026-02-01",
+                  "maxDate": "2026-02-28",
+                  "icon": "calendar_month"
+                },
+                "validator": {
+                  "type": "string",
+                  "required": true,
+                  "format": "date"
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabCalendar",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "calendar",
+                "path": "calendarEmpty",
+                "label": "Empty"
+              },
+              {
+                "kind": "input",
+                "type": "calendar",
+                "path": "calendarDefault",
+                "defaultValue": "2026-02-13",
+                "label": "With default value"
+              },
+              {
+                "kind": "input",
+                "type": "calendar",
+                "path": "calendarDisabled",
+                "defaultValue": "2026-02-13",
+                "disabled": true,
+                "label": "Disabled"
+              },
+              {
+                "kind": "input",
+                "type": "calendar",
+                "path": "calendarReadonly",
+                "defaultValue": "2026-02-13",
+                "readonly": true,
+                "label": "Read only"
+              },
+              {
+                "kind": "input",
+                "type": "calendar",
+                "path": "calendarValidation",
+                "label": "Required (validation)",
+                "validator": {
+                  "type": "string",
+                  "required": true,
+                  "format": "date"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "calendar",
+                "path": "calendarDisabledRanges",
+                "defaultValue": "2026-02-13",
+                "label": "Disabled date ranges",
+                "props": {
+                  "disabledRanges": [
+                    {
+                      "start": "2026-02-09",
+                      "end": "2026-02-10"
+                    },
+                    {
+                      "start": "2026-02-17"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabDatePicker",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "datePicker",
+                "path": "datePickerEmpty",
+                "label": "Empty",
+                "props": {
+                  "icon": "calendar_month"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "datePicker",
+                "path": "datePickerDefault",
+                "defaultValue": "2026-02-13",
+                "label": "With default value",
+                "props": {
+                  "icon": "calendar_month"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "datePicker",
+                "path": "datePickerDisabled",
+                "defaultValue": "2026-02-13",
+                "disabled": true,
+                "label": "Disabled",
+                "props": {
+                  "icon": "calendar_month"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "datePicker",
+                "path": "datePickerReadonly",
+                "defaultValue": "2026-02-13",
+                "readonly": true,
+                "label": "Read only",
+                "props": {
+                  "icon": "calendar_month"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "datePicker",
+                "path": "datePickerValidation",
+                "label": "Required (validation)",
+                "props": {
+                  "icon": "calendar_month"
+                },
+                "validator": {
+                  "type": "string",
+                  "required": true,
+                  "format": "date"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "datePicker",
+                "path": "datePickerDisabledRanges",
+                "defaultValue": "2026-02-13",
+                "label": "Disabled date ranges",
+                "props": {
+                  "icon": "calendar_month",
+                  "minDate": "2026-02-01",
+                  "maxDate": "2026-02-28",
+                  "disabledRanges": [
+                    {
+                      "start": "2026-02-09",
+                      "end": "2026-02-10"
+                    },
+                    {
+                      "start": "2026-02-17"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabRangeDateInput",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "rangeDateInput",
+                "path": "rangeDateInputEmpty",
+                "label": "Empty",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateInput",
+                "path": "rangeDateInputDefault",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-13",
+                    "end": "2026-02-16"
+                  },
+                  {
+                    "start": "2026-02-20"
+                  }
+                ],
+                "label": "With default value",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateInput",
+                "path": "rangeDateInputEditable",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-13",
+                    "end": "2026-02-16"
+                  },
+                  {
+                    "start": "2026-02-20"
+                  }
+                ],
+                "label": "Editable",
+                "props": {
+                  "allowEdit": true,
+                  "icon": "calendar_month",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateInput",
+                "path": "rangeDateInputDisabled",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-13",
+                    "end": "2026-02-16"
+                  },
+                  {
+                    "start": "2026-02-20"
+                  }
+                ],
+                "disabled": true,
+                "label": "Disabled",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateInput",
+                "path": "rangeDateInputReadonly",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-13",
+                    "end": "2026-02-16"
+                  },
+                  {
+                    "start": "2026-02-20"
+                  }
+                ],
+                "readonly": true,
+                "label": "Read only",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateInput",
+                "path": "rangeDateInputValidation",
+                "label": "Required (validation)",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to"
+                },
+                "validator": {
+                  "type": "array",
+                  "required": true
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabRangeTimeInput",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "rangeTimeInput",
+                "path": "rangeTimeInputEmpty",
+                "label": "Empty",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeTimeInput",
+                "path": "rangeTimeInputDefault",
+                "defaultValue": [
+                  {
+                    "start": "09:00:00",
+                    "end": "11:00:00"
+                  },
+                  {
+                    "start": "14:00:00",
+                    "end": "14:30:00"
+                  }
+                ],
+                "label": "With default value",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeTimeInput",
+                "path": "rangeTimeInputEditable",
+                "defaultValue": [
+                  {
+                    "start": "09:00:00",
+                    "end": "11:00:00"
+                  },
+                  {
+                    "start": "14:00:00",
+                    "end": "14:30:00"
+                  }
+                ],
+                "label": "Editable",
+                "props": {
+                  "allowEdit": true,
+                  "icon": "schedule",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeTimeInput",
+                "path": "rangeTimeInputConstraints",
+                "label": "With min/max time",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to",
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 15
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeTimeInput",
+                "path": "rangeTimeInputDisabled",
+                "defaultValue": [
+                  {
+                    "start": "09:00:00",
+                    "end": "11:00:00"
+                  },
+                  {
+                    "start": "14:00:00",
+                    "end": "14:30:00"
+                  }
+                ],
+                "disabled": true,
+                "label": "Disabled",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeTimeInput",
+                "path": "rangeTimeInputReadonly",
+                "defaultValue": [
+                  {
+                    "start": "09:00:00",
+                    "end": "11:00:00"
+                  },
+                  {
+                    "start": "14:00:00",
+                    "end": "14:30:00"
+                  }
+                ],
+                "readonly": true,
+                "label": "Read only",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeTimeInput",
+                "path": "rangeTimeInputValidation",
+                "label": "Required (validation)",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to"
+                },
+                "validator": {
+                  "type": "array",
+                  "required": true
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabRangeDateTimeInput",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "rangeDateTimeInput",
+                "path": "rangeDateTimeInputEmpty",
+                "label": "Empty",
+                "props": {
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimeInput",
+                "path": "rangeDateTimeInputDefault",
+                "defaultValue": [
+                  {
+                    "start": "2026-11-22T09:00:00",
+                    "end": "2026-11-22T11:00:00"
+                  },
+                  {
+                    "start": "2026-11-23T14:00:00",
+                    "end": "2026-11-24T09:30:00"
+                  }
+                ],
+                "label": "With default value",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimeInput",
+                "path": "rangeDateTimeInputEditable",
+                "defaultValue": [
+                  {
+                    "start": "2026-11-22T09:00:00",
+                    "end": "2026-11-22T11:00:00"
+                  },
+                  {
+                    "start": "2026-11-23T14:00:00",
+                    "end": "2026-11-24T09:30:00"
+                  }
+                ],
+                "label": "Editable",
+                "props": {
+                  "allowEdit": true,
+                  "icon": "schedule",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimeInput",
+                "path": "rangeDateTimeInputConstraints",
+                "label": "With min/max date-time",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to",
+                  "minDateTime": "2026-01-01T09:00:00",
+                  "maxDateTime": "2026-12-31T18:00:00",
+                  "minDateTimeMessage": "No slots available before Jan 1st, 2026 at 9:00.",
+                  "maxDateTimeMessage": "No slots available after Dec 31st, 2026 at 18:00.",
+                  "minuteStep": 15
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimeInput",
+                "path": "rangeDateTimeInputDisabled",
+                "defaultValue": [
+                  {
+                    "start": "2026-11-22T09:00:00",
+                    "end": "2026-11-22T11:00:00"
+                  }
+                ],
+                "disabled": true,
+                "label": "Disabled",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimeInput",
+                "path": "rangeDateTimeInputReadonly",
+                "defaultValue": [
+                  {
+                    "start": "2026-11-22T09:00:00",
+                    "end": "2026-11-22T11:00:00"
+                  }
+                ],
+                "readonly": true,
+                "label": "Read only",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimeInput",
+                "path": "rangeDateTimeInputValidation",
+                "label": "Required (validation)",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to"
+                },
+                "validator": {
+                  "type": "array",
+                  "required": true
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabRangeDateTimeCalendar",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "rangeDateTimeCalendar",
+                "path": "rangeDateTimeCalendarEmpty",
+                "label": "Empty",
+                "props": {
+                  "minuteStep": 30,
+                  "startTimeLabel": "Check-in",
+                  "endTimeLabel": "Check-out"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimeCalendar",
+                "path": "rangeDateTimeCalendarDefault",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-13T09:00:00",
+                    "end": "2026-02-13T11:00:00"
+                  },
+                  {
+                    "start": "2026-02-13T13:00:00",
+                    "end": "2026-02-13T15:00:00"
+                  },
+                  {
+                    "start": "2026-02-16T14:00:00",
+                    "end": "2026-02-18T09:30:00"
+                  }
+                ],
+                "label": "With default value",
+                "props": {
+                  "dayCountAriaLabel": "Number of slots taken: {count}",
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimeCalendar",
+                "path": "rangeDateTimeCalendarEditable",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-13T09:00:00",
+                    "end": "2026-02-13T11:00:00"
+                  },
+                  {
+                    "start": "2026-02-16T14:00:00",
+                    "end": "2026-02-18T09:30:00"
+                  }
+                ],
+                "label": "Editable",
+                "props": {
+                  "allowEdit": true,
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimeCalendar",
+                "path": "rangeDateTimeCalendarDisabled",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-13T09:00:00",
+                    "end": "2026-02-13T11:00:00"
+                  }
+                ],
+                "disabled": true,
+                "label": "Disabled",
+                "props": {
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimeCalendar",
+                "path": "rangeDateTimeCalendarReadonly",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-13T09:00:00",
+                    "end": "2026-02-13T11:00:00"
+                  }
+                ],
+                "readonly": true,
+                "label": "Read only",
+                "props": {
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimeCalendar",
+                "path": "rangeDateTimeCalendarValidation",
+                "label": "Required (validation)",
+                "validator": {
+                  "type": "array",
+                  "required": true
+                },
+                "props": {
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimeCalendar",
+                "path": "rangeDateTimeCalendarConstraints",
+                "label": "With min/max date-time and disabled spans",
+                "props": {
+                  "minuteStep": 30,
+                  "minDateTime": "2026-02-01T09:00:00",
+                  "maxDateTime": "2026-07-31T18:00:00",
+                  "allowCustomTime": true,
+                  "disabledRanges": [
+                    {
+                      "start": "2026-02-09T00:00:00",
+                      "end": "2026-02-10T23:59:59"
+                    },
+                    {
+                      "start": "2026-02-17T13:00:00",
+                      "end": "2026-02-17T14:00:00"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabRangeDateTimePicker",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "rangeDateTimePicker",
+                "path": "rangeDateTimePickerEmpty",
+                "label": "Empty",
+                "props": {
+                  "minuteStep": 30,
+                  "startTimeLabel": "Check-in",
+                  "endTimeLabel": "Check-out"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimePicker",
+                "path": "rangeDateTimePickerDefault",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-13T09:00:00",
+                    "end": "2026-02-13T11:00:00"
+                  },
+                  {
+                    "start": "2026-02-13T13:00:00",
+                    "end": "2026-02-13T15:00:00"
+                  },
+                  {
+                    "start": "2026-02-16T14:00:00",
+                    "end": "2026-02-18T09:30:00"
+                  }
+                ],
+                "label": "With default value",
+                "props": {
+                  "dayCountAriaLabel": "Number of slots taken: {count}",
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimePicker",
+                "path": "rangeDateTimePickerEditable",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-13T09:00:00",
+                    "end": "2026-02-13T11:00:00"
+                  },
+                  {
+                    "start": "2026-02-16T14:00:00",
+                    "end": "2026-02-18T09:30:00"
+                  }
+                ],
+                "label": "Editable",
+                "props": {
+                  "allowEdit": true,
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimePicker",
+                "path": "rangeDateTimePickerDisabled",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-13T09:00:00",
+                    "end": "2026-02-13T11:00:00"
+                  }
+                ],
+                "disabled": true,
+                "label": "Disabled",
+                "props": {
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimePicker",
+                "path": "rangeDateTimePickerReadonly",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-13T09:00:00",
+                    "end": "2026-02-13T11:00:00"
+                  }
+                ],
+                "readonly": true,
+                "label": "Read only",
+                "props": {
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimePicker",
+                "path": "rangeDateTimePickerValidation",
+                "label": "Required (validation)",
+                "validator": {
+                  "type": "array",
+                  "required": true
+                },
+                "props": {
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimePicker",
+                "path": "rangeDateTimePickerConstraints",
+                "label": "With min/max date-time and disabled spans",
+                "props": {
+                  "minuteStep": 30,
+                  "minDateTime": "2026-02-01T09:00:00",
+                  "maxDateTime": "2026-07-31T18:00:00",
+                  "allowCustomTime": true,
+                  "disabledDayCountAriaLabel": "Disabled slots: {count}",
+                  "disabledRanges": [
+                    {
+                      "start": "2026-02-09T00:00:00",
+                      "end": "2026-02-10T23:59:59"
+                    },
+                    {
+                      "start": "2026-02-17T13:00:00",
+                      "end": "2026-02-17T14:00:00"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabRangeTimePicker",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "rangeTimePicker",
+                "path": "rangeTimePickerEmpty",
+                "label": "Empty",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to",
+                  "hourFormat": "24",
+                  "minTime": "06:00:00",
+                  "maxTime": "22:00:00",
+                  "minuteStep": 30,
+                  "allowCustomTime": true,
+                  "startTimeLabel": "Time In",
+                  "endTimeLabel": "Time Out",
+                  "disabledRanges": [
+                    {
+                      "start": "13:00:00",
+                      "end": "14:00:00"
+                    }
+                  ],
+                  "disabledRangeMessage": "Time is withing a disabled range."
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeTimePicker",
+                "path": "rangeTimePickerDefault",
+                "defaultValue": [
+                  {
+                    "start": "09:00:00",
+                    "end": "12:00:00"
+                  },
+                  {
+                    "start": "14:00:00",
+                    "end": "17:00:00"
+                  }
+                ],
+                "label": "Shift schedule",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to",
+                  "hourFormat": "24",
+                  "minTime": "06:00:00",
+                  "maxTime": "22:00:00",
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeTimePicker",
+                "path": "rangeTimePickerEditable",
+                "defaultValue": [
+                  {
+                    "start": "09:00:00",
+                    "end": "12:00:00"
+                  },
+                  {
+                    "start": "14:00:00",
+                    "end": "17:00:00"
+                  }
+                ],
+                "label": "Editable",
+                "props": {
+                  "allowEdit": true,
+                  "allowCustomTime": true,
+                  "icon": "schedule",
+                  "separator": "to",
+                  "hourFormat": "24",
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeTimePicker",
+                "path": "rangeTimePickerConstraints",
+                "label": "Booking with lunch break",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to",
+                  "hourFormat": "24",
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 15,
+                  "allowCustomTime": true,
+                  "disabledRanges": [
+                    {
+                      "start": "13:00:00",
+                      "end": "14:00:00"
+                    }
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeTimePicker",
+                "path": "rangeTimePickerDisabled",
+                "defaultValue": [
+                  {
+                    "start": "09:00:00",
+                    "end": "12:00:00"
+                  },
+                  {
+                    "start": "14:00:00",
+                    "end": "17:00:00"
+                  }
+                ],
+                "disabled": true,
+                "label": "Disabled",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to",
+                  "hourFormat": "24",
+                  "minTime": "06:00:00",
+                  "maxTime": "22:00:00",
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeTimePicker",
+                "path": "rangeTimePickerReadonly",
+                "defaultValue": [
+                  {
+                    "start": "09:00:00",
+                    "end": "12:00:00"
+                  },
+                  {
+                    "start": "14:00:00",
+                    "end": "17:00:00"
+                  }
+                ],
+                "readonly": true,
+                "label": "Read only",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to",
+                  "hourFormat": "24",
+                  "minTime": "06:00:00",
+                  "maxTime": "22:00:00",
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeTimePicker",
+                "path": "rangeTimePickerValidation",
+                "label": "Required (validation)",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to",
+                  "hourFormat": "24",
+                  "minTime": "06:00:00",
+                  "maxTime": "22:00:00",
+                  "minuteStep": 30
+                },
+                "validator": {
+                  "type": "array",
+                  "required": true
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabRangeCalendar",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "rangeCalendar",
+                "path": "rangeCalendarEmpty",
+                "label": "Empty"
+              },
+              {
+                "kind": "input",
+                "type": "rangeCalendar",
+                "path": "rangeCalendarDefault",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-13",
+                    "end": "2026-02-16"
+                  },
+                  {
+                    "start": "2026-02-20"
+                  }
+                ],
+                "label": "With default value"
+              },
+              {
+                "kind": "input",
+                "type": "rangeCalendar",
+                "path": "rangeCalendarEditable",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-13",
+                    "end": "2026-02-16"
+                  },
+                  {
+                    "start": "2026-02-20"
+                  }
+                ],
+                "label": "Editable",
+                "props": {
+                  "allowEdit": true
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeCalendar",
+                "path": "rangeCalendarDisabled",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-13",
+                    "end": "2026-02-16"
+                  },
+                  {
+                    "start": "2026-02-20"
+                  }
+                ],
+                "disabled": true,
+                "label": "Disabled"
+              },
+              {
+                "kind": "input",
+                "type": "rangeCalendar",
+                "path": "rangeCalendarReadonly",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-13",
+                    "end": "2026-02-16"
+                  },
+                  {
+                    "start": "2026-02-20"
+                  }
+                ],
+                "readonly": true,
+                "label": "Read only"
+              },
+              {
+                "kind": "input",
+                "type": "rangeCalendar",
+                "path": "rangeCalendarValidation",
+                "label": "Required (validation)",
+                "validator": {
+                  "type": "array",
+                  "required": true
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeCalendar",
+                "path": "rangeCalendarDisabledRanges",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-13",
+                    "end": "2026-02-16"
+                  },
+                  {
+                    "start": "2026-02-20"
+                  }
+                ],
+                "label": "Disabled date ranges",
+                "props": {
+                  "disabledRanges": [
+                    {
+                      "start": "2026-02-09",
+                      "end": "2026-02-10"
+                    },
+                    {
+                      "start": "2026-02-17"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabRangeDatePicker",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "rangeDatePicker",
+                "path": "rangeDatePickerEmpty",
+                "label": "Empty",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDatePicker",
+                "path": "rangeDatePickerMinMax",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-20"
+                  }
+                ],
+                "label": "Min/Max",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to",
+                  "minDate": "2026-02-01",
+                  "maxDate": "2026-02-28",
+                  "minDateMessage": "Min date is 01.02.2026",
+                  "maxDateMessage": "Max date is 28.02.2026"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDatePicker",
+                "path": "rangeDatePickerDefault",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-13",
+                    "end": "2026-02-16"
+                  },
+                  {
+                    "start": "2026-02-20"
+                  }
+                ],
+                "label": "With default value",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDatePicker",
+                "path": "rangeDatePickerEditable",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-13",
+                    "end": "2026-02-16"
+                  },
+                  {
+                    "start": "2026-02-20"
+                  }
+                ],
+                "label": "Editable",
+                "props": {
+                  "allowEdit": true,
+                  "icon": "calendar_month",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDatePicker",
+                "path": "rangeDatePickerDisabled",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-13",
+                    "end": "2026-02-16"
+                  },
+                  {
+                    "start": "2026-02-20"
+                  }
+                ],
+                "disabled": true,
+                "label": "Disabled",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDatePicker",
+                "path": "rangeDatePickerReadonly",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-13",
+                    "end": "2026-02-16"
+                  },
+                  {
+                    "start": "2026-02-20"
+                  }
+                ],
+                "readonly": true,
+                "label": "Read only",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDatePicker",
+                "path": "rangeDatePickerValidation",
+                "label": "Required (validation)",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to"
+                },
+                "validator": {
+                  "type": "array",
+                  "required": true
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDatePicker",
+                "path": "rangeDatePickerDisabledRanges",
+                "defaultValue": [
+                  {
+                    "start": "2026-02-13",
+                    "end": "2026-02-16"
+                  },
+                  {
+                    "start": "2026-02-20"
+                  }
+                ],
+                "label": "Disabled date ranges",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to",
+                  "disabledRanges": [
+                    {
+                      "start": "2026-02-09",
+                      "end": "2026-02-10"
+                    },
+                    {
+                      "start": "2026-02-17"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabTimeInput",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "timeInput",
+                "path": "timeInputEmpty",
+                "label": "Empty",
+                "props": {
+                  "icon": "schedule",
+                  "minuteStep": 15
+                }
+              },
+              {
+                "kind": "input",
+                "type": "timeInput",
+                "path": "timeInputDefault",
+                "defaultValue": "09:30:00",
+                "label": "With default value",
+                "props": {
+                  "icon": "schedule",
+                  "minuteStep": 15
+                }
+              },
+              {
+                "kind": "input",
+                "type": "timeInput",
+                "path": "timeInputDisabled",
+                "defaultValue": "09:30:00",
+                "disabled": true,
+                "label": "Disabled",
+                "props": {
+                  "icon": "schedule",
+                  "minuteStep": 15
+                }
+              },
+              {
+                "kind": "input",
+                "type": "timeInput",
+                "path": "timeInputReadonly",
+                "defaultValue": "09:30:00",
+                "readonly": true,
+                "label": "Read only",
+                "props": {
+                  "icon": "schedule",
+                  "minuteStep": 15
+                }
+              },
+              {
+                "kind": "input",
+                "type": "timeInput",
+                "path": "timeInputValidation",
+                "label": "Required (validation)",
+                "props": {
+                  "icon": "schedule",
+                  "minuteStep": 15,
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00"
+                },
+                "validator": {
+                  "type": "string",
+                  "required": true,
+                  "format": "time"
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabTimePicker",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "timePicker",
+                "path": "timePickerEmpty",
+                "label": "Empty",
+                "props": {
+                  "icon": "schedule",
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "timePicker",
+                "path": "timePickerDefault",
+                "defaultValue": "09:30:00",
+                "label": "With default value",
+                "props": {
+                  "icon": "schedule",
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "timePicker",
+                "path": "timePickerDisabled",
+                "defaultValue": "09:30:00",
+                "disabled": true,
+                "label": "Disabled",
+                "props": {
+                  "icon": "schedule",
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "timePicker",
+                "path": "timePickerReadonly",
+                "defaultValue": "09:30:00",
+                "readonly": true,
+                "label": "Read only",
+                "props": {
+                  "icon": "schedule",
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "timePicker",
+                "path": "timePickerValidation",
+                "label": "Required (validation)",
+                "props": {
+                  "icon": "schedule",
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 30
+                },
+                "validator": {
+                  "type": "string",
+                  "required": true,
+                  "format": "time"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "timePicker",
+                "path": "timePickerDisabledRanges",
+                "defaultValue": "09:30:00",
+                "label": "Disabled time ranges",
+                "props": {
+                  "icon": "schedule",
+                  "allowCustomTime": true,
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 30,
+                  "disabledRanges": [
+                    {
+                      "start": "13:00:00",
+                      "end": "14:00:00"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabDateTimeInput",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "dateTimeInput",
+                "path": "dateTimeInputEmpty",
+                "label": "Empty",
+                "props": {
+                  "icon": "calendar_month",
+                  "minuteStep": 15
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dateTimeInput",
+                "path": "dateTimeInputDefault",
+                "defaultValue": "2026-02-13T09:30:00",
+                "label": "With default value",
+                "props": {
+                  "icon": "calendar_month",
+                  "minuteStep": 15
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dateTimeInput",
+                "path": "dateTimeInputDisabled",
+                "defaultValue": "2026-02-13T09:30:00",
+                "disabled": true,
+                "label": "Disabled",
+                "props": {
+                  "icon": "calendar_month",
+                  "minuteStep": 15
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dateTimeInput",
+                "path": "dateTimeInputReadonly",
+                "defaultValue": "2026-02-13T09:30:00",
+                "readonly": true,
+                "label": "Read only",
+                "props": {
+                  "icon": "calendar_month",
+                  "minuteStep": 15
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dateTimeInput",
+                "path": "dateTimeInputValidation",
+                "label": "Required (validation)",
+                "props": {
+                  "icon": "calendar_month",
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 30,
+                  "minDate": "2026-02-01",
+                  "maxDate": "2026-07-31"
+                },
+                "validator": {
+                  "type": "string",
+                  "required": true,
+                  "format": "date-time"
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabDateTimeCalendar",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "dateTimeCalendar",
+                "path": "dateTimeCalendarEmpty",
+                "label": "Empty",
+                "props": {
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 30,
+                  "allowCustomTime": true
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dateTimeCalendar",
+                "path": "dateTimeCalendarDefault",
+                "defaultValue": "2026-02-13T09:30:00",
+                "label": "With default value",
+                "props": {
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dateTimeCalendar",
+                "path": "dateTimeCalendarDisabled",
+                "defaultValue": "2026-02-13T09:30:00",
+                "disabled": true,
+                "label": "Disabled",
+                "props": {
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dateTimeCalendar",
+                "path": "dateTimeCalendarReadonly",
+                "defaultValue": "2026-02-13T09:30:00",
+                "readonly": true,
+                "label": "Read only",
+                "props": {
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dateTimeCalendar",
+                "path": "dateTimeCalendarValidation",
+                "label": "Required (validation)",
+                "props": {
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 30
+                },
+                "validator": {
+                  "type": "string",
+                  "required": true,
+                  "format": "date-time"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dateTimeCalendar",
+                "path": "dateTimeCalendarDisabledRanges",
+                "defaultValue": "2026-02-16T09:30:00",
+                "label": "Disabled date & time ranges",
+                "props": {
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 30,
+                  "minDate": "2026-02-01",
+                  "maxDate": "2026-07-31",
+                  "allowCustomTime": true,
+                  "disabledRanges": [
+                    {
+                      "start": "2026-02-09",
+                      "end": "2026-02-10"
+                    },
+                    {
+                      "start": "2026-02-17"
+                    }
+                  ],
+                  "disabledTimeRanges": [
+                    {
+                      "start": "13:00:00",
+                      "end": "14:00:00",
+                      "weekdays": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5
+                      ]
+                    },
+                    {
+                      "start": "09:00:00",
+                      "end": "10:30:00",
+                      "date": "2026-02-13"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabDateTimePicker",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "dateTimePicker",
+                "path": "dateTimePickerEmpty",
+                "label": "Empty",
+                "props": {
+                  "icon": "calendar_month",
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 30,
+                  "allowCustomTime": true
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dateTimePicker",
+                "path": "dateTimePickerDefault",
+                "defaultValue": "2026-02-13T09:30:00",
+                "label": "With default value",
+                "props": {
+                  "icon": "calendar_month",
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dateTimePicker",
+                "path": "dateTimePickerDisabled",
+                "defaultValue": "2026-02-13T09:30:00",
+                "disabled": true,
+                "label": "Disabled",
+                "props": {
+                  "icon": "calendar_month",
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dateTimePicker",
+                "path": "dateTimePickerReadonly",
+                "defaultValue": "2026-02-13T09:30:00",
+                "readonly": true,
+                "label": "Read only",
+                "props": {
+                  "icon": "calendar_month",
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dateTimePicker",
+                "path": "dateTimePickerValidation",
+                "label": "Required (validation)",
+                "props": {
+                  "icon": "calendar_month",
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 30
+                },
+                "validator": {
+                  "type": "string",
+                  "required": true,
+                  "format": "date-time"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dateTimePicker",
+                "path": "dateTimePickerDisabledRanges",
+                "defaultValue": "2026-02-16T09:30:00",
+                "label": "Disabled date & time ranges",
+                "props": {
+                  "icon": "calendar_month",
+                  "allowCustomTime": true,
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 30,
+                  "minDate": "2026-02-01",
+                  "maxDate": "2026-07-31",
+                  "disabledRanges": [
+                    {
+                      "start": "2026-02-09",
+                      "end": "2026-02-10"
+                    },
+                    {
+                      "start": "2026-02-17"
+                    }
+                  ],
+                  "disabledTimeRanges": [
+                    {
+                      "start": "13:00:00",
+                      "end": "14:00:00",
+                      "weekdays": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5
+                      ]
+                    },
+                    {
+                      "start": "09:00:00",
+                      "end": "10:30:00",
+                      "date": "2026-02-13"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabMarkdown",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "markdown",
+                "path": "markdown",
+                "label": "Markdown",
+                "props": {
+                  "autocomplete": "off"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "markdown",
+                "path": "markdownDisabled",
+                "label": "Disabled markdown",
+                "disabled": true,
+                "readonly": true
+              },
+              {
+                "kind": "input",
+                "type": "markdown",
+                "path": "markdownAutoGrow",
+                "label": "Auto-growing markdown",
+                "props": {
+                  "placeholder": "This editor will grow automatically when you type in it.",
+                  "autoGrow": true,
+                  "minimumHeight": 80
+                }
+              },
+              {
+                "kind": "input",
+                "type": "markdown",
+                "path": "markdownWithHint",
+                "label": "Markdown with hint",
+                "props": {
+                  "hint": "This is a hint",
+                  "placeholder": "Write some markdown here"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "markdown",
+                "path": "markdownWithPreview",
+                "label": "Markdown with preview",
+                "props": {
+                  "defaultOpenPreview": true,
+                  "counterMode": "current",
+                  "minimumHeight": 80
+                },
+                "validator": {
+                  "type": "string",
+                  "maxLength": 500,
+                  "required": true
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabTextarea",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "textarea",
+                "path": "textarea",
+                "label": "Textarea",
+                "props": {
+                  "autocomplete": "off"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "textarea",
+                "path": "textareaDisabled",
+                "label": "Disabled textarea",
+                "disabled": true,
+                "readonly": true
+              },
+              {
+                "kind": "input",
+                "type": "textarea",
+                "path": "textareaAutoGrow",
+                "label": "Auto-growing textarea",
+                "props": {
+                  "placeholder": "This textarea will grow automatically when you type in it.",
+                  "autoGrow": true,
+                  "minimumHeight": 80
+                }
+              },
+              {
+                "kind": "input",
+                "type": "textarea",
+                "path": "textareaWithHint",
+                "label": "Textarea with hint",
+                "props": {
+                  "hint": "This is a hint",
+                  "placeholder": "Please enter your phone number"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "textarea",
+                "path": "textareaWithCounter",
+                "label": "Textarea with counter",
+                "props": {
+                  "hint": "This is a hint",
+                  "placeholder": "Please enter your phone number",
+                  "counterMode": "current",
+                  "minimumHeight": 80
+                },
+                "validator": {
+                  "type": "string",
+                  "maxLength": 10,
+                  "required": true
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabCheckbox",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "checkbox",
+                "label": "Create new account?",
+                "path": "isNewUser"
+              },
+              {
+                "kind": "input",
+                "type": "checkbox",
+                "label": "Disabled checkbox",
+                "path": "isDisabled",
+                "disabled": true
+              },
+              {
+                "kind": "input",
+                "type": "checkbox",
+                "label": "Readonly checkbox",
+                "path": "isReadonly",
+                "readonly": true
+              },
+              {
+                "kind": "input",
+                "type": "checkbox",
+                "label": "Create new account?",
+                "path": "isNewUserLeft",
+                "props": {
+                  "checkboxPosition": "left",
+                  "hint": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis feugiat quam. Duis est justo, tincidunt eu risus id, gravida rutrum ipsum. Nam mattis felis quis interdum pretium. Nunc ipsum orci, consectetur nec turpis in, luctus rutrum lectus. In ultrices augue erat, id molestie tortor fringilla ac. Nullam a nibh viverra, auctor sapien vel, commodo felis. Aliquam erat volutpat. Aliquam hendrerit odio in molestie malesuada. Sed a sem nec ante gravida pretium. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis feugiat quam. Duis est justo, tincidunt eu risus id, gravida rutrum ipsum. Nam mattis felis quis interdum pretium. Nunc ipsum orci, consectetur nec turpis in, luctus rutrum lectus. In ultrices augue erat, id molestie tortor fringilla ac. Nullam a nibh viverra, auctor sapien vel, commodo felis. Aliquam erat volutpat. Aliquam hendrerit odio in molestie malesuada. Sed a sem nec ante gravida pretium."
+                }
+              },
+              {
+                "kind": "input",
+                "type": "checkbox",
+                "label": "Create new account?",
+                "path": "isNewUserHint",
+                "props": {
+                  "hint": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis feugiat quam. Duis est justo, tincidunt eu risus id, gravida rutrum ipsum. Nam mattis felis quis interdum pretium. Nunc ipsum orci, consectetur nec turpis in, luctus rutrum lectus. In ultrices augue erat, id molestie tortor fringilla ac. Nullam a nibh viverra, auctor sapien vel, commodo felis. Aliquam erat volutpat. Aliquam hendrerit odio in molestie malesuada. Sed a sem nec ante gravida pretium. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis feugiat quam. Duis est justo, tincidunt eu risus id, gravida rutrum ipsum. Nam mattis felis quis interdum pretium. Nunc ipsum orci, consectetur nec turpis in, luctus rutrum lectus. In ultrices augue erat, id molestie tortor fringilla ac. Nullam a nibh viverra, auctor sapien vel, commodo felis. Aliquam erat volutpat. Aliquam hendrerit odio in molestie malesuada. Sed a sem nec ante gravida pretium."
+                },
+                "validator": {
+                  "type": "boolean",
+                  "required": true
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabToggle",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "toggle",
+                "label": "Create new account?",
+                "path": "isNewUser"
+              },
+              {
+                "kind": "input",
+                "type": "toggle",
+                "label": "Disabled toggle",
+                "path": "isDisabled",
+                "disabled": true,
+                "readonly": true
+              },
+              {
+                "kind": "input",
+                "type": "toggle",
+                "label": "Create new account?",
+                "path": "isNewUserLeft",
+                "props": {
+                  "togglePosition": "left",
+                  "hint": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis feugiat quam. Duis est justo, tincidunt eu risus id, gravida rutrum ipsum. Nam mattis felis quis interdum pretium. Nunc ipsum orci, consectetur nec turpis in, luctus rutrum lectus. In ultrices augue erat, id molestie tortor fringilla ac. Nullam a nibh viverra, auctor sapien vel, commodo felis. Aliquam erat volutpat. Aliquam hendrerit odio in molestie malesuada. Sed a sem nec ante gravida pretium. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis feugiat quam. Duis est justo, tincidunt eu risus id, gravida rutrum ipsum. Nam mattis felis quis interdum pretium. Nunc ipsum orci, consectetur nec turpis in, luctus rutrum lectus. In ultrices augue erat, id molestie tortor fringilla ac. Nullam a nibh viverra, auctor sapien vel, commodo felis. Aliquam erat volutpat. Aliquam hendrerit odio in molestie malesuada. Sed a sem nec ante gravida pretium."
+                }
+              },
+              {
+                "kind": "input",
+                "type": "toggle",
+                "label": "Create new account?",
+                "path": "isNewUserHint",
+                "props": {
+                  "hint": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis feugiat quam. Duis est justo, tincidunt eu risus id, gravida rutrum ipsum. Nam mattis felis quis interdum pretium. Nunc ipsum orci, consectetur nec turpis in, luctus rutrum lectus. In ultrices augue erat, id molestie tortor fringilla ac. Nullam a nibh viverra, auctor sapien vel, commodo felis. Aliquam erat volutpat. Aliquam hendrerit odio in molestie malesuada. Sed a sem nec ante gravida pretium. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis feugiat quam. Duis est justo, tincidunt eu risus id, gravida rutrum ipsum. Nam mattis felis quis interdum pretium. Nunc ipsum orci, consectetur nec turpis in, luctus rutrum lectus. In ultrices augue erat, id molestie tortor fringilla ac. Nullam a nibh viverra, auctor sapien vel, commodo felis. Aliquam erat volutpat. Aliquam hendrerit odio in molestie malesuada. Sed a sem nec ante gravida pretium."
+                },
+                "validator": {
+                  "type": "boolean",
+                  "required": true
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabRadiogroup",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "radiogroup",
+                "path": "radiogroups.greeting",
+                "label": "Greeting",
+                "readonly": true,
+                "props": {
+                  "hint": "This radiogroup is disabled and \"bye\" should be selected",
+                  "options": [
+                    "hello",
+                    "bye"
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "radiogroup",
+                "path": "radiogroups.wrongGreeting",
+                "label": "Greeting with an unknown value",
+                "props": {
+                  "hint": "No option should be selected, because the provided data does not match the enum of options. A validation error should also be displayed",
+                  "options": [
+                    "hello",
+                    "bye"
+                  ]
+                },
+                "validator": {
+                  "type": "string",
+                  "required": true
+                }
+              },
+              {
+                "kind": "input",
+                "type": "radiogroup",
+                "path": "radiogroups.requiredUnselected",
+                "label": "Required greeting",
+                "props": {
+                  "hint": "No option should be selected, and a validation error should be displayed because the field is required",
+                  "options": [
+                    "hello",
+                    "bye"
+                  ],
+                  "direction": "row"
+                },
+                "validator": {
+                  "type": "string",
+                  "required": true
+                }
+              },
+              {
+                "kind": "input",
+                "type": "radiogroup",
+                "path": "radiogroups.greetingIndex",
+                "label": "Greeting by index",
+                "props": {
+                  "hint": "\"bye.2\" should be selected",
+                  "options": [
+                    {
+                      "label": "hello.1",
+                      "value": 1
+                    },
+                    {
+                      "label": "bye.2",
+                      "value": 2
+                    }
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "radiogroup",
+                "path": "radiogroups.range",
+                "label": "Range",
+                "props": {
+                  "hint": "A segmented radio group: \"Week\" should be selected",
+                  "appearance": "segmented",
+                  "options": [
+                    {
+                      "label": "Day",
+                      "value": "day"
+                    },
+                    {
+                      "label": "Week",
+                      "value": "week"
+                    },
+                    {
+                      "label": "Month",
+                      "value": "month"
+                    }
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "radiogroup",
+                "path": "radiogroups.view",
+                "label": "View",
+                "validator": {
+                  "type": "string",
+                  "required": true
+                },
+                "props": {
+                  "hint": "Segmented and required: nothing selected, with a validation error",
+                  "appearance": "segmented",
+                  "options": [
+                    {
+                      "label": "List",
+                      "value": "list"
+                    },
+                    {
+                      "label": "Grid",
+                      "value": "grid"
+                    },
+                    {
+                      "label": "Board",
+                      "value": "board"
+                    }
+                  ]
+                }
+              },
+              {
+                "uid": "subregionRadiogroup",
+                "kind": "input",
+                "type": "radiogroup",
+                "path": "radiogroups.subregion",
+                "label": "Country subregion",
+                "props": {
+                  "hint": "No option should be selected"
+                },
+                "on": {
+                  "load": "getSubregionsForRadio",
+                  "change": "getCountriesForRadio"
+                }
+              },
+              {
+                "uid": "countryRadiogroup",
+                "kind": "input",
+                "type": "radiogroup",
+                "path": "radiogroups.country",
+                "label": "Country",
+                "include": {
+                  "in": [
+                    "hasSubregionRadiogroup"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabCheckboxGroup",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "checkboxGroup",
+                "path": "checkboxGroups.toppings",
+                "label": "Toppings",
+                "props": {
+                  "hint": "The value keeps the options' order, whatever order you check them in",
+                  "options": [
+                    {
+                      "label": "Cheese",
+                      "value": "cheese"
+                    },
+                    {
+                      "label": "Ham",
+                      "value": "ham"
+                    },
+                    {
+                      "label": "Olives",
+                      "value": "olives"
+                    },
+                    {
+                      "label": "Mushrooms",
+                      "value": "mushrooms"
+                    }
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "checkboxGroup",
+                "path": "checkboxGroups.favourites",
+                "label": "Favourite toppings",
+                "props": {
+                  "hint": "At most two: check a third and the error shows",
+                  "options": [
+                    {
+                      "label": "Cheese",
+                      "value": "cheese"
+                    },
+                    {
+                      "label": "Ham",
+                      "value": "ham"
+                    },
+                    {
+                      "label": "Olives",
+                      "value": "olives"
+                    },
+                    {
+                      "label": "Mushrooms",
+                      "value": "mushrooms"
+                    }
+                  ]
+                },
+                "validator": {
+                  "type": "array",
+                  "maxItems": 2,
+                  "messages": {
+                    "maxItems": "Pick at most two toppings"
+                  }
+                }
+              },
+              {
+                "kind": "input",
+                "type": "checkboxGroup",
+                "path": "checkboxGroups.extras",
+                "label": "Extras",
+                "props": {
+                  "hint": "Required, and at most two: errors show once it is touched",
+                  "options": [
+                    "Napkins",
+                    "Cutlery",
+                    "Sauce"
+                  ]
+                },
+                "validator": {
+                  "type": "array",
+                  "required": true,
+                  "maxItems": 2,
+                  "messages": {
+                    "invalid": "Pick at least one extra",
+                    "required": "Pick at least one extra",
+                    "maxItems": "Pick at most two extras"
+                  }
+                }
+              },
+              {
+                "kind": "input",
+                "type": "checkboxGroup",
+                "path": "checkboxGroups.days",
+                "label": "Delivery days",
+                "props": {
+                  "hint": "A row of options",
+                  "options": [
+                    "Mon",
+                    "Tue",
+                    "Wed",
+                    "Thu",
+                    "Fri"
+                  ],
+                  "direction": "row"
+                },
+                "defaultValue": [
+                  "Mon",
+                  "Wed"
+                ]
+              },
+              {
+                "kind": "input",
+                "type": "checkboxGroup",
+                "path": "checkboxGroups.disabled",
+                "label": "Disabled",
+                "props": {
+                  "options": [
+                    {
+                      "label": "Cheese",
+                      "value": "cheese"
+                    },
+                    {
+                      "label": "Ham",
+                      "value": "ham"
+                    },
+                    {
+                      "label": "Olives",
+                      "value": "olives"
+                    },
+                    {
+                      "label": "Mushrooms",
+                      "value": "mushrooms"
+                    }
+                  ]
+                },
+                "disabled": true,
+                "defaultValue": [
+                  "ham"
+                ]
+              },
+              {
+                "kind": "input",
+                "type": "checkboxGroup",
+                "path": "checkboxGroups.readonly",
+                "label": "Read-only",
+                "props": {
+                  "options": [
+                    {
+                      "label": "Cheese",
+                      "value": "cheese"
+                    },
+                    {
+                      "label": "Ham",
+                      "value": "ham"
+                    },
+                    {
+                      "label": "Olives",
+                      "value": "olives"
+                    },
+                    {
+                      "label": "Mushrooms",
+                      "value": "mushrooms"
+                    }
+                  ]
+                },
+                "readonly": true,
+                "defaultValue": [
+                  "cheese",
+                  "olives"
+                ]
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "checkboxGroups.name",
+                    "label": "Name"
+                  },
+                  {
+                    "kind": "input",
+                    "type": "checkboxGroup",
+                    "path": "checkboxGroups.contact",
+                    "label": "Contact me by",
+                    "props": {
+                      "options": [
+                        "Email",
+                        "Phone"
+                      ],
+                      "direction": "row"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uid": "tabRating",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "rating",
+                "path": "ratings.service",
+                "label": "Service",
+                "props": {
+                  "hint": "Click the picked star again, or press Delete, to clear it"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rating",
+                "path": "ratings.food",
+                "label": "Food",
+                "props": {
+                  "hint": "Required: an error shows once it is touched, and again once it is cleared"
+                },
+                "validator": {
+                  "type": "integer",
+                  "required": true,
+                  "messages": {
+                    "invalid": "Rate the food"
+                  }
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rating",
+                "path": "ratings.stay",
+                "label": "Your stay",
+                "props": {
+                  "hint": "Ten stars: the validator's maximum"
+                },
+                "validator": {
+                  "type": "integer",
+                  "maximum": 10
+                },
+                "defaultValue": 7
+              },
+              {
+                "kind": "input",
+                "type": "rating",
+                "path": "ratings.disabled",
+                "label": "Disabled",
+                "disabled": true,
+                "defaultValue": 2
+              },
+              {
+                "kind": "input",
+                "type": "rating",
+                "path": "ratings.readonly",
+                "label": "Read-only",
+                "readonly": true,
+                "defaultValue": 4
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "ratings.reviewer",
+                    "label": "Reviewer"
+                  },
+                  {
+                    "kind": "input",
+                    "type": "rating",
+                    "path": "ratings.overall",
+                    "label": "Overall"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uid": "tabSelect",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "select",
+                "path": "selects.greeting",
+                "label": "Greeting",
+                "readonly": true,
+                "props": {
+                  "icon": "phone_callback",
+                  "hint": "\"bye\" should be selected",
+                  "options": [
+                    "hello",
+                    "bye"
+                  ],
+                  "placeholder": "Please, select an option",
+                  "autocomplete": "off"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "select",
+                "path": "selects.wrongGreeting",
+                "label": "Greeting with an unknown value",
+                "props": {
+                  "icon": "phone_callback",
+                  "hint": "The disabled  \"Select an Option\" option should be selected, because the provided data does not match the enum of options. A validation error should also be displayed",
+                  "options": [
+                    "hello",
+                    "bye"
+                  ]
+                },
+                "validator": {
+                  "type": "string",
+                  "required": true
+                }
+              },
+              {
+                "kind": "input",
+                "type": "select",
+                "path": "selects.requiredUnselected",
+                "label": "Required greeting",
+                "props": {
+                  "hint": "The disabled  \"Select an Option\" option should be selected, and a validation error should be displayed because the field is required",
+                  "options": [
+                    "hello",
+                    "bye"
+                  ]
+                },
+                "validator": {
+                  "type": "string",
+                  "required": true
+                }
+              },
+              {
+                "kind": "input",
+                "type": "select",
+                "path": "selects.greetingIndex",
+                "label": "Greeting by index",
+                "props": {
+                  "hint": "\"bye.2\" should be selected",
+                  "options": [
+                    {
+                      "label": "hello.1",
+                      "value": 1
+                    },
+                    {
+                      "label": "bye.2",
+                      "value": 2
+                    }
+                  ]
+                }
+              },
+              {
+                "uid": "subregionSelect",
+                "kind": "input",
+                "type": "select",
+                "path": "selects.subregion",
+                "label": "Country subregion",
+                "props": {
+                  "hint": "The disabled  \"Select an Option\" option should be selected"
+                },
+                "on": {
+                  "load": "getSubregionsForSelect",
+                  "change": "getCountriesForSelect"
+                }
+              },
+              {
+                "uid": "countrySelect",
+                "kind": "input",
+                "type": "select",
+                "path": "selects.country",
+                "label": "Country",
+                "include": {
+                  "in": [
+                    "hasSubregionSelect"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabSlider",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "slider",
+                "path": "sliders.volume",
+                "label": "Volume",
+                "props": {
+                  "hint": "No value until you move the thumb. Required: an error shows once it is touched"
+                },
+                "validator": {
+                  "type": "number",
+                  "required": true,
+                  "messages": {
+                    "invalid": "Pick a volume"
+                  }
+                }
+              },
+              {
+                "kind": "input",
+                "type": "slider",
+                "path": "sliders.brightness",
+                "label": "Brightness",
+                "props": {
+                  "hint": "A tick at every step of 10, filled up to the value",
+                  "step": 10,
+                  "marks": true
+                },
+                "defaultValue": 40
+              },
+              {
+                "kind": "input",
+                "type": "slider",
+                "path": "sliders.opacity",
+                "label": "Opacity",
+                "props": {
+                  "hint": "A percentage, in the label and in a bubble over the thumb",
+                  "maximum": 1,
+                  "step": 0.05,
+                  "format": {
+                    "style": "percent"
+                  },
+                  "valuePlacement": "both"
+                },
+                "defaultValue": 0.6
+              },
+              {
+                "kind": "input",
+                "type": "slider",
+                "path": "sliders.rating",
+                "label": "Rating",
+                "props": {
+                  "hint": "Labelled marks, and the value in a bubble only",
+                  "minimum": 1,
+                  "maximum": 5,
+                  "marks": [
+                    {
+                      "value": 1,
+                      "label": "Poor"
+                    },
+                    3,
+                    {
+                      "value": 5,
+                      "label": "Great"
+                    }
+                  ],
+                  "valuePlacement": "bubble"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "slider",
+                "path": "sliders.disabled",
+                "label": "Disabled",
+                "disabled": true,
+                "defaultValue": 30
+              },
+              {
+                "kind": "input",
+                "type": "slider",
+                "path": "sliders.readonly",
+                "label": "Read-only",
+                "readonly": true,
+                "defaultValue": 70
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "sliders.speaker",
+                    "label": "Speaker",
+                    "props": {
+                      "hint": "Its name in the app"
+                    }
+                  },
+                  {
+                    "kind": "input",
+                    "type": "slider",
+                    "path": "sliders.bass",
+                    "label": "Bass",
+                    "props": {
+                      "minimum": -10,
+                      "maximum": 10,
+                      "marks": [
+                        {
+                          "value": -10,
+                          "label": "-10 dB"
+                        },
+                        {
+                          "value": 0,
+                          "label": "0"
+                        },
+                        {
+                          "value": 10,
+                          "label": "+10 dB"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uid": "tabRangeSlider",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "rangeSlider",
+                "path": "rangeSliders.price",
+                "label": "Price per night",
+                "props": {
+                  "hint": "In euros. Screen readers name the thumbs \"From\" and \"To\"",
+                  "maximum": 500,
+                  "step": 10,
+                  "format": {
+                    "style": "currency",
+                    "currency": "EUR",
+                    "maximumFractionDigits": 0
+                  },
+                  "startLabel": "From",
+                  "endLabel": "To"
+                },
+                "defaultValue": {
+                  "start": 100,
+                  "end": 300
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeSlider",
+                "path": "rangeSliders.age",
+                "label": "Age range",
+                "props": {
+                  "hint": "No range until you move a thumb. Required: an error shows once it is touched",
+                  "minimum": 18,
+                  "maximum": 99
+                },
+                "validator": {
+                  "type": "range",
+                  "required": true,
+                  "messages": {
+                    "required": "Pick an age range"
+                  }
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeSlider",
+                "path": "rangeSliders.hours",
+                "label": "Opening hours",
+                "props": {
+                  "hint": "Labelled marks, and the values in the label and in bubbles",
+                  "maximum": 24,
+                  "marks": [
+                    {
+                      "value": 0,
+                      "label": "0:00"
+                    },
+                    {
+                      "value": 6,
+                      "label": "6:00"
+                    },
+                    {
+                      "value": 12,
+                      "label": "12:00"
+                    },
+                    {
+                      "value": 18,
+                      "label": "18:00"
+                    },
+                    {
+                      "value": 24,
+                      "label": "24:00"
+                    }
+                  ],
+                  "valuePlacement": "both"
+                },
+                "defaultValue": {
+                  "start": 9,
+                  "end": 18
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeSlider",
+                "path": "rangeSliders.disabled",
+                "label": "Disabled",
+                "disabled": true,
+                "defaultValue": {
+                  "start": 20,
+                  "end": 60
+                }
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "rangeSliders.city",
+                    "label": "City",
+                    "props": {
+                      "hint": "Where to stay"
+                    }
+                  },
+                  {
+                    "kind": "input",
+                    "type": "rangeSlider",
+                    "path": "rangeSliders.budget",
+                    "label": "Budget",
+                    "props": {
+                      "maximum": 1000,
+                      "step": 50,
+                      "format": {
+                        "style": "currency",
+                        "currency": "EUR",
+                        "maximumFractionDigits": 0
+                      },
+                      "marks": [
+                        {
+                          "value": 0,
+                          "label": "€0"
+                        },
+                        {
+                          "value": 1000,
+                          "label": "€1,000"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uid": "tabOtp",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "otp",
+                "path": "otp.verification",
+                "label": "Verification code",
+                "props": {
+                  "hint": "Six digits. Paste 123-456 and the dash is dropped. Leave it half typed for an error"
+                },
+                "validator": {
+                  "type": "string",
+                  "required": true,
+                  "exactLength": 6,
+                  "messages": {
+                    "required": "Enter the code",
+                    "invalid": "Enter the code",
+                    "exactLength": "Enter all 6 digits"
+                  }
+                }
+              },
+              {
+                "kind": "input",
+                "type": "otp",
+                "path": "otp.grouped",
+                "label": "Grouped",
+                "props": {
+                  "hint": "Two groups of three",
+                  "groups": [
+                    3,
+                    3
+                  ]
+                },
+                "defaultValue": "123"
+              },
+              {
+                "kind": "input",
+                "type": "otp",
+                "path": "otp.short",
+                "label": "Four digits",
+                "props": {
+                  "hint": "Four digits: the validator's exactLength sets the length"
+                },
+                "validator": {
+                  "type": "string",
+                  "required": true,
+                  "exactLength": 4,
+                  "messages": {
+                    "required": "Enter the code",
+                    "invalid": "Enter the code",
+                    "exactLength": "The code has four digits"
+                  }
+                }
+              },
+              {
+                "kind": "input",
+                "type": "otp",
+                "path": "otp.disabled",
+                "label": "Disabled",
+                "disabled": true,
+                "defaultValue": "482913"
+              },
+              {
+                "kind": "input",
+                "type": "otp",
+                "path": "otp.readonly",
+                "label": "Read-only",
+                "readonly": true,
+                "defaultValue": "482913"
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "otp.email",
+                    "label": "Email",
+                    "props": {
+                      "hint": "Where we sent the code"
+                    }
+                  },
+                  {
+                    "kind": "input",
+                    "type": "otp",
+                    "path": "otp.emailCode",
+                    "label": "Email code",
+                    "validator": {
+                      "type": "string",
+                      "exactLength": 4
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uid": "tabDropdown",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "dropdown",
+                "path": "dropdowns.searchAsYouType",
+                "label": "Search as you type",
+                "props": {
+                  "itemHeight": 60,
+                  "itemRenderer": "productItemRenderer",
+                  "labelField": "product",
+                  "valueField": "id",
+                  "inputDebounce": 300,
+                  "items": [],
+                  "hint": "Search as you type with server side filtering",
+                  "autocomplete": "off"
+                },
+                "on": {
+                  "load": "searchProductForDropdown",
+                  "filter": "searchProductForDropdown"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dropdown",
+                "path": "dropdowns.defaultListRendererObjectItems",
+                "label": "Default list renderer with object values",
+                "props": {
+                  "height": 100,
+                  "hint": "Virtual scroll list with 1000 items. Default Item height.",
+                  "items": [
+                    {
+                      "label": "Item 0",
+                      "value": 0
+                    },
+                    {
+                      "label": "Item 1",
+                      "value": 1
+                    },
+                    {
+                      "label": "Item 2",
+                      "value": 2
+                    },
+                    {
+                      "label": "Item 3",
+                      "value": 3
+                    },
+                    {
+                      "label": "Item 4",
+                      "value": 4
+                    },
+                    {
+                      "label": "Item 5",
+                      "value": 5
+                    },
+                    {
+                      "label": "Item 6",
+                      "value": 6
+                    },
+                    {
+                      "label": "Item 7",
+                      "value": 7
+                    },
+                    {
+                      "label": "Item 8",
+                      "value": 8
+                    },
+                    {
+                      "label": "Item 9",
+                      "value": 9
+                    },
+                    {
+                      "label": "Item 10",
+                      "value": 10
+                    },
+                    {
+                      "label": "Item 11",
+                      "value": 11
+                    },
+                    {
+                      "label": "Item 12",
+                      "value": 12
+                    },
+                    {
+                      "label": "Item 13",
+                      "value": 13
+                    },
+                    {
+                      "label": "Item 14",
+                      "value": 14
+                    },
+                    {
+                      "label": "Item 15",
+                      "value": 15
+                    },
+                    {
+                      "label": "Item 16",
+                      "value": 16
+                    },
+                    {
+                      "label": "Item 17",
+                      "value": 17
+                    },
+                    {
+                      "label": "Item 18",
+                      "value": 18
+                    },
+                    {
+                      "label": "Item 19",
+                      "value": 19
+                    }
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dropdown",
+                "path": "dropdowns.defaultListRenderer",
+                "label": "Default list renderer with primitive values",
+                "props": {
+                  "height": 100,
+                  "hint": "Virtual scroll list with 1000 items. Default Item height.",
+                  "items": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dropdown",
+                "path": "dropdowns.withIcon",
+                "label": "Dropdown with icon",
+                "props": {
+                  "icon": "search",
+                  "height": 100,
+                  "hint": "The icon sits to the left of the filter input",
+                  "items": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dropdown",
+                "path": "dropdowns.defaultRenderer20",
+                "label": "Default Renderer with 20px item height",
+                "props": {
+                  "height": 100,
+                  "itemHeight": 20,
+                  "hint": "Virtual scroll list with 1000 items. Item height is 20px.",
+                  "items": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dropdown",
+                "path": "dropdowns.disabledList",
+                "label": "Disabled list",
+                "disabled": true,
+                "readonly": true,
+                "props": {
+                  "height": 100,
+                  "items": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dropdown",
+                "path": "dropdowns.requiredList",
+                "label": "Required list",
+                "props": {
+                  "hint": "Select a number greater than 10.",
+                  "height": 100,
+                  "items": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19
+                  ]
+                },
+                "validator": {
+                  "type": "number",
+                  "required": true,
+                  "minimum": 10
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dropdown",
+                "path": "dropdowns.invalidValueList",
+                "label": "Invalid value list",
+                "props": {
+                  "hint": "A list containing invalid values.",
+                  "height": 100,
+                  "items": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19
+                  ]
+                },
+                "validator": {
+                  "type": "string",
+                  "required": true
+                }
+              },
+              {
+                "kind": "input",
+                "type": "dropdown",
+                "path": "dropdowns.customItemRenderer",
+                "label": "Custom item renderer",
+                "props": {
+                  "hint": "Search by \"title\" and \"description\"",
+                  "height": 150,
+                  "itemHeight": 60,
+                  "itemRenderer": "complexListItemRenderer",
+                  "labelField": "title",
+                  "valueField": "value",
+                  "searchFields": [
+                    "title",
+                    "description"
+                  ],
+                  "items": [
+                    {
+                      "value": "one",
+                      "title": "This is One",
+                      "description": "Blah blah blah Lorem Ipsum"
+                    },
+                    {
+                      "value": "two",
+                      "title": "Two this is",
+                      "description": "Ok, blah blah Ipsum Lorem"
+                    },
+                    {
+                      "value": "three",
+                      "title": "Three this is",
+                      "description": "Lorem Ipsum blah blah blah"
+                    },
+                    {
+                      "value": "four",
+                      "title": "Four this is",
+                      "description": "bluh bluh bluh"
+                    },
+                    {
+                      "value": "five",
+                      "title": "Five this is",
+                      "description": "bleh bleh"
+                    },
+                    {
+                      "value": "six",
+                      "title": "Six this is",
+                      "description": "blih blih blih"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabFileUpload",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "fileUploads.title",
+                    "label": "Title",
+                    "props": {
+                      "placeholder": "A text input sharing the row with the upload"
+                    }
+                  },
+                  {
+                    "kind": "input",
+                    "type": "fileUpload",
+                    "path": "fileUploads.basic",
+                    "label": "Single file",
+                    "props": {
+                      "hint": "Names containing \"fail\" fail to upload, so you can try the retry button"
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "input",
+                "type": "fileUpload",
+                "path": "fileUploads.pdfOnly",
+                "label": "PDF or Word, 5 MB max",
+                "validator": {
+                  "type": "file",
+                  "required": true
+                },
+                "props": {
+                  "hint": "Other types and bigger files are refused before uploading",
+                  "icon": "attach_file",
+                  "accept": [
+                    "application/pdf",
+                    ".doc",
+                    ".docx"
+                  ],
+                  "maxSize": 5242880,
+                  "buttonLabel": "Upload document"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "fileUpload",
+                "path": "fileUploads.preloaded",
+                "label": "Preloaded file",
+                "props": {
+                  "hint": "Restored from the server: only the envelope is in the form data"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "multiFileUpload",
+                "path": "fileUploads.images",
+                "label": "Images, up to 3",
+                "validator": {
+                  "type": "files",
+                  "required": true,
+                  "maxItems": 3
+                },
+                "props": {
+                  "hint": "Files upload one at a time; a fourth file is flagged by the validator, not blocked",
+                  "accept": [
+                    "image/*"
+                  ],
+                  "buttonLabel": "Upload images"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "multiFileUpload",
+                "path": "fileUploads.multiPreloaded",
+                "label": "Preloaded files"
+              },
+              {
+                "kind": "input",
+                "type": "fileUpload",
+                "path": "fileUploads.disabled",
+                "label": "Disabled upload",
+                "disabled": true
+              },
+              {
+                "kind": "input",
+                "type": "multiFileUpload",
+                "path": "fileUploads.readonly",
+                "label": "Readonly files",
+                "readonly": true
+              }
+            ]
+          },
+          {
+            "uid": "tabList",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "list",
+                "path": "lists.defaultListRenderer",
+                "label": "Default renderer",
+                "props": {
+                  "hint": "Virtual scroll list with 1000 items. Default Item height.",
+                  "items": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "list",
+                "path": "lists.defaultListRendererObjectItems",
+                "label": "Default renderer with object items",
+                "props": {
+                  "height": 150,
+                  "hint": "Virtual scroll list with 1000 items. Default Item height.",
+                  "items": [
+                    {
+                      "label": "Item 0",
+                      "value": 0
+                    },
+                    {
+                      "label": "Item 1",
+                      "value": 1
+                    },
+                    {
+                      "label": "Item 2",
+                      "value": 2
+                    },
+                    {
+                      "label": "Item 3",
+                      "value": 3
+                    },
+                    {
+                      "label": "Item 4",
+                      "value": 4
+                    },
+                    {
+                      "label": "Item 5",
+                      "value": 5
+                    },
+                    {
+                      "label": "Item 6",
+                      "value": 6
+                    },
+                    {
+                      "label": "Item 7",
+                      "value": 7
+                    },
+                    {
+                      "label": "Item 8",
+                      "value": 8
+                    },
+                    {
+                      "label": "Item 9",
+                      "value": 9
+                    },
+                    {
+                      "label": "Item 10",
+                      "value": 10
+                    },
+                    {
+                      "label": "Item 11",
+                      "value": 11
+                    },
+                    {
+                      "label": "Item 12",
+                      "value": 12
+                    },
+                    {
+                      "label": "Item 13",
+                      "value": 13
+                    },
+                    {
+                      "label": "Item 14",
+                      "value": 14
+                    },
+                    {
+                      "label": "Item 15",
+                      "value": 15
+                    },
+                    {
+                      "label": "Item 16",
+                      "value": 16
+                    },
+                    {
+                      "label": "Item 17",
+                      "value": 17
+                    },
+                    {
+                      "label": "Item 18",
+                      "value": 18
+                    },
+                    {
+                      "label": "Item 19",
+                      "value": 19
+                    }
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "list",
+                "path": "lists.defaultRenderer20",
+                "label": "Default Renderer with 20px item height",
+                "props": {
+                  "height": 150,
+                  "itemHeight": 20,
+                  "hint": "Virtual scroll list with 1000 items. Item height is 20px.",
+                  "items": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "list",
+                "path": "lists.disabledList",
+                "label": "Disabled list",
+                "disabled": true,
+                "readonly": true,
+                "props": {
+                  "height": 150,
+                  "items": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "list",
+                "path": "lists.requiredList",
+                "label": "Required list",
+                "props": {
+                  "hint": "Select a number greater than 10.",
+                  "height": 150,
+                  "items": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19
+                  ]
+                },
+                "validator": {
+                  "type": "number",
+                  "required": true,
+                  "minimum": 10
+                }
+              },
+              {
+                "kind": "input",
+                "type": "list",
+                "path": "lists.invalidValueList",
+                "label": "Invalid value list",
+                "props": {
+                  "hint": "A list containing invalid values.",
+                  "height": 150,
+                  "items": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12,
+                    13,
+                    14,
+                    15,
+                    16,
+                    17,
+                    18,
+                    19
+                  ]
+                },
+                "validator": {
+                  "type": "string",
+                  "required": true
+                }
+              },
+              {
+                "kind": "input",
+                "type": "list",
+                "path": "lists.customItemRenderer",
+                "label": "Custom item renderer",
+                "props": {
+                  "height": 200,
+                  "itemHeight": 60,
+                  "labelField": "title",
+                  "valueField": "value",
+                  "itemRenderer": "complexListItemRenderer",
+                  "items": [
+                    {
+                      "value": "one",
+                      "title": "This is One",
+                      "description": "Blah blah blah Lorem Ipsum"
+                    },
+                    {
+                      "value": "two",
+                      "title": "Two this is",
+                      "description": "Ok, blah blah Ipsum Lorem"
+                    },
+                    {
+                      "value": "three",
+                      "title": "Three this is",
+                      "description": "Lorem Ipsum blah blah blah"
+                    },
+                    {
+                      "value": "four",
+                      "title": "Four this is",
+                      "description": "bluh bluh bluh"
+                    },
+                    {
+                      "value": "five",
+                      "title": "Five this is",
+                      "description": "bleh bleh"
+                    },
+                    {
+                      "value": "six",
+                      "title": "Six this is",
+                      "description": "blih blih blih"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabMultiDropdown",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "multiDropdown",
+                "path": "multiDropdowns.frameworks",
+                "label": "Frameworks",
+                "props": {
+                  "placeholder": "Search frameworks…",
+                  "hint": "Toggle options — the panel stays open while you pick",
+                  "inputDebounce": 0,
+                  "items": [
+                    "React",
+                    "Angular",
+                    "Vue",
+                    "Lit",
+                    "Svelte",
+                    "Solid"
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "multiDropdown",
+                "path": "multiDropdowns.withIcon",
+                "label": "Multi dropdown with icon",
+                "props": {
+                  "placeholder": "Search frameworks…",
+                  "icon": "checklist",
+                  "hint": "The icon sits to the left of the pills and filter input",
+                  "items": [
+                    "React",
+                    "Angular",
+                    "Vue",
+                    "Lit",
+                    "Svelte",
+                    "Solid"
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "multiDropdown",
+                "path": "multiDropdowns.objectItems",
+                "label": "Object items",
+                "props": {
+                  "placeholder": "Search items…",
+                  "hint": "Object items resolved through labelField/valueField",
+                  "height": 150,
+                  "items": [
+                    {
+                      "label": "Item 0",
+                      "value": 0
+                    },
+                    {
+                      "label": "Item 1",
+                      "value": 1
+                    },
+                    {
+                      "label": "Item 2",
+                      "value": 2
+                    },
+                    {
+                      "label": "Item 3",
+                      "value": 3
+                    },
+                    {
+                      "label": "Item 4",
+                      "value": 4
+                    },
+                    {
+                      "label": "Item 5",
+                      "value": 5
+                    }
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "multiDropdown",
+                "path": "multiDropdowns.limited",
+                "label": "Limited to 3 selections",
+                "validator": {
+                  "type": "array",
+                  "maxItems": 3
+                },
+                "props": {
+                  "placeholder": "Pick up to three…",
+                  "hint": "A maxItems validator flags a fourth selection instead of blocking it",
+                  "items": [
+                    "React",
+                    "Angular",
+                    "Vue",
+                    "Lit",
+                    "Svelte",
+                    "Solid"
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "multiDropdown",
+                "path": "multiDropdowns.disabled",
+                "label": "Disabled multi dropdown",
+                "disabled": true,
+                "readonly": true,
+                "props": {
+                  "placeholder": "Disabled",
+                  "items": [
+                    "React",
+                    "Angular",
+                    "Vue",
+                    "Lit",
+                    "Svelte",
+                    "Solid"
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "multiDropdown",
+                "path": "multiDropdowns.required",
+                "label": "Required multi dropdown",
+                "validator": {
+                  "type": "array",
+                  "required": true,
+                  "minItems": 2
+                },
+                "props": {
+                  "placeholder": "Pick at least two…",
+                  "hint": "Select at least two frameworks",
+                  "items": [
+                    "React",
+                    "Angular",
+                    "Vue",
+                    "Lit",
+                    "Svelte",
+                    "Solid"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabMultiList",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "multiList",
+                "path": "multiLists.frameworks",
+                "label": "Frameworks",
+                "props": {
+                  "hint": "Click or press Enter/Space to toggle options on and off",
+                  "height": 150,
+                  "items": [
+                    "React",
+                    "Angular",
+                    "Vue",
+                    "Lit",
+                    "Svelte",
+                    "Solid"
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "multiList",
+                "path": "multiLists.objectItems",
+                "label": "Object items",
+                "validator": {
+                  "type": "array",
+                  "required": true,
+                  "minItems": 2
+                },
+                "props": {
+                  "hint": "Object items resolved through labelField/valueField",
+                  "height": 150,
+                  "items": [
+                    {
+                      "label": "Item 0",
+                      "value": 0
+                    },
+                    {
+                      "label": "Item 1",
+                      "value": 1
+                    },
+                    {
+                      "label": "Item 2",
+                      "value": 2
+                    },
+                    {
+                      "label": "Item 3",
+                      "value": 3
+                    },
+                    {
+                      "label": "Item 4",
+                      "value": 4
+                    },
+                    {
+                      "label": "Item 5",
+                      "value": 5
+                    }
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "multiList",
+                "path": "multiLists.limited",
+                "label": "Limited to 2 selections",
+                "validator": {
+                  "type": "array",
+                  "maxItems": 2
+                },
+                "props": {
+                  "hint": "A maxItems validator flags a third selection instead of blocking it",
+                  "height": 150,
+                  "items": [
+                    "React",
+                    "Angular",
+                    "Vue",
+                    "Lit",
+                    "Svelte",
+                    "Solid"
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "multiList",
+                "path": "multiLists.disabled",
+                "label": "Disabled multi list",
+                "disabled": true,
+                "readonly": true,
+                "props": {
+                  "height": 150,
+                  "items": [
+                    "React",
+                    "Angular",
+                    "Vue",
+                    "Lit",
+                    "Svelte",
+                    "Solid"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabRepeater",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "repeater",
+                "path": "repeaters.users",
+                "label": "Team Members",
+                "props": {
+                  "title": "Developer",
+                  "addButtonIcon": "person_add",
+                  "removeButtonIcon": "delete",
+                  "addLabel": "Add new developer",
+                  "addLabel.limitReached": "'Limit Reached, you can't add more'",
+                  "removeLabel": "Delete",
+                  "template": {
+                    "kind": "layout",
+                    "type": "grid",
+                    "props": {
+                      "direction": "row"
+                    },
+                    "children": [
+                      {
+                        "kind": "input",
+                        "type": "textinput",
+                        "path": "repeaters.users.items.firstName",
+                        "label": "First name",
+                        "size": 5,
+                        "validator": {
+                          "type": "string",
+                          "required": true
+                        }
+                      },
+                      {
+                        "kind": "input",
+                        "type": "textinput",
+                        "path": "repeaters.users.items.lastName",
+                        "label": "Last name",
+                        "size": 5
+                      },
+                      {
+                        "uid": "userRowMenu",
+                        "kind": "action",
+                        "type": "menu",
+                        "on": {
+                          "click": "repeaterRowAction"
+                        },
+                        "props": {
+                          "items": [
+                            {
+                              "label": "Edit",
+                              "value": "edit"
+                            },
+                            {
+                              "label": "Duplicate",
+                              "value": "duplicate"
+                            }
+                          ],
+                          "ariaLabel": "Row actions",
+                          "icon": "more_vert",
+                          "variant": "outlined",
+                          "placement": "bottom-end"
+                        }
+                      }
+                    ]
+                  }
+                },
+                "validator": {
+                  "type": "array",
+                  "required": true,
+                  "minItems": 1,
+                  "maxItems": 2
+                }
+              },
+              {
+                "uid": "repeaterRowActionResult",
+                "kind": "display",
+                "type": "alert",
+                "props": {
+                  "text": "Pick an action in the menu of a row.",
+                  "level": "info"
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabTags",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "tags",
+                "path": "tags.basic",
+                "label": "Tags",
+                "props": {
+                  "placeholder": "Add a tag…"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "tags",
+                "path": "tags.withIcon",
+                "label": "Tags with icon",
+                "props": {
+                  "icon": "label",
+                  "hint": "Press Enter, Tab or comma to add a tag",
+                  "placeholder": "Type and press Enter"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "tags",
+                "path": "tags.duplicates",
+                "label": "Tags with duplicates",
+                "props": {
+                  "hint": "allowDuplicates lets the same tag be added more than once",
+                  "placeholder": "Try entering the same tag twice",
+                  "allowDuplicates": true
+                }
+              },
+              {
+                "kind": "input",
+                "type": "tags",
+                "path": "tags.limited",
+                "label": "Tags with limited number of tags",
+                "validator": {
+                  "type": "array",
+                  "maxItems": 5
+                },
+                "props": {
+                  "hint": "A maxItems validator flags a sixth tag instead of blocking it",
+                  "placeholder": "Add a tag…"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "tags",
+                "path": "tags.scrollable",
+                "label": "Tags with scrollable container",
+                "props": {
+                  "icon": "tag",
+                  "hint": "Many tags scroll horizontally; resize the window to see the count-bubble fallback",
+                  "placeholder": "Add another…"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "tags",
+                "path": "tags.validated",
+                "label": "Tags with validation",
+                "props": {
+                  "hint": "At least 1, at most 3 tags — must be unique",
+                  "placeholder": "Add a tag…"
+                },
+                "validator": {
+                  "type": "array",
+                  "required": true,
+                  "minItems": 1,
+                  "maxItems": 3
+                }
+              },
+              {
+                "kind": "input",
+                "type": "tags",
+                "path": "tags.disabled",
+                "label": "Disabled tags",
+                "disabled": true,
+                "props": {
+                  "placeholder": "You cannot type here"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "tags",
+                "path": "tags.readonly",
+                "label": "Readonly tags",
+                "readonly": true,
+                "props": {
+                  "placeholder": "Read-only"
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabCustomWidget",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "display",
+                "type": "heading",
+                "props": {
+                  "text": "Client name: {{ $form.clientName || 'unknown' }}",
+                  "level": 1
+                }
+              },
+              {
+                "kind": "input",
+                "type": "textinput",
+                "path": "clientName",
+                "label": "Client name",
+                "props": {
+                  "placeholder": "Type to see the heading above change",
+                  "hint": "The heading is a custom widget of this playground. A template in its text prop reads $form.clientName."
+                }
+              },
+              {
+                "kind": "input",
+                "type": "toggle",
+                "path": "registerMode",
+                "label": "{{ $form.registerMode ? 'Switch to login' : 'Switch to register' }}",
+                "props": {
+                  "hint": "A template computes this label from the form data."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "uid": "submit-button",
+        "kind": "action",
+        "type": "button",
+        "actionType": "submit",
+        "label": "Submit",
+        "props": {
+          "icon": "save",
+          "iconPosition": "right"
+        },
+        "disabled": {
+          "when": "$formIsInvalid"
+        }
+      }
+    ]
+  },
+  "data": {
+    "listName": "Development Team",
+    "currency": 1000000,
+    "dropdowns": {
+      "defaultListRenderer": 0,
+      "disabledList": 0,
+      "customItemRenderer": "two"
+    },
+    "lists": {
+      "defaultListRenderer": 0,
+      "disabledList": 0,
+      "customItemRenderer": "one"
+    },
+    "multiDropdowns": {
+      "withIcon": [
+        "React",
+        "Vue"
+      ],
+      "objectItems": [
+        1,
+        3
+      ],
+      "disabled": [
+        "React",
+        "Vue"
+      ]
+    },
+    "multiLists": {
+      "frameworks": [
+        "Vue"
+      ],
+      "disabled": [
+        "React"
+      ]
+    },
+    "fileUploads": {
+      "title": "",
+      "preloaded": {
+        "id": "srv-contract",
+        "name": "contract.pdf",
+        "size": 204800,
+        "type": "application/pdf",
+        "status": "uploaded",
+        "data": {
+          "url": "https://cdn.example.com/uploads/contract.pdf"
+        }
+      },
+      "multiPreloaded": [
+        {
+          "id": "srv-photo-1",
+          "name": "front.jpg",
+          "size": 512000,
+          "type": "image/jpeg",
+          "status": "uploaded",
+          "data": {
+            "url": "https://cdn.example.com/uploads/front.jpg"
+          }
+        },
+        {
+          "id": "srv-photo-2",
+          "name": "back.jpg",
+          "size": 498000,
+          "type": "image/jpeg",
+          "status": "uploaded",
+          "data": {
+            "url": "https://cdn.example.com/uploads/back.jpg"
+          }
+        }
+      ],
+      "readonly": [
+        {
+          "id": "srv-frozen",
+          "name": "frozen.txt",
+          "size": 12,
+          "type": "text/plain",
+          "status": "uploaded",
+          "data": {
+            "url": "https://cdn.example.com/uploads/frozen.txt"
+          }
+        }
+      ]
+    },
+    "selects": {
+      "greeting": "bye",
+      "wrongGreeting": "aaaaaa",
+      "greetingIndex": 2
+    },
+    "radiogroups": {
+      "greeting": "bye",
+      "wrongGreeting": "aaaaaa",
+      "greetingIndex": 2,
+      "range": "week"
+    },
+    "repeaters": {
+      "users": [
+        {
+          "firstName": "Alice",
+          "lastName": "Johnson"
+        },
+        {
+          "firstName": "",
+          "lastName": "Smith"
+        },
+        {
+          "firstName": "Charlie"
+        },
+        {
+          "firstName": "Diana",
+          "lastName": "Rodriguez"
+        }
+      ]
+    },
+    "tags": {
+      "basic": [
+        "hello",
+        "world"
+      ],
+      "withIcon": [],
+      "duplicates": [
+        "vip",
+        "vip"
+      ],
+      "limited": [],
+      "scrollable": [
+        "design",
+        "product",
+        "engineering",
+        "research",
+        "marketing",
+        "analytics",
+        "operations",
+        "support",
+        "finance",
+        "legal",
+        "people"
+      ],
+      "validated": [
+        "design",
+        "product"
+      ],
+      "disabled": [
+        "read",
+        "only"
+      ],
+      "readonly": [
+        "frozen"
+      ]
+    }
+  }
+}

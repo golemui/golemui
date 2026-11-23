@@ -1,0 +1,370 @@
+{
+  "afterStart": {
+    "formHealth": {
+      "status": "ok"
+    },
+    "isFormValid": true,
+    "touched": false,
+    "allControlsValidated": false,
+    "currentStates": [],
+    "data": {
+      "username": "[undefined]",
+      "zipCode": "[undefined]",
+      "website": "[undefined]",
+      "age": "[undefined]",
+      "score": "[undefined]",
+      "rating": "[undefined]",
+      "tags": "[undefined]",
+      "acceptTerms": "[undefined]"
+    },
+    "validations": {},
+    "touchedControls": {},
+    "widgetFlags": {},
+    "resolvedSources": {
+      "#0": "layout grid",
+      "#0.0": "display alert",
+      "username-textinput": "input textinput username",
+      "#0.2": "display alert",
+      "zipCode-textinput": "input textinput zipCode",
+      "#0.4": "display alert",
+      "website-textinput": "input textinput website",
+      "#0.6": "display alert",
+      "age-number": "input number age",
+      "#0.8": "display alert",
+      "score-number": "input number score",
+      "#0.10": "display alert",
+      "rating": "input number rating",
+      "#0.12": "display alert",
+      "tags-rangeCalendar": "input rangeCalendar tags",
+      "#0.14": "display alert",
+      "acceptTerms-checkbox": "input checkbox acceptTerms",
+      "messages-submit": "action button"
+    },
+    "repeaterItemScopes": {},
+    "repeaterRows": {},
+    "calculatedWidgets": {
+      "#0": {
+        "uid": "#0",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "#0.0",
+          "username-textinput",
+          "#0.2",
+          "zipCode-textinput",
+          "#0.4",
+          "website-textinput",
+          "#0.6",
+          "age-number",
+          "#0.8",
+          "score-number",
+          "#0.10",
+          "rating",
+          "#0.12",
+          "tags-rangeCalendar",
+          "#0.14",
+          "acceptTerms-checkbox",
+          "messages-submit"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.0": {
+        "uid": "#0.0",
+        "type": "alert",
+        "kind": "display",
+        "props": {
+          "text": "string: required + minLength + maxLength with plain string messages"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "username-textinput": {
+        "uid": "username-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Username",
+        "validator": {
+          "type": "string",
+          "required": true,
+          "minLength": 4,
+          "maxLength": 10,
+          "messages": {
+            "required": "Username is required",
+            "minLength": "Username must be at least 4 characters",
+            "maxLength": "Username must be 10 characters or fewer"
+          }
+        },
+        "path": "username",
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "#0.2": {
+        "uid": "#0.2",
+        "type": "alert",
+        "kind": "display",
+        "props": {
+          "text": "string: pattern with i18n TranslationConfig message"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "zipCode-textinput": {
+        "uid": "zipCode-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "label": "ZIP Code",
+        "validator": {
+          "type": "string",
+          "pattern": "^\\d{5}$",
+          "messages": {
+            "pattern": {
+              "key": "validation.zipCode.pattern"
+            }
+          }
+        },
+        "path": "zipCode",
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "#0.4": {
+        "uid": "#0.4",
+        "type": "alert",
+        "kind": "display",
+        "props": {
+          "text": "string: format with i18n TranslationConfig message"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "website-textinput": {
+        "uid": "website-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Website",
+        "validator": {
+          "type": "string",
+          "format": "url",
+          "messages": {
+            "format": {
+              "key": "validation.website.format"
+            }
+          }
+        },
+        "path": "website",
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "#0.6": {
+        "uid": "#0.6",
+        "type": "alert",
+        "kind": "display",
+        "props": {
+          "text": "number: required + minimum + maximum with plain string messages"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "age-number": {
+        "uid": "age-number",
+        "type": "number",
+        "kind": "input",
+        "label": "Age",
+        "validator": {
+          "type": "number",
+          "required": true,
+          "minimum": 18,
+          "maximum": 120,
+          "messages": {
+            "invalid": "Age must be a number",
+            "minimum": "You must be at least 18 years old",
+            "maximum": "Age cannot exceed 120"
+          }
+        },
+        "path": "age",
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "#0.8": {
+        "uid": "#0.8",
+        "type": "alert",
+        "kind": "display",
+        "props": {
+          "text": "number: exclusiveMinimum + exclusiveMaximum with i18n messages"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "score-number": {
+        "uid": "score-number",
+        "type": "number",
+        "kind": "input",
+        "label": "Score (exclusive 0-100)",
+        "validator": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 100,
+          "messages": {
+            "invalid": {
+              "key": "validation.score.invalid"
+            },
+            "exclusiveMinimum": {
+              "key": "validation.score.exclusiveMinimum"
+            },
+            "exclusiveMaximum": {
+              "key": "validation.score.exclusiveMaximum"
+            }
+          }
+        },
+        "path": "score",
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "#0.10": {
+        "uid": "#0.10",
+        "type": "alert",
+        "kind": "display",
+        "props": {
+          "text": "number: multipleOf with plain string message"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "rating": {
+        "uid": "rating",
+        "type": "number",
+        "kind": "input",
+        "label": "Rating (multiples of 0.5)",
+        "validator": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5,
+          "multipleOf": 0.5,
+          "messages": {
+            "multipleOf": "Rating must be a multiple of 0.5"
+          }
+        },
+        "path": "rating",
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "#0.12": {
+        "uid": "#0.12",
+        "type": "alert",
+        "kind": "display",
+        "props": {
+          "text": "array: required + minItems with i18n messages"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "tags-rangeCalendar": {
+        "uid": "tags-rangeCalendar",
+        "type": "rangeCalendar",
+        "kind": "input",
+        "label": "Selected Dates",
+        "validator": {
+          "type": "array",
+          "required": true,
+          "minItems": 2,
+          "maxItems": 5,
+          "messages": {
+            "required": {
+              "key": "validation.tags.required"
+            },
+            "minItems": {
+              "key": "validation.tags.minItems"
+            },
+            "maxItems": "You can select at most 5 tags"
+          }
+        },
+        "path": "tags",
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "#0.14": {
+        "uid": "#0.14",
+        "type": "alert",
+        "kind": "display",
+        "props": {
+          "text": "boolean: required (const: true) with plain string message"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "acceptTerms-checkbox": {
+        "uid": "acceptTerms-checkbox",
+        "type": "checkbox",
+        "kind": "input",
+        "label": "I accept the terms and conditions",
+        "validator": {
+          "type": "boolean",
+          "const": true,
+          "messages": {
+            "invalid": "You must check",
+            "const": "You must accept the terms and conditions to continue"
+          }
+        },
+        "path": "acceptTerms",
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "messages-submit": {
+        "uid": "messages-submit",
+        "type": "button",
+        "kind": "action",
+        "label": "Submit",
+        "on": {
+          "load": "[undefined]",
+          "click": "submit",
+          "change": "[undefined]",
+          "filter": "[undefined]",
+          "blur": "[undefined]"
+        },
+        "keysWithUndefined": "size include exclude disabled actionType"
+      }
+    }
+  },
+  "afterSubmit": {
+    "isFormValid": false,
+    "touched": true,
+    "allControlsValidated": true,
+    "validations": {
+      "allEntries": {
+        "acceptTerms": null,
+        "age": [
+          "required"
+        ],
+        "rating": null,
+        "score": null,
+        "tags": [
+          "required"
+        ],
+        "username": [
+          "required"
+        ],
+        "website": null,
+        "zipCode": null
+      }
+    },
+    "touchedControls": {
+      "allEntries": {
+        "acceptTerms": true,
+        "age": true,
+        "rating": true,
+        "score": true,
+        "tags": true,
+        "username": true,
+        "website": true,
+        "zipCode": true
+      }
+    }
+  },
+  "afterData": {
+    "data": {
+      "username": "",
+      "age": null,
+      "score": null,
+      "rating": null,
+      "tags": [],
+      "acceptTerms": null,
+      "website": "",
+      "zipCode": ""
+    }
+  },
+  "afterEmptyData": {
+    "data": {
+      "username": "[undefined]",
+      "zipCode": "[undefined]",
+      "website": "[undefined]",
+      "age": "[undefined]",
+      "score": "[undefined]",
+      "rating": "[undefined]",
+      "tags": "[undefined]",
+      "acceptTerms": "[undefined]"
+    }
+  }
+}

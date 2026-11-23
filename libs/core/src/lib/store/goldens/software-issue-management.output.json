@@ -1,0 +1,3326 @@
+{
+  "afterStart": {
+    "formHealth": {
+      "status": "ok"
+    },
+    "isFormValid": true,
+    "touched": false,
+    "allControlsValidated": false,
+    "currentStates": [],
+    "data": {
+      "projects": "[undefined]",
+      "developers": "[undefined]",
+      "issues": "[undefined]"
+    },
+    "validations": {},
+    "touchedControls": {},
+    "widgetFlags": {},
+    "resolvedSources": {
+      "#0": "layout grid",
+      "root": "layout grid",
+      "title": "display markdownText",
+      "form-tabs": "layout tabs",
+      "projects-tab": "layout grid",
+      "projects-repeater": "input repeater projects",
+      "developers-tab": "layout grid",
+      "devs-repeater": "input repeater developers",
+      "issues-tab": "layout grid",
+      "issues-repeater": "input repeater issues"
+    },
+    "repeaterItemScopes": {},
+    "repeaterRows": {},
+    "calculatedWidgets": {
+      "#0": {
+        "uid": "#0",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "root"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "root": {
+        "uid": "root",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "column",
+          "gap": "xs"
+        },
+        "children": [
+          "title",
+          "form-tabs"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "title": {
+        "uid": "title",
+        "type": "markdownText",
+        "kind": "display",
+        "props": {
+          "md": "## Software Issue Management"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "form-tabs": {
+        "uid": "form-tabs",
+        "type": "tabs",
+        "kind": "layout",
+        "props": {
+          "tabs": [
+            {
+              "label": "Projects",
+              "uid": "projects-tab"
+            },
+            {
+              "label": "Developers",
+              "uid": "developers-tab"
+            },
+            {
+              "label": "Issues",
+              "uid": "issues-tab"
+            }
+          ]
+        },
+        "children": [
+          "projects-tab",
+          "developers-tab",
+          "issues-tab"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "projects-tab": {
+        "uid": "projects-tab",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "projects-repeater"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "projects-repeater": {
+        "uid": "projects-repeater",
+        "type": "repeater",
+        "kind": "input",
+        "path": "projects",
+        "props": {
+          "title": "Project",
+          "addLabel": "Add Project",
+          "template": {
+            "rowTemplateUid": "project-template"
+          }
+        },
+        "keysWithUndefined": "size include exclude label disabled readonly validator defaultValue"
+      },
+      "developers-tab": {
+        "uid": "developers-tab",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "devs-repeater"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "devs-repeater": {
+        "uid": "devs-repeater",
+        "type": "repeater",
+        "kind": "input",
+        "path": "developers",
+        "props": {
+          "addLabel": "Add Developer",
+          "template": {
+            "rowTemplateUid": "dev-template"
+          }
+        },
+        "keysWithUndefined": "size include exclude label disabled readonly validator defaultValue"
+      },
+      "issues-tab": {
+        "uid": "issues-tab",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "issues-repeater"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "issues-repeater": {
+        "uid": "issues-repeater",
+        "type": "repeater",
+        "kind": "input",
+        "path": "issues",
+        "props": {
+          "addLabel": "Report Issue",
+          "template": {
+            "rowTemplateUid": "issue-template"
+          }
+        },
+        "keysWithUndefined": "size include exclude label disabled readonly validator defaultValue"
+      }
+    }
+  },
+  "afterSubmit": {
+    "touched": true,
+    "allControlsValidated": true,
+    "validations": {
+      "allEntries": {
+        "developers": null,
+        "issues": null,
+        "projects": null
+      }
+    },
+    "touchedControls": {
+      "allEntries": {
+        "developers": true,
+        "issues": true,
+        "projects": true
+      }
+    }
+  },
+  "afterData": {
+    "data": {
+      "projects": [
+        {
+          "name": "GolemUI",
+          "deliveryDate": "2026-06-30",
+          "budget": 100000,
+          "description": "**GolemUI The Declarative Form Engine:**\n\nThe New Paradigm for building forms. Stop coding UI-coupled forms and start defining semantic, serializable schemas."
+        }
+      ],
+      "developers": [
+        {
+          "name": "John Doe",
+          "position": "pm",
+          "holidays": [
+            {
+              "start": "2026-05-29"
+            }
+          ]
+        },
+        {
+          "name": "Jane Smith",
+          "position": "ui_ux",
+          "holidays": [
+            {
+              "start": "2026-05-29",
+              "end": "2026-06-01"
+            }
+          ]
+        },
+        {
+          "name": "Alice Johnson",
+          "position": "frontend",
+          "holidays": []
+        },
+        {
+          "name": "Bob Brown",
+          "position": "backend",
+          "holidays": [
+            {
+              "start": "2026-07-01",
+              "end": "2026-07-15"
+            },
+            {
+              "start": "2026-12-20",
+              "end": "2026-12-31"
+            }
+          ]
+        },
+        {
+          "name": "Charlie Davis",
+          "position": "fullstack",
+          "holidays": []
+        },
+        {
+          "name": "David Wilson",
+          "position": "devops",
+          "holidays": []
+        }
+      ],
+      "issues": [
+        {
+          "name": "Add new toggle component",
+          "type": "feature",
+          "projectId": "GolemUI",
+          "assigneeId": "John Doe",
+          "estDelivery": "2026-06-30",
+          "highPriority": false,
+          "description": "[undefined]"
+        },
+        {
+          "name": "Use custom font",
+          "type": "improvement",
+          "projectId": "GolemUI",
+          "assigneeId": "Jane Smith",
+          "estDelivery": "2026-06-30",
+          "highPriority": false,
+          "description": "[undefined]"
+        },
+        {
+          "name": "Fix rendering issue in small screens",
+          "type": "bug",
+          "projectId": "GolemUI",
+          "assigneeId": "Alice Johnson",
+          "estDelivery": "2026-06-30",
+          "highPriority": true,
+          "description": "[undefined]"
+        },
+        {
+          "name": "Add reactive functions docs",
+          "type": "documentation",
+          "projectId": "GolemUI",
+          "assigneeId": "Bob Brown",
+          "estDelivery": "2026-06-30",
+          "highPriority": false,
+          "description": "[undefined]"
+        },
+        {
+          "name": "Add tests to Astro components",
+          "type": "test",
+          "projectId": "GolemUI",
+          "assigneeId": "Charlie Davis",
+          "estDelivery": "2026-06-30",
+          "highPriority": false,
+          "description": "[undefined]"
+        },
+        {
+          "name": "Deploy website",
+          "type": "chore",
+          "projectId": "GolemUI",
+          "assigneeId": "David Wilson",
+          "estDelivery": "2026-06-30",
+          "highPriority": false,
+          "description": "[undefined]"
+        }
+      ]
+    },
+    "validations": {
+      "changedEntries": {
+        "developers.0.holidays": null,
+        "developers.0.name": null,
+        "developers.0.position": null,
+        "developers.1.holidays": null,
+        "developers.1.name": null,
+        "developers.1.position": null,
+        "developers.2.holidays": null,
+        "developers.2.name": null,
+        "developers.2.position": null,
+        "developers.3.holidays": null,
+        "developers.3.name": null,
+        "developers.3.position": null,
+        "developers.4.holidays": null,
+        "developers.4.name": null,
+        "developers.4.position": null,
+        "developers.5.holidays": null,
+        "developers.5.name": null,
+        "developers.5.position": null,
+        "issues.0.assigneeId": null,
+        "issues.0.description": null,
+        "issues.0.estDelivery": null,
+        "issues.0.highPriority": null,
+        "issues.0.name": null,
+        "issues.0.projectId": null,
+        "issues.0.type": null,
+        "issues.1.assigneeId": null,
+        "issues.1.description": null,
+        "issues.1.estDelivery": null,
+        "issues.1.highPriority": null,
+        "issues.1.name": null,
+        "issues.1.projectId": null,
+        "issues.1.type": null,
+        "issues.2.assigneeId": null,
+        "issues.2.description": null,
+        "issues.2.estDelivery": null,
+        "issues.2.highPriority": null,
+        "issues.2.name": null,
+        "issues.2.projectId": null,
+        "issues.2.type": null,
+        "issues.3.assigneeId": null,
+        "issues.3.description": null,
+        "issues.3.estDelivery": null,
+        "issues.3.highPriority": null,
+        "issues.3.name": null,
+        "issues.3.projectId": null,
+        "issues.3.type": null,
+        "issues.4.assigneeId": null,
+        "issues.4.description": null,
+        "issues.4.estDelivery": null,
+        "issues.4.highPriority": null,
+        "issues.4.name": null,
+        "issues.4.projectId": null,
+        "issues.4.type": null,
+        "issues.5.assigneeId": null,
+        "issues.5.description": null,
+        "issues.5.estDelivery": null,
+        "issues.5.highPriority": null,
+        "issues.5.name": null,
+        "issues.5.projectId": null,
+        "issues.5.type": null,
+        "projects.0.budget": null,
+        "projects.0.deliveryDate": null,
+        "projects.0.description": null,
+        "projects.0.name": null
+      }
+    },
+    "touchedControls": {
+      "changedEntries": {
+        "developers.0.holidays": true,
+        "developers.0.name": true,
+        "developers.0.position": true,
+        "developers.1.holidays": true,
+        "developers.1.name": true,
+        "developers.1.position": true,
+        "developers.2.holidays": true,
+        "developers.2.name": true,
+        "developers.2.position": true,
+        "developers.3.holidays": true,
+        "developers.3.name": true,
+        "developers.3.position": true,
+        "developers.4.holidays": true,
+        "developers.4.name": true,
+        "developers.4.position": true,
+        "developers.5.holidays": true,
+        "developers.5.name": true,
+        "developers.5.position": true,
+        "issues.0.assigneeId": true,
+        "issues.0.description": true,
+        "issues.0.estDelivery": true,
+        "issues.0.highPriority": true,
+        "issues.0.name": true,
+        "issues.0.projectId": true,
+        "issues.0.type": true,
+        "issues.1.assigneeId": true,
+        "issues.1.description": true,
+        "issues.1.estDelivery": true,
+        "issues.1.highPriority": true,
+        "issues.1.name": true,
+        "issues.1.projectId": true,
+        "issues.1.type": true,
+        "issues.2.assigneeId": true,
+        "issues.2.description": true,
+        "issues.2.estDelivery": true,
+        "issues.2.highPriority": true,
+        "issues.2.name": true,
+        "issues.2.projectId": true,
+        "issues.2.type": true,
+        "issues.3.assigneeId": true,
+        "issues.3.description": true,
+        "issues.3.estDelivery": true,
+        "issues.3.highPriority": true,
+        "issues.3.name": true,
+        "issues.3.projectId": true,
+        "issues.3.type": true,
+        "issues.4.assigneeId": true,
+        "issues.4.description": true,
+        "issues.4.estDelivery": true,
+        "issues.4.highPriority": true,
+        "issues.4.name": true,
+        "issues.4.projectId": true,
+        "issues.4.type": true,
+        "issues.5.assigneeId": true,
+        "issues.5.description": true,
+        "issues.5.estDelivery": true,
+        "issues.5.highPriority": true,
+        "issues.5.name": true,
+        "issues.5.projectId": true,
+        "issues.5.type": true,
+        "projects.0.budget": true,
+        "projects.0.deliveryDate": true,
+        "projects.0.description": true,
+        "projects.0.name": true
+      }
+    },
+    "resolvedSources": {
+      "keys": [
+        "#0",
+        "root",
+        "title",
+        "form-tabs",
+        "projects-tab",
+        "projects-repeater",
+        "project-template[0]",
+        "project-name[0]",
+        "project-delivery[0]",
+        "project-budget[0]",
+        "project-desc[0]",
+        "developers-tab",
+        "devs-repeater",
+        "dev-template[0]",
+        "dev-name[0]",
+        "dev-position[0]",
+        "dev-holidays[0]",
+        "dev-template[1]",
+        "dev-name[1]",
+        "dev-position[1]",
+        "dev-holidays[1]",
+        "dev-template[2]",
+        "dev-name[2]",
+        "dev-position[2]",
+        "dev-holidays[2]",
+        "dev-template[3]",
+        "dev-name[3]",
+        "dev-position[3]",
+        "dev-holidays[3]",
+        "dev-template[4]",
+        "dev-name[4]",
+        "dev-position[4]",
+        "dev-holidays[4]",
+        "dev-template[5]",
+        "dev-name[5]",
+        "dev-position[5]",
+        "dev-holidays[5]",
+        "issues-tab",
+        "issues-repeater",
+        "issue-template[0]",
+        "#0.0.1.2.0.t.0[0]",
+        "issue-name[0]",
+        "issue-desc[0]",
+        "#0.0.1.2.0.t.1[0]",
+        "issue-type[0]",
+        "issue-project[0]",
+        "issue-assignee[0]",
+        "issue-delivery[0]",
+        "issue-priority[0]",
+        "issue-template[1]",
+        "#0.0.1.2.0.t.0[1]",
+        "issue-name[1]",
+        "issue-desc[1]",
+        "#0.0.1.2.0.t.1[1]",
+        "issue-type[1]",
+        "issue-project[1]",
+        "issue-assignee[1]",
+        "issue-delivery[1]",
+        "issue-priority[1]",
+        "issue-template[2]",
+        "#0.0.1.2.0.t.0[2]",
+        "issue-name[2]",
+        "issue-desc[2]",
+        "#0.0.1.2.0.t.1[2]",
+        "issue-type[2]",
+        "issue-project[2]",
+        "issue-assignee[2]",
+        "issue-delivery[2]",
+        "issue-priority[2]",
+        "issue-template[3]",
+        "#0.0.1.2.0.t.0[3]",
+        "issue-name[3]",
+        "issue-desc[3]",
+        "#0.0.1.2.0.t.1[3]",
+        "issue-type[3]",
+        "issue-project[3]",
+        "issue-assignee[3]",
+        "issue-delivery[3]",
+        "issue-priority[3]",
+        "issue-template[4]",
+        "#0.0.1.2.0.t.0[4]",
+        "issue-name[4]",
+        "issue-desc[4]",
+        "#0.0.1.2.0.t.1[4]",
+        "issue-type[4]",
+        "issue-project[4]",
+        "issue-assignee[4]",
+        "issue-delivery[4]",
+        "issue-priority[4]",
+        "issue-template[5]",
+        "#0.0.1.2.0.t.0[5]",
+        "issue-name[5]",
+        "issue-desc[5]",
+        "#0.0.1.2.0.t.1[5]",
+        "issue-type[5]",
+        "issue-project[5]",
+        "issue-assignee[5]",
+        "issue-delivery[5]",
+        "issue-priority[5]"
+      ],
+      "changedEntries": {
+        "project-template[0]": "layout grid",
+        "project-name[0]": "input textinput projects.0.name",
+        "project-delivery[0]": "input datePicker projects.0.deliveryDate",
+        "project-budget[0]": "input currency projects.0.budget",
+        "project-desc[0]": "input markdown projects.0.description",
+        "dev-template[0]": "layout grid",
+        "dev-name[0]": "input textinput developers.0.name",
+        "dev-position[0]": "input dropdown developers.0.position",
+        "dev-holidays[0]": "input rangeDatePicker developers.0.holidays",
+        "dev-template[1]": "layout grid",
+        "dev-name[1]": "input textinput developers.1.name",
+        "dev-position[1]": "input dropdown developers.1.position",
+        "dev-holidays[1]": "input rangeDatePicker developers.1.holidays",
+        "dev-template[2]": "layout grid",
+        "dev-name[2]": "input textinput developers.2.name",
+        "dev-position[2]": "input dropdown developers.2.position",
+        "dev-holidays[2]": "input rangeDatePicker developers.2.holidays",
+        "dev-template[3]": "layout grid",
+        "dev-name[3]": "input textinput developers.3.name",
+        "dev-position[3]": "input dropdown developers.3.position",
+        "dev-holidays[3]": "input rangeDatePicker developers.3.holidays",
+        "dev-template[4]": "layout grid",
+        "dev-name[4]": "input textinput developers.4.name",
+        "dev-position[4]": "input dropdown developers.4.position",
+        "dev-holidays[4]": "input rangeDatePicker developers.4.holidays",
+        "dev-template[5]": "layout grid",
+        "dev-name[5]": "input textinput developers.5.name",
+        "dev-position[5]": "input dropdown developers.5.position",
+        "dev-holidays[5]": "input rangeDatePicker developers.5.holidays",
+        "issue-template[0]": "layout grid",
+        "#0.0.1.2.0.t.0[0]": "layout grid",
+        "issue-name[0]": "input textinput issues.0.name",
+        "issue-desc[0]": "input markdown issues.0.description",
+        "#0.0.1.2.0.t.1[0]": "layout grid",
+        "issue-type[0]": "input dropdown issues.0.type",
+        "issue-project[0]": "input dropdown issues.0.projectId",
+        "issue-assignee[0]": "input dropdown issues.0.assigneeId",
+        "issue-delivery[0]": "input datePicker issues.0.estDelivery",
+        "issue-priority[0]": "input toggle issues.0.highPriority",
+        "issue-template[1]": "layout grid",
+        "#0.0.1.2.0.t.0[1]": "layout grid",
+        "issue-name[1]": "input textinput issues.1.name",
+        "issue-desc[1]": "input markdown issues.1.description",
+        "#0.0.1.2.0.t.1[1]": "layout grid",
+        "issue-type[1]": "input dropdown issues.1.type",
+        "issue-project[1]": "input dropdown issues.1.projectId",
+        "issue-assignee[1]": "input dropdown issues.1.assigneeId",
+        "issue-delivery[1]": "input datePicker issues.1.estDelivery",
+        "issue-priority[1]": "input toggle issues.1.highPriority",
+        "issue-template[2]": "layout grid",
+        "#0.0.1.2.0.t.0[2]": "layout grid",
+        "issue-name[2]": "input textinput issues.2.name",
+        "issue-desc[2]": "input markdown issues.2.description",
+        "#0.0.1.2.0.t.1[2]": "layout grid",
+        "issue-type[2]": "input dropdown issues.2.type",
+        "issue-project[2]": "input dropdown issues.2.projectId",
+        "issue-assignee[2]": "input dropdown issues.2.assigneeId",
+        "issue-delivery[2]": "input datePicker issues.2.estDelivery",
+        "issue-priority[2]": "input toggle issues.2.highPriority",
+        "issue-template[3]": "layout grid",
+        "#0.0.1.2.0.t.0[3]": "layout grid",
+        "issue-name[3]": "input textinput issues.3.name",
+        "issue-desc[3]": "input markdown issues.3.description",
+        "#0.0.1.2.0.t.1[3]": "layout grid",
+        "issue-type[3]": "input dropdown issues.3.type",
+        "issue-project[3]": "input dropdown issues.3.projectId",
+        "issue-assignee[3]": "input dropdown issues.3.assigneeId",
+        "issue-delivery[3]": "input datePicker issues.3.estDelivery",
+        "issue-priority[3]": "input toggle issues.3.highPriority",
+        "issue-template[4]": "layout grid",
+        "#0.0.1.2.0.t.0[4]": "layout grid",
+        "issue-name[4]": "input textinput issues.4.name",
+        "issue-desc[4]": "input markdown issues.4.description",
+        "#0.0.1.2.0.t.1[4]": "layout grid",
+        "issue-type[4]": "input dropdown issues.4.type",
+        "issue-project[4]": "input dropdown issues.4.projectId",
+        "issue-assignee[4]": "input dropdown issues.4.assigneeId",
+        "issue-delivery[4]": "input datePicker issues.4.estDelivery",
+        "issue-priority[4]": "input toggle issues.4.highPriority",
+        "issue-template[5]": "layout grid",
+        "#0.0.1.2.0.t.0[5]": "layout grid",
+        "issue-name[5]": "input textinput issues.5.name",
+        "issue-desc[5]": "input markdown issues.5.description",
+        "#0.0.1.2.0.t.1[5]": "layout grid",
+        "issue-type[5]": "input dropdown issues.5.type",
+        "issue-project[5]": "input dropdown issues.5.projectId",
+        "issue-assignee[5]": "input dropdown issues.5.assigneeId",
+        "issue-delivery[5]": "input datePicker issues.5.estDelivery",
+        "issue-priority[5]": "input toggle issues.5.highPriority"
+      }
+    },
+    "repeaterItemScopes": {
+      "allEntries": {
+        "#0.0.1.2.0.t.0[0]": {
+          "itemPath": "issues.0",
+          "index": 0
+        },
+        "#0.0.1.2.0.t.0[1]": {
+          "itemPath": "issues.1",
+          "index": 1
+        },
+        "#0.0.1.2.0.t.0[2]": {
+          "itemPath": "issues.2",
+          "index": 2
+        },
+        "#0.0.1.2.0.t.0[3]": {
+          "itemPath": "issues.3",
+          "index": 3
+        },
+        "#0.0.1.2.0.t.0[4]": {
+          "itemPath": "issues.4",
+          "index": 4
+        },
+        "#0.0.1.2.0.t.0[5]": {
+          "itemPath": "issues.5",
+          "index": 5
+        },
+        "#0.0.1.2.0.t.1[0]": {
+          "itemPath": "issues.0",
+          "index": 0
+        },
+        "#0.0.1.2.0.t.1[1]": {
+          "itemPath": "issues.1",
+          "index": 1
+        },
+        "#0.0.1.2.0.t.1[2]": {
+          "itemPath": "issues.2",
+          "index": 2
+        },
+        "#0.0.1.2.0.t.1[3]": {
+          "itemPath": "issues.3",
+          "index": 3
+        },
+        "#0.0.1.2.0.t.1[4]": {
+          "itemPath": "issues.4",
+          "index": 4
+        },
+        "#0.0.1.2.0.t.1[5]": {
+          "itemPath": "issues.5",
+          "index": 5
+        },
+        "dev-holidays[0]": {
+          "itemPath": "developers.0",
+          "index": 0
+        },
+        "dev-holidays[1]": {
+          "itemPath": "developers.1",
+          "index": 1
+        },
+        "dev-holidays[2]": {
+          "itemPath": "developers.2",
+          "index": 2
+        },
+        "dev-holidays[3]": {
+          "itemPath": "developers.3",
+          "index": 3
+        },
+        "dev-holidays[4]": {
+          "itemPath": "developers.4",
+          "index": 4
+        },
+        "dev-holidays[5]": {
+          "itemPath": "developers.5",
+          "index": 5
+        },
+        "dev-name[0]": {
+          "itemPath": "developers.0",
+          "index": 0
+        },
+        "dev-name[1]": {
+          "itemPath": "developers.1",
+          "index": 1
+        },
+        "dev-name[2]": {
+          "itemPath": "developers.2",
+          "index": 2
+        },
+        "dev-name[3]": {
+          "itemPath": "developers.3",
+          "index": 3
+        },
+        "dev-name[4]": {
+          "itemPath": "developers.4",
+          "index": 4
+        },
+        "dev-name[5]": {
+          "itemPath": "developers.5",
+          "index": 5
+        },
+        "dev-position[0]": {
+          "itemPath": "developers.0",
+          "index": 0
+        },
+        "dev-position[1]": {
+          "itemPath": "developers.1",
+          "index": 1
+        },
+        "dev-position[2]": {
+          "itemPath": "developers.2",
+          "index": 2
+        },
+        "dev-position[3]": {
+          "itemPath": "developers.3",
+          "index": 3
+        },
+        "dev-position[4]": {
+          "itemPath": "developers.4",
+          "index": 4
+        },
+        "dev-position[5]": {
+          "itemPath": "developers.5",
+          "index": 5
+        },
+        "dev-template[0]": {
+          "itemPath": "developers.0",
+          "index": 0
+        },
+        "dev-template[1]": {
+          "itemPath": "developers.1",
+          "index": 1
+        },
+        "dev-template[2]": {
+          "itemPath": "developers.2",
+          "index": 2
+        },
+        "dev-template[3]": {
+          "itemPath": "developers.3",
+          "index": 3
+        },
+        "dev-template[4]": {
+          "itemPath": "developers.4",
+          "index": 4
+        },
+        "dev-template[5]": {
+          "itemPath": "developers.5",
+          "index": 5
+        },
+        "issue-assignee[0]": {
+          "itemPath": "issues.0",
+          "index": 0
+        },
+        "issue-assignee[1]": {
+          "itemPath": "issues.1",
+          "index": 1
+        },
+        "issue-assignee[2]": {
+          "itemPath": "issues.2",
+          "index": 2
+        },
+        "issue-assignee[3]": {
+          "itemPath": "issues.3",
+          "index": 3
+        },
+        "issue-assignee[4]": {
+          "itemPath": "issues.4",
+          "index": 4
+        },
+        "issue-assignee[5]": {
+          "itemPath": "issues.5",
+          "index": 5
+        },
+        "issue-delivery[0]": {
+          "itemPath": "issues.0",
+          "index": 0
+        },
+        "issue-delivery[1]": {
+          "itemPath": "issues.1",
+          "index": 1
+        },
+        "issue-delivery[2]": {
+          "itemPath": "issues.2",
+          "index": 2
+        },
+        "issue-delivery[3]": {
+          "itemPath": "issues.3",
+          "index": 3
+        },
+        "issue-delivery[4]": {
+          "itemPath": "issues.4",
+          "index": 4
+        },
+        "issue-delivery[5]": {
+          "itemPath": "issues.5",
+          "index": 5
+        },
+        "issue-desc[0]": {
+          "itemPath": "issues.0",
+          "index": 0
+        },
+        "issue-desc[1]": {
+          "itemPath": "issues.1",
+          "index": 1
+        },
+        "issue-desc[2]": {
+          "itemPath": "issues.2",
+          "index": 2
+        },
+        "issue-desc[3]": {
+          "itemPath": "issues.3",
+          "index": 3
+        },
+        "issue-desc[4]": {
+          "itemPath": "issues.4",
+          "index": 4
+        },
+        "issue-desc[5]": {
+          "itemPath": "issues.5",
+          "index": 5
+        },
+        "issue-name[0]": {
+          "itemPath": "issues.0",
+          "index": 0
+        },
+        "issue-name[1]": {
+          "itemPath": "issues.1",
+          "index": 1
+        },
+        "issue-name[2]": {
+          "itemPath": "issues.2",
+          "index": 2
+        },
+        "issue-name[3]": {
+          "itemPath": "issues.3",
+          "index": 3
+        },
+        "issue-name[4]": {
+          "itemPath": "issues.4",
+          "index": 4
+        },
+        "issue-name[5]": {
+          "itemPath": "issues.5",
+          "index": 5
+        },
+        "issue-priority[0]": {
+          "itemPath": "issues.0",
+          "index": 0
+        },
+        "issue-priority[1]": {
+          "itemPath": "issues.1",
+          "index": 1
+        },
+        "issue-priority[2]": {
+          "itemPath": "issues.2",
+          "index": 2
+        },
+        "issue-priority[3]": {
+          "itemPath": "issues.3",
+          "index": 3
+        },
+        "issue-priority[4]": {
+          "itemPath": "issues.4",
+          "index": 4
+        },
+        "issue-priority[5]": {
+          "itemPath": "issues.5",
+          "index": 5
+        },
+        "issue-project[0]": {
+          "itemPath": "issues.0",
+          "index": 0
+        },
+        "issue-project[1]": {
+          "itemPath": "issues.1",
+          "index": 1
+        },
+        "issue-project[2]": {
+          "itemPath": "issues.2",
+          "index": 2
+        },
+        "issue-project[3]": {
+          "itemPath": "issues.3",
+          "index": 3
+        },
+        "issue-project[4]": {
+          "itemPath": "issues.4",
+          "index": 4
+        },
+        "issue-project[5]": {
+          "itemPath": "issues.5",
+          "index": 5
+        },
+        "issue-template[0]": {
+          "itemPath": "issues.0",
+          "index": 0
+        },
+        "issue-template[1]": {
+          "itemPath": "issues.1",
+          "index": 1
+        },
+        "issue-template[2]": {
+          "itemPath": "issues.2",
+          "index": 2
+        },
+        "issue-template[3]": {
+          "itemPath": "issues.3",
+          "index": 3
+        },
+        "issue-template[4]": {
+          "itemPath": "issues.4",
+          "index": 4
+        },
+        "issue-template[5]": {
+          "itemPath": "issues.5",
+          "index": 5
+        },
+        "issue-type[0]": {
+          "itemPath": "issues.0",
+          "index": 0
+        },
+        "issue-type[1]": {
+          "itemPath": "issues.1",
+          "index": 1
+        },
+        "issue-type[2]": {
+          "itemPath": "issues.2",
+          "index": 2
+        },
+        "issue-type[3]": {
+          "itemPath": "issues.3",
+          "index": 3
+        },
+        "issue-type[4]": {
+          "itemPath": "issues.4",
+          "index": 4
+        },
+        "issue-type[5]": {
+          "itemPath": "issues.5",
+          "index": 5
+        },
+        "project-budget[0]": {
+          "itemPath": "projects.0",
+          "index": 0
+        },
+        "project-delivery[0]": {
+          "itemPath": "projects.0",
+          "index": 0
+        },
+        "project-desc[0]": {
+          "itemPath": "projects.0",
+          "index": 0
+        },
+        "project-name[0]": {
+          "itemPath": "projects.0",
+          "index": 0
+        },
+        "project-template[0]": {
+          "itemPath": "projects.0",
+          "index": 0
+        }
+      }
+    },
+    "repeaterRows": {
+      "allEntries": {
+        "#0.0.1.2.0.t.0[0]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.0",
+            "index": 0
+          }
+        ],
+        "#0.0.1.2.0.t.0[1]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.1",
+            "index": 1
+          }
+        ],
+        "#0.0.1.2.0.t.0[2]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.2",
+            "index": 2
+          }
+        ],
+        "#0.0.1.2.0.t.0[3]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.3",
+            "index": 3
+          }
+        ],
+        "#0.0.1.2.0.t.0[4]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.4",
+            "index": 4
+          }
+        ],
+        "#0.0.1.2.0.t.0[5]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.5",
+            "index": 5
+          }
+        ],
+        "#0.0.1.2.0.t.1[0]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.0",
+            "index": 0
+          }
+        ],
+        "#0.0.1.2.0.t.1[1]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.1",
+            "index": 1
+          }
+        ],
+        "#0.0.1.2.0.t.1[2]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.2",
+            "index": 2
+          }
+        ],
+        "#0.0.1.2.0.t.1[3]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.3",
+            "index": 3
+          }
+        ],
+        "#0.0.1.2.0.t.1[4]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.4",
+            "index": 4
+          }
+        ],
+        "#0.0.1.2.0.t.1[5]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.5",
+            "index": 5
+          }
+        ],
+        "dev-holidays[0]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.0",
+            "index": 0
+          }
+        ],
+        "dev-holidays[1]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.1",
+            "index": 1
+          }
+        ],
+        "dev-holidays[2]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.2",
+            "index": 2
+          }
+        ],
+        "dev-holidays[3]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.3",
+            "index": 3
+          }
+        ],
+        "dev-holidays[4]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.4",
+            "index": 4
+          }
+        ],
+        "dev-holidays[5]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.5",
+            "index": 5
+          }
+        ],
+        "dev-name[0]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.0",
+            "index": 0
+          }
+        ],
+        "dev-name[1]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.1",
+            "index": 1
+          }
+        ],
+        "dev-name[2]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.2",
+            "index": 2
+          }
+        ],
+        "dev-name[3]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.3",
+            "index": 3
+          }
+        ],
+        "dev-name[4]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.4",
+            "index": 4
+          }
+        ],
+        "dev-name[5]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.5",
+            "index": 5
+          }
+        ],
+        "dev-position[0]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.0",
+            "index": 0
+          }
+        ],
+        "dev-position[1]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.1",
+            "index": 1
+          }
+        ],
+        "dev-position[2]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.2",
+            "index": 2
+          }
+        ],
+        "dev-position[3]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.3",
+            "index": 3
+          }
+        ],
+        "dev-position[4]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.4",
+            "index": 4
+          }
+        ],
+        "dev-position[5]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.5",
+            "index": 5
+          }
+        ],
+        "dev-template[0]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.0",
+            "index": 0
+          }
+        ],
+        "dev-template[1]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.1",
+            "index": 1
+          }
+        ],
+        "dev-template[2]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.2",
+            "index": 2
+          }
+        ],
+        "dev-template[3]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.3",
+            "index": 3
+          }
+        ],
+        "dev-template[4]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.4",
+            "index": 4
+          }
+        ],
+        "dev-template[5]": [
+          {
+            "declaredItemPath": "developers.items",
+            "itemPath": "developers.5",
+            "index": 5
+          }
+        ],
+        "issue-assignee[0]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.0",
+            "index": 0
+          }
+        ],
+        "issue-assignee[1]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.1",
+            "index": 1
+          }
+        ],
+        "issue-assignee[2]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.2",
+            "index": 2
+          }
+        ],
+        "issue-assignee[3]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.3",
+            "index": 3
+          }
+        ],
+        "issue-assignee[4]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.4",
+            "index": 4
+          }
+        ],
+        "issue-assignee[5]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.5",
+            "index": 5
+          }
+        ],
+        "issue-delivery[0]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.0",
+            "index": 0
+          }
+        ],
+        "issue-delivery[1]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.1",
+            "index": 1
+          }
+        ],
+        "issue-delivery[2]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.2",
+            "index": 2
+          }
+        ],
+        "issue-delivery[3]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.3",
+            "index": 3
+          }
+        ],
+        "issue-delivery[4]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.4",
+            "index": 4
+          }
+        ],
+        "issue-delivery[5]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.5",
+            "index": 5
+          }
+        ],
+        "issue-desc[0]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.0",
+            "index": 0
+          }
+        ],
+        "issue-desc[1]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.1",
+            "index": 1
+          }
+        ],
+        "issue-desc[2]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.2",
+            "index": 2
+          }
+        ],
+        "issue-desc[3]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.3",
+            "index": 3
+          }
+        ],
+        "issue-desc[4]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.4",
+            "index": 4
+          }
+        ],
+        "issue-desc[5]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.5",
+            "index": 5
+          }
+        ],
+        "issue-name[0]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.0",
+            "index": 0
+          }
+        ],
+        "issue-name[1]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.1",
+            "index": 1
+          }
+        ],
+        "issue-name[2]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.2",
+            "index": 2
+          }
+        ],
+        "issue-name[3]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.3",
+            "index": 3
+          }
+        ],
+        "issue-name[4]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.4",
+            "index": 4
+          }
+        ],
+        "issue-name[5]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.5",
+            "index": 5
+          }
+        ],
+        "issue-priority[0]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.0",
+            "index": 0
+          }
+        ],
+        "issue-priority[1]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.1",
+            "index": 1
+          }
+        ],
+        "issue-priority[2]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.2",
+            "index": 2
+          }
+        ],
+        "issue-priority[3]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.3",
+            "index": 3
+          }
+        ],
+        "issue-priority[4]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.4",
+            "index": 4
+          }
+        ],
+        "issue-priority[5]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.5",
+            "index": 5
+          }
+        ],
+        "issue-project[0]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.0",
+            "index": 0
+          }
+        ],
+        "issue-project[1]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.1",
+            "index": 1
+          }
+        ],
+        "issue-project[2]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.2",
+            "index": 2
+          }
+        ],
+        "issue-project[3]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.3",
+            "index": 3
+          }
+        ],
+        "issue-project[4]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.4",
+            "index": 4
+          }
+        ],
+        "issue-project[5]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.5",
+            "index": 5
+          }
+        ],
+        "issue-template[0]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.0",
+            "index": 0
+          }
+        ],
+        "issue-template[1]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.1",
+            "index": 1
+          }
+        ],
+        "issue-template[2]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.2",
+            "index": 2
+          }
+        ],
+        "issue-template[3]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.3",
+            "index": 3
+          }
+        ],
+        "issue-template[4]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.4",
+            "index": 4
+          }
+        ],
+        "issue-template[5]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.5",
+            "index": 5
+          }
+        ],
+        "issue-type[0]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.0",
+            "index": 0
+          }
+        ],
+        "issue-type[1]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.1",
+            "index": 1
+          }
+        ],
+        "issue-type[2]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.2",
+            "index": 2
+          }
+        ],
+        "issue-type[3]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.3",
+            "index": 3
+          }
+        ],
+        "issue-type[4]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.4",
+            "index": 4
+          }
+        ],
+        "issue-type[5]": [
+          {
+            "declaredItemPath": "issues.items",
+            "itemPath": "issues.5",
+            "index": 5
+          }
+        ],
+        "project-budget[0]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.0",
+            "index": 0
+          }
+        ],
+        "project-delivery[0]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.0",
+            "index": 0
+          }
+        ],
+        "project-desc[0]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.0",
+            "index": 0
+          }
+        ],
+        "project-name[0]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.0",
+            "index": 0
+          }
+        ],
+        "project-template[0]": [
+          {
+            "declaredItemPath": "projects.items",
+            "itemPath": "projects.0",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "calculatedWidgets": {
+      "changedEntries": {
+        "project-template[0]": {
+          "uid": "project-template[0]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "columns": 12,
+            "direction": "row"
+          },
+          "children": [
+            "project-name",
+            "project-delivery",
+            "project-budget",
+            "project-desc"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "project-name[0]": {
+          "uid": "project-name[0]",
+          "type": "textinput",
+          "kind": "input",
+          "size": 6,
+          "label": "Project Name",
+          "validator": {
+            "type": "string",
+            "required": true
+          },
+          "path": "projects.0.name",
+          "keysWithUndefined": "include exclude disabled readonly defaultValue"
+        },
+        "project-delivery[0]": {
+          "uid": "project-delivery[0]",
+          "type": "datePicker",
+          "kind": "input",
+          "size": 3,
+          "label": "Delivery Date",
+          "path": "projects.0.deliveryDate",
+          "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+        },
+        "project-budget[0]": {
+          "uid": "project-budget[0]",
+          "type": "currency",
+          "kind": "input",
+          "size": 3,
+          "label": "Budget",
+          "path": "projects.0.budget",
+          "props": {
+            "currency": "USD"
+          },
+          "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+        },
+        "project-desc[0]": {
+          "uid": "project-desc[0]",
+          "type": "markdown",
+          "kind": "input",
+          "size": 12,
+          "label": "Description",
+          "path": "projects.0.description",
+          "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+        },
+        "dev-template[0]": {
+          "uid": "dev-template[0]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "columns": 12,
+            "direction": "row"
+          },
+          "children": [
+            "dev-name",
+            "dev-position",
+            "dev-holidays"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "dev-name[0]": {
+          "uid": "dev-name[0]",
+          "type": "textinput",
+          "kind": "input",
+          "size": 4,
+          "label": "Developer Name",
+          "validator": {
+            "type": "string",
+            "required": true
+          },
+          "path": "developers.0.name",
+          "keysWithUndefined": "include exclude disabled readonly defaultValue"
+        },
+        "dev-position[0]": {
+          "uid": "dev-position[0]",
+          "type": "dropdown",
+          "kind": "input",
+          "size": 4,
+          "label": "Position",
+          "path": "developers.0.position",
+          "props": {
+            "items": [
+              {
+                "label": "Product Manager",
+                "value": "pm"
+              },
+              {
+                "label": "UI/UX Designer",
+                "value": "ui_ux"
+              },
+              {
+                "label": "Frontend Developer",
+                "value": "frontend"
+              },
+              {
+                "label": "Backend Developer",
+                "value": "backend"
+              },
+              {
+                "label": "Fullstack Developer",
+                "value": "fullstack"
+              },
+              {
+                "label": "DevOps",
+                "value": "devops"
+              }
+            ]
+          },
+          "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+        },
+        "dev-holidays[0]": {
+          "uid": "dev-holidays[0]",
+          "type": "rangeDatePicker",
+          "kind": "input",
+          "size": 4,
+          "label": "Holidays",
+          "path": "developers.0.holidays",
+          "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+        },
+        "dev-template[1]": {
+          "uid": "dev-template[1]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "columns": 12,
+            "direction": "row"
+          },
+          "children": [
+            "dev-name",
+            "dev-position",
+            "dev-holidays"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "dev-name[1]": {
+          "uid": "dev-name[1]",
+          "type": "textinput",
+          "kind": "input",
+          "size": 4,
+          "label": "Developer Name",
+          "validator": {
+            "type": "string",
+            "required": true
+          },
+          "path": "developers.1.name",
+          "keysWithUndefined": "include exclude disabled readonly defaultValue"
+        },
+        "dev-position[1]": {
+          "uid": "dev-position[1]",
+          "type": "dropdown",
+          "kind": "input",
+          "size": 4,
+          "label": "Position",
+          "path": "developers.1.position",
+          "props": {
+            "items": [
+              {
+                "label": "Product Manager",
+                "value": "pm"
+              },
+              {
+                "label": "UI/UX Designer",
+                "value": "ui_ux"
+              },
+              {
+                "label": "Frontend Developer",
+                "value": "frontend"
+              },
+              {
+                "label": "Backend Developer",
+                "value": "backend"
+              },
+              {
+                "label": "Fullstack Developer",
+                "value": "fullstack"
+              },
+              {
+                "label": "DevOps",
+                "value": "devops"
+              }
+            ]
+          },
+          "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+        },
+        "dev-holidays[1]": {
+          "uid": "dev-holidays[1]",
+          "type": "rangeDatePicker",
+          "kind": "input",
+          "size": 4,
+          "label": "Holidays",
+          "path": "developers.1.holidays",
+          "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+        },
+        "dev-template[2]": {
+          "uid": "dev-template[2]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "columns": 12,
+            "direction": "row"
+          },
+          "children": [
+            "dev-name",
+            "dev-position",
+            "dev-holidays"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "dev-name[2]": {
+          "uid": "dev-name[2]",
+          "type": "textinput",
+          "kind": "input",
+          "size": 4,
+          "label": "Developer Name",
+          "validator": {
+            "type": "string",
+            "required": true
+          },
+          "path": "developers.2.name",
+          "keysWithUndefined": "include exclude disabled readonly defaultValue"
+        },
+        "dev-position[2]": {
+          "uid": "dev-position[2]",
+          "type": "dropdown",
+          "kind": "input",
+          "size": 4,
+          "label": "Position",
+          "path": "developers.2.position",
+          "props": {
+            "items": [
+              {
+                "label": "Product Manager",
+                "value": "pm"
+              },
+              {
+                "label": "UI/UX Designer",
+                "value": "ui_ux"
+              },
+              {
+                "label": "Frontend Developer",
+                "value": "frontend"
+              },
+              {
+                "label": "Backend Developer",
+                "value": "backend"
+              },
+              {
+                "label": "Fullstack Developer",
+                "value": "fullstack"
+              },
+              {
+                "label": "DevOps",
+                "value": "devops"
+              }
+            ]
+          },
+          "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+        },
+        "dev-holidays[2]": {
+          "uid": "dev-holidays[2]",
+          "type": "rangeDatePicker",
+          "kind": "input",
+          "size": 4,
+          "label": "Holidays",
+          "path": "developers.2.holidays",
+          "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+        },
+        "dev-template[3]": {
+          "uid": "dev-template[3]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "columns": 12,
+            "direction": "row"
+          },
+          "children": [
+            "dev-name",
+            "dev-position",
+            "dev-holidays"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "dev-name[3]": {
+          "uid": "dev-name[3]",
+          "type": "textinput",
+          "kind": "input",
+          "size": 4,
+          "label": "Developer Name",
+          "validator": {
+            "type": "string",
+            "required": true
+          },
+          "path": "developers.3.name",
+          "keysWithUndefined": "include exclude disabled readonly defaultValue"
+        },
+        "dev-position[3]": {
+          "uid": "dev-position[3]",
+          "type": "dropdown",
+          "kind": "input",
+          "size": 4,
+          "label": "Position",
+          "path": "developers.3.position",
+          "props": {
+            "items": [
+              {
+                "label": "Product Manager",
+                "value": "pm"
+              },
+              {
+                "label": "UI/UX Designer",
+                "value": "ui_ux"
+              },
+              {
+                "label": "Frontend Developer",
+                "value": "frontend"
+              },
+              {
+                "label": "Backend Developer",
+                "value": "backend"
+              },
+              {
+                "label": "Fullstack Developer",
+                "value": "fullstack"
+              },
+              {
+                "label": "DevOps",
+                "value": "devops"
+              }
+            ]
+          },
+          "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+        },
+        "dev-holidays[3]": {
+          "uid": "dev-holidays[3]",
+          "type": "rangeDatePicker",
+          "kind": "input",
+          "size": 4,
+          "label": "Holidays",
+          "path": "developers.3.holidays",
+          "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+        },
+        "dev-template[4]": {
+          "uid": "dev-template[4]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "columns": 12,
+            "direction": "row"
+          },
+          "children": [
+            "dev-name",
+            "dev-position",
+            "dev-holidays"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "dev-name[4]": {
+          "uid": "dev-name[4]",
+          "type": "textinput",
+          "kind": "input",
+          "size": 4,
+          "label": "Developer Name",
+          "validator": {
+            "type": "string",
+            "required": true
+          },
+          "path": "developers.4.name",
+          "keysWithUndefined": "include exclude disabled readonly defaultValue"
+        },
+        "dev-position[4]": {
+          "uid": "dev-position[4]",
+          "type": "dropdown",
+          "kind": "input",
+          "size": 4,
+          "label": "Position",
+          "path": "developers.4.position",
+          "props": {
+            "items": [
+              {
+                "label": "Product Manager",
+                "value": "pm"
+              },
+              {
+                "label": "UI/UX Designer",
+                "value": "ui_ux"
+              },
+              {
+                "label": "Frontend Developer",
+                "value": "frontend"
+              },
+              {
+                "label": "Backend Developer",
+                "value": "backend"
+              },
+              {
+                "label": "Fullstack Developer",
+                "value": "fullstack"
+              },
+              {
+                "label": "DevOps",
+                "value": "devops"
+              }
+            ]
+          },
+          "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+        },
+        "dev-holidays[4]": {
+          "uid": "dev-holidays[4]",
+          "type": "rangeDatePicker",
+          "kind": "input",
+          "size": 4,
+          "label": "Holidays",
+          "path": "developers.4.holidays",
+          "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+        },
+        "dev-template[5]": {
+          "uid": "dev-template[5]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "columns": 12,
+            "direction": "row"
+          },
+          "children": [
+            "dev-name",
+            "dev-position",
+            "dev-holidays"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "dev-name[5]": {
+          "uid": "dev-name[5]",
+          "type": "textinput",
+          "kind": "input",
+          "size": 4,
+          "label": "Developer Name",
+          "validator": {
+            "type": "string",
+            "required": true
+          },
+          "path": "developers.5.name",
+          "keysWithUndefined": "include exclude disabled readonly defaultValue"
+        },
+        "dev-position[5]": {
+          "uid": "dev-position[5]",
+          "type": "dropdown",
+          "kind": "input",
+          "size": 4,
+          "label": "Position",
+          "path": "developers.5.position",
+          "props": {
+            "items": [
+              {
+                "label": "Product Manager",
+                "value": "pm"
+              },
+              {
+                "label": "UI/UX Designer",
+                "value": "ui_ux"
+              },
+              {
+                "label": "Frontend Developer",
+                "value": "frontend"
+              },
+              {
+                "label": "Backend Developer",
+                "value": "backend"
+              },
+              {
+                "label": "Fullstack Developer",
+                "value": "fullstack"
+              },
+              {
+                "label": "DevOps",
+                "value": "devops"
+              }
+            ]
+          },
+          "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+        },
+        "dev-holidays[5]": {
+          "uid": "dev-holidays[5]",
+          "type": "rangeDatePicker",
+          "kind": "input",
+          "size": 4,
+          "label": "Holidays",
+          "path": "developers.5.holidays",
+          "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
+        },
+        "issue-template[0]": {
+          "uid": "issue-template[0]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "direction": "row"
+          },
+          "children": [
+            "#0.0.1.2.0.t.0",
+            "#0.0.1.2.0.t.1"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "#0.0.1.2.0.t.0[0]": {
+          "uid": "#0.0.1.2.0.t.0[0]",
+          "type": "grid",
+          "kind": "layout",
+          "size": 3,
+          "props": {
+            "direction": "column",
+            "justify": "start"
+          },
+          "children": [
+            "issue-name",
+            "issue-desc"
+          ],
+          "keysWithUndefined": "include exclude"
+        },
+        "issue-name[0]": {
+          "uid": "issue-name[0]",
+          "type": "textinput",
+          "kind": "input",
+          "label": "Issue Name",
+          "validator": {
+            "type": "string",
+            "required": true
+          },
+          "path": "issues.0.name",
+          "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+        },
+        "issue-desc[0]": {
+          "uid": "issue-desc[0]",
+          "type": "markdown",
+          "kind": "input",
+          "label": "Issue Description (be precise)",
+          "path": "issues.0.description",
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "#0.0.1.2.0.t.1[0]": {
+          "uid": "#0.0.1.2.0.t.1[0]",
+          "type": "grid",
+          "kind": "layout",
+          "size": 1,
+          "props": {
+            "direction": "column"
+          },
+          "children": [
+            "issue-type",
+            "issue-project",
+            "issue-assignee",
+            "issue-delivery",
+            "issue-priority"
+          ],
+          "keysWithUndefined": "include exclude"
+        },
+        "issue-type[0]": {
+          "uid": "issue-type[0]",
+          "type": "dropdown",
+          "kind": "input",
+          "label": "Type",
+          "path": "issues.0.type",
+          "props": {
+            "items": [
+              {
+                "label": "Feature",
+                "value": "feature"
+              },
+              {
+                "label": "Improvement",
+                "value": "improvement"
+              },
+              {
+                "label": "Bug",
+                "value": "bug"
+              },
+              {
+                "label": "Documentation",
+                "value": "documentation"
+              },
+              {
+                "label": "Test",
+                "value": "test"
+              },
+              {
+                "label": "Chore",
+                "value": "chore"
+              }
+            ]
+          },
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-project[0]": {
+          "uid": "issue-project[0]",
+          "type": "dropdown",
+          "kind": "input",
+          "label": "Project",
+          "path": "issues.0.projectId",
+          "props": {
+            "placeholder": "Select Project",
+            "items": [],
+            "labelField": "name",
+            "valueField": "name"
+          },
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-assignee[0]": {
+          "uid": "issue-assignee[0]",
+          "type": "dropdown",
+          "kind": "input",
+          "label": "Assign To",
+          "path": "issues.0.assigneeId",
+          "props": {
+            "placeholder": "Select Developer",
+            "items": [],
+            "labelField": "name",
+            "valueField": "name"
+          },
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-delivery[0]": {
+          "uid": "issue-delivery[0]",
+          "type": "datePicker",
+          "kind": "input",
+          "label": "Est. Delivery Date",
+          "path": "issues.0.estDelivery",
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-priority[0]": {
+          "uid": "issue-priority[0]",
+          "type": "toggle",
+          "kind": "input",
+          "label": "High Priority",
+          "path": "issues.0.highPriority",
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-template[1]": {
+          "uid": "issue-template[1]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "direction": "row"
+          },
+          "children": [
+            "#0.0.1.2.0.t.0",
+            "#0.0.1.2.0.t.1"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "#0.0.1.2.0.t.0[1]": {
+          "uid": "#0.0.1.2.0.t.0[1]",
+          "type": "grid",
+          "kind": "layout",
+          "size": 3,
+          "props": {
+            "direction": "column",
+            "justify": "start"
+          },
+          "children": [
+            "issue-name",
+            "issue-desc"
+          ],
+          "keysWithUndefined": "include exclude"
+        },
+        "issue-name[1]": {
+          "uid": "issue-name[1]",
+          "type": "textinput",
+          "kind": "input",
+          "label": "Issue Name",
+          "validator": {
+            "type": "string",
+            "required": true
+          },
+          "path": "issues.1.name",
+          "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+        },
+        "issue-desc[1]": {
+          "uid": "issue-desc[1]",
+          "type": "markdown",
+          "kind": "input",
+          "label": "Issue Description (be precise)",
+          "path": "issues.1.description",
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "#0.0.1.2.0.t.1[1]": {
+          "uid": "#0.0.1.2.0.t.1[1]",
+          "type": "grid",
+          "kind": "layout",
+          "size": 1,
+          "props": {
+            "direction": "column"
+          },
+          "children": [
+            "issue-type",
+            "issue-project",
+            "issue-assignee",
+            "issue-delivery",
+            "issue-priority"
+          ],
+          "keysWithUndefined": "include exclude"
+        },
+        "issue-type[1]": {
+          "uid": "issue-type[1]",
+          "type": "dropdown",
+          "kind": "input",
+          "label": "Type",
+          "path": "issues.1.type",
+          "props": {
+            "items": [
+              {
+                "label": "Feature",
+                "value": "feature"
+              },
+              {
+                "label": "Improvement",
+                "value": "improvement"
+              },
+              {
+                "label": "Bug",
+                "value": "bug"
+              },
+              {
+                "label": "Documentation",
+                "value": "documentation"
+              },
+              {
+                "label": "Test",
+                "value": "test"
+              },
+              {
+                "label": "Chore",
+                "value": "chore"
+              }
+            ]
+          },
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-project[1]": {
+          "uid": "issue-project[1]",
+          "type": "dropdown",
+          "kind": "input",
+          "label": "Project",
+          "path": "issues.1.projectId",
+          "props": {
+            "placeholder": "Select Project",
+            "items": [],
+            "labelField": "name",
+            "valueField": "name"
+          },
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-assignee[1]": {
+          "uid": "issue-assignee[1]",
+          "type": "dropdown",
+          "kind": "input",
+          "label": "Assign To",
+          "path": "issues.1.assigneeId",
+          "props": {
+            "placeholder": "Select Developer",
+            "items": [],
+            "labelField": "name",
+            "valueField": "name"
+          },
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-delivery[1]": {
+          "uid": "issue-delivery[1]",
+          "type": "datePicker",
+          "kind": "input",
+          "label": "Est. Delivery Date",
+          "path": "issues.1.estDelivery",
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-priority[1]": {
+          "uid": "issue-priority[1]",
+          "type": "toggle",
+          "kind": "input",
+          "label": "High Priority",
+          "path": "issues.1.highPriority",
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-template[2]": {
+          "uid": "issue-template[2]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "direction": "row"
+          },
+          "children": [
+            "#0.0.1.2.0.t.0",
+            "#0.0.1.2.0.t.1"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "#0.0.1.2.0.t.0[2]": {
+          "uid": "#0.0.1.2.0.t.0[2]",
+          "type": "grid",
+          "kind": "layout",
+          "size": 3,
+          "props": {
+            "direction": "column",
+            "justify": "start"
+          },
+          "children": [
+            "issue-name",
+            "issue-desc"
+          ],
+          "keysWithUndefined": "include exclude"
+        },
+        "issue-name[2]": {
+          "uid": "issue-name[2]",
+          "type": "textinput",
+          "kind": "input",
+          "label": "Issue Name",
+          "validator": {
+            "type": "string",
+            "required": true
+          },
+          "path": "issues.2.name",
+          "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+        },
+        "issue-desc[2]": {
+          "uid": "issue-desc[2]",
+          "type": "markdown",
+          "kind": "input",
+          "label": "Issue Description (be precise)",
+          "path": "issues.2.description",
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "#0.0.1.2.0.t.1[2]": {
+          "uid": "#0.0.1.2.0.t.1[2]",
+          "type": "grid",
+          "kind": "layout",
+          "size": 1,
+          "props": {
+            "direction": "column"
+          },
+          "children": [
+            "issue-type",
+            "issue-project",
+            "issue-assignee",
+            "issue-delivery",
+            "issue-priority"
+          ],
+          "keysWithUndefined": "include exclude"
+        },
+        "issue-type[2]": {
+          "uid": "issue-type[2]",
+          "type": "dropdown",
+          "kind": "input",
+          "label": "Type",
+          "path": "issues.2.type",
+          "props": {
+            "items": [
+              {
+                "label": "Feature",
+                "value": "feature"
+              },
+              {
+                "label": "Improvement",
+                "value": "improvement"
+              },
+              {
+                "label": "Bug",
+                "value": "bug"
+              },
+              {
+                "label": "Documentation",
+                "value": "documentation"
+              },
+              {
+                "label": "Test",
+                "value": "test"
+              },
+              {
+                "label": "Chore",
+                "value": "chore"
+              }
+            ]
+          },
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-project[2]": {
+          "uid": "issue-project[2]",
+          "type": "dropdown",
+          "kind": "input",
+          "label": "Project",
+          "path": "issues.2.projectId",
+          "props": {
+            "placeholder": "Select Project",
+            "items": [],
+            "labelField": "name",
+            "valueField": "name"
+          },
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-assignee[2]": {
+          "uid": "issue-assignee[2]",
+          "type": "dropdown",
+          "kind": "input",
+          "label": "Assign To",
+          "path": "issues.2.assigneeId",
+          "props": {
+            "placeholder": "Select Developer",
+            "items": [],
+            "labelField": "name",
+            "valueField": "name"
+          },
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-delivery[2]": {
+          "uid": "issue-delivery[2]",
+          "type": "datePicker",
+          "kind": "input",
+          "label": "Est. Delivery Date",
+          "path": "issues.2.estDelivery",
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-priority[2]": {
+          "uid": "issue-priority[2]",
+          "type": "toggle",
+          "kind": "input",
+          "label": "High Priority",
+          "path": "issues.2.highPriority",
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-template[3]": {
+          "uid": "issue-template[3]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "direction": "row"
+          },
+          "children": [
+            "#0.0.1.2.0.t.0",
+            "#0.0.1.2.0.t.1"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "#0.0.1.2.0.t.0[3]": {
+          "uid": "#0.0.1.2.0.t.0[3]",
+          "type": "grid",
+          "kind": "layout",
+          "size": 3,
+          "props": {
+            "direction": "column",
+            "justify": "start"
+          },
+          "children": [
+            "issue-name",
+            "issue-desc"
+          ],
+          "keysWithUndefined": "include exclude"
+        },
+        "issue-name[3]": {
+          "uid": "issue-name[3]",
+          "type": "textinput",
+          "kind": "input",
+          "label": "Issue Name",
+          "validator": {
+            "type": "string",
+            "required": true
+          },
+          "path": "issues.3.name",
+          "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+        },
+        "issue-desc[3]": {
+          "uid": "issue-desc[3]",
+          "type": "markdown",
+          "kind": "input",
+          "label": "Issue Description (be precise)",
+          "path": "issues.3.description",
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "#0.0.1.2.0.t.1[3]": {
+          "uid": "#0.0.1.2.0.t.1[3]",
+          "type": "grid",
+          "kind": "layout",
+          "size": 1,
+          "props": {
+            "direction": "column"
+          },
+          "children": [
+            "issue-type",
+            "issue-project",
+            "issue-assignee",
+            "issue-delivery",
+            "issue-priority"
+          ],
+          "keysWithUndefined": "include exclude"
+        },
+        "issue-type[3]": {
+          "uid": "issue-type[3]",
+          "type": "dropdown",
+          "kind": "input",
+          "label": "Type",
+          "path": "issues.3.type",
+          "props": {
+            "items": [
+              {
+                "label": "Feature",
+                "value": "feature"
+              },
+              {
+                "label": "Improvement",
+                "value": "improvement"
+              },
+              {
+                "label": "Bug",
+                "value": "bug"
+              },
+              {
+                "label": "Documentation",
+                "value": "documentation"
+              },
+              {
+                "label": "Test",
+                "value": "test"
+              },
+              {
+                "label": "Chore",
+                "value": "chore"
+              }
+            ]
+          },
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-project[3]": {
+          "uid": "issue-project[3]",
+          "type": "dropdown",
+          "kind": "input",
+          "label": "Project",
+          "path": "issues.3.projectId",
+          "props": {
+            "placeholder": "Select Project",
+            "items": [],
+            "labelField": "name",
+            "valueField": "name"
+          },
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-assignee[3]": {
+          "uid": "issue-assignee[3]",
+          "type": "dropdown",
+          "kind": "input",
+          "label": "Assign To",
+          "path": "issues.3.assigneeId",
+          "props": {
+            "placeholder": "Select Developer",
+            "items": [],
+            "labelField": "name",
+            "valueField": "name"
+          },
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-delivery[3]": {
+          "uid": "issue-delivery[3]",
+          "type": "datePicker",
+          "kind": "input",
+          "label": "Est. Delivery Date",
+          "path": "issues.3.estDelivery",
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-priority[3]": {
+          "uid": "issue-priority[3]",
+          "type": "toggle",
+          "kind": "input",
+          "label": "High Priority",
+          "path": "issues.3.highPriority",
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-template[4]": {
+          "uid": "issue-template[4]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "direction": "row"
+          },
+          "children": [
+            "#0.0.1.2.0.t.0",
+            "#0.0.1.2.0.t.1"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "#0.0.1.2.0.t.0[4]": {
+          "uid": "#0.0.1.2.0.t.0[4]",
+          "type": "grid",
+          "kind": "layout",
+          "size": 3,
+          "props": {
+            "direction": "column",
+            "justify": "start"
+          },
+          "children": [
+            "issue-name",
+            "issue-desc"
+          ],
+          "keysWithUndefined": "include exclude"
+        },
+        "issue-name[4]": {
+          "uid": "issue-name[4]",
+          "type": "textinput",
+          "kind": "input",
+          "label": "Issue Name",
+          "validator": {
+            "type": "string",
+            "required": true
+          },
+          "path": "issues.4.name",
+          "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+        },
+        "issue-desc[4]": {
+          "uid": "issue-desc[4]",
+          "type": "markdown",
+          "kind": "input",
+          "label": "Issue Description (be precise)",
+          "path": "issues.4.description",
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "#0.0.1.2.0.t.1[4]": {
+          "uid": "#0.0.1.2.0.t.1[4]",
+          "type": "grid",
+          "kind": "layout",
+          "size": 1,
+          "props": {
+            "direction": "column"
+          },
+          "children": [
+            "issue-type",
+            "issue-project",
+            "issue-assignee",
+            "issue-delivery",
+            "issue-priority"
+          ],
+          "keysWithUndefined": "include exclude"
+        },
+        "issue-type[4]": {
+          "uid": "issue-type[4]",
+          "type": "dropdown",
+          "kind": "input",
+          "label": "Type",
+          "path": "issues.4.type",
+          "props": {
+            "items": [
+              {
+                "label": "Feature",
+                "value": "feature"
+              },
+              {
+                "label": "Improvement",
+                "value": "improvement"
+              },
+              {
+                "label": "Bug",
+                "value": "bug"
+              },
+              {
+                "label": "Documentation",
+                "value": "documentation"
+              },
+              {
+                "label": "Test",
+                "value": "test"
+              },
+              {
+                "label": "Chore",
+                "value": "chore"
+              }
+            ]
+          },
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-project[4]": {
+          "uid": "issue-project[4]",
+          "type": "dropdown",
+          "kind": "input",
+          "label": "Project",
+          "path": "issues.4.projectId",
+          "props": {
+            "placeholder": "Select Project",
+            "items": [],
+            "labelField": "name",
+            "valueField": "name"
+          },
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-assignee[4]": {
+          "uid": "issue-assignee[4]",
+          "type": "dropdown",
+          "kind": "input",
+          "label": "Assign To",
+          "path": "issues.4.assigneeId",
+          "props": {
+            "placeholder": "Select Developer",
+            "items": [],
+            "labelField": "name",
+            "valueField": "name"
+          },
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-delivery[4]": {
+          "uid": "issue-delivery[4]",
+          "type": "datePicker",
+          "kind": "input",
+          "label": "Est. Delivery Date",
+          "path": "issues.4.estDelivery",
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-priority[4]": {
+          "uid": "issue-priority[4]",
+          "type": "toggle",
+          "kind": "input",
+          "label": "High Priority",
+          "path": "issues.4.highPriority",
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-template[5]": {
+          "uid": "issue-template[5]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "direction": "row"
+          },
+          "children": [
+            "#0.0.1.2.0.t.0",
+            "#0.0.1.2.0.t.1"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "#0.0.1.2.0.t.0[5]": {
+          "uid": "#0.0.1.2.0.t.0[5]",
+          "type": "grid",
+          "kind": "layout",
+          "size": 3,
+          "props": {
+            "direction": "column",
+            "justify": "start"
+          },
+          "children": [
+            "issue-name",
+            "issue-desc"
+          ],
+          "keysWithUndefined": "include exclude"
+        },
+        "issue-name[5]": {
+          "uid": "issue-name[5]",
+          "type": "textinput",
+          "kind": "input",
+          "label": "Issue Name",
+          "validator": {
+            "type": "string",
+            "required": true
+          },
+          "path": "issues.5.name",
+          "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+        },
+        "issue-desc[5]": {
+          "uid": "issue-desc[5]",
+          "type": "markdown",
+          "kind": "input",
+          "label": "Issue Description (be precise)",
+          "path": "issues.5.description",
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "#0.0.1.2.0.t.1[5]": {
+          "uid": "#0.0.1.2.0.t.1[5]",
+          "type": "grid",
+          "kind": "layout",
+          "size": 1,
+          "props": {
+            "direction": "column"
+          },
+          "children": [
+            "issue-type",
+            "issue-project",
+            "issue-assignee",
+            "issue-delivery",
+            "issue-priority"
+          ],
+          "keysWithUndefined": "include exclude"
+        },
+        "issue-type[5]": {
+          "uid": "issue-type[5]",
+          "type": "dropdown",
+          "kind": "input",
+          "label": "Type",
+          "path": "issues.5.type",
+          "props": {
+            "items": [
+              {
+                "label": "Feature",
+                "value": "feature"
+              },
+              {
+                "label": "Improvement",
+                "value": "improvement"
+              },
+              {
+                "label": "Bug",
+                "value": "bug"
+              },
+              {
+                "label": "Documentation",
+                "value": "documentation"
+              },
+              {
+                "label": "Test",
+                "value": "test"
+              },
+              {
+                "label": "Chore",
+                "value": "chore"
+              }
+            ]
+          },
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-project[5]": {
+          "uid": "issue-project[5]",
+          "type": "dropdown",
+          "kind": "input",
+          "label": "Project",
+          "path": "issues.5.projectId",
+          "props": {
+            "placeholder": "Select Project",
+            "items": [],
+            "labelField": "name",
+            "valueField": "name"
+          },
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-assignee[5]": {
+          "uid": "issue-assignee[5]",
+          "type": "dropdown",
+          "kind": "input",
+          "label": "Assign To",
+          "path": "issues.5.assigneeId",
+          "props": {
+            "placeholder": "Select Developer",
+            "items": [],
+            "labelField": "name",
+            "valueField": "name"
+          },
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-delivery[5]": {
+          "uid": "issue-delivery[5]",
+          "type": "datePicker",
+          "kind": "input",
+          "label": "Est. Delivery Date",
+          "path": "issues.5.estDelivery",
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        },
+        "issue-priority[5]": {
+          "uid": "issue-priority[5]",
+          "type": "toggle",
+          "kind": "input",
+          "label": "High Priority",
+          "path": "issues.5.highPriority",
+          "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+        }
+      }
+    }
+  },
+  "afterEmptyData": {
+    "data": {
+      "projects": "[undefined]",
+      "developers": "[undefined]",
+      "issues": "[undefined]"
+    },
+    "validations": {
+      "removedKeys": [
+        "developers.0.holidays",
+        "developers.0.name",
+        "developers.0.position",
+        "developers.1.holidays",
+        "developers.1.name",
+        "developers.1.position",
+        "developers.2.holidays",
+        "developers.2.name",
+        "developers.2.position",
+        "developers.3.holidays",
+        "developers.3.name",
+        "developers.3.position",
+        "developers.4.holidays",
+        "developers.4.name",
+        "developers.4.position",
+        "developers.5.holidays",
+        "developers.5.name",
+        "developers.5.position",
+        "issues.0.assigneeId",
+        "issues.0.description",
+        "issues.0.estDelivery",
+        "issues.0.highPriority",
+        "issues.0.name",
+        "issues.0.projectId",
+        "issues.0.type",
+        "issues.1.assigneeId",
+        "issues.1.description",
+        "issues.1.estDelivery",
+        "issues.1.highPriority",
+        "issues.1.name",
+        "issues.1.projectId",
+        "issues.1.type",
+        "issues.2.assigneeId",
+        "issues.2.description",
+        "issues.2.estDelivery",
+        "issues.2.highPriority",
+        "issues.2.name",
+        "issues.2.projectId",
+        "issues.2.type",
+        "issues.3.assigneeId",
+        "issues.3.description",
+        "issues.3.estDelivery",
+        "issues.3.highPriority",
+        "issues.3.name",
+        "issues.3.projectId",
+        "issues.3.type",
+        "issues.4.assigneeId",
+        "issues.4.description",
+        "issues.4.estDelivery",
+        "issues.4.highPriority",
+        "issues.4.name",
+        "issues.4.projectId",
+        "issues.4.type",
+        "issues.5.assigneeId",
+        "issues.5.description",
+        "issues.5.estDelivery",
+        "issues.5.highPriority",
+        "issues.5.name",
+        "issues.5.projectId",
+        "issues.5.type",
+        "projects.0.budget",
+        "projects.0.deliveryDate",
+        "projects.0.description",
+        "projects.0.name"
+      ]
+    },
+    "touchedControls": {
+      "removedKeys": [
+        "developers.0.holidays",
+        "developers.0.name",
+        "developers.0.position",
+        "developers.1.holidays",
+        "developers.1.name",
+        "developers.1.position",
+        "developers.2.holidays",
+        "developers.2.name",
+        "developers.2.position",
+        "developers.3.holidays",
+        "developers.3.name",
+        "developers.3.position",
+        "developers.4.holidays",
+        "developers.4.name",
+        "developers.4.position",
+        "developers.5.holidays",
+        "developers.5.name",
+        "developers.5.position",
+        "issues.0.assigneeId",
+        "issues.0.description",
+        "issues.0.estDelivery",
+        "issues.0.highPriority",
+        "issues.0.name",
+        "issues.0.projectId",
+        "issues.0.type",
+        "issues.1.assigneeId",
+        "issues.1.description",
+        "issues.1.estDelivery",
+        "issues.1.highPriority",
+        "issues.1.name",
+        "issues.1.projectId",
+        "issues.1.type",
+        "issues.2.assigneeId",
+        "issues.2.description",
+        "issues.2.estDelivery",
+        "issues.2.highPriority",
+        "issues.2.name",
+        "issues.2.projectId",
+        "issues.2.type",
+        "issues.3.assigneeId",
+        "issues.3.description",
+        "issues.3.estDelivery",
+        "issues.3.highPriority",
+        "issues.3.name",
+        "issues.3.projectId",
+        "issues.3.type",
+        "issues.4.assigneeId",
+        "issues.4.description",
+        "issues.4.estDelivery",
+        "issues.4.highPriority",
+        "issues.4.name",
+        "issues.4.projectId",
+        "issues.4.type",
+        "issues.5.assigneeId",
+        "issues.5.description",
+        "issues.5.estDelivery",
+        "issues.5.highPriority",
+        "issues.5.name",
+        "issues.5.projectId",
+        "issues.5.type",
+        "projects.0.budget",
+        "projects.0.deliveryDate",
+        "projects.0.description",
+        "projects.0.name"
+      ]
+    },
+    "resolvedSources": {
+      "removedKeys": [
+        "project-template[0]",
+        "project-name[0]",
+        "project-delivery[0]",
+        "project-budget[0]",
+        "project-desc[0]",
+        "dev-template[0]",
+        "dev-name[0]",
+        "dev-position[0]",
+        "dev-holidays[0]",
+        "dev-template[1]",
+        "dev-name[1]",
+        "dev-position[1]",
+        "dev-holidays[1]",
+        "dev-template[2]",
+        "dev-name[2]",
+        "dev-position[2]",
+        "dev-holidays[2]",
+        "dev-template[3]",
+        "dev-name[3]",
+        "dev-position[3]",
+        "dev-holidays[3]",
+        "dev-template[4]",
+        "dev-name[4]",
+        "dev-position[4]",
+        "dev-holidays[4]",
+        "dev-template[5]",
+        "dev-name[5]",
+        "dev-position[5]",
+        "dev-holidays[5]",
+        "issue-template[0]",
+        "#0.0.1.2.0.t.0[0]",
+        "issue-name[0]",
+        "issue-desc[0]",
+        "#0.0.1.2.0.t.1[0]",
+        "issue-type[0]",
+        "issue-project[0]",
+        "issue-assignee[0]",
+        "issue-delivery[0]",
+        "issue-priority[0]",
+        "issue-template[1]",
+        "#0.0.1.2.0.t.0[1]",
+        "issue-name[1]",
+        "issue-desc[1]",
+        "#0.0.1.2.0.t.1[1]",
+        "issue-type[1]",
+        "issue-project[1]",
+        "issue-assignee[1]",
+        "issue-delivery[1]",
+        "issue-priority[1]",
+        "issue-template[2]",
+        "#0.0.1.2.0.t.0[2]",
+        "issue-name[2]",
+        "issue-desc[2]",
+        "#0.0.1.2.0.t.1[2]",
+        "issue-type[2]",
+        "issue-project[2]",
+        "issue-assignee[2]",
+        "issue-delivery[2]",
+        "issue-priority[2]",
+        "issue-template[3]",
+        "#0.0.1.2.0.t.0[3]",
+        "issue-name[3]",
+        "issue-desc[3]",
+        "#0.0.1.2.0.t.1[3]",
+        "issue-type[3]",
+        "issue-project[3]",
+        "issue-assignee[3]",
+        "issue-delivery[3]",
+        "issue-priority[3]",
+        "issue-template[4]",
+        "#0.0.1.2.0.t.0[4]",
+        "issue-name[4]",
+        "issue-desc[4]",
+        "#0.0.1.2.0.t.1[4]",
+        "issue-type[4]",
+        "issue-project[4]",
+        "issue-assignee[4]",
+        "issue-delivery[4]",
+        "issue-priority[4]",
+        "issue-template[5]",
+        "#0.0.1.2.0.t.0[5]",
+        "issue-name[5]",
+        "issue-desc[5]",
+        "#0.0.1.2.0.t.1[5]",
+        "issue-type[5]",
+        "issue-project[5]",
+        "issue-assignee[5]",
+        "issue-delivery[5]",
+        "issue-priority[5]"
+      ]
+    },
+    "repeaterItemScopes": {
+      "allEntries": {}
+    },
+    "repeaterRows": {
+      "allEntries": {}
+    },
+    "calculatedWidgets": {
+      "removedKeys": [
+        "project-template[0]",
+        "project-name[0]",
+        "project-delivery[0]",
+        "project-budget[0]",
+        "project-desc[0]",
+        "dev-template[0]",
+        "dev-name[0]",
+        "dev-position[0]",
+        "dev-holidays[0]",
+        "dev-template[1]",
+        "dev-name[1]",
+        "dev-position[1]",
+        "dev-holidays[1]",
+        "dev-template[2]",
+        "dev-name[2]",
+        "dev-position[2]",
+        "dev-holidays[2]",
+        "dev-template[3]",
+        "dev-name[3]",
+        "dev-position[3]",
+        "dev-holidays[3]",
+        "dev-template[4]",
+        "dev-name[4]",
+        "dev-position[4]",
+        "dev-holidays[4]",
+        "dev-template[5]",
+        "dev-name[5]",
+        "dev-position[5]",
+        "dev-holidays[5]",
+        "issue-template[0]",
+        "#0.0.1.2.0.t.0[0]",
+        "issue-name[0]",
+        "issue-desc[0]",
+        "#0.0.1.2.0.t.1[0]",
+        "issue-type[0]",
+        "issue-project[0]",
+        "issue-assignee[0]",
+        "issue-delivery[0]",
+        "issue-priority[0]",
+        "issue-template[1]",
+        "#0.0.1.2.0.t.0[1]",
+        "issue-name[1]",
+        "issue-desc[1]",
+        "#0.0.1.2.0.t.1[1]",
+        "issue-type[1]",
+        "issue-project[1]",
+        "issue-assignee[1]",
+        "issue-delivery[1]",
+        "issue-priority[1]",
+        "issue-template[2]",
+        "#0.0.1.2.0.t.0[2]",
+        "issue-name[2]",
+        "issue-desc[2]",
+        "#0.0.1.2.0.t.1[2]",
+        "issue-type[2]",
+        "issue-project[2]",
+        "issue-assignee[2]",
+        "issue-delivery[2]",
+        "issue-priority[2]",
+        "issue-template[3]",
+        "#0.0.1.2.0.t.0[3]",
+        "issue-name[3]",
+        "issue-desc[3]",
+        "#0.0.1.2.0.t.1[3]",
+        "issue-type[3]",
+        "issue-project[3]",
+        "issue-assignee[3]",
+        "issue-delivery[3]",
+        "issue-priority[3]",
+        "issue-template[4]",
+        "#0.0.1.2.0.t.0[4]",
+        "issue-name[4]",
+        "issue-desc[4]",
+        "#0.0.1.2.0.t.1[4]",
+        "issue-type[4]",
+        "issue-project[4]",
+        "issue-assignee[4]",
+        "issue-delivery[4]",
+        "issue-priority[4]",
+        "issue-template[5]",
+        "#0.0.1.2.0.t.0[5]",
+        "issue-name[5]",
+        "issue-desc[5]",
+        "#0.0.1.2.0.t.1[5]",
+        "issue-type[5]",
+        "issue-project[5]",
+        "issue-assignee[5]",
+        "issue-delivery[5]",
+        "issue-priority[5]"
+      ]
+    }
+  }
+}

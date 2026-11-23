@@ -1,0 +1,187 @@
+{
+  "afterStart": {
+    "formHealth": {
+      "status": "ok"
+    },
+    "isFormValid": true,
+    "touched": false,
+    "allControlsValidated": false,
+    "currentStates": [],
+    "data": {
+      "name": "[undefined]",
+      "greeting": "[undefined]",
+      "wrongGreeting": "[undefined]",
+      "greetingIndex": "[undefined]",
+      "selects": {
+        "subregion": "[undefined]",
+        "country": "[undefined]"
+      }
+    },
+    "validations": {},
+    "touchedControls": {},
+    "widgetFlags": {
+      "selects.country-select": {
+        "hidden": true
+      }
+    },
+    "resolvedSources": {
+      "#0": "layout grid",
+      "name-textinput": "input textinput name",
+      "greeting-select": "input select greeting",
+      "wrongGreeting-select": "input select wrongGreeting",
+      "greetingIndex-select": "input select greetingIndex",
+      "selects.subregion-select": "input select selects.subregion",
+      "selects.country-select": "input select selects.country",
+      "#0.6": "action button"
+    },
+    "repeaterItemScopes": {},
+    "repeaterRows": {},
+    "calculatedWidgets": {
+      "#0": {
+        "uid": "#0",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "name-textinput",
+          "greeting-select",
+          "wrongGreeting-select",
+          "greetingIndex-select",
+          "selects.subregion-select",
+          "#0.6"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "name-textinput": {
+        "uid": "name-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Name",
+        "path": "name",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "greeting-select": {
+        "uid": "greeting-select",
+        "type": "select",
+        "kind": "input",
+        "label": "Greeting",
+        "disabled": true,
+        "path": "greeting",
+        "props": {
+          "options": [
+            "hello",
+            "bye"
+          ],
+          "placeholder": "Please, select an option"
+        },
+        "keysWithUndefined": "size include exclude readonly validator defaultValue"
+      },
+      "wrongGreeting-select": {
+        "uid": "wrongGreeting-select",
+        "type": "select",
+        "kind": "input",
+        "path": "wrongGreeting",
+        "props": {
+          "options": [
+            "hello",
+            "bye"
+          ]
+        },
+        "keysWithUndefined": "size include exclude label disabled readonly validator defaultValue"
+      },
+      "greetingIndex-select": {
+        "uid": "greetingIndex-select",
+        "type": "select",
+        "kind": "input",
+        "path": "greetingIndex",
+        "props": {
+          "options": [
+            {
+              "label": "hello.1",
+              "value": 1
+            },
+            {
+              "label": "bye.2",
+              "value": 2
+            }
+          ]
+        },
+        "keysWithUndefined": "size include exclude label disabled readonly validator defaultValue"
+      },
+      "selects.subregion-select": {
+        "uid": "selects.subregion-select",
+        "type": "select",
+        "kind": "input",
+        "label": "Country subregion",
+        "path": "selects.subregion",
+        "on": {
+          "load": "getSubregionsForSelect",
+          "click": "[undefined]",
+          "change": "getCountriesForSelect",
+          "filter": "[undefined]",
+          "blur": "[undefined]"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "#0.6": {
+        "uid": "#0.6",
+        "type": "button",
+        "kind": "action",
+        "label": "Send",
+        "on": {
+          "load": "[undefined]",
+          "click": "submit",
+          "change": "[undefined]",
+          "filter": "[undefined]",
+          "blur": "[undefined]"
+        },
+        "keysWithUndefined": "size include exclude disabled actionType"
+      }
+    }
+  },
+  "afterSubmit": {
+    "touched": true,
+    "allControlsValidated": true,
+    "validations": {
+      "allEntries": {
+        "greeting": null,
+        "greetingIndex": null,
+        "name": null,
+        "selects.subregion": null,
+        "wrongGreeting": null
+      }
+    },
+    "touchedControls": {
+      "allEntries": {
+        "greeting": true,
+        "greetingIndex": true,
+        "name": true,
+        "selects.subregion": true,
+        "wrongGreeting": true
+      }
+    }
+  },
+  "afterData": {
+    "data": {
+      "greeting": "bye",
+      "wrongGreeting": "aaaaaa",
+      "greetingIndex": 2,
+      "name": "[undefined]",
+      "selects": {
+        "subregion": "[undefined]",
+        "country": "[undefined]"
+      }
+    }
+  },
+  "afterEmptyData": {
+    "data": {
+      "name": "[undefined]",
+      "greeting": "[undefined]",
+      "wrongGreeting": "[undefined]",
+      "greetingIndex": "[undefined]",
+      "selects": {
+        "subregion": "[undefined]",
+        "country": "[undefined]"
+      }
+    }
+  }
+}

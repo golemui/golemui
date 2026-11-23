@@ -1,0 +1,132 @@
+{
+  "afterStart": {
+    "formHealth": {
+      "status": "ok"
+    },
+    "isFormValid": true,
+    "touched": false,
+    "allControlsValidated": false,
+    "currentStates": [],
+    "data": {
+      "textinput": "[undefined]"
+    },
+    "validations": {},
+    "touchedControls": {},
+    "widgetFlags": {},
+    "resolvedSources": {
+      "#0": "layout grid",
+      "#0.0": "display heading",
+      "textinput-textinput": "input textinput textinput",
+      "#0.2": "action button"
+    },
+    "repeaterItemScopes": {},
+    "repeaterRows": {},
+    "calculatedWidgets": {
+      "#0": {
+        "uid": "#0",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "#0.0",
+          "textinput-textinput",
+          "#0.2"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.0": {
+        "uid": "#0.0",
+        "type": "heading",
+        "kind": "display",
+        "props": {
+          "text": "KITCHEN SINK",
+          "level": 3
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "textinput-textinput": {
+        "uid": "textinput-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "path": "textinput",
+        "keysWithUndefined": "size include exclude label disabled readonly validator defaultValue"
+      },
+      "#0.2": {
+        "uid": "#0.2",
+        "type": "button",
+        "kind": "action",
+        "label": "Create",
+        "actionType": "submit",
+        "props": {
+          "icon": "save",
+          "iconPosition": "right"
+        },
+        "keysWithUndefined": "size include exclude disabled"
+      }
+    }
+  },
+  "afterSubmit": {
+    "touched": true,
+    "allControlsValidated": true,
+    "validations": {
+      "allEntries": {
+        "textinput": null
+      }
+    },
+    "touchedControls": {
+      "allEntries": {
+        "textinput": true
+      }
+    }
+  },
+  "afterData": {
+    "data": {
+      "listName": "Development Team",
+      "currency": 1000000,
+      "dropdowns": {
+        "defaultListRenderer": 0,
+        "disabledList": 0,
+        "customItemRenderer": "one"
+      },
+      "lists": {
+        "defaultListRenderer": 0,
+        "disabledList": 0,
+        "customItemRenderer": "one"
+      },
+      "selects": {
+        "greeting": "bye",
+        "wrongGreeting": "aaaaaa",
+        "greetingIndex": 2
+      },
+      "radiogroups": {
+        "greeting": "bye",
+        "wrongGreeting": "aaaaaa",
+        "greetingIndex": 2
+      },
+      "repeaters": {
+        "users": [
+          {
+            "firstName": "Alice",
+            "lastName": "Johnson"
+          },
+          {
+            "firstName": "",
+            "lastName": "Smith"
+          },
+          {
+            "firstName": "Charlie"
+          },
+          {
+            "firstName": "Diana",
+            "lastName": "Rodriguez"
+          }
+        ]
+      },
+      "textinput": "[undefined]"
+    }
+  },
+  "afterEmptyData": {
+    "data": {
+      "textinput": "[undefined]"
+    }
+  }
+}

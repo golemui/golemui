@@ -1,0 +1,163 @@
+{
+  "formDef": {
+    "states": {
+      "remote": "$form.details.isRemote === true",
+      "systemMessage": "$meta.systemMessage !== undefined",
+      "offline": "$meta.connectionStatus !== \"online\""
+    },
+    "form": [
+      {
+        "kind": "display",
+        "type": "heading",
+        "props": {
+          "text": {
+            "key": "consultation.header.onsite"
+          },
+          "text.remote": {
+            "key": "consultation.header.remote"
+          }
+        }
+      },
+      {
+        "kind": "display",
+        "type": "alert",
+        "props": {
+          "text": "Your connection status is: {{$meta.connectionStatus}}",
+          "level": "success",
+          "level.offline": "error"
+        }
+      },
+      {
+        "kind": "display",
+        "type": "alert",
+        "props": {
+          "text": {
+            "key": "consultation.system.message",
+            "params": {
+              "message": "$meta.systemMessage"
+            }
+          },
+          "level": "warning"
+        },
+        "include": {
+          "in": [
+            "systemMessage"
+          ]
+        }
+      },
+      {
+        "kind": "input",
+        "type": "toggle",
+        "path": "details.isRemote",
+        "label": {
+          "key": "consultation.mode.label",
+          "default": "I prefer a remote Zoom meeting"
+        }
+      },
+      {
+        "kind": "input",
+        "type": "textinput",
+        "path": "details.clientName",
+        "label": {
+          "key": "consultation.field.name"
+        },
+        "props": {
+          "placeholder": {
+            "key": "consultation.placeholder.name",
+            "default": "e.g. Jane Doe"
+          }
+        },
+        "validator": {
+          "type": "string",
+          "required": true,
+          "minLength": 2
+        }
+      },
+      {
+        "kind": "input",
+        "type": "calendar",
+        "path": "details.date",
+        "label": {
+          "key": "consultation.field.date",
+          "default": "Select a Date"
+        },
+        "props": {
+          "prevMonthIcon": "chevron_left",
+          "nextMonthIcon": "chevron_right"
+        },
+        "validator": {
+          "type": "string",
+          "required": true,
+          "format": "date-time"
+        }
+      },
+      {
+        "kind": "display",
+        "type": "alert",
+        "props": {
+          "text": {
+            "key": "consultation.info.onsite",
+            "default": "Please arrive at our Main St. office 10 minutes early."
+          },
+          "level": "info",
+          "text.remote": {
+            "key": "consultation.info.remote",
+            "default": "A Zoom link will be sent to your email upon confirmation."
+          },
+          "level.remote": "warning"
+        }
+      },
+      {
+        "kind": "input",
+        "type": "currency",
+        "path": "depositAmount",
+        "label": {
+          "key": "consultation.field.deposit",
+          "default": "Room Reservation Deposit"
+        },
+        "props": {
+          "currency": "EUR"
+        },
+        "exclude": {
+          "from": [
+            "remote"
+          ]
+        }
+      },
+      {
+        "kind": "action",
+        "type": "button",
+        "on": {
+          "click": "handleSubmit"
+        },
+        "label": {
+          "key": "consultation.btn.submit",
+          "default": "Confirm Booking"
+        }
+      },
+      {
+        "kind": "action",
+        "type": "button",
+        "on": {
+          "click": "handleSubmit"
+        },
+        "label": {
+          "key": "consultation.btn.submit",
+          "default": "Confirm Booking"
+        }
+      }
+    ]
+  },
+  "data": {
+    "details": {
+      "clientName": "",
+      "date": null,
+      "isRemote": false,
+      "notes": ""
+    }
+  },
+  "meta": {
+    "systemMessage": "System maintenance is scheduled for tomorrow",
+    "connectionStatus": "online"
+  }
+}

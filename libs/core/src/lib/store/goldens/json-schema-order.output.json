@@ -1,0 +1,513 @@
+{
+  "afterStart": {
+    "formHealth": {
+      "status": "ok"
+    },
+    "isFormValid": true,
+    "touched": false,
+    "allControlsValidated": false,
+    "currentStates": [
+      "if02"
+    ],
+    "data": {
+      "email": "[undefined]",
+      "country": "[undefined]",
+      "state": "[undefined]",
+      "zip": "[undefined]",
+      "company": "[undefined]",
+      "vatNumber": "[undefined]",
+      "deliveryDate": "[undefined]",
+      "lines": "[undefined]",
+      "payment": {
+        "method": "[undefined]",
+        "cardNumber": "[undefined]",
+        "iban": "[undefined]"
+      },
+      "giftWrap": "[undefined]",
+      "giftMessage": "[undefined]"
+    },
+    "validations": {},
+    "touchedControls": {},
+    "widgetFlags": {
+      "payment.cardNumber-textinput": {
+        "hidden": true
+      },
+      "payment.iban-textinput": {
+        "hidden": true
+      },
+      "state-select": {
+        "hidden": true
+      }
+    },
+    "resolvedSources": {
+      "#0": "layout grid",
+      "email-textinput": "input textinput email",
+      "country-select": "input select country",
+      "state-select": "input select state",
+      "zip-textinput": "input textinput zip",
+      "company-textinput": "input textinput company",
+      "vatNumber-textinput": "input textinput vatNumber",
+      "deliveryDate-dateInput": "input dateInput deliveryDate",
+      "lines-repeater": "input repeater lines",
+      "#0.8": "layout grid",
+      "payment.method-select": "input select payment.method",
+      "payment.cardNumber-textinput": "input textinput payment.cardNumber",
+      "payment.iban-textinput": "input textinput payment.iban",
+      "giftWrap-checkbox": "input checkbox giftWrap",
+      "giftMessage-textarea": "input textarea giftMessage",
+      "#0.11": "action button"
+    },
+    "repeaterItemScopes": {},
+    "repeaterRows": {},
+    "calculatedWidgets": {
+      "#0": {
+        "uid": "#0",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "email-textinput",
+          "country-select",
+          "zip-textinput",
+          "company-textinput",
+          "vatNumber-textinput",
+          "deliveryDate-dateInput",
+          "lines-repeater",
+          "#0.8",
+          "giftWrap-checkbox",
+          "giftMessage-textarea",
+          "#0.11"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "email-textinput": {
+        "uid": "email-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "label": "E-mail",
+        "validator": {
+          "type": "string",
+          "required": true,
+          "format": "email"
+        },
+        "path": "email",
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "country-select": {
+        "uid": "country-select",
+        "type": "select",
+        "kind": "input",
+        "label": "Country",
+        "validator": {
+          "type": "string",
+          "required": true
+        },
+        "path": "country",
+        "props": {
+          "options": [
+            {
+              "label": "United States",
+              "value": "US"
+            },
+            {
+              "label": "Netherlands",
+              "value": "NL"
+            }
+          ]
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "zip-textinput": {
+        "uid": "zip-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Postal code",
+        "validator": {
+          "type": "string",
+          "pattern": "^[0-9]{4} ?[A-Z]{2}$"
+        },
+        "path": "zip",
+        "props": {
+          "hint": "The format depends on the country."
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "company-textinput": {
+        "uid": "company-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Company name",
+        "path": "company",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "vatNumber-textinput": {
+        "uid": "vatNumber-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "label": "VAT number",
+        "path": "vatNumber",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "deliveryDate-dateInput": {
+        "uid": "deliveryDate-dateInput",
+        "type": "dateInput",
+        "kind": "input",
+        "label": "Delivery date",
+        "path": "deliveryDate",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "lines-repeater": {
+        "uid": "lines-repeater",
+        "type": "repeater",
+        "kind": "input",
+        "label": "Lines",
+        "validator": {
+          "type": "array",
+          "required": true,
+          "minItems": 1,
+          "maxItems": 5
+        },
+        "path": "lines",
+        "props": {
+          "title": "Line",
+          "addLabel": "Add line",
+          "removeLabel": "Remove",
+          "template": {
+            "rowTemplateUid": "#0.7.t"
+          }
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "#0.8": {
+        "uid": "#0.8",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "gap": "sm"
+        },
+        "children": [
+          "payment.method-select"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "payment.method-select": {
+        "uid": "payment.method-select",
+        "type": "select",
+        "kind": "input",
+        "label": "Method",
+        "validator": {
+          "type": "string",
+          "required": true
+        },
+        "path": "payment.method",
+        "props": {
+          "options": [
+            {
+              "label": "Card",
+              "value": "card"
+            },
+            {
+              "label": "Bank transfer",
+              "value": "bank"
+            }
+          ]
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "giftWrap-checkbox": {
+        "uid": "giftWrap-checkbox",
+        "type": "checkbox",
+        "kind": "input",
+        "label": "Gift wrap",
+        "path": "giftWrap",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "giftMessage-textarea": {
+        "uid": "giftMessage-textarea",
+        "type": "textarea",
+        "kind": "input",
+        "label": "Gift message",
+        "validator": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "path": "giftMessage",
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "#0.11": {
+        "uid": "#0.11",
+        "type": "button",
+        "kind": "action",
+        "label": "Submit",
+        "actionType": "submit",
+        "props": {
+          "variant": "filled"
+        },
+        "keysWithUndefined": "size include exclude disabled"
+      }
+    }
+  },
+  "afterSubmit": {
+    "isFormValid": false,
+    "touched": true,
+    "allControlsValidated": true,
+    "validations": {
+      "allEntries": {
+        "company": null,
+        "country": [
+          "required"
+        ],
+        "deliveryDate": null,
+        "email": [
+          "required"
+        ],
+        "giftMessage": null,
+        "giftWrap": null,
+        "lines": [
+          "required"
+        ],
+        "payment.method": [
+          "required"
+        ],
+        "vatNumber": null,
+        "zip": null
+      }
+    },
+    "touchedControls": {
+      "allEntries": {
+        "company": true,
+        "country": true,
+        "deliveryDate": true,
+        "email": true,
+        "giftMessage": true,
+        "giftWrap": true,
+        "lines": true,
+        "payment.method": true,
+        "vatNumber": true,
+        "zip": true
+      }
+    }
+  },
+  "afterData": {
+    "data": {
+      "lines": [
+        {
+          "product": "[undefined]",
+          "quantity": 1
+        }
+      ],
+      "email": "[undefined]",
+      "country": "[undefined]",
+      "state": "[undefined]",
+      "zip": "[undefined]",
+      "company": "[undefined]",
+      "vatNumber": "[undefined]",
+      "deliveryDate": "[undefined]",
+      "payment": {
+        "method": "[undefined]",
+        "cardNumber": "[undefined]",
+        "iban": "[undefined]"
+      },
+      "giftWrap": "[undefined]",
+      "giftMessage": "[undefined]"
+    },
+    "validations": {
+      "changedEntries": {
+        "lines": null,
+        "lines.0.product": [
+          "required"
+        ],
+        "lines.0.quantity": null
+      }
+    },
+    "touchedControls": {
+      "changedEntries": {
+        "lines.0.product": true,
+        "lines.0.quantity": true
+      }
+    },
+    "resolvedSources": {
+      "keys": [
+        "#0",
+        "email-textinput",
+        "country-select",
+        "state-select",
+        "zip-textinput",
+        "company-textinput",
+        "vatNumber-textinput",
+        "deliveryDate-dateInput",
+        "lines-repeater",
+        "#0.7.t[0]",
+        "lines.items.product-select[0]",
+        "lines.items.quantity-number[0]",
+        "#0.8",
+        "payment.method-select",
+        "payment.cardNumber-textinput",
+        "payment.iban-textinput",
+        "giftWrap-checkbox",
+        "giftMessage-textarea",
+        "#0.11"
+      ],
+      "changedEntries": {
+        "#0.7.t[0]": "layout grid",
+        "lines.items.product-select[0]": "input select lines.0.product",
+        "lines.items.quantity-number[0]": "input number lines.0.quantity"
+      }
+    },
+    "repeaterItemScopes": {
+      "allEntries": {
+        "#0.7.t[0]": {
+          "itemPath": "lines.0",
+          "index": 0
+        },
+        "lines.items.product-select[0]": {
+          "itemPath": "lines.0",
+          "index": 0
+        },
+        "lines.items.quantity-number[0]": {
+          "itemPath": "lines.0",
+          "index": 0
+        }
+      }
+    },
+    "repeaterRows": {
+      "allEntries": {
+        "#0.7.t[0]": [
+          {
+            "declaredItemPath": "lines.items",
+            "itemPath": "lines.0",
+            "index": 0
+          }
+        ],
+        "lines.items.product-select[0]": [
+          {
+            "declaredItemPath": "lines.items",
+            "itemPath": "lines.0",
+            "index": 0
+          }
+        ],
+        "lines.items.quantity-number[0]": [
+          {
+            "declaredItemPath": "lines.items",
+            "itemPath": "lines.0",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "calculatedWidgets": {
+      "changedEntries": {
+        "#0.7.t[0]": {
+          "uid": "#0.7.t[0]",
+          "type": "grid",
+          "kind": "layout",
+          "props": {
+            "gap": "sm"
+          },
+          "children": [
+            "lines.items.product-select",
+            "lines.items.quantity-number"
+          ],
+          "keysWithUndefined": "size include exclude"
+        },
+        "lines.items.product-select[0]": {
+          "uid": "lines.items.product-select[0]",
+          "type": "select",
+          "kind": "input",
+          "label": "Product",
+          "validator": {
+            "type": "string",
+            "required": true,
+            "enum": [
+              "Notebook",
+              "Pen",
+              "Backpack"
+            ]
+          },
+          "path": "lines.0.product",
+          "props": {
+            "options": [
+              {
+                "label": "Notebook",
+                "value": "Notebook"
+              },
+              {
+                "label": "Pen",
+                "value": "Pen"
+              },
+              {
+                "label": "Backpack",
+                "value": "Backpack"
+              }
+            ]
+          },
+          "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+        },
+        "lines.items.quantity-number[0]": {
+          "uid": "lines.items.quantity-number[0]",
+          "type": "number",
+          "kind": "input",
+          "label": "Quantity",
+          "validator": {
+            "type": "integer",
+            "required": true,
+            "minimum": 1
+          },
+          "path": "lines.0.quantity",
+          "defaultValue": 1,
+          "keysWithUndefined": "size include exclude disabled readonly"
+        }
+      }
+    }
+  },
+  "afterEmptyData": {
+    "data": {
+      "email": "[undefined]",
+      "country": "[undefined]",
+      "state": "[undefined]",
+      "zip": "[undefined]",
+      "company": "[undefined]",
+      "vatNumber": "[undefined]",
+      "deliveryDate": "[undefined]",
+      "lines": "[undefined]",
+      "payment": {
+        "method": "[undefined]",
+        "cardNumber": "[undefined]",
+        "iban": "[undefined]"
+      },
+      "giftWrap": "[undefined]",
+      "giftMessage": "[undefined]"
+    },
+    "validations": {
+      "removedKeys": [
+        "lines.0.product",
+        "lines.0.quantity"
+      ]
+    },
+    "touchedControls": {
+      "removedKeys": [
+        "lines.0.product",
+        "lines.0.quantity"
+      ]
+    },
+    "resolvedSources": {
+      "removedKeys": [
+        "#0.7.t[0]",
+        "lines.items.product-select[0]",
+        "lines.items.quantity-number[0]"
+      ]
+    },
+    "repeaterItemScopes": {
+      "allEntries": {}
+    },
+    "repeaterRows": {
+      "allEntries": {}
+    },
+    "calculatedWidgets": {
+      "removedKeys": [
+        "#0.7.t[0]",
+        "lines.items.product-select[0]",
+        "lines.items.quantity-number[0]"
+      ]
+    }
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "afterStart": {
+    "formHealth": {
+      "status": "ok"
+    },
+    "isFormValid": true,
+    "touched": false,
+    "allControlsValidated": false,
+    "currentStates": [],
+    "data": {
+      "login": {
+        "email": "[undefined]",
+        "password": "[undefined]",
+        "subscribe": "[undefined]"
+      }
+    },
+    "validations": {},
+    "touchedControls": {},
+    "widgetFlags": {},
+    "resolvedSources": {
+      "#0": "layout grid",
+      "login-flex": "layout grid",
+      "#0.0.0": "display heading",
+      "login-email": "input textinput login.email",
+      "login-password": "input password login.password",
+      "login-subscribe": "input checkbox login.subscribe",
+      "login-submit": "action button"
+    },
+    "repeaterItemScopes": {},
+    "repeaterRows": {},
+    "calculatedWidgets": {
+      "#0": {
+        "uid": "#0",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "login-flex"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "login-flex": {
+        "uid": "login-flex",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "column"
+        },
+        "children": [
+          "#0.0.0",
+          "login-email",
+          "login-password",
+          "login-subscribe",
+          "login-submit"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.0.0": {
+        "uid": "#0.0.0",
+        "type": "heading",
+        "kind": "display",
+        "props": {
+          "text": "Sign up",
+          "level": 3
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "login-email": {
+        "uid": "login-email",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Email",
+        "path": "login.email",
+        "props": {
+          "placeholder": "example@domain.com"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "login-password": {
+        "uid": "login-password",
+        "type": "password",
+        "kind": "input",
+        "label": "Password",
+        "path": "login.password",
+        "props": {
+          "placeholder": "Enter your password...",
+          "showPasswordIcon": "visibility",
+          "hidePasswordIcon": "visibility_off"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "login-subscribe": {
+        "uid": "login-subscribe",
+        "type": "checkbox",
+        "kind": "input",
+        "label": "Subscribe to the newsletter",
+        "path": "login.subscribe",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "login-submit": {
+        "uid": "login-submit",
+        "type": "button",
+        "kind": "action",
+        "label": "Sign up",
+        "keysWithUndefined": "size include exclude disabled actionType"
+      }
+    }
+  },
+  "afterSubmit": {
+    "touched": true,
+    "allControlsValidated": true,
+    "validations": {
+      "allEntries": {
+        "login.email": null,
+        "login.password": null,
+        "login.subscribe": null
+      }
+    },
+    "touchedControls": {
+      "allEntries": {
+        "login.email": true,
+        "login.password": true,
+        "login.subscribe": true
+      }
+    }
+  },
+  "afterData": {},
+  "afterEmptyData": {}
+}
