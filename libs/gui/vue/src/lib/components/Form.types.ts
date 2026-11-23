@@ -16,6 +16,11 @@ export type GuiFormEmits = {
 };
 
 export interface GuiFormHandle {
+  /**
+   * Returns a copy of the form data, as a form event would carry it now: without the values of
+   * hidden inputs.
+   */
+  getData: () => Record<string, any>;
   setData: (data: Record<string, any>) => void;
   setMeta: (meta: Record<string, any>) => void;
   /** Sets the form health. An errored health shows the boundary and freezes the form until `{ status: 'ok' }`. */

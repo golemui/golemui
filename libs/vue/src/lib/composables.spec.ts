@@ -124,7 +124,8 @@ const mountForm = async (
     mounted.querySelector('form')?.dispatchEvent(new Event('submit', { cancelable: true }));
     await nextTick();
   };
-  return { container: mounted, setData, submit };
+  const getData = () => formHandle.value?.getData();
+  return { container: mounted, getData, setData, submit };
 };
 
 /**
@@ -712,5 +713,37 @@ describe('a new config object', () => {
     await nextTick();
 
     expect(healths).toEqual([{ status: 'ok' }, { status: 'ok' }]);
+  });
+});
+
+describe('getData', () => {
+  const formDefWithHiddenInput = rootLayout(
+    [
+      firstNameInput,
+      { uid: 'secret', kind: 'input', type: 'textinput', path: 'secret', include: { in: ['vip'] } },
+    ],
+    { states: { vip: '$form.vip === true' } },
+  );
+
+  it('returns the form data without the values of hidden inputs', async () => {
+    const { getData } = await mountForm({
+      formDef: formDefWithHiddenInput,
+      widgetLoaders: stubWidgetLoaders,
+      data: { vip: false, firstName: 'Ada', secret: 'x' },
+    });
+
+    expect(getData()).toEqual({ vip: false, firstName: 'Ada' });
+  });
+
+  it('returns the data of a setData call', async () => {
+    const { getData, setData } = await mountForm({
+      formDef: formDefWithHiddenInput,
+      widgetLoaders: stubWidgetLoaders,
+      data: {},
+    });
+
+    await setData({ vip: true, firstName: 'Linus', secret: 'y' });
+
+    expect(getData()).toEqual({ vip: true, firstName: 'Linus', secret: 'y' });
   });
 });

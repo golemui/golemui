@@ -44,6 +44,68 @@ export const runSetDataSetMetaTests = (baseMountFn: MountComponentFn) => {
       });
     });
 
+    describe('getData', () => {
+      const formDef = defineForm({
+        states: { vip: '$form.vip === true' },
+        form: [
+          { uid: 'name', kind: 'input', type: 'textinput', path: 'name' },
+          {
+            uid: 'secret',
+            kind: 'input',
+            type: 'textinput',
+            path: 'secret',
+            include: { in: ['vip'] },
+          },
+        ],
+      });
+
+      it('returns what the user typed, without the values of hidden inputs', () => {
+        let handle!: FormHandle;
+        mountFn({
+          data: { vip: false, name: 'Ada', secret: 'x', note: 'kept' },
+          formDef,
+          onFormReady: (h) => (handle = h),
+        });
+        cy.get('[data-cy="name_textinput"]').type('!');
+        cy.wrap(null).should(() => {
+          expect(handle.getData()).to.deep.equal({ vip: false, name: 'Ada!', note: 'kept' });
+        });
+      });
+
+      it('returns the data of a setData call', () => {
+        let handle!: FormHandle;
+        mountFn({ data: { name: 'Ada' }, formDef, onFormReady: (h) => (handle = h) });
+        cy.get('[data-cy="name_textinput"]').should('have.value', 'Ada');
+        cy.then(() => handle.setData({ vip: true, name: 'Linus', secret: 'y' }));
+        cy.wrap(null).should(() => {
+          expect(handle.getData()).to.deep.equal({ vip: true, name: 'Linus', secret: 'y' });
+        });
+      });
+
+      it('returns a copy, so a change to it does not change the form', () => {
+        let handle!: FormHandle;
+        mountFn({ data: { name: 'Ada' }, formDef, onFormReady: (h) => (handle = h) });
+        cy.get('[data-cy="name_textinput"]').should('have.value', 'Ada');
+        cy.then(() => {
+          handle.getData()['name'] = 'Linus';
+        });
+        cy.get('[data-cy="name_textinput"]').should('have.value', 'Ada');
+        cy.then(() => expect(handle.getData()).to.deep.equal({ name: 'Ada' }));
+      });
+
+      it('gives back what the user typed to the form of a new config', () => {
+        let handle!: FormHandle;
+        mountFn({ data: { name: 'Ada' }, formDef, onFormReady: (h) => (handle = h) });
+        cy.get('[data-cy="name_textinput"]').clear().type('Grace');
+        cy.wrap(null).should(() => expect(handle.getData()).to.deep.equal({ name: 'Grace' }));
+        cy.then(() => {
+          const typed = handle.getData();
+          handle.setConfig({ formDef, data: typed });
+        });
+        cy.get('[data-cy="name_textinput"]').should('have.value', 'Grace');
+      });
+    });
+
     describe('setData reaches controls the user already changed', () => {
       // One input per case. Interact first so the native control is dirty, then setData
       // and assert the store value replaced what the user did.

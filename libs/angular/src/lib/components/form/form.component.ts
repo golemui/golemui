@@ -14,6 +14,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import {
+  cloneObject,
   type FormEvent,
   type FormHealth,
   formHealth,
@@ -174,6 +175,17 @@ export class FormCoreComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.unsubscribeI18n();
+  }
+
+  /**
+   * Returns a copy of the form data, as a form event would carry it now: without the values of
+   * hidden inputs. Before the form has started, it returns the data the form will start with.
+   */
+  getData(): Record<string, any> {
+    if (!this.started) {
+      return cloneObject(this.dataBeforeStart ?? this.config().data ?? {});
+    }
+    return this.context.getData();
   }
 
   setData(data: Record<string, any>): void {

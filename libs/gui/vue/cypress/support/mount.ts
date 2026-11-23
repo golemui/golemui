@@ -98,6 +98,7 @@ export const mountFramework = (options: MountOptions) => {
         const handle = formRef.value;
         if (!handle) return;
         onFormReady({
+          getData: () => handle.getData(),
           setData: (data) => handle.setData(data),
           setMeta: (meta) => handle.setMeta(meta),
           setHealth: (health) => handle.setHealth(health),

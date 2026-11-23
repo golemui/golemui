@@ -1,9 +1,10 @@
-import type {
-  FormEvent,
-  FormHealth,
-  FormInitConfig,
-  FormSubmitEvent,
-  WithWidget,
+import {
+  cloneObject,
+  type FormEvent,
+  type FormHealth,
+  type FormInitConfig,
+  type FormSubmitEvent,
+  type WithWidget,
 } from '@golemui/core';
 import {
   buildWidgetSetForm,
@@ -29,6 +30,11 @@ export interface WidgetSetFormProps<
 
 /** Methods exposed on a template ref to a factory-built form component. */
 export interface WidgetSetFormHandle {
+  /**
+   * Returns a copy of the form data, as a form event would carry it now: without the values of
+   * hidden inputs.
+   */
+  getData: () => Record<string, any>;
   setData: (data: Record<string, any>) => void;
   setMeta: (meta: Record<string, any>) => void;
   /** Sets the form health. An errored health shows the boundary and freezes the form until `{ status: 'ok' }`. */
@@ -37,7 +43,7 @@ export interface WidgetSetFormHandle {
 
 /**
  * The component type returned by {@link createFormComponent}: the widget
- * set's props, the three form events, and the exposed setData / setMeta / setHealth
+ * set's props, the three form events, and the exposed getData / setData / setMeta / setHealth
  * methods.
  */
 export type WidgetSetFormComponent<
@@ -81,6 +87,9 @@ export function createFormComponent<
       const bundle = computed(() => buildWidgetSetForm(widgetSet, props.config as TConfig));
 
       expose({
+        // The core form starts in the first render, so before it the data is the config data.
+        getData: () =>
+          formRef.value?.getData() ?? cloneObject((props.config as TConfig).data ?? {}),
         setData: (data: Record<string, any>) => formRef.value?.setData(data),
         setMeta: (meta: Record<string, any>) => formRef.value?.setMeta(meta),
         setHealth: (health: FormHealth) => formRef.value?.setHealth(health),

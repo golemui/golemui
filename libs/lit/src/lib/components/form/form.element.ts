@@ -1,4 +1,5 @@
 import {
+  cloneObject,
   type FormEvent,
   type FormHealth,
   type FormInitConfig,
@@ -308,6 +309,20 @@ export class FormElement extends LitElement {
   private onFormSubmit(event: SubmitEvent) {
     event.preventDefault();
     this.context.emitSubmitEvent();
+  }
+
+  /**
+   * Returns a copy of the form data, as a form event would carry it now: without the values of
+   * hidden inputs. Before the form has started, it returns the data the form will start with.
+   */
+  getData(): Record<string, any> {
+    const waitsForStart = !this.started || this.newConfigOrValidatorsWaits;
+    // An undefined config starts nothing, so a form that has started before keeps its data.
+    const keepsTheFormThere = this.storeGeneration > 0 && !this.config;
+    if (waitsForStart && !keepsTheFormThere) {
+      return cloneObject(this.dataBeforeStart ?? this.config?.data ?? {});
+    }
+    return this.context.getData();
   }
 
   setData(data: Record<string, any>): void {

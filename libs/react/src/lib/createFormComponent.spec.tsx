@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { preloadFormWidgets } from '@golemui/core';
-import { act, type ReactNode, useEffect, useRef } from 'react';
+import { act, type ReactNode, useEffect, useMemo, useRef } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createFormComponent } from './createFormComponent';
@@ -118,5 +118,60 @@ describe('a widget set form with a new config object', () => {
     expect(lastHookOutput<InputHookOutput<string>>('firstName').value).toBe('Linus');
     expect(oldStores.actionsByStore[0].slice(oldStoreActionCount)).toEqual([]);
     expect(newStores.actionsByStore).toHaveLength(1);
+  });
+});
+
+describe('getData of a widget set form', () => {
+  const WidgetSetForm = createFormComponent({
+    widgetLoaders: stubWidgetLoaders,
+    validators: () => noopValidators,
+  });
+
+  it('returns what the user typed', async () => {
+    const formRef: { current: FormComponentHandle | null } = { current: null };
+    await render(
+      <WidgetSetForm ref={formRef} config={{ formDef: formDefWithChangeEvent, data: {} }} />,
+    );
+
+    await act(async () =>
+      lastHookOutput<InputHookOutput<string>>('firstName').onValueChanged('Grace'),
+    );
+
+    expect(formRef.current?.getData()).toEqual({ firstName: 'Grace' });
+  });
+
+  it('returns the data the new form starts with in a useEffect of the host after a new config', async () => {
+    const dataInEffect: Record<string, unknown>[] = [];
+    function Host({ customer, draft }: { customer: string; draft?: Record<string, unknown> }) {
+      const formRef = useRef<FormComponentHandle>(null);
+      const config = useMemo(
+        () => ({ formDef: formDefWithChangeEvent, data: { firstName: customer } }),
+        [customer],
+      );
+      useEffect(() => {
+        const handle = formRef.current;
+        if (!handle) {
+          return;
+        }
+        dataInEffect.push(handle.getData());
+        if (draft) {
+          // A health call before the start is kept, and so is every call after it.
+          handle.setHealth({ status: 'ok' });
+          handle.setData(draft);
+          dataInEffect.push(handle.getData());
+        }
+      }, [config, draft]);
+      return <WidgetSetForm ref={formRef} config={config} />;
+    }
+    await render(<Host customer="Ada" />);
+
+    await render(<Host customer="Grace" draft={{ firstName: 'Linus' }} />);
+
+    expect(dataInEffect).toEqual([
+      { firstName: 'Ada' },
+      { firstName: 'Grace' },
+      { firstName: 'Linus' },
+    ]);
+    expect(lastHookOutput<InputHookOutput<string>>('firstName').value).toBe('Linus');
   });
 });

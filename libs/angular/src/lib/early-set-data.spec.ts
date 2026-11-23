@@ -298,3 +298,77 @@ describe('setData and setMeta on gui-widget-set-form before the form starts', ()
     expect(coreStoreState(innerForm(fixture)).data).toEqual({ firstName: 'Bob' });
   });
 });
+
+describe('getData on gui-core-form', () => {
+  const createForm = (config = buildConfig()) => {
+    const fixture = TestBed.createComponent(FormCoreComponent);
+    fixture.componentRef.setInput('config', config);
+    fixture.componentRef.setInput('validators', noopValidators);
+    return fixture;
+  };
+
+  it('returns the config data before the form starts', () => {
+    const fixture = createForm();
+
+    expect(fixture.componentInstance.getData()).toEqual(buildConfig().data);
+  });
+
+  it('returns the data of a setData call made before the form starts', () => {
+    const fixture = createForm();
+
+    fixture.componentInstance.setData({ firstName: 'Bob' });
+
+    expect(fixture.componentInstance.getData()).toEqual({ firstName: 'Bob' });
+  });
+
+  it('returns an empty object before the start for a config without data', () => {
+    const fixture = createForm({ ...buildConfig(), data: undefined });
+
+    expect(fixture.componentInstance.getData()).toEqual({});
+  });
+
+  it('returns the data of the form after the start', () => {
+    const fixture = createForm();
+    fixture.detectChanges();
+
+    fixture.componentInstance.setData({ firstName: 'Bob', extra: 1 });
+
+    expect(fixture.componentInstance.getData()).toEqual({ firstName: 'Bob', extra: 1 });
+  });
+});
+
+describe('getData on gui-widget-set-form', () => {
+  const createWidgetSetForm = () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideWidgetSet({ widgetLoaders: stubWidgetLoaders, validators: () => noopValidators }),
+      ],
+    });
+    const fixture = TestBed.createComponent(WidgetSetFormComponent);
+    fixture.componentRef.setInput('config', { formDef, data: { firstName: 'Ada' } });
+    return fixture;
+  };
+
+  it('returns the config data before the inner form exists', () => {
+    const fixture = createWidgetSetForm();
+
+    expect(fixture.componentInstance.getData()).toEqual({ firstName: 'Ada' });
+  });
+
+  it('returns the data of a setData call made before the inner form exists', () => {
+    const fixture = createWidgetSetForm();
+
+    fixture.componentInstance.setData({ firstName: 'Bob' });
+
+    expect(fixture.componentInstance.getData()).toEqual({ firstName: 'Bob' });
+  });
+
+  it('returns the data of the inner form after the start', () => {
+    const fixture = createWidgetSetForm();
+    fixture.detectChanges();
+
+    fixture.componentInstance.setData({ firstName: 'Bob' });
+
+    expect(fixture.componentInstance.getData()).toEqual({ firstName: 'Bob' });
+  });
+});

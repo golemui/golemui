@@ -204,6 +204,67 @@ describe('setData and setMeta before the form starts', () => {
   });
 });
 
+describe('getData', () => {
+  it('returns the config data before the form is in the page', () => {
+    const form = createFormWithoutMounting();
+    setConfig(form, buildConfig());
+
+    expect(form.getData()).toEqual({ firstName: 'Ada', lastName: 'Lovelace' });
+  });
+
+  it('returns the data of a setData call made before the form starts', () => {
+    const form = createFormWithoutMounting();
+    setConfig(form, buildConfig());
+
+    form.setData({ firstName: 'Bob' });
+
+    expect(form.getData()).toEqual({ firstName: 'Bob' });
+  });
+
+  it('returns an empty object before the config is set', () => {
+    expect(createFormWithoutMounting().getData()).toEqual({});
+  });
+
+  it('returns the data of the form after the start', async () => {
+    const form = await mountForm();
+
+    form.setData({ firstName: 'Bob', extra: 1 });
+
+    expect(form.getData()).toEqual({ firstName: 'Bob', extra: 1 });
+    expect(form.getData()).toEqual(form.context.getData());
+  });
+
+  it('returns the data of a new config before the form starts with it', async () => {
+    const form = await mountForm();
+
+    setConfig(form, { ...buildConfig(), data: { firstName: 'Dana' } });
+
+    expect(form.getData()).toEqual({ firstName: 'Dana' });
+    form.setData({ firstName: 'Eve' });
+    expect(form.getData()).toEqual({ firstName: 'Eve' });
+  });
+
+  it('returns the data of the form there when the config becomes undefined', async () => {
+    const form = await mountForm();
+    form.setData({ firstName: 'Bob' });
+
+    form.config = undefined as unknown as FormElement['config'];
+
+    expect(form.getData()).toEqual({ firstName: 'Bob' });
+  });
+
+  it('returns a copy of the kept data', () => {
+    const form = createFormWithoutMounting();
+    const draft = { firstName: 'Bob' };
+    form.setData(draft);
+
+    form.getData()['firstName'] = 'Eve';
+
+    expect(form.getData()).toEqual({ firstName: 'Bob' });
+    expect(draft).toEqual({ firstName: 'Bob' });
+  });
+});
+
 describe('a gui-core-form that moves in the DOM', () => {
   it('keeps its store and follows the store health after the move', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => undefined);

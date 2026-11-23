@@ -19,6 +19,7 @@ import { type WidgetSetDependencies } from '@golemui/core/internals';
 import { type CustomValidatorSchemas } from '@golemui/gui-validators';
 
 export interface FormHandle {
+  getData: () => Record<string, any>;
   setData: (data: Record<string, any>) => void;
   setMeta: (meta: Record<string, any>) => void;
   setHealth: (health: FormHealth) => void;

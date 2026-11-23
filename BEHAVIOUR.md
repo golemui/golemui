@@ -923,9 +923,30 @@ shows the error like one of its own.
 
 - Status: follows.
 
+### 34. `getData` returns the data a form event would carry
+
+`getData()` returns a copy of the form data without the values of hidden inputs, the same `data`
+as a form event sent at that moment. A change to the copy does not change the form. Before the
+form has started, it returns the data the form will start with: the data of the last `setData`
+call (rule 26), else the `data` of the config, else `{}`. The form has not decided yet which
+inputs are hidden, so this data is not pruned.
+
+- Scenario: an app replaces the definition on screen with a new version. A new config starts the
+  form again (rule 25), so the app reads the data first and passes it in the new config:
+
+  ```ts
+  form.config = { formDef: nextFormDef, data: form.getData() };
+  ```
+
+- Example: the user typed `Grace` in `name`, and `secret` is hidden -> `getData()` returns
+  `{ name: 'Grace' }`, and the new form shows `Grace`.
+- Example: a Lit form that is not in the page yet, `form.config = { formDef, data: { name: 'Ada' } }`
+  and `form.setData({ name: 'Bob' })` -> `getData()` returns `{ name: 'Bob' }`.
+- Status: follows in React, Angular, Vue and Lit.
+
 ## Events and expressions
 
-### 34. An `on` value is an event name
+### 35. An `on` value is an event name
 
 In a form definition, each `on` value is the name of the event, a string. The host handles the
 event in its `formEvent` handler.
@@ -938,7 +959,7 @@ event in its `formEvent` handler.
   and read `event.data.isDraft` in the host `formEvent` handler.
 - Status: follows.
 
-### 35. `$log` works in every expression
+### 36. `$log` works in every expression
 
 `$log(value)` logs a value and returns it, to debug an expression.
 
@@ -959,7 +980,7 @@ event in its `formEvent` handler.
 
 - Status: follows.
 
-### 36. An i18n param keeps the value it has
+### 37. An i18n param keeps the value it has
 
 The translator receives each param with its own value. A literal param keeps its type, and an
 expression param gives its result, also when the result is `null` or `undefined`.

@@ -1,5 +1,6 @@
 import {
   type Action,
+  cloneObject,
   FormContext,
   type FormEvent,
   type FormHealth,
@@ -28,6 +29,11 @@ import WidgetErrorBoundary, { type WidgetErrorFallback } from './WidgetErrorBoun
 import WidgetRenderer from './WidgetRenderer';
 
 export interface FormComponentHandle {
+  /**
+   * Returns a copy of the form data, as a form event would carry it now: without the values of
+   * hidden inputs. Before the form has started, it returns the data the form will start with.
+   */
+  getData: () => Record<string, any>;
   setData: (data: Record<string, any>) => void;
   setMeta: (meta: Record<string, any>) => void;
   /** Sets the form health. An errored health shows the boundary and freezes the form until `{ status: 'ok' }`. */
@@ -138,7 +144,7 @@ function createFormInstance(
     formName,
     config,
     validators,
-    handle: createHandle(store, handleState),
+    handle: createHandle(context, handleState),
     subscribe: (onStoreChange) => {
       const subscription = store.state$.subscribe(onStoreChange);
       return () => subscription.unsubscribe();
@@ -167,7 +173,11 @@ function createFormInstance(
  * Creates the handle of one store. Each call goes to that store, so a late call through the
  * handle of a replaced form never reaches the form of a newer config.
  */
-function createHandle(store: FormStore, handleState: HandleState): FormComponentHandle {
+function createHandle(
+  context: FormContext<WidgetComponent>,
+  handleState: HandleState,
+): FormComponentHandle {
+  const store = context.store;
   const dispatchOrKeep = (action: HandleAction) => {
     // An uncommitted store has no health subscription yet. A health call is applied after the
     // subscription exists, so the host gets the health of the started form first. Each call
@@ -182,6 +192,19 @@ function createHandle(store: FormStore, handleState: HandleState): FormComponent
     store.dispatch(action);
   };
   return {
+    getData: () => {
+      if (store !== handleState.uncommittedStore) {
+        return context.getData();
+      }
+      // Before the start: the data of the last kept setData call, else the data the store has.
+      let data = store.getState().data;
+      for (const action of handleState.keptCalls) {
+        if (action.type === 'SET_DATA') {
+          data = action.payload.data;
+        }
+      }
+      return cloneObject(data);
+    },
     setData: (data) => dispatchOrKeep({ type: 'SET_DATA', payload: { data } }),
     setMeta: (meta) => dispatchOrKeep({ type: 'SET_META', payload: { meta } }),
     setHealth: (health) =>
