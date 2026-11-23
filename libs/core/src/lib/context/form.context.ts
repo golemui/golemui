@@ -106,6 +106,12 @@ export class FormContext<ComponentType> {
       name,
       data: pruneHiddenData(state),
       detail,
+      widget: {
+        uid: widget.uid,
+        type: widget.type,
+        // No `path` key for the widgets that have none (actions, layouts).
+        ...(widget.kind === 'input' ? { path: widget.path } : {}),
+      },
       // No `row` key outside a repeater, so the events of other widgets keep their shape.
       ...(row !== undefined ? { row } : {}),
       callback: (action: EventHandlerCallback) => {

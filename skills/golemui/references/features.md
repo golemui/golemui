@@ -18,8 +18,10 @@ the form component accepts: https://golemui.com/json/features/overview.md
 - **Form events** - `formSubmit`, `formHealth` (validity), `formEvent` (widget -> host events).
   A widget names its events under `on` (`load`, `change`, `filter`, `blur`, `click`), for
   example `"on": { "click": "save" }`. The host handles each name in its `formEvent` handler.
-  An event from a widget inside a repeater row also carries `row` (`{ index, indexes, path }`),
-  so the host can tell the rows apart.
+  Every event carries `widget` (`{ uid, type, path? }`), the widget that sent it, so one handler
+  can serve many widgets; `path` is set for inputs only. An event from a widget inside a repeater
+  row also carries `row` (`{ index, indexes, path }`), so the host can tell the rows apart, and
+  its `widget.uid` and `widget.path` are the ones of the row (`name[1]`, `users.1.name`).
   https://golemui.com/json/features/events.md
 - **Runtime methods** — imperative API on the form component instance (read/patch values,
   trigger validation, react to runtime changes). `setData`, `setMeta` and `setHealth`;
