@@ -1,13 +1,29 @@
 import { formatIssuePath } from 'ts.data.json';
+import { compileForm } from '../../compile/compile-form';
+import { type CompiledForm } from '../../compile/compiled-form';
 import { errorCodes, errorMessage } from '../../errors';
 import { type Form, formDefDecoder } from '../../form';
 import { type FormWidget, isInputWidget, isLayoutWidget } from '../../form-widget';
+import { type ExpressionPolicy } from '../../utils/check-expression';
 import { flattenForm } from '../../utils/form';
 import { expandSources } from '../../utils/repeater';
 import type { INITIALIZE } from '../actions';
 import { createInitialState, type FormHealth, type State } from '../model';
 
-export const initialize = ({ lang }: State, action: INITIALIZE): State => {
+/**
+ * Builds the state of a form from a new definition. Only the language of the state before
+ * stays. A definition that cannot be used gives a state with an errored form health.
+ *
+ * @param state - The state before. Only its language is read.
+ * @param action - The action with the form definition and the form name.
+ * @param expressionPolicy - Which issues of the expression check make an expression fail.
+ * @returns The new state. No widget is computed yet.
+ */
+export const initialize = (
+  { lang }: State,
+  action: INITIALIZE,
+  expressionPolicy: ExpressionPolicy = 'warn',
+): State => {
   const initialState = {
     ...createInitialState(lang),
     formName: action.payload.formName,
@@ -68,10 +84,32 @@ export const initialize = ({ lang }: State, action: INITIALIZE): State => {
 
     warnUndeclaredStateReferences(flatForm, result.value.states);
 
+    const decodedFormDef = result.value as Form;
+    let compiled: CompiledForm;
+    try {
+      compiled = compileForm(decodedFormDef, expressionPolicy);
+    } catch (error) {
+      // A read of the definition object threw after the decode, for example the keys of a prop
+      // object that can be listed only one time.
+      return {
+        ...initialState,
+        formHealth: erroredHealth(
+          errorCodes.initializeUnknownError,
+          `The form definition cannot be read: ${errorMessage(error)}`,
+        ),
+      };
+    }
+    if (formHealth.status !== 'ok') {
+      // A definition with a repeated uid computes no widget. Its states are still evaluated
+      // when the host clears the error.
+      compiled = { ...compiled, root: undefined };
+    }
+
     // No data yet, so this adds the static widgets only. SET_DATA expands the repeater rows.
     return {
       ...initialState,
-      formDef: result.value as Form,
+      formDef: decodedFormDef,
+      compiled,
       flatForm,
       ...expandSources(flatForm, {}),
       formHealth,

@@ -57,8 +57,8 @@ export const reducer = ({
   return (state: State, action: Action): State => {
     switch (action.type) {
       case 'INITIALIZE':
-        // Decode only. The SET_DATA every binding dispatches next runs the first derive.
-        return initialize(state, action);
+        // Decode and compile only. The SET_DATA every binding dispatches next runs the first derive.
+        return initialize(state, action, expressionPolicy);
 
       case 'SET_DATA':
         return deriveAndValidateAppearingInputs(setData(state, action));
