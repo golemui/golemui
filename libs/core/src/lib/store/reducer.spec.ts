@@ -4058,6 +4058,108 @@ describe('reducer end-to-end', () => {
       );
     });
 
+    describe('the type repeater on a widget that is not an input', () => {
+      const repeaterTypeMessage =
+        'The type "repeater" needs "kind": "input", a "path" and a row layout in "props.template".';
+
+      const rowsWith = (template: Record<string, any>) => ({
+        kind: 'input',
+        type: 'repeater',
+        path: 'rows',
+        props: { template },
+      });
+
+      it.each([
+        {
+          place: 'a display widget',
+          formDef: { form: [{ kind: 'display', type: 'repeater' }] },
+          location: 'form.children[0].type',
+        },
+        {
+          place: 'a layout widget',
+          formDef: { form: [{ kind: 'layout', type: 'repeater', children: [] }] },
+          location: 'form.children[0].type',
+        },
+        {
+          place: 'an action widget',
+          formDef: { form: [{ kind: 'action', type: 'repeater' }] },
+          location: 'form.children[0].type',
+        },
+        {
+          place: 'a widget of a row layout',
+          formDef: {
+            form: [
+              rowsWith({
+                kind: 'layout',
+                type: 'flex',
+                children: [{ kind: 'display', type: 'repeater' }],
+              }),
+            ],
+          },
+          location: 'form.children[0].props.template.children[0].type',
+        },
+        {
+          place: 'a row layout',
+          formDef: { form: [rowsWith({ kind: 'layout', type: 'repeater', children: [] })] },
+          location: 'form.children[0].props.template.type',
+        },
+        {
+          place: 'the layout of the whole form',
+          formDef: { form: { uid: '', kind: 'layout', type: 'repeater', children: [] } },
+          location: 'form.type',
+        },
+      ])('gives code 22 with the location for $place', ({ formDef, location }) => {
+        // No data yet: a list with no row must report the error too.
+        const state = drive([init(formDef)]);
+
+        expect(state.formHealth).toEqual({
+          status: 'errored',
+          code: 22,
+          message: `[22] ${location}: ${repeaterTypeMessage}`,
+        });
+        expect(state.flatForm).toEqual({});
+      });
+
+      it('keeps the error after the data arrives', () => {
+        const state = drive([
+          init({ form: [{ kind: 'display', type: 'repeater' }] }),
+          setData({ rows: [{}] }),
+        ]);
+
+        expect(state.formHealth).toEqual({
+          status: 'errored',
+          code: 22,
+          message: `[22] form.children[0].type: ${repeaterTypeMessage}`,
+        });
+        expect(state.calculatedWidgets).toEqual({});
+      });
+
+      it('accepts a type that only contains the word repeater', () => {
+        const state = drive([
+          init({
+            form: [
+              { uid: 'header', kind: 'display', type: 'repeater-header' },
+              { uid: 'list', kind: 'layout', type: 'Repeater', children: [] },
+            ],
+          }),
+          setData({}),
+        ]);
+
+        expect(state.formHealth).toEqual({ status: 'ok' });
+        expect(Object.keys(state.calculatedWidgets)).toEqual(['#0', 'header', 'list']);
+      });
+
+      it('keeps the message of a type that is not a text', () => {
+        const state = drive([init({ form: [{ kind: 'display', type: 5 }] })]);
+
+        expect(state.formHealth).toEqual({
+          status: 'errored',
+          code: 22,
+          message: '[22] form.children[0].type: 5 is not a valid string',
+        });
+      });
+    });
+
     it('keeps the other props of a valid repeater and leaves the definition unchanged', () => {
       const template = {
         uid: 'row',

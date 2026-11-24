@@ -292,10 +292,26 @@ const inputPathDecoder = new Decoder<DotPath>((json: unknown) => {
   return issue === undefined ? ok(json) : err([{ message: issue, path: [] }]);
 });
 
+const widgetTypeDecoder = string();
+
+// The rows of a repeater are built from its path and its row layout, which only an input has.
+const typeOfNonInputDecoder = new Decoder<WidgetType>((json: unknown) => {
+  if (json === 'repeater') {
+    return err([
+      {
+        message:
+          'The type "repeater" needs "kind": "input", a "path" and a row layout in "props.template".',
+        path: [],
+      },
+    ]);
+  }
+  return widgetTypeDecoder.decode(json);
+});
+
 const displayWidgetDecoder = objectWithSuffix<DisplayWidget<string>>({
   kind: { decoder: literal('display') },
   uid: { decoder: uidDecoder },
-  type: { decoder: string() },
+  type: { decoder: typeOfNonInputDecoder },
   size: { suffixed: true, decoder: optional(number()) },
   include: { decoder: optional(includeDecoder) },
   exclude: { decoder: optional(excludeDecoder) },
@@ -305,7 +321,7 @@ const displayWidgetDecoder = objectWithSuffix<DisplayWidget<string>>({
 const actionWidgetDecoder = objectWithSuffix<ActionWidget<string>>({
   kind: { decoder: literal('action') },
   uid: { decoder: uidDecoder },
-  type: { decoder: string() },
+  type: { decoder: typeOfNonInputDecoder },
   actionType: {
     decoder: optional(oneOf([literal('button'), literal('submit')])),
   },
@@ -374,7 +390,7 @@ const formWidgetDecoder = lazy(
 export const layoutWidgetDecoder = objectWithSuffix<LayoutWidget<string>>({
   kind: { decoder: literal('layout') },
   uid: { decoder: uidDecoder },
-  type: { decoder: string() },
+  type: { decoder: typeOfNonInputDecoder },
   size: { suffixed: true, decoder: optional(number()) },
   include: { decoder: optional(includeDecoder) },
   exclude: { decoder: optional(excludeDecoder) },
