@@ -1,3 +1,4 @@
+import { type CompiledForm, emptyCompiledForm } from '../compile/compiled-form';
 import { type Form, formDefDecoder } from '../form';
 import type { FormWidget } from '../form-widget';
 import { type DotPath, type Uid, type ValidationStatus } from '../shared';
@@ -15,6 +16,16 @@ export type State = {
    * The complete form definition.
    */
   formDef: Form<string>;
+
+  /**
+   * `formDef` in which everything that does not depend on the data is already computed, such as
+   * the parsed expressions. `INITIALIZE` builds it. A form without a usable definition has the
+   * empty compiled form.
+   *
+   * It holds functions. So a JSON copy of the state works, and `structuredClone` of the state
+   * throws.
+   */
+  compiled: CompiledForm;
 
   /**
    * Flattened representation of `formDef` as a map from UID to widget definition.
@@ -160,6 +171,7 @@ export const createInitialState = (lang: string): State => ({
       children: [],
     },
   }) as Form,
+  compiled: emptyCompiledForm(),
   flatForm: {},
   resolvedSources: {},
   currentStates: [],
