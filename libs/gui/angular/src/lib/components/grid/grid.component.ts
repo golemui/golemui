@@ -3,14 +3,12 @@ import { Component, computed, inject, type OnDestroy, type OnInit } from '@angul
 import { LayoutWidgetAdapter, WidgetDirective } from '@golemui/angular';
 import type { FormWidget, LayoutWidget, WithWidget } from '@golemui/core';
 import {
-  type FlexProps,
   gridCellClasses,
   gridClasses,
   type GridProps,
   resolveGrid,
 } from '@golemui/gui-shared/internals';
 
-/** The grid layout, and the deprecated flex layout, which renders as a grid. */
 @Component({
   standalone: true,
   selector: 'gui-grid-layout',
@@ -24,9 +22,9 @@ import {
 export class GridComponent implements OnInit, OnDestroy, WithWidget {
   widget!: LayoutWidget;
 
-  protected adapter: LayoutWidgetAdapter<GridProps & FlexProps> = inject(LayoutWidgetAdapter);
+  protected adapter: LayoutWidgetAdapter<GridProps> = inject(LayoutWidgetAdapter);
 
-  protected grid = computed(() => resolveGrid(this.widget.type, this.adapter.templateData()));
+  protected grid = computed(() => resolveGrid(this.adapter.templateData()));
 
   protected readonly gridClasses = gridClasses;
 

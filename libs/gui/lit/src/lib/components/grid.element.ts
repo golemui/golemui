@@ -1,7 +1,6 @@
 import type { LayoutWidget, WithWidget } from '@golemui/core';
 import { LayoutWidgetAdapter, type LitFormContext, formContext, layoutContext } from '@golemui/lit';
 import {
-  type FlexProps,
   gridCellClasses,
   gridClasses,
   type GridProps,
@@ -14,7 +13,6 @@ import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 import { repeat } from 'lit-html/directives/repeat.js';
 
-/** The grid layout, and the deprecated flex layout, which renders as a grid. */
 export class GridElement extends LitElement implements WithWidget {
   widget!: LayoutWidget;
 
@@ -23,7 +21,7 @@ export class GridElement extends LitElement implements WithWidget {
   formContext!: LitFormContext<any>;
 
   @provide({ context: layoutContext })
-  adapter = new LayoutWidgetAdapter<GridProps & FlexProps>();
+  adapter = new LayoutWidgetAdapter<GridProps>();
 
   subscriptions: Subscription[] = [];
 
@@ -43,7 +41,7 @@ export class GridElement extends LitElement implements WithWidget {
   }
 
   override render() {
-    const grid = resolveGrid(this.widget.type, this.adapter.templateData);
+    const grid = resolveGrid(this.adapter.templateData);
     const children = this.adapter.templateData.children || [];
 
     return html`

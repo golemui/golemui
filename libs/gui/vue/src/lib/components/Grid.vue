@@ -1,9 +1,7 @@
 <script setup lang="ts">
-// The grid layout, and the deprecated flex layout, which renders as a grid.
 import type { LayoutWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/vue';
 import {
-  type FlexProps,
   gridCellClasses,
   gridClasses,
   type GridProps,
@@ -13,9 +11,9 @@ import { computed } from 'vue';
 
 const props = defineProps<WithWidget>();
 const widget = props.widget as LayoutWidget;
-const { domId, children, templateData } = useLayoutWidget<GridProps & FlexProps>(widget);
+const { domId, children, templateData } = useLayoutWidget<GridProps>(widget);
 
-const grid = computed(() => resolveGrid(widget.type, templateData.value));
+const grid = computed(() => resolveGrid(templateData.value));
 </script>
 
 <template>

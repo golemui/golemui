@@ -33,7 +33,7 @@ describe('validateFormDefinitionAsync', () => {
           props: {
             template: {
               kind: 'layout',
-              type: 'flex',
+              type: 'grid',
               children: [{ kind: 'input', type: 'number', path: 'rows.items.count' }],
             },
             'template.mobile': {
@@ -51,7 +51,7 @@ describe('validateFormDefinitionAsync', () => {
     expect(Object.fromEntries(Object.entries(needs).map(([k, v]) => [k, [...v].sort()]))).toEqual({
       root: [''],
       chunkRef: [''],
-      shallowWidget: ['checkbox', 'flex', 'grid', 'number', 'repeater', 'textinput'],
+      shallowWidget: ['checkbox', 'grid', 'number', 'repeater', 'textinput'],
       validatorBranch: ['integer', 'string'],
       customWidget: ['input'],
     });

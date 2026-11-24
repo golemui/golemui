@@ -883,18 +883,6 @@ export type OneOfProps = {
   valueField?: string;
 };
 
-/**
- * @deprecated Use a grid (`GridProps`). A flex layout still renders, as a grid: `row` and
- * `row-reverse` become a row, `column` and `column-reverse` a stack, `align` becomes `justify`
- * and `gap` the nearest `GridGap`. `justify` is dropped. It will be removed in v3.0.0.
- */
-export type FlexProps = {
-  direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
-  justify?: 'center' | 'start' | 'end' | 'stretch';
-  align?: 'center' | 'start' | 'end' | 'space-between' | 'space-around' | 'space-evenly';
-  gap?: number;
-};
-
 /** The steps of a grid's `gap`. Each one is a `--gui-layout-gap-*` CSS variable. */
 export type GridGap = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 

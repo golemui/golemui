@@ -21,8 +21,10 @@ export const JSON_VALIDATE_FORM_DEFINITION_TOOL = {
     'Hard mistakes (typos in widget `type`, missing required props, invalid validator shapes) ' +
     'show up in `errors` and flip `valid` to false. A chunk reference (`{"$ref": "./x.form-chunk.json"}`) ' +
     'is a legal widget entry and is accepted anywhere a widget can appear, except as a repeater `template`, which ' +
-    'must be a built-in layout (`accordion`, `flex`, `grid`, `tabs`); a widget where it is not allowed is an error ' +
-    'with keyword `position`. A repeated widget uid is an error with keyword `duplicateUid`. Outside repeater ' +
+    'must be a built-in layout (`accordion`, `grid`, `tabs`); a widget where it is not allowed is an error ' +
+    'with keyword `position`. A repeated widget uid is an error with keyword `duplicateUid`. A widget `type` ' +
+    'that GolemUI 3.0 removed (`flex`) is an error with keyword `removedType`, and its `suggestion` says what ' +
+    'to write instead. Outside repeater ' +
     'templates, the uids of all widgets must differ, at any depth of layouts. Inside repeater templates, they ' +
     'must differ among all the templates of the same repeater depth (the templates of the top-level repeaters, ' +
     'then the templates of the repeaters inside them, and so on). A widget without `uid` gets `<path>-<type>` ' +

@@ -64,7 +64,6 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
   repeater: async () => (await import('./components/repeater.element')).RepeaterElement,
 
   // LAYOUTS
-  flex: async () => (await import('./components/grid.element')).GridElement,
   grid: async () => (await import('./components/grid.element')).GridElement,
   tabs: async () => (await import('./components/tabs.element')).TabsElement,
   accordion: async () => (await import('./components/accordion.element')).AccordionElement,

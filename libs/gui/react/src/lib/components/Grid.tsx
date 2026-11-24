@@ -1,7 +1,6 @@
 import type { LayoutWidget, WithWidget } from '@golemui/core';
 import { useLayoutWidget, WidgetRenderer } from '@golemui/react';
 import {
-  type FlexProps,
   gridCellClasses,
   gridClasses,
   type GridProps,
@@ -9,11 +8,10 @@ import {
 } from '@golemui/gui-shared/internals';
 import '../styles.scss';
 
-/** The grid layout, and the deprecated flex layout, which renders as a grid. */
 export function Grid(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as LayoutWidget;
-  const { domId, children, templateData } = useLayoutWidget<GridProps & FlexProps>(widget);
-  const grid = resolveGrid(widget.type, templateData);
+  const { domId, children, templateData } = useLayoutWidget<GridProps>(widget);
+  const grid = resolveGrid(templateData);
 
   return (
     <div className="gui-field">

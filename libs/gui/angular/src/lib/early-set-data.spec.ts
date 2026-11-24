@@ -7,7 +7,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { FormComponent } from './components/form/form.component';
 
 const config = {
-  formDef: { form: { uid: 'root', kind: 'layout', type: 'flex', children: [] } },
+  formDef: { form: { uid: 'root', kind: 'layout', type: 'grid', children: [] } },
   data: { firstName: 'Ada' },
 };
 

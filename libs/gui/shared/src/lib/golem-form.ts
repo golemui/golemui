@@ -25,7 +25,6 @@ import type {
   MultiDropdownProps,
   MultiFileUploadProps,
   MultiListProps,
-  FlexProps,
   GridProps,
   ListProps,
   MarkdownProps,
@@ -246,7 +245,6 @@ type GolemWidget<
   | GuiRepeater<FormType, States, V, CustomWidget>
   | GuiSelect<FormType, States, V>
   | GuiSlider<FormType, States, V>
-  | GuiFlex<FormType, States, V, CustomWidget>
   | GuiGrid<FormType, States, V, CustomWidget>
   | GuiTabs<FormType, States, V, CustomWidget>
   | GuiTextarea<FormType, States, V>
@@ -544,15 +542,6 @@ type GuiSelect<FormType extends Record<string, any>, States extends string, V> =
   SelectProps,
   V
 > & { type: 'select' };
-
-type GuiFlex<
-  FormType extends Record<string, any>,
-  States extends string,
-  V,
-  CustomWidget extends FormWidget<any, FormType>,
-> = LayoutWidget<States, FormType, FlexProps, GolemWidget<FormType, States, V, CustomWidget>[]> & {
-  type: 'flex';
-};
 
 type GuiGrid<
   FormType extends Record<string, any>,

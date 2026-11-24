@@ -39,7 +39,7 @@ describe('Repeater schema validation', () => {
               template: {
                 uid: 'tpl-1',
                 kind: 'layout',
-                type: 'flex',
+                type: 'grid',
                 children: [
                   {
                     uid: 'child-1',
@@ -80,7 +80,7 @@ describe('Repeater schema validation', () => {
               template: {
                 uid: 'tpl-1',
                 kind: 'layout',
-                type: 'flex',
+                type: 'grid',
                 children: [
                   {
                     uid: 'child-1',
@@ -115,7 +115,7 @@ describe('Repeater schema validation', () => {
               template: {
                 uid: 'tpl-1',
                 kind: 'layout',
-                type: 'flex',
+                type: 'grid',
                 children: [
                   {
                     uid: 'child-1',
@@ -153,7 +153,7 @@ describe('Repeater schema validation', () => {
               template: {
                 uid: 'tpl-1',
                 kind: 'layout',
-                type: 'flex',
+                type: 'grid',
                 children: [
                   {
                     uid: 'child-1',
@@ -176,7 +176,7 @@ describe('Repeater schema validation', () => {
       expect(isValid).toBe(true);
     });
 
-    it('should validate template using any layout widget kind (grid, tabs, accordion, flex)', () => {
+    it('should validate a grid template with props', () => {
       const formDef = golemForm().create({
         form: [
           {
@@ -223,7 +223,7 @@ describe('Repeater schema validation', () => {
               template: {
                 uid: 'team-tpl',
                 kind: 'layout',
-                type: 'flex',
+                type: 'grid',
                 children: [
                   {
                     uid: 'team-name',
@@ -243,7 +243,7 @@ describe('Repeater schema validation', () => {
                       template: {
                         uid: 'member-tpl',
                         kind: 'layout',
-                        type: 'flex',
+                        type: 'grid',
                         children: [
                           {
                             uid: 'member-name',
@@ -283,7 +283,7 @@ describe('Repeater schema validation', () => {
               template: {
                 uid: 'tpl-1',
                 kind: 'layout',
-                type: 'flex',
+                type: 'grid',
                 children: [{ uid: 'f-1', kind: 'input', type: 'textinput', path: 'value' }],
               },
             },
@@ -319,7 +319,7 @@ describe('Repeater schema validation', () => {
         template: {
           uid: 'tpl-1',
           kind: 'layout',
-          type: 'flex',
+          type: 'grid',
           children: [{ uid: 'f-1', kind: 'input', type: 'textinput', path: 'value' }],
         },
       },

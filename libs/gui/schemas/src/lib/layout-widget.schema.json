@@ -5,7 +5,6 @@
   "title": "Golem Layout Widget",
   "oneOf": [
     { "$ref": "./components/accordion.schema.json" },
-    { "$ref": "./components/flex.schema.json" },
     { "$ref": "./components/grid.schema.json" },
     { "$ref": "./components/tabs.schema.json" }
   ]

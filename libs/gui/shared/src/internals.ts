@@ -28,7 +28,6 @@ export type {
   DropdownProps,
   FileUploadBaseProps,
   FileUploadProps,
-  FlexProps,
   GridGap,
   GridJustify,
   GridProps,

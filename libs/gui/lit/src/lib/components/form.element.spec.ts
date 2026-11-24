@@ -16,13 +16,13 @@ import './form.element';
 // Lit renders on the microtask schedule, so one macrotask completes every nested render.
 const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
 
-const formDef = { form: { uid: 'root', kind: 'layout', type: 'flex', children: [] } };
+const formDef = { form: { uid: 'root', kind: 'layout', type: 'grid', children: [] } };
 
 const coreStoreState = (form: FormElement) =>
   (form.querySelector('gui-core-form') as CoreFormElement).context.store.getState();
 
 beforeAll(async () => {
-  await preloadFormWidgets({ widgetLoaders: { flex: widgetLoaders.flex } });
+  await preloadFormWidgets({ widgetLoaders: { grid: widgetLoaders.grid } });
 }, 30_000);
 
 afterEach(() => {

@@ -156,7 +156,7 @@ type WidgetMutation = {
 };
 
 const TEXT_INPUT = { kind: 'input', type: 'textinput', path: 'mutated' };
-const FLEX = { kind: 'layout', type: 'flex', children: [{ ...TEXT_INPUT }] };
+const GRID = { kind: 'layout', type: 'grid', children: [{ ...TEXT_INPUT }] };
 
 /**
  * Applies `edit` to a copy of the widget. Skips the location when the widget is not an object or
@@ -257,14 +257,15 @@ const WIDGET_MUTATIONS: WidgetMutation[] = [
   // Widgets in each position.
   { name: 'is-a-chunk-ref', apply: () => ({ $ref: './part.form-chunk.json' }) },
   { name: 'is-a-bad-chunk-ref', apply: () => ({ $ref: 5 }) },
-  { name: 'is-a-chunk-ref-with-extras', apply: () => ({ $ref: './x.json', type: 'flex' }) },
+  { name: 'is-a-chunk-ref-with-extras', apply: () => ({ $ref: './x.json', type: 'grid' }) },
   { name: 'is-not-an-object', apply: () => 'x' },
   { name: 'is-null', apply: () => null },
   { name: 'is-an-array', apply: () => [] },
   { name: 'is-an-input', apply: () => clone(TEXT_INPUT) },
   { name: 'is-a-typo-input', apply: () => ({ ...TEXT_INPUT, type: 'textinpu' }) },
-  { name: 'is-a-flex', apply: () => clone(FLEX) },
-  { name: 'is-a-typo-flex', apply: () => ({ ...clone(FLEX), type: 'flx' }) },
+  { name: 'is-a-grid', apply: () => clone(GRID) },
+  { name: 'is-a-typo-grid', apply: () => ({ ...clone(GRID), type: 'grd' }) },
+  { name: 'is-a-removed-flex', apply: () => ({ ...clone(GRID), type: 'flex' }) },
   { name: 'is-a-button', apply: () => ({ kind: 'action', type: 'button', label: 'Go' }) },
   { name: 'is-a-custom-input', apply: () => ({ kind: 'input', type: 'myInput', path: 'q' }) },
   { name: 'is-a-custom-display', apply: () => ({ kind: 'display', type: 'myDisplay' }) },
@@ -331,7 +332,7 @@ const WIDGET_MUTATIONS: WidgetMutation[] = [
   {
     name: 'state-template-is-invalid',
     apply: editWidget((w) => {
-      (w['props'] as JsonObject)['template.mobile'] = { ...clone(FLEX), notAProperty: true };
+      (w['props'] as JsonObject)['template.mobile'] = { ...clone(GRID), notAProperty: true };
     }, hasTemplate),
   },
   {

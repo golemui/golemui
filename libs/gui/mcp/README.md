@@ -115,7 +115,7 @@ Returns the JSON Schema, kind, a minimal working example, and authoring notes fo
 single GolemUI widget. Cheaper than dumping the whole API into the model's context.
 
 **Input:** `{ widgetType }` (one of the widget `type` constants — `textinput`,
-`dropdown`, `repeater`, `flex`, etc.)
+`dropdown`, `repeater`, `grid`, etc.)
 
 ### `get_concept`
 
