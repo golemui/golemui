@@ -4,7 +4,7 @@ import { type DotPath } from '../shared';
 import { expandStateExpressions } from '../store/reducers/calculate-current-state';
 import { hasWhen } from '../store/reducers/utils';
 import { type ExpressionPolicy } from '../utils/check-expression';
-import { ITEMS_TOKEN, type RepeaterTemplateWidget } from '../utils/repeater';
+import { isRepeaterWidget, ITEMS_TOKEN, type RepeaterTemplateWidget } from '../utils/repeater';
 import { compileFormExpression, compileRowCondition, type RowLevel } from './compile-expression';
 import {
   compileCoreFields,
@@ -74,7 +74,7 @@ function compileWidget(source: FormWidget<string>, context: WidgetCompileContext
     ? source.children.map((child) => compileWidget(child, context))
     : [];
   const repeater =
-    isRepeater(source) && path !== undefined ? compileRows(source, path, context) : undefined;
+    isRepeaterWidget(source) && path !== undefined ? compileRows(source, path, context) : undefined;
   const conditions = compileConditions(source, context);
 
   const hasConditionsBelow =
@@ -90,14 +90,9 @@ function compileWidget(source: FormWidget<string>, context: WidgetCompileContext
     conditions,
     hasConditionsBelow,
     coreFields: compileCoreFields(source, context),
-    propFields: compilePropFields(source, isRepeater(source), context),
+    propFields: compilePropFields(source, isRepeaterWidget(source), context),
     onFields: compileOnFields(source, context),
   };
-}
-
-// A display or a layout with the type `repeater` has no path, so it has no rows.
-function isRepeater(source: FormWidget<string>): source is RepeaterTemplateWidget {
-  return isInputWidget(source) && source.type === 'repeater';
 }
 
 // -----------------------------------------------------------------------------
