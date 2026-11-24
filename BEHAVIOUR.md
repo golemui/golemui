@@ -218,6 +218,11 @@ from there. An exception instead stops the whole app or the framework render.
   the form loads -> code 23, and the message says to pass `{ form: [...] }`.
 - Example: an authoring tool saves a repeater before the author adds its template ->
   `{ "kind": "input", "type": "repeater", "path": "contacts" }` gives code 22.
+- Example: a form author writes a repeater as a layout, because it holds other widgets ->
+  `{ "kind": "layout", "type": "repeater", "children": [] }` gives code 22 with the label
+  `form.children[0].type`. The type `repeater` is an input with a `path` and a row layout in
+  `props.template`. A display, a layout or an action with that type is an error, also inside
+  the row layout of a repeater.
 - Example: an app writes the definition as an object and puts a function in it. A function is
   not allowed as a widget, as the value of a widget key such as `label`, `validator` or `on`, or
   as a prop:

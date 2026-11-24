@@ -131,18 +131,6 @@ describe('compileForm', () => {
       expect(users.repeater?.rowLayout.source).toBe(template);
       expect(users.repeater?.rowLayout.children.map((child) => child.source.uid)).toEqual(['name']);
     });
-
-    it.each(['display', 'layout'])(
-      'compiles a %s widget with the type repeater as a widget without rows',
-      (kind) => {
-        const compiled = compile({
-          form: [{ uid: 'odd', kind, type: 'repeater', children: [], props: { template: {} } }],
-        });
-
-        expect(widgetOf(compiled, 'odd').repeater).toBeUndefined();
-        expect(widgetOf(compiled, 'odd').path).toBeUndefined();
-      },
-    );
   });
 
   describe('the states', () => {
