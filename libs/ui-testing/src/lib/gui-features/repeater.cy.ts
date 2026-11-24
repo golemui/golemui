@@ -57,7 +57,6 @@ export const runRepeaterComponentTests = (baseMountFn: MountComponentFn) => {
                         props: {
                           addLabel: 'Add new developer',
                           removeLabel: 'Remove developer',
-                          limit: 5,
                           template: {
                             kind: 'layout',
                             type: 'grid',
@@ -1666,18 +1665,17 @@ export const runRepeaterComponentTests = (baseMountFn: MountComponentFn) => {
           ],
         });
 
-      it('sends a change with the new rows for each add, and disables Add at the limit', () => {
+      it('sends a change with the new rows for each add and removal', () => {
         const formEventHandler = cy.stub().as('formEventHandler');
         const formSubmitHandler = cy.stub().as('formSubmitHandler');
         mountFn({
-          formDef: membersForm({ limit: 2 }, { change: 'rowsChanged' }),
+          formDef: membersForm({}, { change: 'rowsChanged' }),
           formEvent: formEventHandler,
           formSubmit: formSubmitHandler,
         });
 
         cy.get('.gui-repeater__add-btn').click();
-        cy.get('.gui-repeater__add-btn').should('not.be.disabled').click();
-        cy.get('.gui-repeater__add-btn').should('be.disabled');
+        cy.get('.gui-repeater__add-btn').click();
 
         cy.get('@formEventHandler').should(() => {
           const events = eventsNamed(formEventHandler, 'rowsChanged');
@@ -1693,7 +1691,6 @@ export const runRepeaterComponentTests = (baseMountFn: MountComponentFn) => {
         cy.get('[data-cy="memberName[1]_textinput"]').type('Bob');
         cy.get('[data-cy="memberRole[1]_textinput"]').type('Dev');
         cy.get('.gui-repeater__remove-btn').eq(0).click();
-        cy.get('.gui-repeater__add-btn').should('not.be.disabled');
         cy.get('@formEventHandler').should(() => {
           const events = eventsNamed(formEventHandler, 'rowsChanged');
           expect(events).to.have.length(3);
@@ -2147,20 +2144,6 @@ export const runRepeaterComponentTests = (baseMountFn: MountComponentFn) => {
         cy.then(() => {
           expect(eventsNamed(formEventHandler, 'rowsChanged')).to.have.length(0);
         });
-      });
-
-      it('keeps the deprecated limit disabling the add button on its own', () => {
-        mountFn({
-          data: { members: MEMBERS },
-          formDef: membersForm({}, { repeaterProps: { limit: 2 } }),
-        });
-
-        cy.get('.gui-repeater__add-btn').should('be.disabled');
-        cy.get('.gui-repeater__remove-btn').first().should('not.be.disabled').click();
-        cy.get('.gui-repeater__add-btn').should('not.be.disabled');
-        repeaterHost('membersRepeater')
-          .should('not.have.class', 'gui-repeater--disabled')
-          .and('not.have.class', 'gui-repeater--readonly');
       });
 
       it('locks an inner repeater that is read only, and not the outer one', () => {

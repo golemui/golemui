@@ -6,7 +6,7 @@
  */
 import type { GridGap, GridJustify, GridProps } from '../widget.props';
 
-/** A grid's props once the deprecated ones are mapped. */
+/** A grid's props, with their defaults. */
 export type ResolvedGrid = {
   mode: 'stack' | 'row' | 'columns' | 'auto';
   /** The number of columns, in `columns` mode. */
@@ -17,43 +17,24 @@ export type ResolvedGrid = {
 
 const MAX_COLUMNS = 12;
 
-/** The gap step nearest to a number of pixels, for the deprecated pixel gaps. */
-export function gapFromPixels(pixels: number): GridGap {
-  if (pixels <= 2) return 'none';
-  if (pixels <= 6) return 'xs';
-  if (pixels <= 12) return 'sm';
-  if (pixels <= 20) return 'md';
-  if (pixels <= 28) return 'lg';
-  return 'xl';
-}
-
-/** The deprecated `align` values, which placed the children along the direction. */
-function justifyFromAlign(align: GridProps['align']): GridJustify | undefined {
-  if (align === 'space-around' || align === 'space-evenly') return 'space-between';
-  return align;
-}
-
 const clamp = (value: number, max: number) => Math.min(Math.max(Math.round(value), 1), max);
 
 /**
- * Resolves a grid's props, mapping the deprecated ones.
+ * Resolves a grid's props, with their defaults.
  *
  * @example
  * resolveGrid({ direction: 'row', gap: 'lg' });
  * // { mode: 'row', gap: 'lg', justify: 'stretch' }
  */
 export function resolveGrid(grid: GridProps = {}): ResolvedGrid {
-  const pixelGap = grid.columnGap ?? grid.rowGap;
-  const gap = grid.gap ?? (pixelGap === undefined ? 'md' : gapFromPixels(pixelGap));
-  const justify = grid.justify ?? justifyFromAlign(grid.align) ?? 'stretch';
+  const gap = grid.gap ?? 'md';
+  const justify = grid.justify ?? 'stretch';
 
   if (grid.columns === 'auto') return { mode: 'auto', gap, justify };
   if (typeof grid.columns === 'number') {
     return { mode: 'columns', columns: clamp(grid.columns, MAX_COLUMNS), gap, justify };
   }
   if (grid.direction !== 'row') return { mode: 'stack', gap, justify };
-  // The deprecated twelve-column grid, which a span placed in.
-  if (grid.autoFit === false) return { mode: 'columns', columns: MAX_COLUMNS, gap, justify };
   return { mode: 'row', gap, justify };
 }
 

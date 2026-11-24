@@ -61,7 +61,6 @@ describe('Markdown schema validation', () => {
               minimumHeight: 200,
               autoGrow: true,
               defaultOpenPreview: false,
-              maxLength: 5000,
               tools: ['H', 'B', 'I', '|', 'Q', 'L', 'OL', 'UL'],
               headingTitle: 'Heading',
               boldTitle: 'Bold',
@@ -194,6 +193,22 @@ describe('Markdown schema validation', () => {
       const invalidMarkdown = formDef.form.children[0];
       const isValid = validate(invalidMarkdown);
       expect(isValid).toBe(false);
+    });
+
+    it('should fail on the maxLength prop that 3.0 removed', () => {
+      const isValid = validate({
+        path: 'content',
+        kind: 'input',
+        type: 'markdown',
+        props: { maxLength: 5000 },
+      });
+      expect(isValid).toBe(false);
+      expect(
+        validate.errors?.some(
+          (e) =>
+            e.keyword === 'additionalProperties' && e.params['additionalProperty'] === 'maxLength',
+        ),
+      ).toBe(true);
     });
   });
 });

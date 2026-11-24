@@ -513,7 +513,7 @@ describe('json_validate_form_definition', () => {
     // hints like "Missing required property `sections`". Should now collapse to one clean error.
     const result = validateFormDefinition({
       formDefinition: {
-        form: [{ kind: 'layout', type: 'grid', props: { columnGap: 12 } }],
+        form: [{ kind: 'layout', type: 'grid', props: { gap: 'sm' } }],
       },
     });
     expect(result.valid).toBe(false);

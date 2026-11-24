@@ -465,7 +465,6 @@ const NOTES: Record<string, string[]> = {
     '`props.justify`, rows only: `"stretch"` (default) shares the width by `size`; `"start"` | `"center"` | `"end"` | `"space-between"` keep each child at its own width and place them. Use `{ direction: "row", justify: "end" }` for submit/cancel buttons on the right.',
     'In a row or columns, fields line up by part: labels and hints on top, controls in the middle (checkboxes, toggles and buttons centred on them), errors below. No sizing or alignment props are needed for that.',
     'Every grid stacks its children when its container is narrower than 480px.',
-    'Deprecated props, still accepted: `autoFit` (use `columns`), `columnGap` / `rowGap` (use `gap`), `align` (use `justify`).',
     'All `grid` props support state suffixes: `"direction.<stateName>": "column"` swaps the direction when a state is active. Call `get_concept({ concept: "states" })` for the full pattern.',
   ],
   tabs: [

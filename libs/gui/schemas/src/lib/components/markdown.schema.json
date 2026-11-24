@@ -31,11 +31,6 @@
     "defaultOpenPreviewProp": {
       "type": "boolean"
     },
-    "maxLengthProp": {
-      "type": "number",
-      "deprecated": true,
-      "description": "Deprecated: use `validator.maxLength`. This prop has no effect, and it will be removed in v3.0.0."
-    },
     "toolsProp": {
       "type": "array",
       "items": {
@@ -130,9 +125,6 @@
         "defaultOpenPreview": {
           "$ref": "#/$defs/defaultOpenPreviewProp"
         },
-        "maxLength": {
-          "$ref": "#/$defs/maxLengthProp"
-        },
         "tools": {
           "$ref": "#/$defs/toolsProp"
         },
@@ -188,9 +180,6 @@
         },
         "^defaultOpenPreview\\.[^.]+$": {
           "$ref": "#/$defs/defaultOpenPreviewProp"
-        },
-        "^maxLength\\.[^.]+$": {
-          "$ref": "#/$defs/maxLengthProp"
         },
         "^tools\\.[^.]+$": {
           "$ref": "#/$defs/toolsProp"

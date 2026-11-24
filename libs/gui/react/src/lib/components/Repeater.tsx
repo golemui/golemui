@@ -163,9 +163,7 @@ export function Repeater(widgetInstance: WithWidget) {
             tabIndex={0}
             className="gui-button gui-repeater__add-btn"
             onClick={() => addItem(value || [])}
-            disabled={
-              disabled || (templateData.limit ? templateData.limit === (value?.length ?? 0) : false)
-            }
+            disabled={disabled}
           >
             {templateData.addButtonIcon && (
               <span

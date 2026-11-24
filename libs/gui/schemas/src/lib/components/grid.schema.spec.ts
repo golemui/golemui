@@ -88,100 +88,6 @@ describe('Grid schema validation', () => {
       expect(isValid).toBe(true);
     });
 
-    it('should still validate the deprecated pixel gaps', () => {
-      const formDef = golemForm().create({
-        form: [
-          {
-            uid: 'grid-1',
-            kind: 'layout',
-            type: 'grid',
-            children: [
-              {
-                uid: 'grid-child-1',
-                kind: 'input',
-                type: 'textinput',
-                path: 'f1',
-              },
-            ],
-            props: {
-              direction: 'row',
-              columnGap: 16,
-              rowGap: 8,
-            },
-          },
-        ],
-      });
-
-      const validGrid = formDef.form.children[0];
-      const isValid = validate(validGrid);
-      if (!isValid) {
-        specValidationErrorsLogger(validate, validGrid);
-      }
-      expect(isValid).toBe(true);
-    });
-
-    it('should validate autoFit property with row direction', () => {
-      const formDef = golemForm().create({
-        form: [
-          {
-            uid: 'grid-1',
-            kind: 'layout',
-            type: 'grid',
-            children: [
-              {
-                uid: 'grid-child-1',
-                kind: 'input',
-                type: 'textinput',
-                path: 'f1',
-              },
-            ],
-            props: {
-              direction: 'row',
-              autoFit: true,
-            },
-          },
-        ],
-      });
-
-      const validGrid = formDef.form.children[0];
-      const isValid = validate(validGrid);
-      if (!isValid) {
-        specValidationErrorsLogger(validate, validGrid);
-      }
-      expect(isValid).toBe(true);
-    });
-
-    it('should validate align property', () => {
-      const formDef = golemForm().create({
-        form: [
-          {
-            uid: 'grid-1',
-            kind: 'layout',
-            type: 'grid',
-            children: [
-              {
-                uid: 'grid-child-1',
-                kind: 'input',
-                type: 'textinput',
-                path: 'f1',
-              },
-            ],
-            props: {
-              direction: 'row',
-              align: 'center',
-            },
-          },
-        ],
-      });
-
-      const validGrid = formDef.form.children[0];
-      const isValid = validate(validGrid);
-      if (!isValid) {
-        specValidationErrorsLogger(validate, validGrid);
-      }
-      expect(isValid).toBe(true);
-    });
-
     it('should validate justify property', () => {
       const formDef = golemForm().create({
         form: [
@@ -230,9 +136,8 @@ describe('Grid schema validation', () => {
             ],
             props: {
               'direction.isMobile': 'column',
-              'columnGap.isDesktop': 24,
-              'rowGap.isDesktop': 12,
-              'align.isMobile': 'center',
+              'columns.isDesktop': 3,
+              'gap.isDesktop': 'lg',
               'justify.isDesktop': 'stretch',
             },
           },
@@ -280,34 +185,27 @@ describe('Grid schema validation', () => {
       ).toBe(true);
     });
 
-    it('should fail on invalid enum for align', () => {
-      const formDef = golemForm().create({
-        form: [
-          {
-            uid: 'grid-1',
-            kind: 'layout',
-            type: 'grid',
-            children: [
-              {
-                uid: 'grid-child-1',
-                kind: 'input',
-                type: 'textinput',
-                path: 'f1',
-              },
-            ],
-            props: {
-              // @ts-expect-error Expected, align is invalid
-              align: 'diagonal',
-            },
-          },
-        ],
+    it.each([
+      ['autoFit', false],
+      ['columnGap', 16],
+      ['rowGap', 8],
+      ['align', 'center'],
+    ])('should fail on the %s prop that 3.0 removed', (prop, value) => {
+      const isValid = validate({
+        uid: 'grid-1',
+        kind: 'layout',
+        type: 'grid',
+        children: [{ uid: 'grid-child-1', kind: 'input', type: 'textinput', path: 'f1' }],
+        props: { [prop]: value },
       });
-
-      const invalidGrid = formDef.form.children[0];
-      const isValid = validate(invalidGrid);
       expect(isValid).toBe(false);
       expect(
-        validate.errors?.some((e) => e.keyword === 'enum' && e.instancePath === '/props/align'),
+        validate.errors?.some(
+          (e) =>
+            e.keyword === 'additionalProperties' &&
+            e.instancePath === '/props' &&
+            e.params['additionalProperty'] === prop,
+        ),
       ).toBe(true);
     });
 

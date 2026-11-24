@@ -113,10 +113,4 @@ export {
   menuButtonClasses,
   menuPanelId,
 } from './lib/utils/menu';
-export {
-  gapFromPixels,
-  gridCellClasses,
-  gridClasses,
-  resolveGrid,
-  type ResolvedGrid,
-} from './lib/utils/grid';
+export { gridCellClasses, gridClasses, resolveGrid, type ResolvedGrid } from './lib/utils/grid';

@@ -62,7 +62,6 @@ describe('Textarea schema validation', () => {
               counterMode: 'current',
               minimumHeight: 100,
               autoGrow: true,
-              maxLength: 500,
             },
           },
         ],
@@ -86,7 +85,6 @@ describe('Textarea schema validation', () => {
             type: 'textarea',
             props: {
               'hint.hasError': 'Comment is required',
-              'maxLength.isPremium': 2000,
               'autoGrow.isMobile': false,
             },
           },
@@ -182,6 +180,22 @@ describe('Textarea schema validation', () => {
       expect(
         validate.errors?.some(
           (e) => e.keyword === 'enum' && e.instancePath === '/props/counterMode',
+        ),
+      ).toBe(true);
+    });
+
+    it('should fail on the maxLength prop that 3.0 removed', () => {
+      const isValid = validate({
+        path: 'comments',
+        kind: 'input',
+        type: 'textarea',
+        props: { maxLength: 500 },
+      });
+      expect(isValid).toBe(false);
+      expect(
+        validate.errors?.some(
+          (e) =>
+            e.keyword === 'additionalProperties' && e.params['additionalProperty'] === 'maxLength',
         ),
       ).toBe(true);
     });

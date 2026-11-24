@@ -137,11 +137,6 @@ export type TextareaProps = {
   counterMode?: 'remaining' | 'current';
   minimumHeight?: number;
   autoGrow?: boolean;
-  /**
-   * @deprecated Use `validator.maxLength`, which drives the counter and the error. This prop has
-   * no effect, and it will be removed in v3.0.0.
-   */
-  maxLength?: number;
 };
 
 type MarkdownButtons = 'H' | 'B' | 'I' | 'S' | 'Q' | 'L' | 'OL' | 'UL' | '|';
@@ -737,11 +732,6 @@ export type MarkdownTextProps = {
 export type RepeaterProps<Template> = {
   addLabel?: string;
   removeLabel?: string;
-  /**
-   * @deprecated Use `validator.maxItems`, which shows an error past the cap instead of disabling
-   * the add button without a message. It will be removed in v3.0.0.
-   */
-  limit?: number;
   template: Template;
   title?: string;
   addButtonIcon?: string;
@@ -907,27 +897,6 @@ export type GridProps = {
    * value keeps each child at its own width, ignores `size`, and places the children on the row.
    */
   justify?: GridJustify;
-  /**
-   * @deprecated Use `columns`. `false` is `columns: 12`; `true`, the old default, is a row. It
-   * will be removed in v3.0.0.
-   */
-  autoFit?: boolean;
-  /** @deprecated Use `gap`. Pixels become the nearest `GridGap`. It will be removed in v3.0.0. */
-  columnGap?: number;
-  /** @deprecated Use `gap`. Pixels become the nearest `GridGap`. It will be removed in v3.0.0. */
-  rowGap?: number;
-  /**
-   * @deprecated Use `justify`, which places the children along the row as `align` did. It will
-   * be removed in v3.0.0.
-   */
-  align?:
-    | 'center'
-    | 'start'
-    | 'end'
-    | 'space-between'
-    | 'space-around'
-    | 'space-evenly'
-    | 'stretch';
 };
 
 export type TabsProps = {

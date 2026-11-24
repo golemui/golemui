@@ -28,11 +28,6 @@
     "autoGrowProp": {
       "type": "boolean"
     },
-    "maxLengthProp": {
-      "type": "number",
-      "deprecated": true,
-      "description": "Deprecated: use `validator.maxLength`. This prop has no effect, and it will be removed in v3.0.0."
-    },
     "autocompleteProp": {
       "type": "string"
     }
@@ -88,9 +83,6 @@
         "autoGrow": {
           "$ref": "#/$defs/autoGrowProp"
         },
-        "maxLength": {
-          "$ref": "#/$defs/maxLengthProp"
-        },
         "autocomplete": {
           "$ref": "#/$defs/autocompleteProp"
         }
@@ -110,9 +102,6 @@
         },
         "^autoGrow\\.[^.]+$": {
           "$ref": "#/$defs/autoGrowProp"
-        },
-        "^maxLength\\.[^.]+$": {
-          "$ref": "#/$defs/maxLengthProp"
         },
         "^autocomplete\\.[^.]+$": {
           "$ref": "#/$defs/autocompleteProp"

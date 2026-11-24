@@ -131,32 +131,5 @@ export const runGridComponentTests = (baseMountFn: MountComponentFn) => {
         expectInputOrder(['first', 'second', 'third']);
       });
     });
-
-    describe('deprecated grid props', () => {
-      it('renders a twelve column grid for autoFit false and takes the gap from columnGap', () => {
-        mountFn({
-          formDef: layoutForm({ direction: 'row', autoFit: false, columnGap: 24 }, [6]),
-        });
-
-        expectContainerClass('gui-grid gui-grid--columns-12 gui-grid--gap-lg');
-        expectCellClasses([
-          'gui-grid__cell gui-grid__cell--span-6',
-          'gui-grid__cell',
-          'gui-grid__cell',
-        ]);
-      });
-
-      it('takes the gap from rowGap when there is no columnGap', () => {
-        mountFn({ formDef: layoutForm({ rowGap: 50 }) });
-
-        expectContainerClass('gui-grid gui-grid--gap-xl');
-      });
-
-      it('renders align as justify and maps the space values to space-between', () => {
-        mountFn({ formDef: layoutForm({ direction: 'row', align: 'space-evenly' }) });
-
-        expectContainerClass('gui-grid gui-grid--row gui-grid--justify-space-between');
-      });
-    });
   });
 };

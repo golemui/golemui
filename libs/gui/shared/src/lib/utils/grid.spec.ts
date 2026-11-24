@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { gapFromPixels, gridCellClasses, gridClasses, resolveGrid } from './grid';
+import { gridCellClasses, gridClasses, resolveGrid } from './grid';
 
 describe('resolveGrid', () => {
   it('stacks a grid with no direction, a md gap apart', () => {
@@ -18,37 +18,6 @@ describe('resolveGrid', () => {
     });
     expect(resolveGrid({ columns: 'auto' }).mode).toBe('auto');
     expect(resolveGrid({ columns: 40 }).columns).toBe(12);
-  });
-
-  it('maps the deprecated grid props', () => {
-    expect(resolveGrid({ direction: 'row', autoFit: true })).toMatchObject({ mode: 'row' });
-    expect(resolveGrid({ direction: 'row', autoFit: false })).toMatchObject({
-      mode: 'columns',
-      columns: 12,
-    });
-    expect(resolveGrid({ direction: 'column', autoFit: false }).mode).toBe('stack');
-    expect(resolveGrid({ columnGap: 24, rowGap: 8 }).gap).toBe('lg');
-    expect(resolveGrid({ rowGap: 50 }).gap).toBe('xl');
-    expect(resolveGrid({ align: 'space-evenly' }).justify).toBe('space-between');
-    expect(resolveGrid({ align: 'end', justify: 'start' }).justify).toBe('start');
-  });
-});
-
-describe('gapFromPixels', () => {
-  it('picks the nearest step', () => {
-    expect([0, 4, 6, 8, 12, 16, 20, 24, 28, 32, 100].map(gapFromPixels)).toEqual([
-      'none',
-      'xs',
-      'xs',
-      'sm',
-      'sm',
-      'md',
-      'md',
-      'lg',
-      'lg',
-      'xl',
-      'xl',
-    ]);
   });
 });
 
@@ -94,18 +63,5 @@ describe('edge values', () => {
     const row = resolveGrid({ direction: 'row' });
     expect(gridCellClasses(row, 0)).toBe('gui-grid__cell');
     expect(gridCellClasses(row, -2)).toBe('gui-grid__cell');
-  });
-
-  it('prefers gap over the pixel gaps and keeps a pixel gap of zero', () => {
-    expect(resolveGrid({ gap: 'xs', columnGap: 30 }).gap).toBe('xs');
-    expect(resolveGrid({ columnGap: 0, rowGap: 30 }).gap).toBe('none');
-  });
-
-  it('maps the space-around align of a grid to space-between', () => {
-    expect(resolveGrid({ direction: 'row', align: 'space-around' }).justify).toBe('space-between');
-  });
-
-  it('gives no gap to a negative number of pixels', () => {
-    expect(gapFromPixels(-5)).toBe('none');
   });
 });

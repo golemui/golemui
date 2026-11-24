@@ -143,8 +143,7 @@ export class RepeaterElement extends LitElement implements WithWidget {
               tabindex="0"
               class="gui-button gui-repeater__add-btn"
               @click=${() => this.addItem()}
-              ?disabled=${disabled ||
-              !!(templateData.limit && templateData.limit === templateData.value?.length)}
+              ?disabled=${disabled}
             >
               ${templateData.addButtonIcon
                 ? html`<span

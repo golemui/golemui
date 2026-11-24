@@ -28,34 +28,6 @@
     "justifyProp": {
       "enum": ["stretch", "start", "center", "end", "space-between"],
       "description": "How a row's children use its width. `stretch`, the default, shares it by `size`; any other value keeps each child at its own width and places them on the row."
-    },
-    "columnGapProp": {
-      "type": "number",
-      "deprecated": true,
-      "description": "Deprecated: use `gap`. Pixels become the nearest gap step. It will be removed in v3.0.0."
-    },
-    "rowGapProp": {
-      "type": "number",
-      "deprecated": true,
-      "description": "Deprecated: use `gap`. Pixels become the nearest gap step. It will be removed in v3.0.0."
-    },
-    "autoFitProp": {
-      "type": "boolean",
-      "deprecated": true,
-      "description": "Deprecated: use `columns`. `false` is `columns: 12`; `true` is a row. It will be removed in v3.0.0."
-    },
-    "alignProp": {
-      "enum": [
-        "center",
-        "start",
-        "end",
-        "space-between",
-        "space-around",
-        "space-evenly",
-        "stretch"
-      ],
-      "deprecated": true,
-      "description": "Deprecated: use `justify`, which places the children along the row. It will be removed in v3.0.0."
     }
   },
   "allOf": [
@@ -91,18 +63,6 @@
         },
         "justify": {
           "$ref": "#/$defs/justifyProp"
-        },
-        "columnGap": {
-          "$ref": "#/$defs/columnGapProp"
-        },
-        "rowGap": {
-          "$ref": "#/$defs/rowGapProp"
-        },
-        "autoFit": {
-          "$ref": "#/$defs/autoFitProp"
-        },
-        "align": {
-          "$ref": "#/$defs/alignProp"
         }
       },
       "patternProperties": {
@@ -117,18 +77,6 @@
         },
         "^justify\\.[^.]+$": {
           "$ref": "#/$defs/justifyProp"
-        },
-        "^columnGap\\.[^.]+$": {
-          "$ref": "#/$defs/columnGapProp"
-        },
-        "^rowGap\\.[^.]+$": {
-          "$ref": "#/$defs/rowGapProp"
-        },
-        "^autoFit\\.[^.]+$": {
-          "$ref": "#/$defs/autoFitProp"
-        },
-        "^align\\.[^.]+$": {
-          "$ref": "#/$defs/alignProp"
         }
       },
       "additionalProperties": false
