@@ -49,7 +49,7 @@ export function getFormEventRow(state: State, uid: Uid): FormEventRow | undefine
 }
 
 /** The path segment that stands for "the current row" in template paths, e.g. `users.items.name`. */
-const ITEMS_TOKEN = 'items';
+export const ITEMS_TOKEN = 'items';
 
 /**
  * The three maps `expandSources` builds from the form and the data.

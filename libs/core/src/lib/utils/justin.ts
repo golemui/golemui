@@ -76,10 +76,7 @@ export function compileExpression(
   }
   if (issues.length > 0 && isDevMode()) {
     // The cache keeps the evaluator, so this prints once per expression until the cache is cleared.
-    const messages = issues.map((issue) => issue.message).join(' ');
-    console.warn(
-      `[GolemUI] Expression "${expression}" fails with expressionPolicy 'strict': ${messages}`,
-    );
+    console.warn(expressionWarning(expression, issues));
   }
   const evaluate = compile(ast);
   if (cache.size >= COMPILED_EXPRESSION_CACHE_LIMIT) {
@@ -87,6 +84,18 @@ export function compileExpression(
   }
   cache.set(expression, evaluate);
   return evaluate;
+}
+
+/**
+ * The developer warning for an expression that runs with the `warn` policy and has issues.
+ *
+ * @param expression - The expression as written.
+ * @param issues - The issues of the expression check. None of them fails with the `warn` policy.
+ * @returns The text for the console.
+ */
+export function expressionWarning(expression: string, issues: ExpressionIssue[]): string {
+  const messages = issues.map((issue) => issue.message).join(' ');
+  return `[GolemUI] Expression "${expression}" fails with expressionPolicy 'strict': ${messages}`;
 }
 
 export function expressionIsTrue(

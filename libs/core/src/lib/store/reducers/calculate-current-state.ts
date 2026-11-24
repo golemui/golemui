@@ -95,7 +95,7 @@ export const calculateCurrentState =
  * // }
  * ```
  */
-function expandStateExpressions(states: Record<string, string>): Record<string, string> {
+export function expandStateExpressions(states: Record<string, string>): Record<string, string> {
   const expandedStates: Record<string, string> = {};
 
   /**
