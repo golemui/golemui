@@ -12,6 +12,5 @@ it. The release notes and the migration guide of a major version are written fro
 
 ## Removed in v3.0.0
 
-| API                                                         | Package          | Deprecated in | Use instead | Why                                                                                             |
-| ----------------------------------------------------------- | ---------------- | ------------- | ----------- | ----------------------------------------------------------------------------------------------- |
-| `localeId` property (`locale-id` attribute) of `gui-number` | `gui-components` | 2.1.1         | Nothing     | It has no effect: the inner `<input type="number">` formats and parses in the browser's locale. |
+| API | Package | Deprecated in | Use instead | Why |
+| --- | ------- | ------------- | ----------- | --- |
