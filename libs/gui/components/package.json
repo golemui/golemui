@@ -173,10 +173,10 @@
       "import": "./lib/components/markdown-text.js",
       "require": "./lib/components/markdown-text.umd.cjs"
     },
-    "./menu": {
-      "types": "./lib/components/menu.d.ts",
-      "import": "./lib/components/menu.js",
-      "require": "./lib/components/menu.umd.cjs"
+    "./menu-button": {
+      "types": "./lib/components/menu-button.d.ts",
+      "import": "./lib/components/menu-button.js",
+      "require": "./lib/components/menu-button.umd.cjs"
     },
     "./toast": {
       "types": "./lib/components/toast.d.ts",

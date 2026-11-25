@@ -4,7 +4,7 @@ import '../components/badge';
 import '../components/checkbox';
 import '../components/checkbox-group';
 import '../components/dialog';
-import '../components/menu';
+import '../components/menu-button';
 import '../components/otp';
 import '../components/popover';
 import '../components/progress';
@@ -62,13 +62,13 @@ export const serverTemplate = () =>
       <div id="plan-help" popover>Every plan includes email support.</div>
     </gui-popover>
     <button type="button" popovertarget="plan-actions" id="plan-actions-button">Plan</button>
-    <gui-menu>
+    <gui-menu-button>
       <div id="plan-actions" popover>
         <button type="button" value="upgrade">Upgrade</button>
         <hr />
         <button type="button" value="cancel">Cancel the plan</button>
       </div>
-    </gui-menu>
+    </gui-menu-button>
     <gui-dialog placement="end">
       <dialog id="plan-dialog" aria-labelledby="plan-dialog-title">
         <h2 id="plan-dialog-title">Compare plans</h2>

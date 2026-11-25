@@ -39,7 +39,7 @@
             {
               "uid": "userRowMenu",
               "kind": "action",
-              "type": "menu",
+              "type": "menuButton",
               "on": {
                 "click": "repeaterRowAction"
               },

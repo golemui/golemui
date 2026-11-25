@@ -1,14 +1,19 @@
 import { describe, expect, it } from 'vitest';
-import { isMenuSeparator, menuButtonAriaLabel, menuButtonClasses, menuPanelId } from './menu';
+import {
+  isMenuButtonSeparator,
+  menuButtonAriaLabel,
+  menuButtonClasses,
+  menuButtonPanelId,
+} from './menu-button';
 
 describe('menu helpers', () => {
   it('names the panel after the widget uid, row index included', () => {
-    expect(menuPanelId('rowActions[2]')).toBe('rowActions[2]_menu');
+    expect(menuButtonPanelId('rowActions[2]')).toBe('rowActions[2]_menu');
   });
 
   it('tells a separator from an action', () => {
-    expect(isMenuSeparator({ separator: true })).toBe(true);
-    expect(isMenuSeparator({ label: 'Edit', value: 'edit' })).toBe(false);
+    expect(isMenuButtonSeparator({ separator: true })).toBe(true);
+    expect(isMenuButtonSeparator({ label: 'Edit', value: 'edit' })).toBe(false);
   });
 
   it('names the button with ariaLabel only when it shows no label', () => {

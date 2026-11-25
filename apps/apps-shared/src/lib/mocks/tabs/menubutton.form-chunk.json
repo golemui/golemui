@@ -1,13 +1,13 @@
 {
   "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
-  "uid": "tabMenu",
+  "uid": "tabMenuButton",
   "kind": "layout",
   "type": "grid",
   "children": [
     {
       "uid": "menuActions",
       "kind": "action",
-      "type": "menu",
+      "type": "menuButton",
       "label": "Actions",
       "on": {
         "click": "onMenuAction"
@@ -40,7 +40,7 @@
     {
       "uid": "menuOutlined",
       "kind": "action",
-      "type": "menu",
+      "type": "menuButton",
       "label": "Actions",
       "on": {
         "click": "onMenuAction"
@@ -74,7 +74,7 @@
     {
       "uid": "menuLink",
       "kind": "action",
-      "type": "menu",
+      "type": "menuButton",
       "label": "Actions",
       "on": {
         "click": "onMenuAction"
@@ -108,7 +108,7 @@
     {
       "uid": "menuIcon",
       "kind": "action",
-      "type": "menu",
+      "type": "menuButton",
       "label": "More",
       "on": {
         "click": "onMenuAction"
@@ -144,7 +144,7 @@
     {
       "uid": "menuIconOnly",
       "kind": "action",
-      "type": "menu",
+      "type": "menuButton",
       "on": {
         "click": "onMenuAction"
       },
@@ -180,7 +180,7 @@
     {
       "uid": "menuTop",
       "kind": "action",
-      "type": "menu",
+      "type": "menuButton",
       "label": "Opens above",
       "on": {
         "click": "onMenuAction"
@@ -214,7 +214,7 @@
     {
       "uid": "menuDisabled",
       "kind": "action",
-      "type": "menu",
+      "type": "menuButton",
       "label": "Actions",
       "disabled": true,
       "props": {

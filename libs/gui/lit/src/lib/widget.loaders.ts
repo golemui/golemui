@@ -5,7 +5,7 @@ import { type Type } from '@golemui/lit';
 export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
   // ACTION
   button: async () => (await import('./components/button.element')).ButtonElement,
-  menu: async () => (await import('./components/menu.element')).MenuElement,
+  menuButton: async () => (await import('./components/menu-button.element')).MenuButtonElement,
 
   // INPUTS
   calendar: async () => (await import('./components/calendar.element')).CalendarElement,

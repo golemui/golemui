@@ -115,7 +115,7 @@ const config: FormInitConfig<Type<WithWidget>> = {
         {
           uid: 'moreActions',
           kind: 'action',
-          type: 'menu',
+          type: 'menuButton',
           label: 'More',
           props: { items: [{ label: 'Save as draft', value: 'draft' }] },
         },
@@ -158,7 +158,9 @@ describe('server rendering the gui widget set in plain node', () => {
     expect(markup).toMatch(/<gui-grid-layout[^>]*class="[^"]*gui-field/);
     expect(markup).toMatch(/<gui-textinput-input[^>]*class="[^"]*gui-textinput[^"]*gui-field/);
     expect(markup).toMatch(/<gui-button-interactive[^>]*class="[^"]*gui-button[^"]*gui-field/);
-    expect(markup).toMatch(/<gui-menu-interactive[^>]*class="[^"]*gui-menu-button[^"]*gui-field/);
+    expect(markup).toMatch(
+      /<gui-menu-button-interactive[^>]*class="[^"]*gui-menu-button[^"]*gui-field/,
+    );
   });
 
   it('renders labels, values and the layout structure', () => {

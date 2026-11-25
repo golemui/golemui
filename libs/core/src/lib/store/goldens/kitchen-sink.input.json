@@ -33,8 +33,8 @@
               "uid": "tabButton"
             },
             {
-              "label": "Menu Component",
-              "uid": "tabMenu"
+              "label": "Menu Button Component",
+              "uid": "tabMenuButton"
             },
             {
               "label": "Calendar Component",
@@ -313,14 +313,14 @@
             ]
           },
           {
-            "uid": "tabMenu",
+            "uid": "tabMenuButton",
             "kind": "layout",
             "type": "grid",
             "children": [
               {
                 "uid": "menuActions",
                 "kind": "action",
-                "type": "menu",
+                "type": "menuButton",
                 "label": "Actions",
                 "on": {
                   "click": "onMenuAction"
@@ -353,7 +353,7 @@
               {
                 "uid": "menuOutlined",
                 "kind": "action",
-                "type": "menu",
+                "type": "menuButton",
                 "label": "Actions",
                 "on": {
                   "click": "onMenuAction"
@@ -387,7 +387,7 @@
               {
                 "uid": "menuLink",
                 "kind": "action",
-                "type": "menu",
+                "type": "menuButton",
                 "label": "Actions",
                 "on": {
                   "click": "onMenuAction"
@@ -421,7 +421,7 @@
               {
                 "uid": "menuIcon",
                 "kind": "action",
-                "type": "menu",
+                "type": "menuButton",
                 "label": "More",
                 "on": {
                   "click": "onMenuAction"
@@ -457,7 +457,7 @@
               {
                 "uid": "menuIconOnly",
                 "kind": "action",
-                "type": "menu",
+                "type": "menuButton",
                 "on": {
                   "click": "onMenuAction"
                 },
@@ -493,7 +493,7 @@
               {
                 "uid": "menuTop",
                 "kind": "action",
-                "type": "menu",
+                "type": "menuButton",
                 "label": "Opens above",
                 "on": {
                   "click": "onMenuAction"
@@ -527,7 +527,7 @@
               {
                 "uid": "menuDisabled",
                 "kind": "action",
-                "type": "menu",
+                "type": "menuButton",
                 "label": "Actions",
                 "disabled": true,
                 "props": {
@@ -5213,7 +5213,7 @@
                       {
                         "uid": "userRowMenu",
                         "kind": "action",
-                        "type": "menu",
+                        "type": "menuButton",
                         "on": {
                           "click": "repeaterRowAction"
                         },

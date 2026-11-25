@@ -9,36 +9,36 @@ import { ActionWidgetAdapter } from '@golemui/angular';
 import type { ActionWidget, WithWidget } from '@golemui/core';
 import type { GuiActionEventDetail } from '@golemui/gui-components';
 import {
-  DEFAULT_MENU_PLACEMENT,
-  isMenuSeparator,
+  DEFAULT_MENU_BUTTON_PLACEMENT,
+  isMenuButtonSeparator,
   menuButtonAriaLabel,
   menuButtonClasses,
-  menuPanelId,
-  type MenuProps,
+  menuButtonPanelId,
+  type MenuButtonProps,
 } from '@golemui/gui-shared/internals';
-import '@golemui/gui-components/menu';
+import '@golemui/gui-components/menu-button';
 import { deferHydrationAttr } from '../../utils/defer-hydration';
 
 /**
- * The menu action widget: a button that opens a `gui-menu` of actions. Picking an item emits the
- * widget's `click` event with `{ value }` as its detail.
+ * The menuButton action widget: a button that opens a menu of actions, with `gui-menu-button`.
+ * Picking an item emits the widget's `click` event with `{ value }` as its detail.
  */
 @Component({
   standalone: true,
-  selector: 'gui-menu-interactive',
+  selector: 'gui-menu-button-interactive',
   providers: [ActionWidgetAdapter],
-  templateUrl: './menu.component.html',
+  templateUrl: './menu-button.component.html',
   host: {
     class: 'gui-menu-button gui-field',
   },
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class MenuComponent implements OnInit, OnDestroy, WithWidget {
+export class MenuButtonComponent implements OnInit, OnDestroy, WithWidget {
   widget!: ActionWidget;
-  protected adapter: ActionWidgetAdapter<MenuProps> = inject(ActionWidgetAdapter);
+  protected adapter: ActionWidgetAdapter<MenuButtonProps> = inject(ActionWidgetAdapter);
   protected readonly deferHydration = deferHydrationAttr();
-  protected readonly defaultPlacement = DEFAULT_MENU_PLACEMENT;
-  protected readonly isMenuSeparator = isMenuSeparator;
+  protected readonly defaultPlacement = DEFAULT_MENU_BUTTON_PLACEMENT;
+  protected readonly isMenuButtonSeparator = isMenuButtonSeparator;
   protected readonly menuButtonClasses = menuButtonClasses;
   protected readonly menuButtonAriaLabel = menuButtonAriaLabel;
 
@@ -51,12 +51,12 @@ export class MenuComponent implements OnInit, OnDestroy, WithWidget {
   }
 
   get panelId() {
-    return menuPanelId(this.adapter.domId);
+    return menuButtonPanelId(this.adapter.domId);
   }
 
   /** The `data-cy` of the panel, built from the bare uid. */
   get panelCy() {
-    return menuPanelId(this.widget.uid);
+    return menuButtonPanelId(this.widget.uid);
   }
 
   onAction(event: Event) {

@@ -3,23 +3,23 @@ import type { ActionWidget, WithWidget } from '@golemui/core';
 import { useActionWidget } from '@golemui/vue';
 import type { GuiActionEventDetail } from '@golemui/gui-components';
 import {
-  DEFAULT_MENU_PLACEMENT,
-  isMenuSeparator,
+  DEFAULT_MENU_BUTTON_PLACEMENT,
+  isMenuButtonSeparator,
   menuButtonAriaLabel,
   menuButtonClasses,
-  menuPanelId,
-  type MenuProps,
+  menuButtonPanelId,
+  type MenuButtonProps,
 } from '@golemui/gui-shared/internals';
 import { computed } from 'vue';
-import '@golemui/gui-components/menu';
+import '@golemui/gui-components/menu-button';
 
-// The menu action widget: a button that opens a `gui-menu` of actions. Picking an item emits the
-// widget's `click` event with `{ value }` as its detail.
+// The menuButton action widget: a button that opens a menu of actions, with `gui-menu-button`.
+// Picking an item emits the widget's `click` event with `{ value }` as its detail.
 const props = defineProps<WithWidget>();
 const widget = props.widget as ActionWidget;
-const { uid, domId, templateData, emitClick } = useActionWidget<MenuProps>(widget);
+const { uid, domId, templateData, emitClick } = useActionWidget<MenuButtonProps>(widget);
 
-const panelId = computed(() => menuPanelId(domId));
+const panelId = computed(() => menuButtonPanelId(domId));
 const buttonClasses = computed(() => menuButtonClasses(templateData.value));
 const ariaLabel = computed(() =>
   menuButtonAriaLabel(templateData.value.label, templateData.value.ariaLabel),
@@ -58,13 +58,13 @@ const onAction = (event: CustomEvent<GuiActionEventDetail>) => {
         ></span>
       </button>
     </div>
-    <gui-menu
-      :placement.prop="templateData.placement ?? DEFAULT_MENU_PLACEMENT"
+    <gui-menu-button
+      :placement.prop="templateData.placement ?? DEFAULT_MENU_BUTTON_PLACEMENT"
       @gui-action="onAction"
     >
-      <div :id="panelId" :data-cy="menuPanelId(uid)" popover>
+      <div :id="panelId" :data-cy="menuButtonPanelId(uid)" popover>
         <template v-for="(item, index) in templateData.items ?? []" :key="index">
-          <hr v-if="isMenuSeparator(item)" />
+          <hr v-if="isMenuButtonSeparator(item)" />
           <button
             v-else
             type="button"
@@ -76,6 +76,6 @@ const onAction = (event: CustomEvent<GuiActionEventDetail>) => {
           </button>
         </template>
       </div>
-    </gui-menu>
+    </gui-menu-button>
   </div>
 </template>

@@ -40,7 +40,7 @@ export type ButtonProps = {
 };
 
 /** An action in a menu. */
-export type MenuAction = {
+export type MenuButtonAction = {
   /** The text of the item. */
   label: Localizable;
   /** What the menu's event carries in `detail.value` when the user picks the item. */
@@ -50,13 +50,13 @@ export type MenuAction = {
 };
 
 /** A line between two groups of a menu's items. */
-export type MenuSeparator = { separator: true };
+export type MenuButtonSeparator = { separator: true };
 
-export type MenuItem = MenuAction | MenuSeparator;
+export type MenuButtonItem = MenuButtonAction | MenuButtonSeparator;
 
-export type MenuProps = {
+export type MenuButtonProps = {
   /** The menu's items, in order. */
-  items: MenuItem[];
+  items: MenuButtonItem[];
   /** Where the menu opens, next to its button. Defaults to `bottom-start`. */
   placement?: GuiPlacement;
   /** The button's style. */

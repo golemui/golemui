@@ -1,7 +1,7 @@
 import { defineForm, type FormWidget } from '@golemui/core';
 import { expectNoDuplicateIds, type MountComponentFn, testDomId, withTestFormName } from '../utils';
 
-export const runMenuComponentTests = (baseMountFn: MountComponentFn) => {
+export const runMenuButtonComponentTests = (baseMountFn: MountComponentFn) => {
   const mountFn = withTestFormName(baseMountFn);
   describe('Menu Component', () => {
     const UID = 'rowActions';
@@ -17,7 +17,7 @@ export const runMenuComponentTests = (baseMountFn: MountComponentFn) => {
       ({
         uid: UID,
         kind: 'action',
-        type: 'menu',
+        type: 'menuButton',
         label: 'Actions',
         on: { click: 'rowAction' },
         props: { items, ...props },

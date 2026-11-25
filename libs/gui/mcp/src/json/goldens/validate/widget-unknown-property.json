@@ -546,12 +546,12 @@
       "interpolationWarnings": []
     }
   },
-  "menu": {
+  "menuButton": {
     "input": {
       "form": [
         {
           "kind": "action",
-          "type": "menu",
+          "type": "menuButton",
           "notAProperty": true
         }
       ]

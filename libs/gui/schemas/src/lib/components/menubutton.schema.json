@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://golemui.com/schemas/gui/components/menu.schema.json",
-  "title": "Menu Widget",
+  "$id": "https://golemui.com/schemas/gui/components/menubutton.schema.json",
+  "title": "Menu Button Widget",
   "description": "A button that opens a menu of actions. Picking an item dispatches `on.click` with the item's value in `detail.value`.",
   "type": "object",
   "$defs": {
@@ -11,7 +11,7 @@
     "disabledDef": {
       "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
     },
-    "menuAction": {
+    "menuButtonAction": {
       "type": "object",
       "description": "An action in the menu.",
       "properties": {
@@ -30,7 +30,7 @@
       "required": ["label", "value"],
       "additionalProperties": false
     },
-    "menuSeparator": {
+    "menuButtonSeparator": {
       "type": "object",
       "description": "A line between two groups of items.",
       "properties": {
@@ -47,10 +47,10 @@
       "items": {
         "oneOf": [
           {
-            "$ref": "#/$defs/menuAction"
+            "$ref": "#/$defs/menuButtonAction"
           },
           {
-            "$ref": "#/$defs/menuSeparator"
+            "$ref": "#/$defs/menuButtonSeparator"
           }
         ]
       },
@@ -97,7 +97,7 @@
       "const": "action"
     },
     "type": {
-      "const": "menu"
+      "const": "menuButton"
     },
     "label": {
       "$ref": "#/$defs/labelDef"
