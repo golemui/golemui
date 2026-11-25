@@ -316,7 +316,7 @@ export function mergeTimeRanges(ranges: TimeRange[]): TimeRange[] {
  * Orders a date-time range so `start <= end`, swapping the two ends when the
  * caller provided them reversed. Date-time ranges are just two ISO date-times,
  * so a "backward" selection (e.g. same day, end time before start time) is
- * reordered rather than rejected — mirroring the range calendar's date swap.
+ * reordered rather than rejected — mirroring the multi-range calendar's date swap.
  *
  * @param {string} start - The (possibly-later) start date-time.
  * @param {string} end - The (possibly-earlier) end date-time.

@@ -1,0 +1,158 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabMultiRangeDatePicker",
+  "kind": "layout",
+  "type": "grid",
+  "children": [
+    {
+      "kind": "input",
+      "type": "multiRangeDatePicker",
+      "path": "multiRangeDatePickerEmpty",
+      "label": "Empty",
+      "props": {
+        "icon": "calendar_month",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeDatePicker",
+      "path": "multiRangeDatePickerMinMax",
+      "defaultValue": [
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "label": "Min/Max",
+      "props": {
+        "icon": "calendar_month",
+        "separator": "to",
+        "minDate": "2026-02-01",
+        "maxDate": "2026-02-28",
+        "minDateMessage": "Min date is 01.02.2026",
+        "maxDateMessage": "Max date is 28.02.2026"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeDatePicker",
+      "path": "multiRangeDatePickerDefault",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "label": "With default value",
+      "props": {
+        "icon": "calendar_month",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeDatePicker",
+      "path": "multiRangeDatePickerEditable",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "label": "Editable",
+      "props": {
+        "allowEdit": true,
+        "icon": "calendar_month",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeDatePicker",
+      "path": "multiRangeDatePickerDisabled",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "disabled": true,
+      "label": "Disabled",
+      "props": {
+        "icon": "calendar_month",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeDatePicker",
+      "path": "multiRangeDatePickerReadonly",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "readonly": true,
+      "label": "Read only",
+      "props": {
+        "icon": "calendar_month",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeDatePicker",
+      "path": "multiRangeDatePickerValidation",
+      "label": "Required (validation)",
+      "props": {
+        "icon": "calendar_month",
+        "separator": "to"
+      },
+      "validator": {
+        "type": "array",
+        "required": true
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeDatePicker",
+      "path": "multiRangeDatePickerDisabledRanges",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "label": "Disabled date ranges",
+      "props": {
+        "icon": "calendar_month",
+        "separator": "to",
+        "disabledRanges": [
+          {
+            "start": "2026-02-09",
+            "end": "2026-02-10"
+          },
+          {
+            "start": "2026-02-17"
+          }
+        ]
+      }
+    }
+  ]
+}

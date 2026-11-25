@@ -11,22 +11,25 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
   calendar: async () => (await import('./components/calendar.element')).CalendarElement,
   dateTimeCalendar: async () =>
     (await import('./components/date-time-calendar.element')).DateTimeCalendarElement,
-  rangeCalendar: async () =>
-    (await import('./components/range-calendar.element')).RangeCalendarElement,
-  rangeDateInput: async () =>
-    (await import('./components/range-date-input.element')).RangeDateInputElement,
-  rangeTimeInput: async () =>
-    (await import('./components/range-time-input.element')).RangeTimeInputElement,
-  rangeDateTimeInput: async () =>
-    (await import('./components/range-date-time-input.element')).RangeDateTimeInputElement,
-  rangeDateTimeCalendar: async () =>
-    (await import('./components/range-date-time-calendar.element')).RangeDateTimeCalendarElement,
-  rangeDateTimePicker: async () =>
-    (await import('./components/range-date-time-picker.element')).RangeDateTimePickerElement,
-  rangeDatePicker: async () =>
-    (await import('./components/range-date-picker.element')).RangeDatePickerElement,
-  rangeTimePicker: async () =>
-    (await import('./components/range-time-picker.element')).RangeTimePickerElement,
+  multiRangeCalendar: async () =>
+    (await import('./components/multi-range-calendar.element')).MultiRangeCalendarElement,
+  multiRangeDateInput: async () =>
+    (await import('./components/multi-range-date-input.element')).MultiRangeDateInputElement,
+  multiRangeTimeInput: async () =>
+    (await import('./components/multi-range-time-input.element')).MultiRangeTimeInputElement,
+  multiRangeDateTimeInput: async () =>
+    (await import('./components/multi-range-date-time-input.element'))
+      .MultiRangeDateTimeInputElement,
+  multiRangeDateTimeCalendar: async () =>
+    (await import('./components/multi-range-date-time-calendar.element'))
+      .MultiRangeDateTimeCalendarElement,
+  multiRangeDateTimePicker: async () =>
+    (await import('./components/multi-range-date-time-picker.element'))
+      .MultiRangeDateTimePickerElement,
+  multiRangeDatePicker: async () =>
+    (await import('./components/multi-range-date-picker.element')).MultiRangeDatePickerElement,
+  multiRangeTimePicker: async () =>
+    (await import('./components/multi-range-time-picker.element')).MultiRangeTimePickerElement,
   currency: async () => (await import('./components/currency.element')).CurrencyElement,
   dateInput: async () => (await import('./components/date.element')).DateElement,
   datePicker: async () => (await import('./components/date-picker.element')).DatePickerElement,

@@ -1,0 +1,112 @@
+<script setup lang="ts">
+import type { InputWidget, Validator, WithWidget } from '@golemui/core';
+import { useInputWidget } from '@golemui/vue';
+import type { DateRange, MultiRangeDatePickerProps } from '@golemui/gui-shared/internals';
+import { computed, onUnmounted, ref, watch } from 'vue';
+import '@golemui/gui-components/multi-range-date-picker';
+
+const props = defineProps<WithWidget>();
+const widget = props.widget as InputWidget<DateRange[]>;
+const {
+  uid,
+  formName,
+  errors,
+  value,
+  isTouched,
+  templateData,
+  onValueChanged,
+  onBlur,
+  injectValidationIssues,
+} = useInputWidget<DateRange[], MultiRangeDatePickerProps>(widget);
+
+const required = computed(() => (templateData.value.validator as Validator)?.required);
+const dayFormat = computed(() => templateData.value.dayFormat || 'numeric');
+const weekdayFormat = computed(() => templateData.value.weekdayFormat || 'narrow');
+const monthFormat = computed(() => templateData.value.monthFormat || 'long');
+const numberOfMonths = computed(() => templateData.value.numberOfMonths ?? 1);
+
+const pickerRef = ref<HTMLElement | null>(null);
+const changeHandler = (e: Event) => {
+  injectValidationIssues(null);
+  onValueChanged((e as CustomEvent).detail.value);
+};
+const errorHandler = (e: Event) => {
+  injectValidationIssues([(e as CustomEvent).detail.message]);
+  onBlur();
+};
+
+let currentEl: HTMLElement | null = null;
+watch(pickerRef, (el) => {
+  if (currentEl) {
+    currentEl.removeEventListener('gui-input', changeHandler);
+    currentEl.removeEventListener('gui-input-error', errorHandler);
+    currentEl.removeEventListener('gui-blur', onBlur);
+  }
+  currentEl = el;
+  if (el) {
+    el.addEventListener('gui-input', changeHandler);
+    el.addEventListener('gui-input-error', errorHandler);
+    el.addEventListener('gui-blur', onBlur);
+  }
+});
+
+onUnmounted(() => {
+  currentEl?.removeEventListener('gui-input', changeHandler);
+  currentEl?.removeEventListener('gui-input-error', errorHandler);
+  currentEl?.removeEventListener('gui-blur', onBlur);
+});
+</script>
+
+<template>
+  <div class="gui-multi-range-date-picker gui-field">
+    <gui-multi-range-date-picker
+      ref="pickerRef"
+      :uid="uid"
+      :id-prefix="formName"
+      :label="templateData.label"
+      :hint="templateData.hint"
+      :errors="errors"
+      :touched="isTouched"
+      :required="required"
+      :disabled="templateData.disabled"
+      :readOnly="templateData.readonly"
+      :value.prop="value"
+      :icon="templateData.icon"
+      :localeId="templateData.lang"
+      :toggleAriaLabel="templateData.toggleAriaLabel"
+      :dayAriaLabel="templateData.dayAriaLabel"
+      :monthAriaLabel="templateData.monthAriaLabel"
+      :yearAriaLabel="templateData.yearAriaLabel"
+      :separator="templateData.separator"
+      :removePillAriaLabel="templateData.removePillAriaLabel"
+      :startDateAriaLabel="templateData.startDateAriaLabel"
+      :endDateAriaLabel="templateData.endDateAriaLabel"
+      :prevMonthIcon="templateData.prevMonthIcon"
+      :nextMonthIcon="templateData.nextMonthIcon"
+      :prevMonthAriaLabel="templateData.prevMonthAriaLabel"
+      :nextMonthAriaLabel="templateData.nextMonthAriaLabel"
+      :selectYearAriaLabel="templateData.selectYearAriaLabel"
+      :yearGridAriaLabel="templateData.yearGridAriaLabel"
+      :dayFormat.prop="dayFormat"
+      :weekdayFormat.prop="weekdayFormat"
+      :monthFormat.prop="monthFormat"
+      :minDate="templateData.minDate"
+      :maxDate="templateData.maxDate"
+      :disabledRanges.prop="templateData.disabledRanges"
+      :numberOfMonths.prop="numberOfMonths"
+      :invalidDateMessage="templateData.invalidDateMessage"
+      :minDateMessage="templateData.minDateMessage"
+      :maxDateMessage="templateData.maxDateMessage"
+      :disabledDateRangeMessage="templateData.disabledDateRangeMessage"
+      :incompleteMessage="templateData.incompleteMessage"
+      :allowEdit="templateData.allowEdit"
+      :editLabel="templateData.editLabel"
+      :editAriaLabel="templateData.editAriaLabel"
+      :confirmEditLabel="templateData.confirmEditLabel"
+      :cancelEditLabel="templateData.cancelEditLabel"
+      :editStartedMessage="templateData.editStartedMessage"
+      :editCommittedMessage="templateData.editCommittedMessage"
+      :editCancelledMessage="templateData.editCancelledMessage"
+    />
+  </div>
+</template>

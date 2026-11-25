@@ -1,0 +1,574 @@
+import { defineForm, identityTranslator } from '@golemui/core';
+import { type MountComponentFn } from '../utils';
+
+// Behavior tests for the gui-multi-range-date-time-calendar web component: a range
+// calendar hosting two time pickers, accumulating a DateTimeRange[] value as
+// pills. Interactive tests use current-month relative dates so the day buttons
+// are visible without hydrating a value first.
+export const runMultiRangeDateTimeCalendarComponentTests = (mountFn: MountComponentFn) => {
+  describe('MultiRangeDateTimeCalendar Component', () => {
+    const cal = 'gui-multi-range-date-time-calendar';
+    const sel = {
+      dayButton: `${cal} .gui-calendar__day-button`,
+      pillText: `${cal} .gui-pills__pill-text`,
+      dayCount: '.gui-multi-range-date-time-calendar__day-count',
+      startPicker: `${cal} gui-time-picker.gui-multi-range-date-time-calendar__start`,
+      endPicker: `${cal} gui-time-picker.gui-multi-range-date-time-calendar__end`,
+      error: '[data-cy="testSubject_validator-error"]',
+    };
+
+    const now = new Date();
+    const y = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const iso = (d: number) => `${y}-${mm}-${String(d).padStart(2, '0')}`;
+    const dt = (d: number, time: string) => `${iso(d)}T${time}`;
+
+    const day = (d: number) => cy.get(`${sel.dayButton}[data-date="${iso(d)}"]`);
+    const startHour = () => cy.get(`${sel.startPicker} gui-time input[data-type="hour"]`);
+    const endHour = () => cy.get(`${sel.endPicker} gui-time input[data-type="hour"]`);
+    const startOption = (time: string) =>
+      cy.get(`${sel.startPicker} gui-time-list .gui-time-list__option[data-value="${time}"]`);
+    const endOption = (time: string) =>
+      cy.get(`${sel.endPicker} gui-time-list .gui-time-list__option[data-value="${time}"]`);
+
+    const mountCalendar = (options?: {
+      data?: Record<string, any>;
+      props?: Record<string, any>;
+      formSubmit?: (event: any) => void;
+      readonly?: boolean;
+      disabled?: boolean;
+    }) => {
+      mountFn({
+        localization: identityTranslator('en-US'),
+        data: options?.data,
+        formDef: defineForm({
+          form: [
+            {
+              uid: 'testSubject',
+              kind: 'input',
+              type: 'multiRangeDateTimeCalendar',
+              path: 'myRanges',
+              ...(options?.props ? { props: options.props } : {}),
+              ...(options?.readonly !== undefined ? { readonly: options.readonly } : {}),
+              ...(options?.disabled !== undefined ? { disabled: options.disabled } : {}),
+            },
+            {
+              uid: 'submitBtn',
+              kind: 'action',
+              type: 'button',
+              label: 'Submit',
+              actionType: 'submit',
+            },
+          ],
+        }),
+        formSubmit: options?.formSubmit,
+      });
+    };
+
+    const submitAndGetData = (formSubmitAlias: string) => {
+      cy.get('[data-cy="submitBtn_button"]').click({ force: true });
+      return cy.get(formSubmitAlias).then((stub: any) => stub.getCall(0).args[0].data);
+    };
+
+    // Select a date range then a start + end time, committing one pill.
+    const commitRange = (startDay: number, startTime: string, endDay: number, endTime: string) => {
+      day(startDay).click();
+      day(endDay).click();
+      startHour().click();
+      startOption(startTime).click();
+      endHour().click();
+      endOption(endTime).click();
+    };
+
+    describe('selection flow', () => {
+      it('should keep both time pickers usable from the start', () => {
+        mountCalendar();
+
+        startHour().should('not.be.disabled');
+        endHour().should('not.be.disabled');
+
+        day(13).click();
+        startHour().should('not.be.disabled');
+
+        day(13).click();
+        startHour().should('not.be.disabled');
+        endHour().should('not.be.disabled');
+      });
+
+      it('should commit a range whose times were picked before the days', () => {
+        const formSubmit = cy.stub().as('formSubmit');
+        mountCalendar({ formSubmit });
+
+        // Times first, no day span yet: nothing commits, both are kept
+        startHour().click();
+        startOption('09:00:00').click();
+        endHour().click();
+        endOption('11:00:00').click();
+        cy.get(sel.pillText).should('have.length', 0);
+
+        // Completing the span commits the whole range
+        day(13).click();
+        day(13).click();
+
+        cy.get(sel.pillText).should('have.length', 1);
+        submitAndGetData('@formSubmit').then((data) => {
+          expect(data.myRanges).to.deep.equal([
+            { start: dt(13, '09:00:00'), end: dt(13, '11:00:00') },
+          ]);
+        });
+      });
+
+      it('should keep the picked times when a new day span is started', () => {
+        mountCalendar();
+
+        startHour().click();
+        startOption('09:00:00').click();
+
+        // Restarting the span must not discard a time already chosen
+        day(13).click();
+        day(16).click();
+        day(20).click();
+
+        startHour().should('have.value', '09');
+      });
+
+      it('should commit a same-day range as a pill and reset the pickers', () => {
+        const formSubmit = cy.stub().as('formSubmit');
+        mountCalendar({ formSubmit });
+
+        commitRange(13, '09:00:00', 13, '11:00:00');
+
+        cy.get(sel.pillText).should('have.length', 1);
+        // Both time inputs are cleared after a commit — the end picker must not
+        // keep showing the last picked value — and both stay usable.
+        startHour().should('have.value', '');
+        endHour().should('have.value', '');
+        startHour().should('not.be.disabled');
+        endHour().should('not.be.disabled');
+
+        submitAndGetData('@formSubmit').then((data) => {
+          expect(data.myRanges).to.deep.equal([
+            { start: dt(13, '09:00:00'), end: dt(13, '11:00:00') },
+          ]);
+        });
+      });
+
+      it('should clear the end list selection for the next range', () => {
+        mountCalendar();
+
+        commitRange(13, '09:00:00', 13, '11:00:00');
+
+        // Start a new range and reopen the end list — the previous end option
+        // must no longer be selected.
+        day(15).click();
+        day(15).click();
+        startHour().click();
+        startOption('09:00:00').click();
+        endHour().click();
+
+        cy.get(`${sel.endPicker} gui-time-list .gui-time-list__option--selected`).should(
+          'not.exist',
+        );
+      });
+
+      it('should keep a cross-day range as-is without double-classing the end day', () => {
+        mountCalendar();
+
+        day(13).click();
+        day(20).click();
+        startHour().click();
+        startOption('18:00:00').click();
+        endHour().click();
+        endOption('09:00:00').click();
+
+        cy.get(sel.pillText).should('have.length', 1);
+        day(13).should('have.class', 'range-start');
+        day(15).should('have.class', 'in-range');
+        // The end day (09:00) must be range-end only — not also in-range, which
+        // would fight the border radii (the endpointDay truncation guard).
+        day(20).should('have.class', 'range-end').and('not.have.class', 'in-range');
+      });
+    });
+
+    describe('multiple ranges per day', () => {
+      it('should keep two non-overlapping same-day ranges and badge the day', () => {
+        mountCalendar();
+
+        commitRange(13, '09:00:00', 13, '11:00:00');
+        commitRange(13, '14:00:00', 13, '15:00:00');
+
+        cy.get(sel.pillText).should('have.length', 2);
+        day(13).find(sel.dayCount).should('have.text', '2');
+        // The selection bubble's hover label lists the committed ranges.
+        day(13)
+          .find('.gui-multi-range-date-time-calendar__badge-tooltip')
+          .should('contain', '09:00 AM')
+          .and('contain', '03:00 PM')
+          .and('not.be.visible');
+      });
+
+      it('should merge overlapping same-day ranges into one pill with no badge', () => {
+        mountCalendar();
+
+        commitRange(13, '09:00:00', 13, '11:00:00');
+        commitRange(13, '10:00:00', 13, '12:00:00');
+
+        cy.get(sel.pillText).should('have.length', 1);
+        day(13).find(sel.dayCount).should('not.exist');
+      });
+    });
+
+    describe('bounds and disabled spans', () => {
+      it('should badge a partially-blocked day with its span count and hover label', () => {
+        mountCalendar({
+          props: {
+            disabledRanges: [
+              { start: dt(17, '10:00:00'), end: dt(17, '11:00:00') },
+              { start: dt(17, '13:00:00'), end: dt(17, '14:00:00') },
+              { start: dt(15, '00:00:00'), end: dt(15, '23:59:59') },
+            ],
+          },
+        });
+
+        // Two partial spans on the 17th → grey bubble '2', hover label listing
+        // both clock windows (hidden until hovered).
+        day(17)
+          .find('.gui-multi-range-date-time-calendar__disabled-count')
+          .should('have.text', '2');
+        day(17)
+          .find('.gui-multi-range-date-time-calendar__badge-tooltip')
+          .should('contain', '10:00 AM – 11:00 AM')
+          .and('contain', '01:00 PM – 02:00 PM')
+          .and('not.be.visible');
+
+        // A fully-blocked day greys out as a whole — no bubble; free days none.
+        day(15).find('.gui-multi-range-date-time-calendar__disabled-count').should('not.exist');
+        day(16).find('.gui-multi-range-date-time-calendar__disabled-count').should('not.exist');
+      });
+
+      it('should stack the selection and disabled bubbles side by side', () => {
+        mountCalendar({
+          props: {
+            disabledRanges: [{ start: dt(13, '16:00:00'), end: dt(13, '17:00:00') }],
+          },
+        });
+
+        commitRange(13, '09:00:00', 13, '11:00:00');
+        commitRange(13, '13:00:00', 13, '14:00:00');
+
+        day(13).find('.gui-multi-range-date-time-calendar__badges').should('exist');
+        day(13).find(sel.dayCount).should('have.text', '2');
+        day(13)
+          .find('.gui-multi-range-date-time-calendar__disabled-count')
+          .should('have.text', '1');
+      });
+
+      it('should clamp the start list on the minDateTime boundary day', () => {
+        mountCalendar({ props: { minDateTime: dt(13, '10:00:00') } });
+
+        day(13).click();
+        day(13).click();
+        startHour().click();
+
+        startOption('09:00:00').should('not.exist');
+        startOption('10:00:00').should('exist');
+      });
+
+      it('should grey the slots of a partial block and reject an overlapping range', () => {
+        mountCalendar({
+          props: {
+            disabledRanges: [{ start: dt(13, '10:00:00'), end: dt(13, '11:00:00') }],
+            disabledRangeMessage: 'Range unavailable',
+          },
+        });
+
+        // A partial block leaves the day clickable but greys its slots.
+        day(13).should('not.be.disabled');
+        day(13).click();
+        day(13).click();
+        startHour().click();
+        startOption('10:00:00').should('be.disabled');
+
+        // 09:00–12:00 steps over the disabled 10:00–11:00 → rejected, no pill.
+        startOption('09:00:00').click();
+        endHour().click();
+        endOption('12:00:00').click();
+
+        cy.get(sel.pillText).should('not.exist');
+        cy.get(sel.error).should('be.visible').and('contain', 'Range unavailable');
+      });
+
+      it('should not create a pill from a typed, uncommitted end time', () => {
+        mountCalendar({
+          props: {
+            hourFormat: '24',
+            allowCustomTime: true,
+            disabledRanges: [{ start: dt(17, '13:00:00'), end: dt(17, '14:00:00') }],
+            disabledRangeMessage: 'Range unavailable',
+          },
+        });
+
+        day(15).click();
+        day(17).click();
+        startHour().click();
+        startOption('14:30:00').click();
+
+        // Type 13:00 into the end picker (allowCustomTime) without committing —
+        // no Enter, no list pick. It surfaces the error but must NOT create a pill.
+        cy.get(`${sel.endPicker} gui-time input[data-type="hour"]`).click().type('13');
+        cy.get(`${sel.endPicker} gui-time input[data-type="minute"]`).type('00');
+
+        cy.get(sel.pillText).should('not.exist');
+        cy.get(sel.error).should('be.visible').and('contain', 'Range unavailable');
+      });
+
+      it('should commit a range finished with a typed end time when focus leaves', () => {
+        mountCalendar({ props: { allowCustomTime: true } });
+
+        day(13).click();
+        day(15).click();
+        startHour().click();
+        startOption('09:00:00').click();
+
+        // A typed custom time never commits as it is typed — only a list pick
+        // or Enter does — so the fourth piece lands here unclaimed.
+        cy.get(`${sel.endPicker} gui-time input[data-type="hour"]`).click().type('11');
+        cy.get(`${sel.endPicker} gui-time input[data-type="minute"]`).type('30');
+        cy.get(sel.pillText).should('not.exist');
+
+        // Leaving is as deliberate as Enter, and the selection is complete.
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get(sel.pillText).should('have.length', 1);
+        startHour().should('have.value', '');
+      });
+
+      it('should disable a fully-blocked day and reject a range stepping over it', () => {
+        mountCalendar({
+          props: {
+            disabledRanges: [{ start: dt(15, '00:00:00'), end: dt(15, '23:59:59') }],
+            disabledRangeMessage: 'Range unavailable',
+          },
+        });
+
+        // Fully-blocked in-month days stay in the accessibility tree
+        // (aria-disabled) instead of being natively disabled
+        day(15).should('have.attr', 'aria-disabled', 'true').and('not.have.attr', 'disabled');
+
+        day(13).click();
+        day(17).click();
+
+        cy.get(sel.pillText).should('not.exist');
+        day(13).should('have.class', 'invalid-range-start');
+        cy.get(sel.error).should('be.visible').and('contain', 'Range unavailable');
+      });
+    });
+
+    describe('incomplete selection on focus leave', () => {
+      it('should report a half-typed time as incomplete when focus leaves', () => {
+        // A partial time never emits, so it lives only in the input's parts:
+        // the leave check must still count it as something left behind.
+        mountCalendar({ props: { hourFormat: '24', allowCustomTime: true } });
+
+        startHour().click().type('10');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        cy.get(sel.error).should('contain.text', 'Incomplete date-time');
+      });
+
+      it('should report a lone anchor day as incomplete and keep the pills', () => {
+        mountCalendar({
+          data: { myRanges: [{ start: dt(10, '09:00:00'), end: dt(10, '10:00:00') }] },
+        });
+
+        day(13).click();
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        // The committed pill is untouched: only the injected issue flags the field
+        cy.get(sel.error).should('contain.text', 'Incomplete date-time');
+        cy.get(sel.pillText).should('have.length', 1);
+      });
+
+      it('should clear the incomplete error when the emptied selection is left again', () => {
+        mountCalendar({ props: { hourFormat: '24', allowCustomTime: true } });
+
+        startHour().click().type('10');
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get(sel.error).should('contain.text', 'Incomplete date-time');
+
+        startHour().type('{selectAll}{backspace}', { force: true });
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get('[data-cy="testSubject_validator-errors"]').should('not.exist');
+      });
+
+      it('should honor the incompleteMessage prop', () => {
+        mountCalendar({ props: { incompleteMessage: 'Half-finished range!' } });
+
+        startHour().click();
+        startOption('09:00:00').click();
+        cy.get('[data-cy="submitBtn_button"]').focus();
+
+        cy.get(sel.error).should('contain.text', 'Half-finished range!');
+      });
+    });
+
+    describe('hydration and states', () => {
+      it('should hydrate a DateTimeRange[] value into pills and day highlights', () => {
+        mountCalendar({
+          data: { myRanges: [{ start: dt(10, '09:00:00'), end: dt(12, '17:00:00') }] },
+        });
+
+        cy.get(sel.pillText).should('have.length', 1);
+        day(10).should('have.class', 'range-start');
+        day(11).should('have.class', 'in-range');
+        day(12).should('have.class', 'range-end').and('not.have.class', 'in-range');
+      });
+
+      it('should not allow selection when disabled', () => {
+        mountCalendar({
+          data: { myRanges: [{ start: dt(13, '09:00:00'), end: dt(13, '11:00:00') }] },
+          disabled: true,
+        });
+
+        // Both pickers are disabled and the hydrated pill is preserved.
+        startHour().should('be.disabled');
+        endHour().should('be.disabled');
+        cy.get(sel.pillText).should('have.length', 1);
+      });
+    });
+
+    describe('allowEdit pill editing', () => {
+      const uid = 'testSubject';
+      const editableRanges = () => [
+        { start: dt(10, '09:00:00'), end: dt(12, '17:00:00') },
+        { start: dt(20, '09:00:00'), end: dt(22, '17:00:00') },
+      ];
+      const editSel = {
+        pill: `${cal} .gui-pills__pill`,
+        selectedEditIcon: `.gui-pills__pill--selected [data-cy="${uid}_pill-edit"]`,
+        confirmIcon: `[data-cy="${uid}_pill-edit-confirm"]`,
+      };
+
+      const mountEditable = (formSubmit?: (event: any) => void) =>
+        mountCalendar({
+          data: { myRanges: editableRanges() },
+          props: { allowEdit: true },
+          formSubmit,
+        });
+
+      it('should mark the selected range by dimming the competing ranges', () => {
+        mountEditable();
+
+        // No selection: nothing is dimmed.
+        day(20).should('not.have.class', 'range-muted');
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'true');
+        day(10).should('have.class', 'edit-selected').and('not.have.class', 'range-muted');
+        day(20).should('have.class', 'range-muted');
+        day(22).should('have.class', 'range-muted');
+
+        // Keyboard navigation moves the selection, and the marking with it.
+        cy.get(editSel.pill).first().type('{rightarrow}');
+        cy.get(editSel.pill).eq(1).should('have.attr', 'aria-pressed', 'true');
+        day(20).should('not.have.class', 'range-muted');
+        day(10).should('have.class', 'range-muted');
+
+        // Focus leaving the pills clears the selection and the marking.
+        day(16).focus();
+        cy.get('.gui-pills__pill--selected').should('not.exist');
+        cy.get('.gui-calendar__day-button.range-muted').should('not.exist');
+      });
+
+      it('should park re-picked days without committing and replace on confirm', () => {
+        const formSubmit = cy.stub().as('formSubmit');
+        mountEditable(formSubmit);
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+        // Editing starts on the range's start day, ready for re-picking.
+        cy.focused().should('have.attr', 'data-date', iso(10));
+        cy.get(editSel.pill).first().should('have.class', 'gui-pills__pill--editing');
+
+        // Two picks reshape the working span; the chosen times survive, the
+        // editing pill live-previews the reshaped range, nothing commits yet.
+        day(8).click();
+        day(9).click();
+        cy.get(editSel.pill).should('have.length', 2);
+        cy.get(editSel.pill).first().should('have.class', 'gui-pills__pill--editing');
+        cy.get(editSel.pill).first().should('contain.text', '09:00 AM');
+
+        cy.get(editSel.confirmIcon).click();
+        cy.get(editSel.pill).should('have.length', 2);
+        cy.get('.gui-pills__pill--editing').should('not.exist');
+
+        submitAndGetData('@formSubmit').then((data) => {
+          expect(data.myRanges).to.deep.equal([
+            { start: dt(8, '09:00:00'), end: dt(9, '17:00:00') },
+            { start: dt(20, '09:00:00'), end: dt(22, '17:00:00') },
+          ]);
+        });
+      });
+
+      it('should park a re-picked time instead of auto-committing it', () => {
+        const formSubmit = cy.stub().as('formSubmit');
+        mountEditable(formSubmit);
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+
+        // In the add flow a list pick with all four pieces commits; during an
+        // edit every piece is pre-filled, so the pick must park instead.
+        startHour().click();
+        startOption('10:00:00').click();
+        cy.get(editSel.pill).should('have.length', 2);
+        cy.get(editSel.pill).first().should('have.class', 'gui-pills__pill--editing');
+        cy.get(editSel.pill).first().should('contain.text', '10:00 AM');
+
+        cy.get(editSel.confirmIcon).click();
+        submitAndGetData('@formSubmit').then((data) => {
+          expect(data.myRanges).to.deep.equal([
+            { start: dt(10, '10:00:00'), end: dt(12, '17:00:00') },
+            { start: dt(20, '09:00:00'), end: dt(22, '17:00:00') },
+          ]);
+        });
+      });
+
+      it('should start editing with E and layer Escape: cancel, then deselect', () => {
+        mountEditable();
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.pill).first().type('e');
+        cy.get(editSel.pill).first().should('have.class', 'gui-pills__pill--editing');
+
+        startHour().click();
+        startOption('11:00:00').click();
+        cy.get(editSel.pill).first().should('contain.text', '11:00 AM');
+
+        // First Escape cancels the session; the label reverts, selection kept.
+        // force: focus sits on the picker's readonly time input after the pick.
+        cy.focused().type('{esc}', { force: true });
+        cy.get('.gui-pills__pill--editing').should('not.exist');
+        cy.get(editSel.pill).first().should('contain.text', '09:00 AM');
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'true');
+
+        // Second Escape clears the selection.
+        cy.focused().type('{esc}');
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'false');
+      });
+
+      it('should surface the incomplete message on a half re-picked confirm', () => {
+        mountEditable();
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+        // A single pick restarts the span: only the anchor remains.
+        day(8).click();
+
+        cy.get(editSel.confirmIcon).click();
+        cy.get(sel.error).should('be.visible').and('contain', 'Incomplete date-time');
+        cy.get(editSel.pill).first().should('have.class', 'gui-pills__pill--editing');
+        cy.get(editSel.pill).should('have.length', 2);
+      });
+    });
+  });
+};

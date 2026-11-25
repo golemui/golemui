@@ -4,28 +4,28 @@
 :is(
   // The form adapters' host elements, and the picker elements themselves when used without a form.
   .gui-date-picker.gui-field,
-  .gui-range-date-picker.gui-field,
-  .gui-range-time-picker.gui-field,
+  .gui-multi-range-date-picker.gui-field,
+  .gui-multi-range-time-picker.gui-field,
   .gui-time-picker.gui-field,
   .gui-date-time-picker.gui-field,
-  .gui-range-date-time-picker.gui-field,
+  .gui-multi-range-date-time-picker.gui-field,
   gui-date-picker,
-  gui-range-date-picker,
-  gui-range-time-picker,
+  gui-multi-range-date-picker,
+  gui-multi-range-time-picker,
   gui-time-picker,
   gui-date-time-picker,
-  gui-range-date-time-picker
+  gui-multi-range-date-time-picker
 ) {
   display: block;
 
   .gui-widget {
     :is(
       .gui-date-picker__arrow,
-      .gui-range-date-picker__arrow,
-      .gui-range-time-picker__arrow,
+      .gui-multi-range-date-picker__arrow,
+      .gui-multi-range-time-picker__arrow,
       .gui-time-picker__arrow,
       .gui-date-time-picker__arrow,
-      .gui-range-date-time-picker__arrow
+      .gui-multi-range-date-time-picker__arrow
     ) {
       color: var(--gui-text-default);
       transform: rotate(0deg);
@@ -39,11 +39,11 @@
 
     > button[aria-expanded='true']:is(
         .gui-date-picker__arrow,
-        .gui-range-date-picker__arrow,
-        .gui-range-time-picker__arrow,
+        .gui-multi-range-date-picker__arrow,
+        .gui-multi-range-time-picker__arrow,
         .gui-time-picker__arrow,
         .gui-date-time-picker__arrow,
-        .gui-range-date-time-picker__arrow
+        .gui-multi-range-date-time-picker__arrow
       ) {
       transform: rotate(180deg);
     }
@@ -51,11 +51,11 @@
     // The picker toggle: a real button that keeps the arrow's visual box.
     > button:is(
         .gui-date-picker__arrow,
-        .gui-range-date-picker__arrow,
-        .gui-range-time-picker__arrow,
+        .gui-multi-range-date-picker__arrow,
+        .gui-multi-range-time-picker__arrow,
         .gui-time-picker__arrow,
         .gui-date-time-picker__arrow,
-        .gui-range-date-time-picker__arrow
+        .gui-multi-range-date-time-picker__arrow
       ) {
       pointer-events: auto;
       background: none;
@@ -66,28 +66,34 @@
       cursor: pointer;
     }
 
-    :is(gui-date, gui-range-date, gui-time, gui-date-time, gui-range-date-time).gui-field {
+    :is(
+      gui-date,
+      gui-multi-range-date,
+      gui-time,
+      gui-date-time,
+      gui-multi-range-date-time
+    ).gui-field {
       gap: 0;
     }
   }
 }
 
-$nested-in-calendar: ':is(gui-date-time-calendar, gui-range-date-time-calendar) *';
+$nested-in-calendar: ':is(gui-date-time-calendar, gui-multi-range-date-time-calendar) *';
 
 :is(
   // The form adapters' host elements, and the picker elements themselves when used without a form.
   .gui-date-picker.gui-field,
-  .gui-range-date-picker.gui-field,
-  .gui-range-time-picker.gui-field,
+  .gui-multi-range-date-picker.gui-field,
+  .gui-multi-range-time-picker.gui-field,
   .gui-time-picker.gui-field,
   .gui-date-time-picker.gui-field,
-  .gui-range-date-time-picker.gui-field,
+  .gui-multi-range-date-time-picker.gui-field,
   gui-date-picker,
-  gui-range-date-picker,
-  gui-range-time-picker,
+  gui-multi-range-date-picker,
+  gui-multi-range-time-picker,
   gui-time-picker,
   gui-date-time-picker,
-  gui-range-date-time-picker
+  gui-multi-range-date-time-picker
 ) {
   .gui-widget > .gui-picker__panel:not(#{$nested-in-calendar}) {
     @include gui-picker-panel-chrome;
@@ -99,10 +105,10 @@ $nested-in-calendar: ':is(gui-date-time-calendar, gui-range-date-time-calendar) 
         > :is(
           gui-date,
           gui-time,
-          gui-range-date,
-          gui-range-time,
+          gui-multi-range-date,
+          gui-multi-range-time,
           gui-date-time,
-          gui-range-date-time
+          gui-multi-range-date-time
         )
         > .gui-widget
         > .gui-parts-ring[aria-invalid='true']
@@ -120,9 +126,9 @@ $nested-in-calendar: ':is(gui-date-time-calendar, gui-range-date-time-calendar) 
 
       > :is(
         gui-calendar,
-        gui-range-calendar,
+        gui-multi-range-calendar,
         gui-date-time-calendar,
-        gui-range-date-time-calendar
+        gui-multi-range-date-time-calendar
       ) {
         width: 100%;
       }

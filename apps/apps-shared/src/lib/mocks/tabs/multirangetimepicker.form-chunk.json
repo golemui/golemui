@@ -1,0 +1,169 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabMultiRangeTimePicker",
+  "kind": "layout",
+  "type": "grid",
+  "children": [
+    {
+      "kind": "input",
+      "type": "multiRangeTimePicker",
+      "path": "multiRangeTimePickerEmpty",
+      "label": "Empty",
+      "props": {
+        "icon": "schedule",
+        "separator": "to",
+        "hourFormat": "24",
+        "minTime": "06:00:00",
+        "maxTime": "22:00:00",
+        "minuteStep": 30,
+        "allowCustomTime": true,
+        "startTimeLabel": "Time In",
+        "endTimeLabel": "Time Out",
+        "disabledRanges": [
+          {
+            "start": "13:00:00",
+            "end": "14:00:00"
+          }
+        ],
+        "disabledRangeMessage": "Time is withing a disabled range."
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeTimePicker",
+      "path": "multiRangeTimePickerDefault",
+      "defaultValue": [
+        {
+          "start": "09:00:00",
+          "end": "12:00:00"
+        },
+        {
+          "start": "14:00:00",
+          "end": "17:00:00"
+        }
+      ],
+      "label": "Shift schedule",
+      "props": {
+        "icon": "schedule",
+        "separator": "to",
+        "hourFormat": "24",
+        "minTime": "06:00:00",
+        "maxTime": "22:00:00",
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeTimePicker",
+      "path": "multiRangeTimePickerEditable",
+      "defaultValue": [
+        {
+          "start": "09:00:00",
+          "end": "12:00:00"
+        },
+        {
+          "start": "14:00:00",
+          "end": "17:00:00"
+        }
+      ],
+      "label": "Editable",
+      "props": {
+        "allowEdit": true,
+        "allowCustomTime": true,
+        "icon": "schedule",
+        "separator": "to",
+        "hourFormat": "24",
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeTimePicker",
+      "path": "multiRangeTimePickerConstraints",
+      "label": "Booking with lunch break",
+      "props": {
+        "icon": "schedule",
+        "separator": "to",
+        "hourFormat": "24",
+        "minTime": "09:00:00",
+        "maxTime": "18:00:00",
+        "minuteStep": 15,
+        "allowCustomTime": true,
+        "disabledRanges": [
+          {
+            "start": "13:00:00",
+            "end": "14:00:00"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeTimePicker",
+      "path": "multiRangeTimePickerDisabled",
+      "defaultValue": [
+        {
+          "start": "09:00:00",
+          "end": "12:00:00"
+        },
+        {
+          "start": "14:00:00",
+          "end": "17:00:00"
+        }
+      ],
+      "disabled": true,
+      "label": "Disabled",
+      "props": {
+        "icon": "schedule",
+        "separator": "to",
+        "hourFormat": "24",
+        "minTime": "06:00:00",
+        "maxTime": "22:00:00",
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeTimePicker",
+      "path": "multiRangeTimePickerReadonly",
+      "defaultValue": [
+        {
+          "start": "09:00:00",
+          "end": "12:00:00"
+        },
+        {
+          "start": "14:00:00",
+          "end": "17:00:00"
+        }
+      ],
+      "readonly": true,
+      "label": "Read only",
+      "props": {
+        "icon": "schedule",
+        "separator": "to",
+        "hourFormat": "24",
+        "minTime": "06:00:00",
+        "maxTime": "22:00:00",
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeTimePicker",
+      "path": "multiRangeTimePickerValidation",
+      "label": "Required (validation)",
+      "props": {
+        "icon": "schedule",
+        "separator": "to",
+        "hourFormat": "24",
+        "minTime": "06:00:00",
+        "maxTime": "22:00:00",
+        "minuteStep": 30
+      },
+      "validator": {
+        "type": "array",
+        "required": true
+      }
+    }
+  ]
+}

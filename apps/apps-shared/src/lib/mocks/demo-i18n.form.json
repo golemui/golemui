@@ -135,7 +135,7 @@
             {
               "uid": "preferredDates",
               "kind": "input",
-              "type": "rangeCalendar",
+              "type": "multiRangeCalendar",
               "path": "preferredDates",
               "label": {
                 "key": "travelPlanner.field.preferredDates.label",

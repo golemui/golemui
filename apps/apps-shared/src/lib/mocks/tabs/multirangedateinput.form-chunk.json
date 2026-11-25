@@ -1,0 +1,111 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabMultiRangeDateInput",
+  "kind": "layout",
+  "type": "grid",
+  "children": [
+    {
+      "kind": "input",
+      "type": "multiRangeDateInput",
+      "path": "multiRangeDateInputEmpty",
+      "label": "Empty",
+      "props": {
+        "icon": "calendar_month",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeDateInput",
+      "path": "multiRangeDateInputDefault",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "label": "With default value",
+      "props": {
+        "icon": "calendar_month",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeDateInput",
+      "path": "multiRangeDateInputEditable",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "label": "Editable",
+      "props": {
+        "allowEdit": true,
+        "icon": "calendar_month",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeDateInput",
+      "path": "multiRangeDateInputDisabled",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "disabled": true,
+      "label": "Disabled",
+      "props": {
+        "icon": "calendar_month",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeDateInput",
+      "path": "multiRangeDateInputReadonly",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "readonly": true,
+      "label": "Read only",
+      "props": {
+        "icon": "calendar_month",
+        "separator": "to"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeDateInput",
+      "path": "multiRangeDateInputValidation",
+      "label": "Required (validation)",
+      "props": {
+        "icon": "calendar_month",
+        "separator": "to"
+      },
+      "validator": {
+        "type": "array",
+        "required": true
+      }
+    }
+  ]
+}

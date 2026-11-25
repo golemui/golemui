@@ -36,17 +36,22 @@ export const widgetLoaders: WidgetLoaders<React.ComponentType<WithWidget>, Golem
   otp: async () => (await import('./components/Otp')).Otp,
   slider: async () => (await import('./components/Slider')).Slider,
   rangeSlider: async () => (await import('./components/RangeSlider')).RangeSlider,
-  rangeCalendar: async () => (await import('./components/RangeCalendar')).RangeCalendar,
-  rangeDateInput: async () => (await import('./components/RangeDateInput')).RangeDateInput,
-  rangeTimeInput: async () => (await import('./components/RangeTimeInput')).RangeTimeInput,
-  rangeDateTimeInput: async () =>
-    (await import('./components/RangeDateTimeInput')).RangeDateTimeInput,
-  rangeDateTimeCalendar: async () =>
-    (await import('./components/RangeDateTimeCalendar')).RangeDateTimeCalendar,
-  rangeDateTimePicker: async () =>
-    (await import('./components/RangeDateTimePicker')).RangeDateTimePicker,
-  rangeDatePicker: async () => (await import('./components/RangeDatePicker')).RangeDatePicker,
-  rangeTimePicker: async () => (await import('./components/RangeTimePicker')).RangeTimePicker,
+  multiRangeCalendar: async () =>
+    (await import('./components/MultiRangeCalendar')).MultiRangeCalendar,
+  multiRangeDateInput: async () =>
+    (await import('./components/MultiRangeDateInput')).MultiRangeDateInput,
+  multiRangeTimeInput: async () =>
+    (await import('./components/MultiRangeTimeInput')).MultiRangeTimeInput,
+  multiRangeDateTimeInput: async () =>
+    (await import('./components/MultiRangeDateTimeInput')).MultiRangeDateTimeInput,
+  multiRangeDateTimeCalendar: async () =>
+    (await import('./components/MultiRangeDateTimeCalendar')).MultiRangeDateTimeCalendar,
+  multiRangeDateTimePicker: async () =>
+    (await import('./components/MultiRangeDateTimePicker')).MultiRangeDateTimePicker,
+  multiRangeDatePicker: async () =>
+    (await import('./components/MultiRangeDatePicker')).MultiRangeDatePicker,
+  multiRangeTimePicker: async () =>
+    (await import('./components/MultiRangeTimePicker')).MultiRangeTimePicker,
   tags: async () => (await import('./components/Tags')).Tags,
 
   // REPEATER

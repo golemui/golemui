@@ -27,12 +27,14 @@ describe('accessible names', () => {
 
   describe('a part that only adds context', () => {
     it('has a default name, which an empty one removes', () => {
-      cy.mount(html`<gui-range-date label="Stay" end-date-aria-label=""></gui-range-date>`);
+      cy.mount(
+        html`<gui-multi-range-date label="Stay" end-date-aria-label=""></gui-multi-range-date>`,
+      );
 
-      cy.get('gui-range-date .gui-range-date-input__field')
+      cy.get('gui-multi-range-date .gui-multi-range-date-input__field')
         .first()
         .should('have.attr', 'aria-label', 'Start date');
-      cy.get('gui-range-date .gui-range-date-input__field')
+      cy.get('gui-multi-range-date .gui-multi-range-date-input__field')
         .last()
         .should('not.have.attr', 'aria-label');
     });
@@ -72,7 +74,9 @@ describe('accessible names', () => {
 
     it('warns in development when it has no label', () => {
       cy.window().then((win) => cy.spy(win.console, 'warn').as('warn'));
-      cy.mount(html`<gui-tags></gui-tags><gui-range-time label="Shift"></gui-range-time>`);
+      cy.mount(
+        html`<gui-tags></gui-tags><gui-multi-range-time label="Shift"></gui-multi-range-time>`,
+      );
 
       cy.get('@warn').should('have.been.calledOnce');
       cy.get('@warn').should('have.been.calledWithMatch', /<gui-tags> has no label/);
@@ -80,11 +84,13 @@ describe('accessible names', () => {
 
     it('inside a picker, is named by the picker label', () => {
       cy.window().then((win) => cy.spy(win.console, 'warn').as('warn'));
-      cy.mount(html`<gui-range-date-picker label="Stay"></gui-range-date-picker>`);
+      cy.mount(html`<gui-multi-range-date-picker label="Stay"></gui-multi-range-date-picker>`);
 
-      cy.get('gui-range-date [role="group"].gui-range-date-input')
+      cy.get('gui-multi-range-date [role="group"].gui-multi-range-date-input')
         .invoke('attr', 'aria-labelledby')
-        .then((id) => cy.get(`gui-range-date-picker > #${id}`).should('contain.text', 'Stay'));
+        .then((id) =>
+          cy.get(`gui-multi-range-date-picker > #${id}`).should('contain.text', 'Stay'),
+        );
       cy.get('@warn').should('not.have.been.called');
     });
   });

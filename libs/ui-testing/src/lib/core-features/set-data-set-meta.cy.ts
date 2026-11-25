@@ -373,54 +373,54 @@ export const runSetDataSetMetaTests = (baseMountFn: MountComponentFn) => {
         cy.get('gui-date-time input[data-type="minute"]').should('have.value', '45');
       });
 
-      it('rangeDateInput', () => {
+      it('multiRangeDateInput', () => {
         let handle!: FormHandle;
         mountControl({
-          type: 'rangeDateInput',
+          type: 'multiRangeDateInput',
           data: { value: [{ start: '2026-06-15', end: '2026-06-18' }] },
           onFormReady: (h) => (handle = h),
         });
-        cy.get('gui-range-date input[data-group="start"][data-type="month"]').type('07');
+        cy.get('gui-multi-range-date input[data-group="start"][data-type="month"]').type('07');
         cy.focused().type('01');
         cy.focused().type('2026');
-        cy.get('gui-range-date .gui-pills__pill-text').should('have.length', 1);
+        cy.get('gui-multi-range-date .gui-pills__pill-text').should('have.length', 1);
         cy.then(() => handle.setData({ value: [{ start: '2025-01-02', end: '2025-01-05' }] }));
-        cy.get('gui-range-date .gui-pills__pill-text')
+        cy.get('gui-multi-range-date .gui-pills__pill-text')
           .should('have.length', 1)
           .and('contain.text', '01/02/2025 - 01/05/2025');
       });
 
-      it('rangeTimeInput', () => {
+      it('multiRangeTimeInput', () => {
         let handle!: FormHandle;
         mountControl({
-          type: 'rangeTimeInput',
+          type: 'multiRangeTimeInput',
           data: { value: [{ start: '09:00:00', end: '11:00:00' }] },
           onFormReady: (h) => (handle = h),
         });
-        cy.get('gui-range-time input[data-group="start"][data-type="hour"]').type('10');
-        cy.get('gui-range-time .gui-pills__pill-text').should('have.length', 1);
+        cy.get('gui-multi-range-time input[data-group="start"][data-type="hour"]').type('10');
+        cy.get('gui-multi-range-time .gui-pills__pill-text').should('have.length', 1);
         cy.then(() => handle.setData({ value: [{ start: '02:00:00', end: '03:30:00' }] }));
-        cy.get('gui-range-time .gui-pills__pill-text')
+        cy.get('gui-multi-range-time .gui-pills__pill-text')
           .should('have.length', 1)
           .and('contain.text', '02:00')
           .and('contain.text', '03:30');
       });
 
-      it('rangeDateTimeInput', () => {
+      it('multiRangeDateTimeInput', () => {
         let handle!: FormHandle;
         mountControl({
-          type: 'rangeDateTimeInput',
+          type: 'multiRangeDateTimeInput',
           data: { value: [{ start: '2026-06-15T09:00:00', end: '2026-06-15T11:00:00' }] },
           onFormReady: (h) => (handle = h),
         });
-        cy.get('gui-range-date-time input[data-group="start"][data-type="month"]').type('07');
-        cy.get('gui-range-date-time .gui-pills__pill-text').should('have.length', 1);
+        cy.get('gui-multi-range-date-time input[data-group="start"][data-type="month"]').type('07');
+        cy.get('gui-multi-range-date-time .gui-pills__pill-text').should('have.length', 1);
         cy.then(() =>
           handle.setData({
             value: [{ start: '2025-01-02T09:30:00', end: '2025-01-02T11:00:00' }],
           }),
         );
-        cy.get('gui-range-date-time .gui-pills__pill-text')
+        cy.get('gui-multi-range-date-time .gui-pills__pill-text')
           .should('have.length', 1)
           .and('contain.text', '01/02/2025');
       });
@@ -489,57 +489,59 @@ export const runSetDataSetMetaTests = (baseMountFn: MountComponentFn) => {
         cy.get('gui-time-picker gui-time input[data-type="minute"]').should('have.value', '45');
       });
 
-      it('rangeDatePicker', () => {
+      it('multiRangeDatePicker', () => {
         let handle!: FormHandle;
         mountControl({
-          type: 'rangeDatePicker',
+          type: 'multiRangeDatePicker',
           data: { value: [{ start: '2026-06-15', end: '2026-06-18' }] },
           onFormReady: (h) => (handle = h),
         });
-        cy.get('gui-range-date input[data-group="start"][data-type="month"]').click();
-        cy.get('gui-range-calendar button[data-date="2026-06-20"]').click();
-        cy.get('gui-range-calendar button[data-date="2026-06-22"]').click();
-        cy.get('gui-range-date .gui-pills__pill-text').should('have.length', 2);
+        cy.get('gui-multi-range-date input[data-group="start"][data-type="month"]').click();
+        cy.get('gui-multi-range-calendar button[data-date="2026-06-20"]').click();
+        cy.get('gui-multi-range-calendar button[data-date="2026-06-22"]').click();
+        cy.get('gui-multi-range-date .gui-pills__pill-text').should('have.length', 2);
         cy.then(() => handle.setData({ value: [{ start: '2025-01-02', end: '2025-01-05' }] }));
-        cy.get('gui-range-date .gui-pills__pill-text')
+        cy.get('gui-multi-range-date .gui-pills__pill-text')
           .should('have.length', 1)
           .and('contain.text', '01/02/2025 - 01/05/2025');
       });
 
-      it('rangeTimePicker', () => {
+      it('multiRangeTimePicker', () => {
         let handle!: FormHandle;
         mountControl({
-          type: 'rangeTimePicker',
+          type: 'multiRangeTimePicker',
           data: { value: [{ start: '09:00:00', end: '11:00:00' }] },
           props: { allowCustomTime: true },
           onFormReady: (h) => (handle = h),
         });
-        cy.get('gui-range-time-picker input[data-group="start"][data-type="hour"]').type('10');
-        cy.get('gui-range-time-picker .gui-pills__pill-text').should('have.length', 1);
+        cy.get('gui-multi-range-time-picker input[data-group="start"][data-type="hour"]').type(
+          '10',
+        );
+        cy.get('gui-multi-range-time-picker .gui-pills__pill-text').should('have.length', 1);
         cy.then(() => handle.setData({ value: [{ start: '02:00:00', end: '03:30:00' }] }));
-        cy.get('gui-range-time-picker .gui-pills__pill-text')
+        cy.get('gui-multi-range-time-picker .gui-pills__pill-text')
           .should('have.length', 1)
           .and('contain.text', '02:00')
           .and('contain.text', '03:30');
       });
 
-      it('rangeDateTimePicker', () => {
+      it('multiRangeDateTimePicker', () => {
         let handle!: FormHandle;
         mountControl({
-          type: 'rangeDateTimePicker',
+          type: 'multiRangeDateTimePicker',
           data: { value: [{ start: '2026-06-15T09:00:00', end: '2026-06-15T11:00:00' }] },
           onFormReady: (h) => (handle = h),
         });
-        cy.get('gui-range-date-time-picker input[data-group="start"][data-type="month"]').type(
-          '07',
-        );
-        cy.get('gui-range-date-time-picker .gui-pills__pill-text').should('have.length', 1);
+        cy.get(
+          'gui-multi-range-date-time-picker input[data-group="start"][data-type="month"]',
+        ).type('07');
+        cy.get('gui-multi-range-date-time-picker .gui-pills__pill-text').should('have.length', 1);
         cy.then(() =>
           handle.setData({
             value: [{ start: '2025-01-02T09:30:00', end: '2025-01-02T11:00:00' }],
           }),
         );
-        cy.get('gui-range-date-time-picker .gui-pills__pill-text')
+        cy.get('gui-multi-range-date-time-picker .gui-pills__pill-text')
           .should('have.length', 1)
           .and('contain.text', '01/02/2025');
       });

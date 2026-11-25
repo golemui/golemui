@@ -25,14 +25,14 @@ import type { GuiRating } from '@golemui/gui-components/rating';
 import type { GuiRangeSlider } from '@golemui/gui-components/range-slider';
 import type { GuiSlider } from '@golemui/gui-components/slider';
 import type { GuiOtp } from '@golemui/gui-components/otp';
-import type { GuiRangeCalendar } from '@golemui/gui-components/range-calendar';
-import type { GuiRangeDateInput } from '@golemui/gui-components/range-date-input';
-import type { GuiRangeDateTimeInput } from '@golemui/gui-components/range-date-time-input';
-import type { GuiRangeDateTimeCalendar } from '@golemui/gui-components/range-date-time-calendar';
-import type { GuiRangeDateTimePicker } from '@golemui/gui-components/range-date-time-picker';
-import type { GuiRangeTimeInput } from '@golemui/gui-components/range-time-input';
-import type { GuiRangeDatePicker } from '@golemui/gui-components/range-date-picker';
-import type { GuiRangeTimePicker } from '@golemui/gui-components/range-time-picker';
+import type { GuiMultiRangeCalendar } from '@golemui/gui-components/multi-range-calendar';
+import type { GuiMultiRangeDateInput } from '@golemui/gui-components/multi-range-date-input';
+import type { GuiMultiRangeDateTimeInput } from '@golemui/gui-components/multi-range-date-time-input';
+import type { GuiMultiRangeDateTimeCalendar } from '@golemui/gui-components/multi-range-date-time-calendar';
+import type { GuiMultiRangeDateTimePicker } from '@golemui/gui-components/multi-range-date-time-picker';
+import type { GuiMultiRangeTimeInput } from '@golemui/gui-components/multi-range-time-input';
+import type { GuiMultiRangeDatePicker } from '@golemui/gui-components/multi-range-date-picker';
+import type { GuiMultiRangeTimePicker } from '@golemui/gui-components/multi-range-time-picker';
 import type { GuiSelect } from '@golemui/gui-components/select';
 import type { GuiTab } from '@golemui/gui-components/tab';
 import type { GuiTabList } from '@golemui/gui-components/tab-list';
@@ -127,40 +127,46 @@ declare module 'react' {
         Partial<GuiSlider>;
       'gui-otp': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiOtp>;
-      'gui-range-calendar': React.DetailedHTMLProps<
+      'gui-multi-range-calendar': React.DetailedHTMLProps<
         React.HTMLAttributes<HTMLElement>,
         HTMLElement
       > &
-        Partial<GuiRangeCalendar>;
-      'gui-range-date': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiRangeDateInput>;
-      'gui-range-date-time': React.DetailedHTMLProps<
+        Partial<GuiMultiRangeCalendar>;
+      'gui-multi-range-date': React.DetailedHTMLProps<
         React.HTMLAttributes<HTMLElement>,
         HTMLElement
       > &
-        Partial<GuiRangeDateTimeInput>;
-      'gui-range-date-time-calendar': React.DetailedHTMLProps<
+        Partial<GuiMultiRangeDateInput>;
+      'gui-multi-range-date-time': React.DetailedHTMLProps<
         React.HTMLAttributes<HTMLElement>,
         HTMLElement
       > &
-        Partial<GuiRangeDateTimeCalendar>;
-      'gui-range-date-time-picker': React.DetailedHTMLProps<
+        Partial<GuiMultiRangeDateTimeInput>;
+      'gui-multi-range-date-time-calendar': React.DetailedHTMLProps<
         React.HTMLAttributes<HTMLElement>,
         HTMLElement
       > &
-        Partial<GuiRangeDateTimePicker>;
-      'gui-range-time': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
-        Partial<GuiRangeTimeInput>;
-      'gui-range-date-picker': React.DetailedHTMLProps<
+        Partial<GuiMultiRangeDateTimeCalendar>;
+      'gui-multi-range-date-time-picker': React.DetailedHTMLProps<
         React.HTMLAttributes<HTMLElement>,
         HTMLElement
       > &
-        Partial<GuiRangeDatePicker>;
-      'gui-range-time-picker': React.DetailedHTMLProps<
+        Partial<GuiMultiRangeDateTimePicker>;
+      'gui-multi-range-time': React.DetailedHTMLProps<
         React.HTMLAttributes<HTMLElement>,
         HTMLElement
       > &
-        Partial<GuiRangeTimePicker>;
+        Partial<GuiMultiRangeTimeInput>;
+      'gui-multi-range-date-picker': React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      > &
+        Partial<GuiMultiRangeDatePicker>;
+      'gui-multi-range-time-picker': React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      > &
+        Partial<GuiMultiRangeTimePicker>;
 
       'gui-select': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiSelect>;

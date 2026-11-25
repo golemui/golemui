@@ -741,6 +741,270 @@
       "interpolationWarnings": []
     }
   },
+  "multiRangeCalendar": {
+    "input": {
+      "form": [
+        {
+          "type": "multiRangeCalendar"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Missing required property `path` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "path"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiRangeDateInput": {
+    "input": {
+      "form": [
+        {
+          "type": "multiRangeDateInput"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Missing required property `path` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "path"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiRangeDatePicker": {
+    "input": {
+      "form": [
+        {
+          "type": "multiRangeDatePicker"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Missing required property `path` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "path"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiRangeDateTimeCalendar": {
+    "input": {
+      "form": [
+        {
+          "type": "multiRangeDateTimeCalendar"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Missing required property `path` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "path"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiRangeDateTimeInput": {
+    "input": {
+      "form": [
+        {
+          "type": "multiRangeDateTimeInput"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Missing required property `path` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "path"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiRangeDateTimePicker": {
+    "input": {
+      "form": [
+        {
+          "type": "multiRangeDateTimePicker"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Missing required property `path` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "path"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiRangeTimeInput": {
+    "input": {
+      "form": [
+        {
+          "type": "multiRangeTimeInput"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Missing required property `path` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "path"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiRangeTimePicker": {
+    "input": {
+      "form": [
+        {
+          "type": "multiRangeTimePicker"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Missing required property `path` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "path"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
   "number": {
     "input": {
       "form": [
@@ -873,275 +1137,11 @@
       "interpolationWarnings": []
     }
   },
-  "rangeCalendar": {
-    "input": {
-      "form": [
-        {
-          "type": "rangeCalendar"
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0",
-          "message": "Missing required property `kind` at `/form/0`",
-          "keyword": "required",
-          "params": {
-            "missingProperty": "kind"
-          }
-        },
-        {
-          "path": "/form/0",
-          "message": "Missing required property `path` at `/form/0`",
-          "keyword": "required",
-          "params": {
-            "missingProperty": "path"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
-  "rangeDateInput": {
-    "input": {
-      "form": [
-        {
-          "type": "rangeDateInput"
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0",
-          "message": "Missing required property `kind` at `/form/0`",
-          "keyword": "required",
-          "params": {
-            "missingProperty": "kind"
-          }
-        },
-        {
-          "path": "/form/0",
-          "message": "Missing required property `path` at `/form/0`",
-          "keyword": "required",
-          "params": {
-            "missingProperty": "path"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
-  "rangeDatePicker": {
-    "input": {
-      "form": [
-        {
-          "type": "rangeDatePicker"
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0",
-          "message": "Missing required property `kind` at `/form/0`",
-          "keyword": "required",
-          "params": {
-            "missingProperty": "kind"
-          }
-        },
-        {
-          "path": "/form/0",
-          "message": "Missing required property `path` at `/form/0`",
-          "keyword": "required",
-          "params": {
-            "missingProperty": "path"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
-  "rangeDateTimeCalendar": {
-    "input": {
-      "form": [
-        {
-          "type": "rangeDateTimeCalendar"
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0",
-          "message": "Missing required property `kind` at `/form/0`",
-          "keyword": "required",
-          "params": {
-            "missingProperty": "kind"
-          }
-        },
-        {
-          "path": "/form/0",
-          "message": "Missing required property `path` at `/form/0`",
-          "keyword": "required",
-          "params": {
-            "missingProperty": "path"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
-  "rangeDateTimeInput": {
-    "input": {
-      "form": [
-        {
-          "type": "rangeDateTimeInput"
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0",
-          "message": "Missing required property `kind` at `/form/0`",
-          "keyword": "required",
-          "params": {
-            "missingProperty": "kind"
-          }
-        },
-        {
-          "path": "/form/0",
-          "message": "Missing required property `path` at `/form/0`",
-          "keyword": "required",
-          "params": {
-            "missingProperty": "path"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
-  "rangeDateTimePicker": {
-    "input": {
-      "form": [
-        {
-          "type": "rangeDateTimePicker"
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0",
-          "message": "Missing required property `kind` at `/form/0`",
-          "keyword": "required",
-          "params": {
-            "missingProperty": "kind"
-          }
-        },
-        {
-          "path": "/form/0",
-          "message": "Missing required property `path` at `/form/0`",
-          "keyword": "required",
-          "params": {
-            "missingProperty": "path"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
   "rangeSlider": {
     "input": {
       "form": [
         {
           "type": "rangeSlider"
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0",
-          "message": "Missing required property `kind` at `/form/0`",
-          "keyword": "required",
-          "params": {
-            "missingProperty": "kind"
-          }
-        },
-        {
-          "path": "/form/0",
-          "message": "Missing required property `path` at `/form/0`",
-          "keyword": "required",
-          "params": {
-            "missingProperty": "path"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
-  "rangeTimeInput": {
-    "input": {
-      "form": [
-        {
-          "type": "rangeTimeInput"
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0",
-          "message": "Missing required property `kind` at `/form/0`",
-          "keyword": "required",
-          "params": {
-            "missingProperty": "kind"
-          }
-        },
-        {
-          "path": "/form/0",
-          "message": "Missing required property `path` at `/form/0`",
-          "keyword": "required",
-          "params": {
-            "missingProperty": "path"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
-  "rangeTimePicker": {
-    "input": {
-      "form": [
-        {
-          "type": "rangeTimePicker"
         }
       ]
     },

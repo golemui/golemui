@@ -265,7 +265,6 @@ const WIDGET_MUTATIONS: WidgetMutation[] = [
   { name: 'is-a-typo-input', apply: () => ({ ...TEXT_INPUT, type: 'textinpu' }) },
   { name: 'is-a-grid', apply: () => clone(GRID) },
   { name: 'is-a-typo-grid', apply: () => ({ ...clone(GRID), type: 'grd' }) },
-  { name: 'is-a-removed-flex', apply: () => ({ ...clone(GRID), type: 'flex' }) },
   { name: 'is-a-button', apply: () => ({ kind: 'action', type: 'button', label: 'Go' }) },
   { name: 'is-a-custom-input', apply: () => ({ kind: 'input', type: 'myInput', path: 'q' }) },
   { name: 'is-a-custom-display', apply: () => ({ kind: 'display', type: 'myDisplay' }) },

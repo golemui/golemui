@@ -35,7 +35,7 @@
       "#0.10": "display alert",
       "rating": "input number rating",
       "#0.12": "display alert",
-      "tags-rangeCalendar": "input rangeCalendar tags",
+      "tags-multiRangeCalendar": "input multiRangeCalendar tags",
       "#0.14": "display alert",
       "acceptTerms-checkbox": "input checkbox acceptTerms",
       "messages-submit": "action button"
@@ -61,7 +61,7 @@
           "#0.10",
           "rating",
           "#0.12",
-          "tags-rangeCalendar",
+          "tags-multiRangeCalendar",
           "#0.14",
           "acceptTerms-checkbox",
           "messages-submit"
@@ -244,9 +244,9 @@
         },
         "keysWithUndefined": "size include exclude"
       },
-      "tags-rangeCalendar": {
-        "uid": "tags-rangeCalendar",
-        "type": "rangeCalendar",
+      "tags-multiRangeCalendar": {
+        "uid": "tags-multiRangeCalendar",
+        "type": "multiRangeCalendar",
         "kind": "input",
         "label": "Selected Dates",
         "validator": {

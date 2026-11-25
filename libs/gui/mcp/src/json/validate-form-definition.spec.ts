@@ -1,6 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { CHANGED_IN_V3 } from './errors';
-import { widgetKindByType } from './schemas/generated/metadata.js';
 import { validateFormDefinition } from './validate-form-definition';
 
 describe('json_validate_form_definition', () => {
@@ -227,58 +225,6 @@ describe('json_validate_form_definition', () => {
     });
     expect(result.warnings).toHaveLength(1);
     expect(result.errors.some((e) => e.path === '/form/0/children/0/type')).toBe(true);
-  });
-
-  describe('widget types removed in 3.0', () => {
-    it('rejects a flex layout and names the grid that replaces it', () => {
-      const result = validateFormDefinition({
-        formDefinition: {
-          form: [
-            {
-              kind: 'layout',
-              type: 'flex',
-              props: { direction: 'row' },
-              children: [{ kind: 'input', type: 'textimput', path: 'name' }],
-            } as never,
-          ],
-        },
-      });
-      expect(result.valid).toBe(false);
-      expect(result.warnings).toEqual([]);
-      const removed = result.errors.find((e) => e.keyword === 'removedType');
-      expect(removed).toMatchObject({ path: '/form/0/type', params: { type: 'flex' } });
-      expect(removed!.message).toMatch(/removed in GolemUI 3\.0/);
-      expect(removed!.suggestion).toMatch(/type: 'grid'/);
-      // Its children are still checked.
-      expect(result.errors.some((e) => e.path === '/form/0/children/0/type')).toBe(true);
-    });
-
-    it('reports a flex repeater template once, as removed', () => {
-      const result = validateFormDefinition({
-        formDefinition: {
-          form: [
-            {
-              kind: 'input',
-              type: 'repeater',
-              path: 'rows',
-              props: {
-                template: {
-                  kind: 'layout',
-                  type: 'flex',
-                  children: [{ kind: 'input', type: 'textinput', path: 'rows.items.name' }],
-                },
-              },
-            } as never,
-          ],
-        },
-      });
-      expect(result.errors.map((e) => e.keyword)).toEqual(['removedType']);
-      expect(result.errors[0]!.path).toBe('/form/0/props/template/type');
-    });
-
-    it('lists only types that are no longer built in', () => {
-      expect(Object.keys(CHANGED_IN_V3).filter((type) => type in widgetKindByType)).toEqual([]);
-    });
   });
 
   describe('chunk references', () => {

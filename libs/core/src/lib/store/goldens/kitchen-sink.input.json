@@ -125,36 +125,36 @@
               "uid": "tabRating"
             },
             {
-              "label": "Range Calendar Component",
-              "uid": "tabRangeCalendar"
+              "label": "Multi Range Calendar Component",
+              "uid": "tabMultiRangeCalendar"
             },
             {
-              "label": "Range Date Input Component",
-              "uid": "tabRangeDateInput"
+              "label": "Multi Range Date Input Component",
+              "uid": "tabMultiRangeDateInput"
             },
             {
-              "label": "Range Time Input Component",
-              "uid": "tabRangeTimeInput"
+              "label": "Multi Range Time Input Component",
+              "uid": "tabMultiRangeTimeInput"
             },
             {
-              "label": "Range Date Time Input Component",
-              "uid": "tabRangeDateTimeInput"
+              "label": "Multi Range Date Time Input Component",
+              "uid": "tabMultiRangeDateTimeInput"
             },
             {
-              "label": "Range Date Time Calendar Component",
-              "uid": "tabRangeDateTimeCalendar"
+              "label": "Multi Range Date Time Calendar Component",
+              "uid": "tabMultiRangeDateTimeCalendar"
             },
             {
-              "label": "Range Date Time Picker Component",
-              "uid": "tabRangeDateTimePicker"
+              "label": "Multi Range Date Time Picker Component",
+              "uid": "tabMultiRangeDateTimePicker"
             },
             {
-              "label": "Range Time Picker Component",
-              "uid": "tabRangeTimePicker"
+              "label": "Multi Range Time Picker Component",
+              "uid": "tabMultiRangeTimePicker"
             },
             {
-              "label": "Range Date Picker Component",
-              "uid": "tabRangeDatePicker"
+              "label": "Multi Range Date Picker Component",
+              "uid": "tabMultiRangeDatePicker"
             },
             {
               "label": "OTP Component",
@@ -1467,14 +1467,14 @@
             ]
           },
           {
-            "uid": "tabRangeDateInput",
+            "uid": "tabMultiRangeDateInput",
             "kind": "layout",
             "type": "grid",
             "children": [
               {
                 "kind": "input",
-                "type": "rangeDateInput",
-                "path": "rangeDateInputEmpty",
+                "type": "multiRangeDateInput",
+                "path": "multiRangeDateInputEmpty",
                 "label": "Empty",
                 "props": {
                   "icon": "calendar_month",
@@ -1483,8 +1483,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateInput",
-                "path": "rangeDateInputDefault",
+                "type": "multiRangeDateInput",
+                "path": "multiRangeDateInputDefault",
                 "defaultValue": [
                   {
                     "start": "2026-02-13",
@@ -1502,8 +1502,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateInput",
-                "path": "rangeDateInputEditable",
+                "type": "multiRangeDateInput",
+                "path": "multiRangeDateInputEditable",
                 "defaultValue": [
                   {
                     "start": "2026-02-13",
@@ -1522,8 +1522,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateInput",
-                "path": "rangeDateInputDisabled",
+                "type": "multiRangeDateInput",
+                "path": "multiRangeDateInputDisabled",
                 "defaultValue": [
                   {
                     "start": "2026-02-13",
@@ -1542,8 +1542,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateInput",
-                "path": "rangeDateInputReadonly",
+                "type": "multiRangeDateInput",
+                "path": "multiRangeDateInputReadonly",
                 "defaultValue": [
                   {
                     "start": "2026-02-13",
@@ -1562,8 +1562,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateInput",
-                "path": "rangeDateInputValidation",
+                "type": "multiRangeDateInput",
+                "path": "multiRangeDateInputValidation",
                 "label": "Required (validation)",
                 "props": {
                   "icon": "calendar_month",
@@ -1577,14 +1577,14 @@
             ]
           },
           {
-            "uid": "tabRangeTimeInput",
+            "uid": "tabMultiRangeTimeInput",
             "kind": "layout",
             "type": "grid",
             "children": [
               {
                 "kind": "input",
-                "type": "rangeTimeInput",
-                "path": "rangeTimeInputEmpty",
+                "type": "multiRangeTimeInput",
+                "path": "multiRangeTimeInputEmpty",
                 "label": "Empty",
                 "props": {
                   "icon": "schedule",
@@ -1593,8 +1593,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeTimeInput",
-                "path": "rangeTimeInputDefault",
+                "type": "multiRangeTimeInput",
+                "path": "multiRangeTimeInputDefault",
                 "defaultValue": [
                   {
                     "start": "09:00:00",
@@ -1613,8 +1613,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeTimeInput",
-                "path": "rangeTimeInputEditable",
+                "type": "multiRangeTimeInput",
+                "path": "multiRangeTimeInputEditable",
                 "defaultValue": [
                   {
                     "start": "09:00:00",
@@ -1634,8 +1634,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeTimeInput",
-                "path": "rangeTimeInputConstraints",
+                "type": "multiRangeTimeInput",
+                "path": "multiRangeTimeInputConstraints",
                 "label": "With min/max time",
                 "props": {
                   "icon": "schedule",
@@ -1647,8 +1647,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeTimeInput",
-                "path": "rangeTimeInputDisabled",
+                "type": "multiRangeTimeInput",
+                "path": "multiRangeTimeInputDisabled",
                 "defaultValue": [
                   {
                     "start": "09:00:00",
@@ -1668,8 +1668,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeTimeInput",
-                "path": "rangeTimeInputReadonly",
+                "type": "multiRangeTimeInput",
+                "path": "multiRangeTimeInputReadonly",
                 "defaultValue": [
                   {
                     "start": "09:00:00",
@@ -1689,8 +1689,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeTimeInput",
-                "path": "rangeTimeInputValidation",
+                "type": "multiRangeTimeInput",
+                "path": "multiRangeTimeInputValidation",
                 "label": "Required (validation)",
                 "props": {
                   "icon": "schedule",
@@ -1704,14 +1704,14 @@
             ]
           },
           {
-            "uid": "tabRangeDateTimeInput",
+            "uid": "tabMultiRangeDateTimeInput",
             "kind": "layout",
             "type": "grid",
             "children": [
               {
                 "kind": "input",
-                "type": "rangeDateTimeInput",
-                "path": "rangeDateTimeInputEmpty",
+                "type": "multiRangeDateTimeInput",
+                "path": "multiRangeDateTimeInputEmpty",
                 "label": "Empty",
                 "props": {
                   "separator": "to"
@@ -1719,8 +1719,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateTimeInput",
-                "path": "rangeDateTimeInputDefault",
+                "type": "multiRangeDateTimeInput",
+                "path": "multiRangeDateTimeInputDefault",
                 "defaultValue": [
                   {
                     "start": "2026-11-22T09:00:00",
@@ -1739,8 +1739,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateTimeInput",
-                "path": "rangeDateTimeInputEditable",
+                "type": "multiRangeDateTimeInput",
+                "path": "multiRangeDateTimeInputEditable",
                 "defaultValue": [
                   {
                     "start": "2026-11-22T09:00:00",
@@ -1760,8 +1760,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateTimeInput",
-                "path": "rangeDateTimeInputConstraints",
+                "type": "multiRangeDateTimeInput",
+                "path": "multiRangeDateTimeInputConstraints",
                 "label": "With min/max date-time",
                 "props": {
                   "icon": "schedule",
@@ -1775,8 +1775,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateTimeInput",
-                "path": "rangeDateTimeInputDisabled",
+                "type": "multiRangeDateTimeInput",
+                "path": "multiRangeDateTimeInputDisabled",
                 "defaultValue": [
                   {
                     "start": "2026-11-22T09:00:00",
@@ -1792,8 +1792,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateTimeInput",
-                "path": "rangeDateTimeInputReadonly",
+                "type": "multiRangeDateTimeInput",
+                "path": "multiRangeDateTimeInputReadonly",
                 "defaultValue": [
                   {
                     "start": "2026-11-22T09:00:00",
@@ -1809,8 +1809,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateTimeInput",
-                "path": "rangeDateTimeInputValidation",
+                "type": "multiRangeDateTimeInput",
+                "path": "multiRangeDateTimeInputValidation",
                 "label": "Required (validation)",
                 "props": {
                   "icon": "schedule",
@@ -1824,14 +1824,14 @@
             ]
           },
           {
-            "uid": "tabRangeDateTimeCalendar",
+            "uid": "tabMultiRangeDateTimeCalendar",
             "kind": "layout",
             "type": "grid",
             "children": [
               {
                 "kind": "input",
-                "type": "rangeDateTimeCalendar",
-                "path": "rangeDateTimeCalendarEmpty",
+                "type": "multiRangeDateTimeCalendar",
+                "path": "multiRangeDateTimeCalendarEmpty",
                 "label": "Empty",
                 "props": {
                   "minuteStep": 30,
@@ -1841,8 +1841,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateTimeCalendar",
-                "path": "rangeDateTimeCalendarDefault",
+                "type": "multiRangeDateTimeCalendar",
+                "path": "multiRangeDateTimeCalendarDefault",
                 "defaultValue": [
                   {
                     "start": "2026-02-13T09:00:00",
@@ -1865,8 +1865,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateTimeCalendar",
-                "path": "rangeDateTimeCalendarEditable",
+                "type": "multiRangeDateTimeCalendar",
+                "path": "multiRangeDateTimeCalendarEditable",
                 "defaultValue": [
                   {
                     "start": "2026-02-13T09:00:00",
@@ -1885,8 +1885,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateTimeCalendar",
-                "path": "rangeDateTimeCalendarDisabled",
+                "type": "multiRangeDateTimeCalendar",
+                "path": "multiRangeDateTimeCalendarDisabled",
                 "defaultValue": [
                   {
                     "start": "2026-02-13T09:00:00",
@@ -1901,8 +1901,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateTimeCalendar",
-                "path": "rangeDateTimeCalendarReadonly",
+                "type": "multiRangeDateTimeCalendar",
+                "path": "multiRangeDateTimeCalendarReadonly",
                 "defaultValue": [
                   {
                     "start": "2026-02-13T09:00:00",
@@ -1917,8 +1917,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateTimeCalendar",
-                "path": "rangeDateTimeCalendarValidation",
+                "type": "multiRangeDateTimeCalendar",
+                "path": "multiRangeDateTimeCalendarValidation",
                 "label": "Required (validation)",
                 "validator": {
                   "type": "array",
@@ -1930,8 +1930,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateTimeCalendar",
-                "path": "rangeDateTimeCalendarConstraints",
+                "type": "multiRangeDateTimeCalendar",
+                "path": "multiRangeDateTimeCalendarConstraints",
                 "label": "With min/max date-time and disabled spans",
                 "props": {
                   "minuteStep": 30,
@@ -1953,14 +1953,14 @@
             ]
           },
           {
-            "uid": "tabRangeDateTimePicker",
+            "uid": "tabMultiRangeDateTimePicker",
             "kind": "layout",
             "type": "grid",
             "children": [
               {
                 "kind": "input",
-                "type": "rangeDateTimePicker",
-                "path": "rangeDateTimePickerEmpty",
+                "type": "multiRangeDateTimePicker",
+                "path": "multiRangeDateTimePickerEmpty",
                 "label": "Empty",
                 "props": {
                   "minuteStep": 30,
@@ -1970,8 +1970,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateTimePicker",
-                "path": "rangeDateTimePickerDefault",
+                "type": "multiRangeDateTimePicker",
+                "path": "multiRangeDateTimePickerDefault",
                 "defaultValue": [
                   {
                     "start": "2026-02-13T09:00:00",
@@ -1994,8 +1994,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateTimePicker",
-                "path": "rangeDateTimePickerEditable",
+                "type": "multiRangeDateTimePicker",
+                "path": "multiRangeDateTimePickerEditable",
                 "defaultValue": [
                   {
                     "start": "2026-02-13T09:00:00",
@@ -2014,8 +2014,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateTimePicker",
-                "path": "rangeDateTimePickerDisabled",
+                "type": "multiRangeDateTimePicker",
+                "path": "multiRangeDateTimePickerDisabled",
                 "defaultValue": [
                   {
                     "start": "2026-02-13T09:00:00",
@@ -2030,8 +2030,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateTimePicker",
-                "path": "rangeDateTimePickerReadonly",
+                "type": "multiRangeDateTimePicker",
+                "path": "multiRangeDateTimePickerReadonly",
                 "defaultValue": [
                   {
                     "start": "2026-02-13T09:00:00",
@@ -2046,8 +2046,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateTimePicker",
-                "path": "rangeDateTimePickerValidation",
+                "type": "multiRangeDateTimePicker",
+                "path": "multiRangeDateTimePickerValidation",
                 "label": "Required (validation)",
                 "validator": {
                   "type": "array",
@@ -2059,8 +2059,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDateTimePicker",
-                "path": "rangeDateTimePickerConstraints",
+                "type": "multiRangeDateTimePicker",
+                "path": "multiRangeDateTimePickerConstraints",
                 "label": "With min/max date-time and disabled spans",
                 "props": {
                   "minuteStep": 30,
@@ -2083,14 +2083,14 @@
             ]
           },
           {
-            "uid": "tabRangeTimePicker",
+            "uid": "tabMultiRangeTimePicker",
             "kind": "layout",
             "type": "grid",
             "children": [
               {
                 "kind": "input",
-                "type": "rangeTimePicker",
-                "path": "rangeTimePickerEmpty",
+                "type": "multiRangeTimePicker",
+                "path": "multiRangeTimePickerEmpty",
                 "label": "Empty",
                 "props": {
                   "icon": "schedule",
@@ -2113,8 +2113,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeTimePicker",
-                "path": "rangeTimePickerDefault",
+                "type": "multiRangeTimePicker",
+                "path": "multiRangeTimePickerDefault",
                 "defaultValue": [
                   {
                     "start": "09:00:00",
@@ -2137,8 +2137,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeTimePicker",
-                "path": "rangeTimePickerEditable",
+                "type": "multiRangeTimePicker",
+                "path": "multiRangeTimePickerEditable",
                 "defaultValue": [
                   {
                     "start": "09:00:00",
@@ -2161,8 +2161,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeTimePicker",
-                "path": "rangeTimePickerConstraints",
+                "type": "multiRangeTimePicker",
+                "path": "multiRangeTimePickerConstraints",
                 "label": "Booking with lunch break",
                 "props": {
                   "icon": "schedule",
@@ -2182,8 +2182,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeTimePicker",
-                "path": "rangeTimePickerDisabled",
+                "type": "multiRangeTimePicker",
+                "path": "multiRangeTimePickerDisabled",
                 "defaultValue": [
                   {
                     "start": "09:00:00",
@@ -2207,8 +2207,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeTimePicker",
-                "path": "rangeTimePickerReadonly",
+                "type": "multiRangeTimePicker",
+                "path": "multiRangeTimePickerReadonly",
                 "defaultValue": [
                   {
                     "start": "09:00:00",
@@ -2232,8 +2232,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeTimePicker",
-                "path": "rangeTimePickerValidation",
+                "type": "multiRangeTimePicker",
+                "path": "multiRangeTimePickerValidation",
                 "label": "Required (validation)",
                 "props": {
                   "icon": "schedule",
@@ -2251,20 +2251,20 @@
             ]
           },
           {
-            "uid": "tabRangeCalendar",
+            "uid": "tabMultiRangeCalendar",
             "kind": "layout",
             "type": "grid",
             "children": [
               {
                 "kind": "input",
-                "type": "rangeCalendar",
-                "path": "rangeCalendarEmpty",
+                "type": "multiRangeCalendar",
+                "path": "multiRangeCalendarEmpty",
                 "label": "Empty"
               },
               {
                 "kind": "input",
-                "type": "rangeCalendar",
-                "path": "rangeCalendarDefault",
+                "type": "multiRangeCalendar",
+                "path": "multiRangeCalendarDefault",
                 "defaultValue": [
                   {
                     "start": "2026-02-13",
@@ -2278,8 +2278,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeCalendar",
-                "path": "rangeCalendarEditable",
+                "type": "multiRangeCalendar",
+                "path": "multiRangeCalendarEditable",
                 "defaultValue": [
                   {
                     "start": "2026-02-13",
@@ -2296,8 +2296,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeCalendar",
-                "path": "rangeCalendarDisabled",
+                "type": "multiRangeCalendar",
+                "path": "multiRangeCalendarDisabled",
                 "defaultValue": [
                   {
                     "start": "2026-02-13",
@@ -2312,8 +2312,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeCalendar",
-                "path": "rangeCalendarReadonly",
+                "type": "multiRangeCalendar",
+                "path": "multiRangeCalendarReadonly",
                 "defaultValue": [
                   {
                     "start": "2026-02-13",
@@ -2328,8 +2328,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeCalendar",
-                "path": "rangeCalendarValidation",
+                "type": "multiRangeCalendar",
+                "path": "multiRangeCalendarValidation",
                 "label": "Required (validation)",
                 "validator": {
                   "type": "array",
@@ -2338,8 +2338,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeCalendar",
-                "path": "rangeCalendarDisabledRanges",
+                "type": "multiRangeCalendar",
+                "path": "multiRangeCalendarDisabledRanges",
                 "defaultValue": [
                   {
                     "start": "2026-02-13",
@@ -2365,14 +2365,14 @@
             ]
           },
           {
-            "uid": "tabRangeDatePicker",
+            "uid": "tabMultiRangeDatePicker",
             "kind": "layout",
             "type": "grid",
             "children": [
               {
                 "kind": "input",
-                "type": "rangeDatePicker",
-                "path": "rangeDatePickerEmpty",
+                "type": "multiRangeDatePicker",
+                "path": "multiRangeDatePickerEmpty",
                 "label": "Empty",
                 "props": {
                   "icon": "calendar_month",
@@ -2381,8 +2381,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDatePicker",
-                "path": "rangeDatePickerMinMax",
+                "type": "multiRangeDatePicker",
+                "path": "multiRangeDatePickerMinMax",
                 "defaultValue": [
                   {
                     "start": "2026-02-20"
@@ -2400,8 +2400,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDatePicker",
-                "path": "rangeDatePickerDefault",
+                "type": "multiRangeDatePicker",
+                "path": "multiRangeDatePickerDefault",
                 "defaultValue": [
                   {
                     "start": "2026-02-13",
@@ -2419,8 +2419,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDatePicker",
-                "path": "rangeDatePickerEditable",
+                "type": "multiRangeDatePicker",
+                "path": "multiRangeDatePickerEditable",
                 "defaultValue": [
                   {
                     "start": "2026-02-13",
@@ -2439,8 +2439,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDatePicker",
-                "path": "rangeDatePickerDisabled",
+                "type": "multiRangeDatePicker",
+                "path": "multiRangeDatePickerDisabled",
                 "defaultValue": [
                   {
                     "start": "2026-02-13",
@@ -2459,8 +2459,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDatePicker",
-                "path": "rangeDatePickerReadonly",
+                "type": "multiRangeDatePicker",
+                "path": "multiRangeDatePickerReadonly",
                 "defaultValue": [
                   {
                     "start": "2026-02-13",
@@ -2479,8 +2479,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDatePicker",
-                "path": "rangeDatePickerValidation",
+                "type": "multiRangeDatePicker",
+                "path": "multiRangeDatePickerValidation",
                 "label": "Required (validation)",
                 "props": {
                   "icon": "calendar_month",
@@ -2493,8 +2493,8 @@
               },
               {
                 "kind": "input",
-                "type": "rangeDatePicker",
-                "path": "rangeDatePickerDisabledRanges",
+                "type": "multiRangeDatePicker",
+                "path": "multiRangeDatePickerDisabledRanges",
                 "defaultValue": [
                   {
                     "start": "2026-02-13",

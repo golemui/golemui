@@ -3,7 +3,7 @@ import { guiWidgetManifest } from '../widget-manifest';
 
 // Core decodes `defaultValue` on every input widget, but each component schema has to declare
 // it separately because its type differs per widget (a string for textinput, an array of
-// `{ start, end }` for rangeDateInput). A schema that forgets it does not just omit the field:
+// `{ start, end }` for multiRangeDateInput). A schema that forgets it does not just omit the field:
 // `unevaluatedProperties: false` makes the schema reject a form that works at runtime, and the
 // rejection surfaces as an opaque oneOf miss. Both directions are pinned here.
 describe('component schema defaultValue parity', () => {

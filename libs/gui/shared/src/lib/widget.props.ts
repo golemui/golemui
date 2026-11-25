@@ -327,7 +327,7 @@ export type DateTimeCalendarProps = CalendarProps &
     noAvailableTimesMessage?: Localizable;
   };
 
-export type RangeCalendarProps = RangeEditProps & {
+export type MultiRangeCalendarProps = RangeEditProps & {
   /**
    * An optional descriptive text providing guidance or information about the associated widget or functionality.
    */
@@ -500,7 +500,7 @@ export type TimePickerProps = TimeInputProps &
     noAvailableTimesMessage?: Localizable;
   };
 
-export type RangeDateInputProps = IncompleteMessageProps &
+export type MultiRangeDateInputProps = IncompleteMessageProps &
   RangeEditProps & {
     hint?: string;
     icon?: string;
@@ -535,13 +535,13 @@ export type DateTimePickerProps = DateTimeCalendarProps &
   DateBoundsMessageProps &
   PickerToggleProps;
 
-export type RangeDatePickerProps = RangeCalendarProps &
-  RangeDateInputProps &
+export type MultiRangeDatePickerProps = MultiRangeCalendarProps &
+  MultiRangeDateInputProps &
   DateBoundsMessageProps &
   PickerToggleProps;
 
-export type RangeDateTimeCalendarProps = Omit<
-  RangeCalendarProps,
+export type MultiRangeDateTimeCalendarProps = Omit<
+  MultiRangeCalendarProps,
   'minDate' | 'maxDate' | 'disabledRanges' | 'disabledDateRangeMessage'
 > &
   IncompleteMessageProps & {
@@ -578,7 +578,7 @@ export type RangeDateTimeCalendarProps = Omit<
     disabledDayCountAriaLabel?: Localizable;
   };
 
-export type RangeTimeInputProps = IncompleteMessageProps &
+export type MultiRangeTimeInputProps = IncompleteMessageProps &
   RangeEditProps & {
     hint?: string;
     icon?: string;
@@ -601,7 +601,7 @@ export type RangeTimeInputProps = IncompleteMessageProps &
     rangeOrderMessage?: Localizable;
   };
 
-export type RangeDateTimeInputProps = IncompleteMessageProps &
+export type MultiRangeDateTimeInputProps = IncompleteMessageProps &
   RangeEditProps & {
     hint?: string;
     icon?: string;
@@ -635,11 +635,11 @@ export type RangeDateTimeInputProps = IncompleteMessageProps &
  * spans, two time pickers, per-day count badge) with the typed range input as
  * its trigger.
  */
-export type RangeDateTimePickerProps = RangeDateTimeCalendarProps &
-  RangeDateTimeInputProps &
+export type MultiRangeDateTimePickerProps = MultiRangeDateTimeCalendarProps &
+  MultiRangeDateTimeInputProps &
   PickerToggleProps;
 
-export type RangeTimePickerProps = RangeTimeInputProps &
+export type MultiRangeTimePickerProps = MultiRangeTimeInputProps &
   PickerToggleProps & {
     /** Times inside these ranges (both ends inclusive) render disabled. */
     disabledRanges?: TimeRange[];

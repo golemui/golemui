@@ -19,16 +19,21 @@ const fields: Record<string, { field: TemplateResult; focusable: string }> = {
     field: html`<gui-date-time-picker label="Delivery"></gui-date-time-picker>`,
     focusable: '[data-type="month"]',
   },
-  'gui-range-date-picker': {
-    field: html`<gui-range-date-picker label="Stay"></gui-range-date-picker>`,
+  'gui-multi-range-date-picker': {
+    field: html`<gui-multi-range-date-picker label="Stay"></gui-multi-range-date-picker>`,
     focusable: '[data-type="month"]',
   },
-  'gui-range-time-picker': {
-    field: html`<gui-range-time-picker label="Hours" locale-id="en-US"></gui-range-time-picker>`,
+  'gui-multi-range-time-picker': {
+    field: html`<gui-multi-range-time-picker
+      label="Hours"
+      locale-id="en-US"
+    ></gui-multi-range-time-picker>`,
     focusable: '[data-type="hour"]',
   },
-  'gui-range-date-time-picker': {
-    field: html`<gui-range-date-time-picker label="Rental"></gui-range-date-time-picker>`,
+  'gui-multi-range-date-time-picker': {
+    field: html`<gui-multi-range-date-time-picker
+      label="Rental"
+    ></gui-multi-range-date-time-picker>`,
     focusable: '[data-type="month"]',
   },
   'gui-dropdown': {

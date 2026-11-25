@@ -26,15 +26,15 @@ import numberSchemaJson from './lib/components/number.schema.json';
 import otpSchemaJson from './lib/components/otp.schema.json';
 import passwordSchemaJson from './lib/components/password.schema.json';
 import radiogroupSchemaJson from './lib/components/radiogroup.schema.json';
-import rangecalendarSchemaJson from './lib/components/rangecalendar.schema.json';
-import rangedateinputSchemaJson from './lib/components/rangedateinput.schema.json';
-import rangedatepickerSchemaJson from './lib/components/rangedatepicker.schema.json';
-import rangedatetimeinputSchemaJson from './lib/components/rangedatetimeinput.schema.json';
-import rangedatetimecalendarSchemaJson from './lib/components/rangedatetimecalendar.schema.json';
-import rangedatetimepickerSchemaJson from './lib/components/rangedatetimepicker.schema.json';
+import multirangecalendarSchemaJson from './lib/components/multirangecalendar.schema.json';
+import multirangedateinputSchemaJson from './lib/components/multirangedateinput.schema.json';
+import multirangedatepickerSchemaJson from './lib/components/multirangedatepicker.schema.json';
+import multirangedatetimeinputSchemaJson from './lib/components/multirangedatetimeinput.schema.json';
+import multirangedatetimecalendarSchemaJson from './lib/components/multirangedatetimecalendar.schema.json';
+import multirangedatetimepickerSchemaJson from './lib/components/multirangedatetimepicker.schema.json';
 import rangesliderSchemaJson from './lib/components/rangeslider.schema.json';
-import rangetimeinputSchemaJson from './lib/components/rangetimeinput.schema.json';
-import rangetimepickerSchemaJson from './lib/components/rangetimepicker.schema.json';
+import multirangetimeinputSchemaJson from './lib/components/multirangetimeinput.schema.json';
+import multirangetimepickerSchemaJson from './lib/components/multirangetimepicker.schema.json';
 import ratingSchemaJson from './lib/components/rating.schema.json';
 import repeaterSchemaJson from './lib/components/repeater.schema.json';
 import selectSchemaJson from './lib/components/select.schema.json';
@@ -80,15 +80,18 @@ export const numberSchema: Record<string, unknown> = numberSchemaJson;
 export const otpSchema: Record<string, unknown> = otpSchemaJson;
 export const passwordSchema: Record<string, unknown> = passwordSchemaJson;
 export const radiogroupSchema: Record<string, unknown> = radiogroupSchemaJson;
-export const rangecalendarSchema: Record<string, unknown> = rangecalendarSchemaJson;
-export const rangedateinputSchema: Record<string, unknown> = rangedateinputSchemaJson;
-export const rangedatepickerSchema: Record<string, unknown> = rangedatepickerSchemaJson;
-export const rangedatetimeinputSchema: Record<string, unknown> = rangedatetimeinputSchemaJson;
-export const rangedatetimecalendarSchema: Record<string, unknown> = rangedatetimecalendarSchemaJson;
-export const rangedatetimepickerSchema: Record<string, unknown> = rangedatetimepickerSchemaJson;
+export const multirangecalendarSchema: Record<string, unknown> = multirangecalendarSchemaJson;
+export const multirangedateinputSchema: Record<string, unknown> = multirangedateinputSchemaJson;
+export const multirangedatepickerSchema: Record<string, unknown> = multirangedatepickerSchemaJson;
+export const multirangedatetimeinputSchema: Record<string, unknown> =
+  multirangedatetimeinputSchemaJson;
+export const multirangedatetimecalendarSchema: Record<string, unknown> =
+  multirangedatetimecalendarSchemaJson;
+export const multirangedatetimepickerSchema: Record<string, unknown> =
+  multirangedatetimepickerSchemaJson;
 export const rangesliderSchema: Record<string, unknown> = rangesliderSchemaJson;
-export const rangetimeinputSchema: Record<string, unknown> = rangetimeinputSchemaJson;
-export const rangetimepickerSchema: Record<string, unknown> = rangetimepickerSchemaJson;
+export const multirangetimeinputSchema: Record<string, unknown> = multirangetimeinputSchemaJson;
+export const multirangetimepickerSchema: Record<string, unknown> = multirangetimepickerSchemaJson;
 export const ratingSchema: Record<string, unknown> = ratingSchemaJson;
 export const repeaterSchema: Record<string, unknown> = repeaterSchemaJson;
 export const selectSchema: Record<string, unknown> = selectSchemaJson;
@@ -130,15 +133,15 @@ export const COMPONENT_SCHEMAS_BY_TYPE = {
   otp: otpSchema,
   password: passwordSchema,
   radiogroup: radiogroupSchema,
-  rangeCalendar: rangecalendarSchema,
-  rangeDateInput: rangedateinputSchema,
-  rangeDatePicker: rangedatepickerSchema,
-  rangeDateTimeInput: rangedatetimeinputSchema,
-  rangeDateTimeCalendar: rangedatetimecalendarSchema,
-  rangeDateTimePicker: rangedatetimepickerSchema,
+  multiRangeCalendar: multirangecalendarSchema,
+  multiRangeDateInput: multirangedateinputSchema,
+  multiRangeDatePicker: multirangedatepickerSchema,
+  multiRangeDateTimeInput: multirangedatetimeinputSchema,
+  multiRangeDateTimeCalendar: multirangedatetimecalendarSchema,
+  multiRangeDateTimePicker: multirangedatetimepickerSchema,
   rangeSlider: rangesliderSchema,
-  rangeTimeInput: rangetimeinputSchema,
-  rangeTimePicker: rangetimepickerSchema,
+  multiRangeTimeInput: multirangetimeinputSchema,
+  multiRangeTimePicker: multirangetimepickerSchema,
   rating: ratingSchema,
   repeater: repeaterSchema,
   select: selectSchema,

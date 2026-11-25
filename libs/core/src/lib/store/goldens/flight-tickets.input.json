@@ -60,7 +60,7 @@
       },
       {
         "kind": "input",
-        "type": "rangeCalendar",
+        "type": "multiRangeCalendar",
         "path": "dates",
         "label": "Outbound/Return Dates",
         "props": {

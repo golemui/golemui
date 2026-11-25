@@ -673,6 +673,230 @@
       "interpolationWarnings": []
     }
   },
+  "multiRangeCalendar": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "multiRangeCalendar",
+          "path": "field",
+          "notAProperty": true
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Unknown property `notAProperty` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "notAProperty"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiRangeDateInput": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "multiRangeDateInput",
+          "path": "field",
+          "notAProperty": true
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Unknown property `notAProperty` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "notAProperty"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiRangeDatePicker": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "multiRangeDatePicker",
+          "path": "field",
+          "notAProperty": true
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Unknown property `notAProperty` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "notAProperty"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiRangeDateTimeCalendar": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "multiRangeDateTimeCalendar",
+          "path": "field",
+          "notAProperty": true
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Unknown property `notAProperty` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "notAProperty"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiRangeDateTimeInput": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "multiRangeDateTimeInput",
+          "path": "field",
+          "notAProperty": true
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Unknown property `notAProperty` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "notAProperty"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiRangeDateTimePicker": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "multiRangeDateTimePicker",
+          "path": "field",
+          "notAProperty": true
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Unknown property `notAProperty` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "notAProperty"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiRangeTimeInput": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "multiRangeTimeInput",
+          "path": "field",
+          "notAProperty": true
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Unknown property `notAProperty` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "notAProperty"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiRangeTimePicker": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "multiRangeTimePicker",
+          "path": "field",
+          "notAProperty": true
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Unknown property `notAProperty` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "notAProperty"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
   "number": {
     "input": {
       "form": [
@@ -785,236 +1009,12 @@
       "interpolationWarnings": []
     }
   },
-  "rangeCalendar": {
-    "input": {
-      "form": [
-        {
-          "kind": "input",
-          "type": "rangeCalendar",
-          "path": "field",
-          "notAProperty": true
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0",
-          "message": "Unknown property `notAProperty` at `/form/0`",
-          "keyword": "unevaluatedProperties",
-          "params": {
-            "unevaluatedProperty": "notAProperty"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
-  "rangeDateInput": {
-    "input": {
-      "form": [
-        {
-          "kind": "input",
-          "type": "rangeDateInput",
-          "path": "field",
-          "notAProperty": true
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0",
-          "message": "Unknown property `notAProperty` at `/form/0`",
-          "keyword": "unevaluatedProperties",
-          "params": {
-            "unevaluatedProperty": "notAProperty"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
-  "rangeDatePicker": {
-    "input": {
-      "form": [
-        {
-          "kind": "input",
-          "type": "rangeDatePicker",
-          "path": "field",
-          "notAProperty": true
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0",
-          "message": "Unknown property `notAProperty` at `/form/0`",
-          "keyword": "unevaluatedProperties",
-          "params": {
-            "unevaluatedProperty": "notAProperty"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
-  "rangeDateTimeCalendar": {
-    "input": {
-      "form": [
-        {
-          "kind": "input",
-          "type": "rangeDateTimeCalendar",
-          "path": "field",
-          "notAProperty": true
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0",
-          "message": "Unknown property `notAProperty` at `/form/0`",
-          "keyword": "unevaluatedProperties",
-          "params": {
-            "unevaluatedProperty": "notAProperty"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
-  "rangeDateTimeInput": {
-    "input": {
-      "form": [
-        {
-          "kind": "input",
-          "type": "rangeDateTimeInput",
-          "path": "field",
-          "notAProperty": true
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0",
-          "message": "Unknown property `notAProperty` at `/form/0`",
-          "keyword": "unevaluatedProperties",
-          "params": {
-            "unevaluatedProperty": "notAProperty"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
-  "rangeDateTimePicker": {
-    "input": {
-      "form": [
-        {
-          "kind": "input",
-          "type": "rangeDateTimePicker",
-          "path": "field",
-          "notAProperty": true
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0",
-          "message": "Unknown property `notAProperty` at `/form/0`",
-          "keyword": "unevaluatedProperties",
-          "params": {
-            "unevaluatedProperty": "notAProperty"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
   "rangeSlider": {
     "input": {
       "form": [
         {
           "kind": "input",
           "type": "rangeSlider",
-          "path": "field",
-          "notAProperty": true
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0",
-          "message": "Unknown property `notAProperty` at `/form/0`",
-          "keyword": "unevaluatedProperties",
-          "params": {
-            "unevaluatedProperty": "notAProperty"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
-  "rangeTimeInput": {
-    "input": {
-      "form": [
-        {
-          "kind": "input",
-          "type": "rangeTimeInput",
-          "path": "field",
-          "notAProperty": true
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0",
-          "message": "Unknown property `notAProperty` at `/form/0`",
-          "keyword": "unevaluatedProperties",
-          "params": {
-            "unevaluatedProperty": "notAProperty"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
-  "rangeTimePicker": {
-    "input": {
-      "form": [
-        {
-          "kind": "input",
-          "type": "rangeTimePicker",
           "path": "field",
           "notAProperty": true
         }

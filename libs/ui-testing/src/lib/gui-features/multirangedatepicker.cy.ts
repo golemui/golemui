@@ -1,0 +1,879 @@
+import { defineForm, identityTranslator } from '@golemui/core';
+import {
+  clearPillsWidthOverride,
+  forcePillsCompactMode,
+  forcePillsStripMode,
+  type MountComponentFn,
+  testDomId,
+  withTestFormName,
+} from '../utils';
+
+// Behavior tests for the gui-multi-range-date-picker web component. They pin the
+// open/close model that used to be hand-rolled per framework (open on input
+// interaction, stay open across range selection, close on outside click or
+// focus leaving the picker, pill click navigating to the range's month).
+export const runMultiRangeDatePickerComponentTests = (baseMountFn: MountComponentFn) => {
+  const mountFn = withTestFormName(baseMountFn);
+  describe('MultiRangeDatePicker Component', () => {
+    const uid = 'testSubject';
+    const sel = {
+      startMonth: 'gui-multi-range-date input[data-group="start"][data-type="month"]',
+      startDay: 'gui-multi-range-date input[data-group="start"][data-type="day"]',
+      endDay: 'gui-multi-range-date input[data-group="end"][data-type="day"]',
+      calendar: 'gui-multi-range-calendar',
+      pillText: 'gui-multi-range-date .gui-pills__pill-text',
+      dayButton: (date: string) => `gui-multi-range-calendar button[data-date="${date}"]`,
+    };
+
+    const mountMultiRangeDatePicker = (options?: {
+      data?: Record<string, any>;
+      props?: Record<string, any>;
+      formSubmit?: (event: any) => void;
+      readonly?: boolean;
+      disabled?: boolean;
+    }) => {
+      mountFn({
+        localization: identityTranslator('en-US'),
+        data: options?.data,
+        formDef: defineForm({
+          form: [
+            {
+              uid,
+              kind: 'input',
+              type: 'multiRangeDatePicker',
+              path: 'myRanges',
+              ...(options?.props ? { props: options.props } : {}),
+              ...(options?.readonly !== undefined ? { readonly: options.readonly } : {}),
+              ...(options?.disabled !== undefined ? { disabled: options.disabled } : {}),
+            },
+            {
+              uid: 'submitBtn',
+              kind: 'action',
+              type: 'button',
+              label: 'Submit',
+              actionType: 'submit',
+            },
+          ],
+        }),
+        formSubmit: options?.formSubmit,
+      });
+    };
+
+    const juneRange = { start: '2026-06-10', end: '2026-06-12' };
+    const marchRange = { start: '2026-03-05', end: '2026-03-07' };
+
+    // en-US orders the parts month/day/year, and each fill auto-advances.
+    const typeGroup = (group: 'start' | 'end', month: string, day: string, year: string) => {
+      cy.get(`gui-multi-range-date input[data-group="${group}"][data-type="month"]`).click();
+      cy.focused().type(month);
+      cy.focused().type(day);
+      cy.focused().type(year);
+    };
+    const typeStart = (month: string, day: string, year: string) =>
+      typeGroup('start', month, day, year);
+    const typeEnd = (month: string, day: string, year: string) =>
+      typeGroup('end', month, day, year);
+
+    it('should not render the calendar initially', () => {
+      mountMultiRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+      cy.get(sel.calendar).should('not.exist');
+    });
+
+    it('should open the calendar when clicking a date input part', () => {
+      mountMultiRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+      cy.get(sel.startMonth).click();
+      cy.get(sel.calendar).should('exist');
+    });
+
+    it('should keep the calendar open across a range selection and submit both ranges', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountMultiRangeDatePicker({ data: { myRanges: [juneRange] }, formSubmit: formSubmitHandler });
+
+      cy.get(sel.startMonth).click();
+
+      // First click anchors the range and must not close the calendar
+      cy.get(sel.dayButton('2026-06-18')).click();
+      cy.get(sel.calendar).should('exist');
+
+      // Second click commits the range; the range picker stays open so the
+      // user can select more ranges
+      cy.get(sel.dayButton('2026-06-20')).click();
+      cy.get(sel.calendar).should('exist');
+      cy.get(sel.pillText).should('have.length', 2);
+
+      cy.get('body').click(0, 0);
+      cy.get(sel.calendar).should('not.exist');
+
+      cy.get('[data-cy="submitBtn_button"]').click();
+      cy.get('@formSubmitHandler').then((stub: any) => {
+        const submittedData = stub.getCall(0).args[0].data;
+        expect(submittedData).to.deep.equal({
+          myRanges: [juneRange, { start: '2026-06-18', end: '2026-06-20' }],
+        });
+      });
+    });
+
+    it('should fill the date fields with the days picked in the calendar', () => {
+      mountMultiRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+      cy.get(sel.startMonth).click();
+
+      // The anchor lands in the start field straight away, so a half-picked
+      // span reads back as a date instead of only a calendar highlight
+      cy.get(sel.dayButton('2026-06-18')).click();
+      cy.get(sel.startMonth).should('have.value', '06');
+      cy.get(sel.startDay).should('have.value', '18');
+      cy.get(sel.endDay).should('have.value', '');
+
+      // Completing the span turns it into a pill and empties the fields again
+      cy.get(sel.dayButton('2026-06-20')).click();
+      cy.get(sel.pillText).should('have.length', 2);
+      cy.get(sel.startDay).should('have.value', '');
+    });
+
+    it('should start a calendar selection from a typed start date and complete it with a click', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountMultiRangeDatePicker({ data: { myRanges: [juneRange] }, formSubmit: formSubmitHandler });
+
+      // Typing a whole endpoint is the same first step as clicking a day: the
+      // calendar picks it up as the in-progress anchor.
+      typeStart('06', '18', '2026');
+      cy.get(sel.calendar).should('exist');
+      cy.get(sel.dayButton('2026-06-18')).should('have.class', 'is-anchor');
+
+      // ...so one click completes the span
+      cy.get(sel.dayButton('2026-06-22')).click();
+      cy.get(sel.pillText).should('have.length', 2);
+      cy.get(sel.startDay).should('have.value', '');
+
+      cy.get('body').click(0, 0);
+      cy.get('[data-cy="submitBtn_button"]').click();
+      cy.get('@formSubmitHandler').then((stub: any) => {
+        expect(stub.getCall(0).args[0].data.myRanges).to.deep.equal([
+          juneRange,
+          { start: '2026-06-18', end: '2026-06-22' },
+        ]);
+      });
+    });
+
+    it('should complete the start date with a click when the end was typed first', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountMultiRangeDatePicker({ data: { myRanges: [juneRange] }, formSubmit: formSubmitHandler });
+
+      // The endpoint keeps the field it was typed into, and the calendar takes
+      // it as the anchor either way — so an EARLIER click completes the start,
+      // ordered by the same reducer that orders a backward two-click pick.
+      // The end year is the last field of the last group, with nothing to
+      // auto-advance into — so the digit that completes it has to commit it.
+      typeEnd('06', '22', '2026');
+      cy.get(sel.dayButton('2026-06-22')).should('have.class', 'is-anchor');
+      cy.get(sel.startDay).should('have.value', '');
+
+      cy.get(sel.dayButton('2026-06-18')).click();
+      cy.get(sel.pillText).should('have.length', 2);
+
+      cy.get('body').click(0, 0);
+      cy.get('[data-cy="submitBtn_button"]').click();
+      cy.get('@formSubmitHandler').then((stub: any) => {
+        expect(stub.getCall(0).args[0].data.myRanges).to.deep.equal([
+          juneRange,
+          { start: '2026-06-18', end: '2026-06-22' },
+        ]);
+      });
+    });
+
+    it('should render a fully typed range as an in-progress selection', () => {
+      mountMultiRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+      typeStart('06', '18', '2026');
+      typeEnd('06', '22', '2026');
+
+      // Both endpoints entered: the whole span highlights, dashed like a hover
+      // preview. It is not a pill until Enter, so it must not wear the solid
+      // committed look of the range beside it.
+      cy.get(sel.dayButton('2026-06-18'))
+        .should('have.class', 'is-selecting')
+        .and('not.have.class', 'range-start');
+      cy.get(sel.dayButton('2026-06-20'))
+        .should('have.class', 'is-selecting')
+        .and('not.have.class', 'in-range');
+      cy.get(sel.dayButton('2026-06-22'))
+        .should('have.class', 'is-selecting')
+        .and('not.have.class', 'range-end');
+      cy.get(sel.pillText).should('have.length', 1);
+    });
+
+    it('should highlight a typed range whose end comes before its start', () => {
+      mountMultiRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+      // Reversed: the commit will reject it, but while it is being entered the
+      // days between the two endpoints still have to show what was typed.
+      typeStart('06', '22', '2026');
+      typeEnd('06', '18', '2026');
+
+      cy.get(sel.dayButton('2026-06-18')).should('have.class', 'is-selecting');
+      cy.get(sel.dayButton('2026-06-20')).should('have.class', 'is-selecting');
+      cy.get(sel.dayButton('2026-06-22')).should('have.class', 'is-selecting');
+    });
+
+    it('should navigate the calendar to a typed date in another month', () => {
+      mountMultiRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+      cy.get(sel.startMonth).click();
+      cy.get(sel.dayButton('2026-06-18')).should('exist');
+
+      typeStart('09', '10', '2026');
+      cy.get(sel.dayButton('2026-09-10')).should('exist').and('have.class', 'is-anchor');
+    });
+
+    it('should commit a typed range with the click that leaves and submits', () => {
+      const formSubmitHandler = cy.stub().as('formSubmitHandler');
+      mountMultiRangeDatePicker({ data: { myRanges: [juneRange] }, formSubmit: formSubmitHandler });
+
+      typeStart('06', '18', '2026');
+      typeEnd('06', '22', '2026');
+      cy.get(sel.pillText).should('have.length', 1);
+
+      // One click leaves the widget and submits the form. Leaving commits the
+      // finished range, and it has to settle before the form reads its data —
+      // otherwise the range the user typed is silently missing from it.
+      cy.get('[data-cy="submitBtn_button"]').click({ force: true });
+      cy.get('@formSubmitHandler').then((stub: any) => {
+        expect(stub.getCall(0).args[0].data.myRanges).to.deep.equal([
+          juneRange,
+          { start: '2026-06-18', end: '2026-06-22' },
+        ]);
+      });
+      cy.get(sel.pillText).should('have.length', 2);
+    });
+
+    it('should report an incomplete range when only the span anchor was picked', () => {
+      mountMultiRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+      cy.get(sel.startMonth).click();
+      cy.get(sel.dayButton('2026-06-18')).click();
+
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete date');
+    });
+
+    it('should clear the incomplete error when the emptied field is left again', () => {
+      // Regression: leave a span anchor behind (incomplete error), come
+      // back, empty the fields it filled and leave again — the error must
+      // not outlive fields that no longer hold anything.
+      mountMultiRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+      cy.get(sel.startMonth).click();
+      cy.get(sel.dayButton('2026-06-18')).click();
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete date');
+
+      cy.get(sel.startMonth).type('{selectAll}{backspace}');
+      cy.get(sel.startDay).type('{selectAll}{backspace}');
+      cy.get('gui-multi-range-date input[data-group="start"][data-type="year"]').type(
+        '{selectAll}{backspace}',
+      );
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get(`[data-cy="${uid}_validator-errors"]`).should('not.exist');
+    });
+
+    it('should keep the calendar open when keyboard navigation crosses a month boundary', () => {
+      mountMultiRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+      cy.get(sel.startMonth).click();
+      cy.get(sel.dayButton('2026-06-30')).focus();
+      // ArrowDown from the last week re-renders the calendar into July; the
+      // focused button is removed mid-navigation and must not close the picker
+      cy.focused().type('{downArrow}');
+
+      cy.get(sel.calendar).should('exist');
+      cy.focused()
+        .should('have.class', 'gui-calendar__day-button')
+        .invoke('attr', 'data-date')
+        .should('contain', '2026-07');
+    });
+
+    it('should stay open when navigating to the minDate boundary month', () => {
+      // minDate two months back: clicking prev into the boundary month disables
+      // the prev arrow that holds focus, which used to drop focus to <body> and
+      // close the whole popover.
+      const now = new Date();
+      const min = new Date(now.getFullYear(), now.getMonth() - 2, 1);
+      const minIso = `${min.getFullYear()}-${String(min.getMonth() + 1).padStart(2, '0')}-01`;
+      mountMultiRangeDatePicker({ props: { minDate: minIso } });
+
+      cy.get(sel.startMonth).click();
+      cy.get(sel.calendar).should('exist');
+
+      cy.get(`${sel.calendar} .gui-calendar__month-button--prev`).click();
+      cy.get(sel.calendar).should('exist');
+      cy.get(`${sel.calendar} .gui-calendar__month-button--prev`).click();
+
+      cy.get(sel.calendar).should('exist');
+      cy.get(`${sel.calendar} .gui-calendar__month-button--prev`).should('be.disabled');
+      cy.get(sel.dayButton(minIso)).should('exist');
+    });
+
+    it('should close the calendar when clicking outside', () => {
+      mountMultiRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+      cy.get(sel.startMonth).click();
+      cy.get(sel.calendar).should('exist');
+
+      cy.get('body').click(0, 0);
+      cy.get(sel.calendar).should('not.exist');
+    });
+
+    it('should close the calendar with Escape', () => {
+      mountMultiRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+      cy.get(sel.startMonth).click();
+      cy.get(sel.calendar).should('exist');
+
+      cy.get(sel.dayButton('2026-06-18')).focus();
+      cy.focused().type('{esc}');
+      cy.get(sel.calendar).should('not.exist');
+    });
+
+    it('should close the calendar when focus leaves the picker', () => {
+      mountMultiRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+      cy.get(sel.startMonth).click();
+      cy.get(sel.calendar).should('exist');
+
+      cy.get('[data-cy="submitBtn_button"]').focus();
+      cy.get(sel.calendar).should('not.exist');
+    });
+
+    it('should open the calendar at the month of the clicked pill', () => {
+      mountMultiRangeDatePicker({ data: { myRanges: [juneRange, marchRange] } });
+
+      // The clicked pill's range lives in a different month than the other.
+      // force: gui-pills may collapse to compact mode in narrow harnesses
+      cy.get(sel.pillText).contains('03/05/2026').click({ force: true });
+      cy.get(sel.calendar).should('exist');
+      cy.get(sel.dayButton(marchRange.start)).should('exist');
+    });
+
+    it('should not open the calendar when disabled', () => {
+      mountMultiRangeDatePicker({ data: { myRanges: [juneRange] }, disabled: true });
+
+      cy.get(sel.startMonth).should('be.disabled');
+      cy.get(`.gui-multi-range-date-picker .gui-widget`).first().click({ force: true });
+      cy.wait(50);
+      cy.get(sel.calendar).should('not.exist');
+    });
+
+    it('should not allow range selection when readonly', () => {
+      mountMultiRangeDatePicker({ data: { myRanges: [juneRange] }, readonly: true });
+
+      cy.get(sel.startMonth).click();
+      cy.get(sel.calendar).should('exist');
+
+      cy.get(sel.dayButton('2026-06-18')).click();
+      cy.get(sel.dayButton('2026-06-20')).click();
+      cy.get(sel.pillText).should('have.length', 1);
+    });
+
+    it('should reject a typed range with an out-of-bounds endpoint (no pill, inputs stay filled)', () => {
+      mountMultiRangeDatePicker({
+        props: { maxDate: '2026-06-20', maxDateMessage: 'Outside the window' },
+      });
+
+      const changeSpy = cy.spy().as('changeSpy');
+      const inputErrorSpy = cy.spy().as('inputErrorSpy');
+      cy.get('gui-multi-range-date-picker').then(($el) => {
+        $el[0].addEventListener('gui-input', changeSpy as unknown as EventListener);
+        $el[0].addEventListener('gui-input-error', inputErrorSpy as unknown as EventListener);
+      });
+
+      // Type a full range 06/25 – 06/26, both past maxDate, and press Enter.
+      // The range is rejected: no pill, no value change, the error surfaces, and
+      // the typed values stay in the inputs so the user can correct them.
+      cy.get(sel.startMonth).click();
+      cy.focused().type('06');
+      cy.focused().type('25');
+      cy.focused().type('2026');
+      cy.get('gui-multi-range-date input[data-group="end"][data-type="month"]').click();
+      cy.focused().type('06');
+      cy.focused().type('26');
+      cy.focused().type('2026');
+      cy.focused().type('{enter}');
+
+      cy.get(sel.pillText).should('not.exist');
+      cy.get('@changeSpy').should('not.have.been.called');
+      cy.get('@inputErrorSpy').then((spy: any) => {
+        expect(spy.getCall(0).args[0].detail.message).to.equal('Outside the window');
+      });
+      cy.get(sel.startDay).should('have.value', '25');
+      cy.get(sel.endDay).should('have.value', '26');
+    });
+
+    it('should reject a typed range that steps over a disabled day (no pill)', () => {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = now.getMonth();
+      const mm = String(m + 1).padStart(2, '0');
+      const yyyy = String(y);
+      const iso = (d: number) => `${yyyy}-${mm}-${String(d).padStart(2, '0')}`;
+
+      mountMultiRangeDatePicker({
+        props: {
+          disabledRanges: [{ start: iso(9), end: iso(10) }],
+          disabledDateRangeMessage: 'Range includes unavailable days',
+        },
+      });
+
+      // Type 08 → 12, which steps over the disabled 9–10 (both endpoints clean).
+      cy.get(sel.startMonth).click();
+      cy.focused().type(mm);
+      cy.focused().type('08');
+      cy.focused().type(yyyy);
+      cy.get('gui-multi-range-date input[data-group="end"][data-type="month"]').click();
+      cy.focused().type(mm);
+      cy.focused().type('12');
+      cy.focused().type(yyyy);
+      cy.focused().type('{enter}');
+
+      // No pill; the error surfaces; the range is echoed and highlighted in red.
+      cy.get(sel.pillText).should('not.exist');
+      cy.get('[data-cy="testSubject_validator-error"]')
+        .should('be.visible')
+        .and('contain', 'Range includes unavailable days');
+      cy.get(sel.startDay).should('have.value', '08');
+      cy.get(sel.endDay).should('have.value', '12');
+      cy.get(sel.dayButton(iso(8))).should('have.class', 'invalid-range-start');
+      cy.get(sel.dayButton(iso(12))).should('have.class', 'invalid-range-end');
+    });
+
+    it('should reject a typed range that starts on a disabled day (no pill)', () => {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = now.getMonth();
+      const mm = String(m + 1).padStart(2, '0');
+      const yyyy = String(y);
+      const iso = (d: number) => `${yyyy}-${mm}-${String(d).padStart(2, '0')}`;
+
+      mountMultiRangeDatePicker({
+        props: {
+          disabledRanges: [{ start: iso(9), end: iso(10) }],
+          disabledDateRangeMessage: 'Range includes unavailable days',
+        },
+      });
+
+      // Start on the disabled 9 → the whole range is rejected, no pill created.
+      cy.get(sel.startMonth).click();
+      cy.focused().type(mm);
+      cy.focused().type('09');
+      cy.focused().type(yyyy);
+      cy.get('gui-multi-range-date input[data-group="end"][data-type="month"]').click();
+      cy.focused().type(mm);
+      cy.focused().type('12');
+      cy.focused().type(yyyy);
+      cy.focused().type('{enter}');
+
+      cy.get(sel.pillText).should('not.exist');
+      cy.get('[data-cy="testSubject_validator-error"]')
+        .should('be.visible')
+        .and('contain', 'Range includes unavailable days');
+    });
+
+    it('should clear a group error once its invalid date is corrected in the input', () => {
+      mountMultiRangeDatePicker({ props: { invalidDateMessage: 'Invalid date' } });
+
+      // Type Feb 30 into the start group of the picker's input and commit with
+      // Enter — validation only runs on a commit attempt, so nothing is
+      // reported while the date is still being typed.
+      cy.get(sel.startMonth).click();
+      cy.focused().type('02');
+      cy.focused().type('30');
+      cy.focused().type('2026');
+      cy.focused().type('{enter}');
+      // Submit marks the form touched so the picker renders the injected error.
+      cy.get('[data-cy="submitBtn_button"]').click({ force: true });
+      cy.get('[data-cy="testSubject_validator-error"]')
+        .should('be.visible')
+        .and('contain', 'Invalid date');
+
+      // Correct just the start day to 28; the end is still empty, but the
+      // corrected start clears the error through the picker.
+      cy.get('gui-multi-range-date input[data-group="start"][data-type="day"]').click();
+      cy.focused().type('{selectall}28', { force: true });
+      cy.get('gui-multi-range-date input[data-group="end"][data-type="month"]').click();
+
+      cy.get('[data-cy="testSubject_validator-error"]').should('not.exist');
+    });
+
+    it('should reject a calendar range that spans a disabled day with an error and no pill', () => {
+      // Dates in the currently-displayed month so the day buttons are visible.
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = now.getMonth();
+      const iso = (d: number) =>
+        `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+      mountMultiRangeDatePicker({
+        props: {
+          disabledRanges: [{ start: iso(15), end: iso(15) }],
+          disabledDateRangeMessage: 'Range includes unavailable days',
+        },
+      });
+
+      cy.get(sel.startMonth).click();
+      // Select 10 → 20, which spans the disabled 15: the whole range is rejected.
+      cy.get(sel.dayButton(iso(10))).click();
+      cy.get(sel.dayButton(iso(20))).click();
+
+      cy.get(sel.pillText).should('not.exist');
+      // The error must surface as soon as the selection completes — without a
+      // submit or a click-outside blur.
+      cy.get('[data-cy="testSubject_validator-error"]')
+        .should('be.visible')
+        .and('contain', 'Range includes unavailable days');
+
+      // The rejected range stays visible in red so the user sees what was invalid.
+      cy.get(sel.dayButton(iso(10))).should('have.class', 'invalid-range-start');
+      cy.get(sel.dayButton(iso(20))).should('have.class', 'invalid-range-end');
+
+      // And the date inputs above are filled with the rejected range.
+      cy.get(sel.startDay).should('have.value', '10');
+      cy.get(sel.endDay).should('have.value', '20');
+    });
+
+    it('should restore the rejected-range highlight after closing and reopening the calendar', () => {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = now.getMonth();
+      const iso = (d: number) =>
+        `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+      mountMultiRangeDatePicker({
+        props: {
+          disabledRanges: [{ start: iso(15), end: iso(15) }],
+          disabledDateRangeMessage: 'Range includes unavailable days',
+        },
+      });
+
+      cy.get(sel.startMonth).click();
+      cy.get(sel.dayButton(iso(10))).click();
+      cy.get(sel.dayButton(iso(20))).click();
+      cy.get(sel.dayButton(iso(10))).should('have.class', 'invalid-range-start');
+
+      // Close the calendar (it gets destroyed) then reopen it.
+      cy.get('body').click(0, 0);
+      cy.get(sel.calendar).should('not.exist');
+      cy.get(sel.startMonth).click();
+
+      // The red highlight is restored on the freshly recreated calendar.
+      cy.get(sel.dayButton(iso(10))).should('have.class', 'invalid-range-start');
+      cy.get(sel.dayButton(iso(20))).should('have.class', 'invalid-range-end');
+      cy.get(sel.startDay).should('have.value', '10');
+    });
+
+    it('should clear the rejected range once a valid range is selected', () => {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = now.getMonth();
+      const iso = (d: number) =>
+        `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+      mountMultiRangeDatePicker({
+        props: {
+          disabledRanges: [{ start: iso(15), end: iso(15) }],
+          disabledDateRangeMessage: 'Range includes unavailable days',
+        },
+      });
+
+      cy.get(sel.startMonth).click();
+      // First an invalid range: 10 → 20 spans the disabled 15.
+      cy.get(sel.dayButton(iso(10))).click();
+      cy.get(sel.dayButton(iso(20))).click();
+      cy.get(sel.dayButton(iso(10))).should('have.class', 'invalid-range-start');
+
+      // Then a valid range clears the red highlight, echoed inputs, and commits a pill.
+      cy.get(sel.dayButton(iso(2))).click();
+      cy.get(sel.dayButton(iso(5))).click();
+
+      cy.get(sel.dayButton(iso(10))).should('not.have.class', 'invalid-range-start');
+      cy.get(sel.dayButton(iso(20))).should('not.have.class', 'invalid-range-end');
+      cy.get(sel.startDay).should('have.value', '');
+      cy.get(sel.pillText).should('exist');
+    });
+
+    describe('accessibility', () => {
+      const toggleSel = 'button.gui-multi-range-date-picker__arrow';
+
+      it('should expose a named popup toggle button', () => {
+        mountMultiRangeDatePicker();
+        cy.get(toggleSel)
+          .should('have.attr', 'aria-label', 'Show calendar')
+          .should('have.attr', 'aria-haspopup', 'dialog')
+          .should('have.attr', 'aria-expanded', 'false')
+          .should('have.attr', 'aria-controls', testDomId('testSubject_popup'));
+      });
+
+      it('should open the calendar dialog from the toggle and move focus into it', () => {
+        mountMultiRangeDatePicker();
+        cy.get(toggleSel).click();
+        cy.get(toggleSel).should('have.attr', 'aria-expanded', 'true');
+        cy.get('gui-multi-range-calendar')
+          .should('have.attr', 'role', 'dialog')
+          .should('have.id', testDomId('testSubject_popup'));
+        cy.focused().should('have.class', 'gui-calendar__day-button');
+      });
+
+      it('should expose blocked days as aria-disabled and never start a range on them', () => {
+        mountMultiRangeDatePicker({
+          data: { myRanges: [juneRange] },
+          props: { disabledRanges: [{ start: '2026-06-15', end: '2026-06-15' }] },
+        });
+
+        cy.get(sel.startDay).click();
+        cy.get(sel.calendar).should('exist');
+
+        cy.get(sel.dayButton('2026-06-15'))
+          .should('have.attr', 'aria-disabled', 'true')
+          .should('not.have.attr', 'disabled');
+
+        // A click on the blocked day must not start a selection
+        cy.get(sel.dayButton('2026-06-15')).click();
+        cy.get(sel.dayButton('2026-06-15')).should('not.have.class', 'is-anchor');
+        cy.get(sel.dayButton('2026-06-15')).should('not.have.class', 'selected');
+        cy.get(sel.calendar).should('exist');
+      });
+    });
+
+    describe('pill keyboard navigation', () => {
+      // The harness lays the trigger out below the compact threshold, so each
+      // test pins the mode it exercises: strip for arrowing along the pills,
+      // compact for the bubble/dropdown interplay with the calendar.
+      afterEach(clearPillsWidthOverride);
+
+      it('should keep the calendar open while arrowing into the pills and back', () => {
+        forcePillsStripMode('.gui-multi-range-date-input');
+        mountMultiRangeDatePicker({ data: { myRanges: [juneRange, marchRange] } });
+
+        cy.get(sel.startMonth).click();
+        cy.get(sel.calendar).should('exist');
+
+        // Focus hops from the segments into the strip; that is not a departure
+        cy.focused().type('{leftArrow}');
+        cy.focused().should('have.class', 'gui-pills__pill');
+        cy.get(sel.calendar).should('exist');
+
+        cy.focused().type('{rightArrow}');
+        cy.focused().should('have.attr', 'data-type', 'month');
+        cy.get(sel.calendar).should('exist');
+      });
+
+      it('should close the calendar when the pills dropdown opens', () => {
+        forcePillsCompactMode('.gui-multi-range-date-input');
+        mountMultiRangeDatePicker({ data: { myRanges: [juneRange, marchRange] } });
+
+        cy.get(sel.startMonth).click();
+        cy.get(sel.calendar).should('exist');
+
+        // The dropdown and the calendar are mutually exclusive overlays
+        cy.get('.gui-pills__count').click();
+        cy.get('.gui-pills__dropdown').should('exist');
+        cy.get(sel.calendar).should('not.exist');
+      });
+
+      it('should return to the segments, calendar closed, after Escape closes the pills dropdown', () => {
+        // Escape returns focus to the segments. Focus alone opens nothing (APG
+        // combobox), so the user lands back on the segments with the calendar closed.
+        forcePillsCompactMode('.gui-multi-range-date-input');
+        mountMultiRangeDatePicker({ data: { myRanges: [juneRange, marchRange] } });
+
+        cy.get('.gui-pills__count').click();
+        cy.get('.gui-pills__dropdown button.gui-pills__pill').first().focus();
+        cy.focused().type('{esc}');
+
+        cy.get('.gui-pills__dropdown').should('not.exist');
+        cy.focused().should('have.attr', 'data-group', 'start');
+        cy.get(sel.calendar).should('not.exist');
+      });
+    });
+
+    describe('panel chrome and in-panel errors', () => {
+      const toggleSel = 'button.gui-multi-range-date-picker__arrow';
+      const panelSel = 'gui-multi-range-date-picker > .gui-widget > .gui-picker__panel';
+
+      it('should wrap the calendar in a panel that exists only while open', () => {
+        mountMultiRangeDatePicker({ data: { myRanges: [juneRange] } });
+        cy.get(panelSel).should('not.exist');
+
+        cy.get(toggleSel).click();
+        cy.get(panelSel).should('be.visible');
+      });
+
+      it('should repeat the field error inside the open panel with the red border', () => {
+        mountMultiRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+        // A span anchor with no end never became a pill → incomplete error
+        cy.get(sel.startMonth).click();
+        cy.get(sel.dayButton('2026-06-18')).click();
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete date');
+
+        cy.get(toggleSel).click();
+        cy.get(`[data-cy="${uid}_panel-validator-error"]`)
+          .should('be.visible')
+          .and('contain.text', 'Incomplete date');
+        cy.get(`[id="${testDomId(`${uid}_panel_errors`)}"]`)
+          .should('have.attr', 'aria-hidden', 'true')
+          .and('not.have.attr', 'role');
+        cy.get(`[id="${testDomId(`${uid}_errors`)}"]`).should('have.length', 1);
+
+        cy.get(`[data-cy="${uid}_validator-error"]`).then(($li) => {
+          cy.get(panelSel).should('have.css', 'border-top-color', $li.css('color'));
+        });
+      });
+
+      it('should not render the panel error copy when the value is valid', () => {
+        mountMultiRangeDatePicker({ data: { myRanges: [juneRange] } });
+        cy.get(toggleSel).click();
+        cy.get(panelSel).should('be.visible');
+        cy.get(`[data-cy="${uid}_panel-validator-errors"]`).should('not.exist');
+      });
+
+      it('should repeat the field error inside the pills dropdown too', () => {
+        // Inside a picker the inner input has showErrors=false (the picker
+        // owns the field copy), but the pills dropdown copy must still show
+        mountMultiRangeDatePicker({ data: { myRanges: [juneRange] } });
+
+        cy.get(sel.startMonth).click();
+        cy.get(sel.dayButton('2026-06-18')).click();
+        cy.get('[data-cy="submitBtn_button"]').focus();
+        cy.get(`[data-cy="${uid}_validator-error"]`).should('contain.text', 'Incomplete date');
+
+        cy.get('.gui-pills__count').click({ force: true });
+        cy.get(`[data-cy="${uid}_pills-validator-error"]`)
+          .should('be.visible')
+          .and('contain.text', 'Incomplete date');
+      });
+    });
+
+    describe('allowEdit pill editing', () => {
+      const editableRanges = [juneRange, { start: '2026-06-20', end: '2026-06-22' }];
+      const editSel = {
+        pill: 'gui-multi-range-date .gui-pills__pill',
+        selectedEditIcon: `.gui-pills__pill--selected [data-cy="${uid}_pill-edit"]`,
+        confirmIcon: `[data-cy="${uid}_pill-edit-confirm"]`,
+      };
+
+      beforeEach(() => forcePillsStripMode('.gui-multi-range-date-input'));
+      afterEach(clearPillsWidthOverride);
+
+      const mountEditable = (formSubmit?: (event: any) => void) =>
+        mountMultiRangeDatePicker({
+          data: { myRanges: editableRanges },
+          props: { allowEdit: true },
+          formSubmit,
+        });
+
+      it('should mark the selected range by dimming the competing ranges', () => {
+        mountEditable();
+
+        // No selection: nothing is dimmed.
+        cy.get(sel.startMonth).click();
+        cy.get(sel.calendar).should('exist');
+        cy.get(sel.dayButton('2026-06-20')).should('not.have.class', 'range-muted');
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'true');
+        cy.get(sel.dayButton('2026-06-10')).should('have.class', 'edit-selected');
+        cy.get(sel.dayButton('2026-06-12')).should('have.class', 'edit-selected');
+        // The selected range keeps its full treatment; the other recedes.
+        cy.get(sel.dayButton('2026-06-10')).should('not.have.class', 'range-muted');
+        cy.get(sel.dayButton('2026-06-20')).should('have.class', 'range-muted');
+        cy.get(sel.dayButton('2026-06-22')).should('have.class', 'range-muted');
+
+        // Keyboard navigation moves the selection, and the marking with it.
+        cy.get(editSel.pill).first().type('{rightarrow}');
+        cy.get(editSel.pill).eq(1).should('have.attr', 'aria-pressed', 'true');
+        cy.get(sel.dayButton('2026-06-20')).should('not.have.class', 'range-muted');
+        cy.get(sel.dayButton('2026-06-10')).should('have.class', 'range-muted');
+
+        // Focus leaving the pills clears the selection and the marking.
+        cy.get(sel.startMonth).click();
+        cy.get('.gui-pills__pill--selected').should('not.exist');
+        cy.get('.gui-calendar__day-button.range-muted').should('not.exist');
+      });
+
+      it('should defer calendar picks to the session and commit the replacement on confirm', () => {
+        const formSubmitHandler = cy.stub().as('formSubmitHandler');
+        mountEditable(formSubmitHandler);
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+        cy.get(sel.startMonth).should('have.value', '06');
+        cy.get(sel.calendar).should('exist');
+
+        // Two picks reshape the working span; nothing commits yet.
+        cy.get(sel.dayButton('2026-06-08')).click();
+        cy.get(sel.dayButton('2026-06-09')).click();
+        cy.get(editSel.pill).should('have.length', 2);
+        cy.get(editSel.pill).first().should('have.class', 'gui-pills__pill--editing');
+        cy.get(editSel.pill).first().should('contain.text', '06/08/2026 - 06/09/2026');
+        cy.get(sel.startDay).should('have.value', '08');
+
+        cy.get(editSel.confirmIcon).click();
+        cy.get(editSel.pill).should('have.length', 2);
+        cy.get(editSel.pill).first().should('contain.text', '06/08/2026 - 06/09/2026');
+
+        // force: the still-open popover panel overlays the submit button.
+        cy.get('[data-cy="submitBtn_button"]').click({ force: true });
+        cy.get('@formSubmitHandler').then((stub: any) => {
+          expect(stub.getCall(0).args[0].data).to.deep.equal({
+            myRanges: [
+              { start: '2026-06-08', end: '2026-06-09' },
+              { start: '2026-06-20', end: '2026-06-22' },
+            ],
+          });
+        });
+      });
+
+      it('should layer Escape below the open popover', () => {
+        mountEditable();
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+        cy.get(sel.calendar).should('exist');
+
+        // First Escape only closes the popover; the session survives.
+        cy.focused().type('{esc}');
+        cy.get(sel.calendar).should('not.exist');
+        cy.get('.gui-pills__pill--editing').should('exist');
+
+        // Second Escape cancels the session, keeping the selection.
+        cy.focused().type('{esc}');
+        cy.get('.gui-pills__pill--editing').should('not.exist');
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'true');
+
+        // Third Escape clears the selection.
+        cy.focused().type('{esc}');
+        cy.get(editSel.pill).first().should('have.attr', 'aria-pressed', 'false');
+      });
+
+      it('should reject a confirmed edit that violates picker constraints, keeping the value', () => {
+        mountMultiRangeDatePicker({
+          data: { myRanges: editableRanges },
+          props: { allowEdit: true, disabledRanges: [{ start: '2026-06-05' }] },
+        });
+
+        cy.get(editSel.pill).first().click();
+        cy.get(editSel.selectedEditIcon).click();
+        // Retype the start over the disabled day and confirm.
+        cy.get(sel.startDay).type('{selectall}05');
+        cy.get(editSel.confirmIcon).click();
+
+        // The picker rejects the replacement; the original pills stand.
+        cy.get(editSel.pill).should('have.length', 2);
+        cy.get(editSel.pill).first().should('contain.text', '06/10/2026 - 06/12/2026');
+      });
+    });
+  });
+};
