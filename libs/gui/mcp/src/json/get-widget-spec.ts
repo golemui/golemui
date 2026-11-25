@@ -335,6 +335,22 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
     include: { in: ['loading'] },
     props: { label: 'Loading results' },
   },
+  typography: {
+    kind: 'display',
+    type: 'typography',
+    props: { text: 'Your booking', variant: 'h2' },
+  },
+  image: {
+    kind: 'display',
+    type: 'image',
+    props: {
+      src: 'https://example.com/room.jpg',
+      alt: 'Double room with a sea view',
+      ratio: '16/9',
+      fit: 'cover',
+      caption: 'Room 204',
+    },
+  },
   markdownText: {
     kind: 'display',
     type: 'markdownText',
@@ -485,6 +501,7 @@ const NOTES: Record<string, string[]> = {
   markdownText: [
     'Display-only widget for rendering markdown. Can be used as a top-level form widget (inside any layout) or inside templates like `dropdown.props.items[].template`.',
     'The required prop is `md` (the markdown string), not `text`.',
+    'For a heading or a line of plain text with no links, lists or emphasis, use `typography` instead: it needs no parser and looks the same.',
     'REQUIRES a `dependencies.markdown` parser in the form init config, or it renders blank. The widget inserts the parser output as HTML without sanitizing it, so for markdown from users or stored data the parser must remove raw HTML and `javascript:` links. Call `get_concept({ concept: "host-services" })`.',
   ],
   tags: [
@@ -604,6 +621,18 @@ const NOTES: Record<string, string[]> = {
   progress: [
     "A progress bar for how far a task has got. `props.label` is required: it names the bar for screen readers. `props.value` goes from 0 to `props.max` (default 100); without a `value` the bar is indeterminate. `props.showValue: true` shows the percentage, formatted in the form's language.",
     '`value` is a NUMBER, so it cannot interpolate `{{ }}` (that always yields a string). Move it with state suffixes (`"value": 25, "value.step2": 50, "value.step3": 75`) or from the host. It is a display widget: it has no `path` and submits nothing.',
+  ],
+  typography: [
+    'A heading or a line of PLAIN text. `props.text` is required and localizable, and interpolates `{{ }}` like any top-level string. A line break in the text is a line break on screen. For links, lists, emphasis or several paragraphs use `markdownText`.',
+    '`props.variant` sets the look AND the tag: `h1` to `h6` render that heading, `body` (the default) and `small` (secondary text such as a note or a timestamp) a paragraph. There is no `lead`, `caption` or `title` variant.',
+    "Headings are the page's outline for screen readers: don't skip levels (an `h2` before any `h3`), and when the form sits in a page that has its own `h1`, start the form's headings at `h2`.",
+    'It has no outer margins: the gap of its layout spaces it. Put it in a `grid` with the fields it introduces.',
+  ],
+  image: [
+    'An image that fills the width of its cell (set the width with the grid\'s `size`). `props.src` and `props.alt` are required. `alt` says what the image shows; set it to `""` only for a decorative image, which screen readers skip.',
+    '`props.ratio` is one of `"1/1"`, `"4/3"`, `"3/2"`, `"16/9"`, `"21/9"` (no other values, no CSS); without it the image keeps its own proportions. `props.fit` (`cover` by default, `contain`, `fill`, `none`) says how it fills that box. `props.caption` (localizable) shows below it. `props.loading` is `lazy` by default; use `eager` for an image at the top of the page.',
+    '`src` interpolates `{{ }}` like any top-level string, so a definition can put form data in an image URL that the browser then requests. The host controls where images may load from with its Content Security Policy (`img-src`). Prefer fixed URLs, and never interpolate personal data into `src`.',
+    'A broken image shows its `alt` text, as the browser does; there is no fallback image.',
   ],
   spinner: [
     'An indeterminate spinner for a wait of unknown length. Show it only while a named state holds: `include: { in: ["loading"] }` with a state such as `"loading": "$form.status === \'loading\'"`. Call `get_concept({ concept: "states" })` for the pattern.',

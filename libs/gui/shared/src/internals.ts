@@ -39,6 +39,11 @@ export type {
   MarkdownTextProps,
   ProgressProps,
   SpinnerProps,
+  TypographyProps,
+  TypographyVariant,
+  ImageProps,
+  ImageRatio,
+  ImageFit,
   MenuAction,
   MenuItem,
   MenuProps,
@@ -116,6 +121,7 @@ export {
   tabPanelId,
 } from './lib/utils/layout-ids';
 export { repeaterIndexSuffix } from './lib/utils/repeater';
+export { imageClasses, typographyClasses, typographyTag } from './lib/utils/content';
 export { findRepeaterRowFocus, focusAfterRowRemoval } from './lib/utils/repeater-focus';
 export type { RepeaterRowFocus } from './lib/utils/repeater-focus';
 export {

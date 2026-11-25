@@ -6,6 +6,8 @@ import alertChunk from './tabs/alert.form-chunk.json';
 import badgeChunk from './tabs/badge.form-chunk.json';
 import progressChunk from './tabs/progress.form-chunk.json';
 import spinnerChunk from './tabs/spinner.form-chunk.json';
+import typographyChunk from './tabs/typography.form-chunk.json';
+import imageChunk from './tabs/image.form-chunk.json';
 import buttonChunk from './tabs/button.form-chunk.json';
 import menuChunk from './tabs/menu.form-chunk.json';
 import markdownTextChunk from './tabs/markdown-text.form-chunk.json';
@@ -67,6 +69,8 @@ const chunks: Record<string, unknown> = {
   './tabs/badge.form-chunk.json': badgeChunk,
   './tabs/progress.form-chunk.json': progressChunk,
   './tabs/spinner.form-chunk.json': spinnerChunk,
+  './tabs/typography.form-chunk.json': typographyChunk,
+  './tabs/image.form-chunk.json': imageChunk,
   './tabs/button.form-chunk.json': buttonChunk,
   './tabs/menu.form-chunk.json': menuChunk,
   './tabs/markdown-text.form-chunk.json': markdownTextChunk,

@@ -40,6 +40,7 @@
           { "label": "Dropdown Component", "uid": "tabDropdown" },
           { "label": "File Upload Component", "uid": "tabFileUpload" },
           { "label": "Grid Layout", "uid": "tabGrid" },
+          { "label": "Image Component", "uid": "tabImage" },
           { "label": "List Component", "uid": "tabList" },
           { "label": "Markdown Component", "uid": "tabMarkdown" },
           { "label": "Markdown Text Component", "uid": "tabMarkdownText" },
@@ -84,7 +85,8 @@
           { "label": "Textinput Component", "uid": "tabTextinput" },
           { "label": "Time Picker Component", "uid": "tabTimePicker" },
           { "label": "Time Input Component", "uid": "tabTimeInput" },
-          { "label": "Toggle Component", "uid": "tabToggle" }
+          { "label": "Toggle Component", "uid": "tabToggle" },
+          { "label": "Typography Component", "uid": "tabTypography" }
         ]
       },
       "on": { "change": "onTabEvent" },
@@ -93,6 +95,8 @@
         { "$ref": "./tabs/badge.form-chunk.json" },
         { "$ref": "./tabs/progress.form-chunk.json" },
         { "$ref": "./tabs/spinner.form-chunk.json" },
+        { "$ref": "./tabs/typography.form-chunk.json" },
+        { "$ref": "./tabs/image.form-chunk.json" },
         { "$ref": "./tabs/button.form-chunk.json" },
         { "$ref": "./tabs/menu.form-chunk.json" },
         { "$ref": "./tabs/markdown-text.form-chunk.json" },

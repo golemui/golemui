@@ -796,6 +796,43 @@ export type SpinnerProps = {
   label?: Localizable;
 };
 
+/** The look of a typography widget, which also picks its tag. */
+export type TypographyVariant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'small';
+
+export type TypographyProps = {
+  /** The text, plain: a line break in it is a line break on screen. */
+  text: Localizable;
+  /**
+   * The look, and the tag: `h1` to `h6` render that heading, `body` (the default) and `small`
+   * a paragraph. Headings are the page's outline for screen readers: don't skip levels.
+   */
+  variant?: TypographyVariant;
+};
+
+/** The proportions an image widget can take, width to height. */
+export type ImageRatio = '1/1' | '4/3' | '3/2' | '16/9' | '21/9';
+
+/** How an image fills the box its ratio gives it, as CSS `object-fit`. */
+export type ImageFit = 'cover' | 'contain' | 'fill' | 'none';
+
+export type ImageProps = {
+  /** The image's URL. */
+  src: string;
+  /**
+   * What the image shows, for screen readers and when it fails to load. `""` marks a decorative
+   * image, which screen readers skip.
+   */
+  alt: Localizable;
+  /** The proportions of the image's box. Without it the image keeps its own. */
+  ratio?: ImageRatio;
+  /** How the image fills a box of another shape. Defaults to `cover`. */
+  fit?: ImageFit;
+  /** A caption shown below the image. */
+  caption?: Localizable;
+  /** When the browser loads it: `lazy` (the default) waits until it is near the screen. */
+  loading?: 'lazy' | 'eager';
+};
+
 export type MarkdownTextProps = {
   md: string;
 };

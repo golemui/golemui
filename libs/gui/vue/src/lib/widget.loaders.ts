@@ -70,7 +70,9 @@ export const widgetLoaders: WidgetLoaders<Component<WithWidget>, GolemWidget> = 
   // DISPLAY
   alert: async () => (await import('./components/Alert.vue')).default,
   badge: async () => (await import('./components/Badge.vue')).default,
+  image: async () => (await import('./components/Image.vue')).default,
   progress: async () => (await import('./components/Progress.vue')).default,
   spinner: async () => (await import('./components/Spinner.vue')).default,
+  typography: async () => (await import('./components/Typography.vue')).default,
   markdownText: async () => (await import('./components/MarkdownText.vue')).default,
 };

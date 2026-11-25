@@ -135,6 +135,18 @@ const config: FormInitConfig<Type<WithWidget>> = {
           props: { label: 'Setup', value: 60, showValue: true },
         },
         { uid: 'saving', kind: 'display', type: 'spinner', props: { label: 'Saving' } },
+        {
+          uid: 'planTitle',
+          kind: 'display',
+          type: 'typography',
+          props: { text: 'Your plan', variant: 'h2' },
+        },
+        {
+          uid: 'planImage',
+          kind: 'display',
+          type: 'image',
+          props: { src: '/plan.png', alt: 'The pro plan', ratio: '16/9', caption: 'Pro' },
+        },
       ],
     },
   },
@@ -190,6 +202,17 @@ describe('server rendering the gui widget set in plain node', () => {
     expect(markup).toContain('Setup');
     expect(markup).toMatch(/<gui-spinner[^>]*id="gui-lit-ssr-form-saving"/);
     expect(markup).toMatch(/role="status"[^>]*>(<!--[^>]*-->)*Saving/);
+  });
+
+  it('renders typography on the tag of its variant, and an image in a figure', () => {
+    expect(markup).toMatch(
+      /<h2[^>]*id="gui-lit-ssr-form-planTitle"[^>]*class="gui-typography gui-typography--h2"[^>]*>(<!--[^>]*-->)*Your plan/,
+    );
+    expect(markup).toMatch(
+      /<figure[^>]*id="gui-lit-ssr-form-planImage"[^>]*class="gui-image gui-image--ratio-16-9"/,
+    );
+    expect(markup).toMatch(/<img[^>]*src="\/plan.png"[^>]*alt="The pro plan"[^>]*loading="lazy"/);
+    expect(markup).toMatch(/<figcaption>(<!--[^>]*-->)*Pro/);
   });
 
   it('renders labels, values and the layout structure', () => {

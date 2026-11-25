@@ -123,9 +123,12 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
   // DISPLAY WIDGETS
   alert: async () => (await import('./components/alert/alert.component')).AlertComponent,
   badge: async () => (await import('./components/badge/badge.component')).BadgeComponent,
+  image: async () => (await import('./components/image/image.component')).ImageComponent,
   progress: async () =>
     (await import('./components/progress/progress.component')).ProgressComponent,
   spinner: async () => (await import('./components/spinner/spinner.component')).SpinnerComponent,
+  typography: async () =>
+    (await import('./components/typography/typography.component')).TypographyComponent,
   markdownText: async () =>
     (await import('./components/markdown-text/markdown-text.component')).MarkdownTextComponent,
 };

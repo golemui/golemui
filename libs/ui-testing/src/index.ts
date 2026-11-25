@@ -37,6 +37,8 @@ export * from './lib/gui-features/alert.cy';
 export * from './lib/gui-features/badge.cy';
 export * from './lib/gui-features/progress.cy';
 export * from './lib/gui-features/spinner.cy';
+export * from './lib/gui-features/typography.cy';
+export * from './lib/gui-features/image.cy';
 export * from './lib/gui-features/button.cy';
 export * from './lib/gui-features/currency.cy';
 export * from './lib/gui-features/dateinput.cy';

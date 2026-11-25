@@ -63,9 +63,11 @@ The reference pages for JSON form definitions, one per widget (props, per-prop e
 
 - `alert` - https://golemui.com/json/widgets-reference/display-fields/alert.md
 - `badge` - https://golemui.com/json/widgets-reference/display-fields/badge.md
+- `image` - https://golemui.com/json/widgets-reference/display-fields/image.md
 - `markdownText` - https://golemui.com/json/widgets-reference/display-fields/markdown-text.md
 - `progress` - https://golemui.com/json/widgets-reference/display-fields/progress.md
 - `spinner` - https://golemui.com/json/widgets-reference/display-fields/spinner.md
+- `typography` - https://golemui.com/json/widgets-reference/display-fields/typography.md
 - Category overview - https://golemui.com/json/widgets-reference/display-fields/overview.md
 
 ## Layout widgets

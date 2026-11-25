@@ -24,6 +24,7 @@ import type {
   DateinputProps,
   DropdownProps,
   FileUploadProps,
+  ImageProps,
   MultiDropdownProps,
   MultiFileUploadProps,
   MultiListProps,
@@ -62,6 +63,7 @@ import type {
   SelectProps,
   SliderProps,
   SpinnerProps,
+  TypographyProps,
   SliderRange,
   RangeSliderProps,
   TabsProps,
@@ -224,6 +226,8 @@ type GolemWidget<
   | GuiBadge<FormType, States>
   | GuiProgress<FormType, States>
   | GuiSpinner<FormType, States>
+  | GuiTypography<FormType, States>
+  | GuiImage<FormType, States>
   | GuiButton<FormType, States>
   | GuiMenu<FormType, States>
   | GuiCalendar<FormType, States, V>
@@ -312,6 +316,18 @@ type GuiSpinner<FormType extends Record<string, any>, States extends string> = D
   FormType,
   SpinnerProps
 > & { type: 'spinner' };
+
+type GuiTypography<FormType extends Record<string, any>, States extends string> = DisplayWidget<
+  States,
+  FormType,
+  TypographyProps
+> & { type: 'typography' };
+
+type GuiImage<FormType extends Record<string, any>, States extends string> = DisplayWidget<
+  States,
+  FormType,
+  ImageProps
+> & { type: 'image' };
 
 type GuiButton<FormType extends Record<string, any>, States extends string> = ActionWidget<
   States,

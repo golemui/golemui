@@ -58,9 +58,11 @@ import gridSchemaJson from './lib/components/grid.schema.json';
 import tabsSchemaJson from './lib/components/tabs.schema.json';
 import alertSchemaJson from './lib/components/alert.schema.json';
 import badgeSchemaJson from './lib/components/badge.schema.json';
+import imageSchemaJson from './lib/components/image.schema.json';
 import markdowntextSchemaJson from './lib/components/markdowntext.schema.json';
 import progressSchemaJson from './lib/components/progress.schema.json';
 import spinnerSchemaJson from './lib/components/spinner.schema.json';
+import typographySchemaJson from './lib/components/typography.schema.json';
 import buttonSchemaJson from './lib/components/button.schema.json';
 import menuSchemaJson from './lib/components/menu.schema.json';
 import customSchemaJson from './lib/components/custom.schema.json';
@@ -126,9 +128,11 @@ export const gridSchema: Record<string, unknown> = gridSchemaJson;
 export const tabsSchema: Record<string, unknown> = tabsSchemaJson;
 export const alertSchema: Record<string, unknown> = alertSchemaJson;
 export const badgeSchema: Record<string, unknown> = badgeSchemaJson;
+export const imageSchema: Record<string, unknown> = imageSchemaJson;
 export const markdowntextSchema: Record<string, unknown> = markdowntextSchemaJson;
 export const progressSchema: Record<string, unknown> = progressSchemaJson;
 export const spinnerSchema: Record<string, unknown> = spinnerSchemaJson;
+export const typographySchema: Record<string, unknown> = typographySchemaJson;
 export const buttonSchema: Record<string, unknown> = buttonSchemaJson;
 export const menuSchema: Record<string, unknown> = menuSchemaJson;
 export const customSchema: Record<string, unknown> = customSchemaJson;
@@ -187,9 +191,11 @@ export const COMPONENT_SCHEMAS_BY_TYPE = {
   tabs: tabsSchema,
   alert: alertSchema,
   badge: badgeSchema,
+  image: imageSchema,
   markdownText: markdowntextSchema,
   progress: progressSchema,
   spinner: spinnerSchema,
+  typography: typographySchema,
   button: buttonSchema,
   menu: menuSchema,
 } as const;

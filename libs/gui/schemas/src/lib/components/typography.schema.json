@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/gui/components/typography.schema.json",
+  "title": "Typography Widget",
+  "description": "A heading or a line of plain text. The variant sets the look and the tag: `h1` to `h6` render that heading, `body` and `small` a paragraph. For links, lists or emphasis use `markdownText`.",
+  "type": "object",
+  "$defs": {
+    "textProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable",
+      "description": "The text, plain: a line break in it is a line break on screen. Interpolates `{{ }}` like any top-level string."
+    },
+    "variantProp": {
+      "enum": ["h1", "h2", "h3", "h4", "h5", "h6", "body", "small"],
+      "description": "The look, and the tag: `h1` to `h6` render that heading, `body` (the default) and `small` a paragraph. Headings are the page's outline for screen readers: don't skip levels."
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "display"
+    },
+    "type": {
+      "const": "typography"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "$ref": "#/$defs/textProp"
+        },
+        "variant": {
+          "$ref": "#/$defs/variantProp"
+        }
+      },
+      "patternProperties": {
+        "^text\\.[^.]+$": {
+          "$ref": "#/$defs/textProp"
+        },
+        "^variant\\.[^.]+$": {
+          "$ref": "#/$defs/variantProp"
+        }
+      },
+      "required": ["text"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["kind", "type", "props"],
+  "unevaluatedProperties": false
+}
