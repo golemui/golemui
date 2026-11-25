@@ -202,8 +202,9 @@ function makeDerive(
       next = applyWidgetProps(next, validationVariables);
       return next.formHealth.status === 'ok' ? next : discardPass(next.formHealth);
     } catch (err) {
-      // This catch covers every pass, so defaults, expand and validation variables report the
-      // flags code too. All four derive codes self-heal identically, so only the label is off.
+      // This catch covers every pass, so defaults, the build of the instances and validation
+      // variables report the flags code too. All four derive codes self-heal identically, so only
+      // the label is off.
       const code =
         err instanceof ExpressionRejectedError ? err.code : errorCodes.calculateWidgetFlagsError;
       return discardPass({
