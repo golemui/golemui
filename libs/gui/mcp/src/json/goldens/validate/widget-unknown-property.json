@@ -1009,6 +1009,90 @@
       "interpolationWarnings": []
     }
   },
+  "rangeCalendar": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "rangeCalendar",
+          "path": "field",
+          "notAProperty": true
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Unknown property `notAProperty` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "notAProperty"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "rangeDateInput": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "rangeDateInput",
+          "path": "field",
+          "notAProperty": true
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Unknown property `notAProperty` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "notAProperty"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "rangeDatePicker": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "rangeDatePicker",
+          "path": "field",
+          "notAProperty": true
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Unknown property `notAProperty` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "notAProperty"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
   "rangeSlider": {
     "input": {
       "form": [

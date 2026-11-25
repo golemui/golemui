@@ -376,21 +376,52 @@ const DROPDOWN_FILTER_NOTE =
   'Server-side search: add `on: { filter: "<event name>" }`. The widget then stops filtering locally: it emits the typed text as `event.detail`, `props.inputDebounce` ms after the last keystroke (default 500), and the host answers with the same `OVERRIDE_WIDGET_PROP`. Without `on.filter`, the widget filters its current items itself.';
 
 /** The value note of the multiRange* widgets: an array of ranges, never one range. */
-function multiRangeNote(example: string): string {
+function multiRangeNote(example: string, single?: string): string {
   return (
     `The value is a LIST of ranges, an array such as \`[${example}]\`, never one \`{ start, end }\` object. ` +
     'The user adds ranges one at a time and each shows as a pill. Validate with an array validator: ' +
-    '`{ type: "array", required: true, minItems: 1 }`; `maxItems` sets the most ranges the value may hold.'
+    '`{ type: "array", required: true, minItems: 1 }`; `maxItems` sets the most ranges the value may hold.' +
+    (single ? ` For ONE range (check-in and check-out, a trip), use \`${single}\`.` : '')
   );
 }
+
+/** The value note of the single range widgets: one range with both ends, never a list. */
+function singleRangeNote(example: string, multi: string): string {
+  return (
+    `The value is ONE range, an object such as \`${example}\`, with both ends set, or nothing. Never a list: ` +
+    `for several ranges, use \`${multi}\`. A one-day range has the same start and end, and the value never ` +
+    'holds a range with one end. Validate with the range validator: `{ type: "range", required: true }` ' +
+    '(it also rejects anything that is not a `{ start, end }` with `start <= end`). Message keys: `required`, ' +
+    '`invalid`.'
+  );
+}
+
+const SINGLE_DATE_PICK_NOTE =
+  'Picking takes two clicks: the first starts a new range and stops showing the old one, the second sets ' +
+  'the value. Escape drops an unfinished pick.';
 const DATE_RANGE = '{ "start": "2026-02-02", "end": "2026-02-06" }';
 const DATE_TIME_RANGE = '{ "start": "2026-02-13T09:00:00", "end": "2026-02-13T11:00:00" }';
 const TIME_RANGE = '{ "start": "09:00", "end": "12:30" }';
 
 const NOTES: Record<string, string[]> = {
-  multiRangeCalendar: [multiRangeNote(DATE_RANGE)],
-  multiRangeDateInput: [multiRangeNote(DATE_RANGE)],
-  multiRangeDatePicker: [multiRangeNote(DATE_RANGE)],
+  rangeCalendar: [
+    singleRangeNote(DATE_RANGE, 'multiRangeCalendar'),
+    SINGLE_DATE_PICK_NOTE,
+    'Days outside `minDate` and `maxDate` or inside `disabledRanges` cannot be picked, and a range over a disabled day is rejected whole with `disabledDateRangeMessage`. They are props, not validator rules.',
+    'There is no way to clear the calendar once a range is set; use `rangeDatePicker` or `rangeDateInput` when the field may be left empty again.',
+  ],
+  rangeDateInput: [
+    singleRangeNote(DATE_RANGE, 'multiRangeDateInput'),
+    'The user types the start and the end date. A reversed pair is stored in order. Emptying both dates clears the value; leaving with one date typed shows `incompleteMessage`.',
+  ],
+  rangeDatePicker: [
+    singleRangeNote(DATE_RANGE, 'multiRangeDatePicker'),
+    `${SINGLE_DATE_PICK_NOTE} The popup closes when the range is complete. The dates can be typed too, as in \`rangeDateInput\`.`,
+    '`minDate`, `maxDate` and `disabledRanges` are props, not validator rules: a range outside them or over a disabled day is rejected whole, picked or typed, with `minDateMessage`, `maxDateMessage` or `disabledDateRangeMessage`, and the value stays as it was.',
+  ],
+  multiRangeCalendar: [multiRangeNote(DATE_RANGE, 'rangeCalendar')],
+  multiRangeDateInput: [multiRangeNote(DATE_RANGE, 'rangeDateInput')],
+  multiRangeDatePicker: [multiRangeNote(DATE_RANGE, 'rangeDatePicker')],
   multiRangeDateTimeCalendar: [multiRangeNote(DATE_TIME_RANGE)],
   multiRangeDateTimeInput: [multiRangeNote(DATE_TIME_RANGE)],
   multiRangeDateTimePicker: [multiRangeNote(DATE_TIME_RANGE)],

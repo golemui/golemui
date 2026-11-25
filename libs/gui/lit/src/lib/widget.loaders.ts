@@ -11,6 +11,12 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
   calendar: async () => (await import('./components/calendar.element')).CalendarElement,
   dateTimeCalendar: async () =>
     (await import('./components/date-time-calendar.element')).DateTimeCalendarElement,
+  rangeCalendar: async () =>
+    (await import('./components/range-calendar.element')).RangeCalendarElement,
+  rangeDateInput: async () =>
+    (await import('./components/range-date-input.element')).RangeDateInputElement,
+  rangeDatePicker: async () =>
+    (await import('./components/range-date-picker.element')).RangeDatePickerElement,
   multiRangeCalendar: async () =>
     (await import('./components/multi-range-calendar.element')).MultiRangeCalendarElement,
   multiRangeDateInput: async () =>

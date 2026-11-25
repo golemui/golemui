@@ -30,6 +30,17 @@ describe('json_get_widget_spec', () => {
     );
   });
 
+  it.each([
+    ['rangeCalendar', 'multiRangeCalendar'],
+    ['rangeDateInput', 'multiRangeDateInput'],
+    ['rangeDatePicker', 'multiRangeDatePicker'],
+  ])('notes of %s say the value is one range and point at %s', (single, multi) => {
+    const singleNotes = getWidgetSpec({ widgetType: single }).notes.join('\n');
+    expect(singleNotes).toContain('The value is ONE range');
+    expect(singleNotes).toContain(`\`${multi}\``);
+    expect(getWidgetSpec({ widgetType: multi }).notes.join('\n')).toContain(`\`${single}\``);
+  });
+
   it.each(['dropdown', 'multiDropdown'])(
     'notes of %s teach loading and filtering items at runtime',
     (widgetType) => {

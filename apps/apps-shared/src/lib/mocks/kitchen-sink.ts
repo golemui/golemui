@@ -21,6 +21,9 @@ import multirangedatetimeinputChunk from './tabs/multirangedatetimeinput.form-ch
 import multirangedatetimecalendarChunk from './tabs/multirangedatetimecalendar.form-chunk.json';
 import multirangedatetimepickerChunk from './tabs/multirangedatetimepicker.form-chunk.json';
 import multirangetimepickerChunk from './tabs/multirangetimepicker.form-chunk.json';
+import rangecalendarChunk from './tabs/rangecalendar.form-chunk.json';
+import rangedateinputChunk from './tabs/rangedateinput.form-chunk.json';
+import rangedatepickerChunk from './tabs/rangedatepicker.form-chunk.json';
 import multirangecalendarChunk from './tabs/multirangecalendar.form-chunk.json';
 import multirangedatepickerChunk from './tabs/multirangedatepicker.form-chunk.json';
 import timeinputChunk from './tabs/timeinput.form-chunk.json';
@@ -71,6 +74,9 @@ const chunks: Record<string, unknown> = {
   './tabs/multirangedatetimecalendar.form-chunk.json': multirangedatetimecalendarChunk,
   './tabs/multirangedatetimepicker.form-chunk.json': multirangedatetimepickerChunk,
   './tabs/multirangetimepicker.form-chunk.json': multirangetimepickerChunk,
+  './tabs/rangecalendar.form-chunk.json': rangecalendarChunk,
+  './tabs/rangedateinput.form-chunk.json': rangedateinputChunk,
+  './tabs/rangedatepicker.form-chunk.json': rangedatepickerChunk,
   './tabs/multirangecalendar.form-chunk.json': multirangecalendarChunk,
   './tabs/multirangedatepicker.form-chunk.json': multirangedatepickerChunk,
   './tabs/timeinput.form-chunk.json': timeinputChunk,

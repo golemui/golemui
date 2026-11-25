@@ -25,6 +25,9 @@ import type { GuiRating } from '@golemui/gui-components/rating';
 import type { GuiRangeSlider } from '@golemui/gui-components/range-slider';
 import type { GuiSlider } from '@golemui/gui-components/slider';
 import type { GuiOtp } from '@golemui/gui-components/otp';
+import type { GuiRangeCalendar } from '@golemui/gui-components/range-calendar';
+import type { GuiRangeDateInput } from '@golemui/gui-components/range-date-input';
+import type { GuiRangeDatePicker } from '@golemui/gui-components/range-date-picker';
 import type { GuiMultiRangeCalendar } from '@golemui/gui-components/multi-range-calendar';
 import type { GuiMultiRangeDateInput } from '@golemui/gui-components/multi-range-date-input';
 import type { GuiMultiRangeDateTimeInput } from '@golemui/gui-components/multi-range-date-time-input';
@@ -127,6 +130,18 @@ declare module 'react' {
         Partial<GuiSlider>;
       'gui-otp': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiOtp>;
+      'gui-range-calendar': React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      > &
+        Partial<GuiRangeCalendar>;
+      'gui-range-date': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        Partial<GuiRangeDateInput>;
+      'gui-range-date-picker': React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      > &
+        Partial<GuiRangeDatePicker>;
       'gui-multi-range-calendar': React.DetailedHTMLProps<
         React.HTMLAttributes<HTMLElement>,
         HTMLElement

@@ -1,0 +1,82 @@
+<script setup lang="ts">
+import type { InputWidget, Validator, WithWidget } from '@golemui/core';
+import { useInputWidget } from '@golemui/vue';
+import type { CompleteDateRange, RangeDateInputProps } from '@golemui/gui-shared/internals';
+import { computed, onUnmounted, ref, watch } from 'vue';
+import '@golemui/gui-components/range-date-input';
+
+const props = defineProps<WithWidget>();
+const widget = props.widget as InputWidget<CompleteDateRange>;
+const {
+  uid,
+  formName,
+  errors,
+  value,
+  isTouched,
+  templateData,
+  onValueChanged,
+  onBlur,
+  injectValidationIssues,
+} = useInputWidget<CompleteDateRange, RangeDateInputProps>(widget);
+
+const required = computed(() => (templateData.value.validator as Validator)?.required);
+
+const elRef = ref<HTMLElement | null>(null);
+const changeHandler = (e: Event) => {
+  injectValidationIssues(null);
+  onValueChanged((e as CustomEvent).detail.value);
+};
+const blurHandler = () => onBlur();
+const errorHandler = (e: Event) => {
+  injectValidationIssues([(e as CustomEvent).detail.message]);
+};
+
+let currentEl: HTMLElement | null = null;
+watch(elRef, (el) => {
+  if (currentEl) {
+    currentEl.removeEventListener('gui-blur', blurHandler);
+    currentEl.removeEventListener('gui-input', changeHandler);
+    currentEl.removeEventListener('gui-input-error', errorHandler);
+  }
+  currentEl = el;
+  if (el) {
+    el.addEventListener('gui-blur', blurHandler);
+    el.addEventListener('gui-input', changeHandler);
+    el.addEventListener('gui-input-error', errorHandler);
+  }
+});
+
+onUnmounted(() => {
+  currentEl?.removeEventListener('gui-blur', blurHandler);
+  currentEl?.removeEventListener('gui-input', changeHandler);
+  currentEl?.removeEventListener('gui-input-error', errorHandler);
+});
+</script>
+
+<template>
+  <div class="gui-range-date-input gui-field">
+    <gui-range-date
+      ref="elRef"
+      :uid="uid"
+      :id-prefix="formName"
+      :label="templateData.label"
+      :hint="templateData.hint"
+      :errors="errors"
+      :touched="isTouched"
+      :required="required"
+      :disabled="templateData.disabled"
+      :readOnly="templateData.readonly"
+      :value="value"
+      :icon="templateData.icon"
+      :localeId="templateData.lang"
+      :dayAriaLabel="templateData.dayAriaLabel"
+      :monthAriaLabel="templateData.monthAriaLabel"
+      :yearAriaLabel="templateData.yearAriaLabel"
+      :invalidDateMessage="templateData.invalidDateMessage"
+      :incompleteMessage="templateData.incompleteMessage"
+      :separator="templateData.separator"
+      :startDateAriaLabel="templateData.startDateAriaLabel"
+      :endDateAriaLabel="templateData.endDateAriaLabel"
+    />
+  </div>
+</template>

@@ -32,6 +32,9 @@ import multirangedatepickerSchemaJson from './lib/components/multirangedatepicke
 import multirangedatetimeinputSchemaJson from './lib/components/multirangedatetimeinput.schema.json';
 import multirangedatetimecalendarSchemaJson from './lib/components/multirangedatetimecalendar.schema.json';
 import multirangedatetimepickerSchemaJson from './lib/components/multirangedatetimepicker.schema.json';
+import rangecalendarSchemaJson from './lib/components/rangecalendar.schema.json';
+import rangedateinputSchemaJson from './lib/components/rangedateinput.schema.json';
+import rangedatepickerSchemaJson from './lib/components/rangedatepicker.schema.json';
 import rangesliderSchemaJson from './lib/components/rangeslider.schema.json';
 import multirangetimeinputSchemaJson from './lib/components/multirangetimeinput.schema.json';
 import multirangetimepickerSchemaJson from './lib/components/multirangetimepicker.schema.json';
@@ -89,6 +92,9 @@ export const multirangedatetimecalendarSchema: Record<string, unknown> =
   multirangedatetimecalendarSchemaJson;
 export const multirangedatetimepickerSchema: Record<string, unknown> =
   multirangedatetimepickerSchemaJson;
+export const rangecalendarSchema: Record<string, unknown> = rangecalendarSchemaJson;
+export const rangedateinputSchema: Record<string, unknown> = rangedateinputSchemaJson;
+export const rangedatepickerSchema: Record<string, unknown> = rangedatepickerSchemaJson;
 export const rangesliderSchema: Record<string, unknown> = rangesliderSchemaJson;
 export const multirangetimeinputSchema: Record<string, unknown> = multirangetimeinputSchemaJson;
 export const multirangetimepickerSchema: Record<string, unknown> = multirangetimepickerSchemaJson;
@@ -139,6 +145,9 @@ export const COMPONENT_SCHEMAS_BY_TYPE = {
   multiRangeDateTimeInput: multirangedatetimeinputSchema,
   multiRangeDateTimeCalendar: multirangedatetimecalendarSchema,
   multiRangeDateTimePicker: multirangedatetimepickerSchema,
+  rangeCalendar: rangecalendarSchema,
+  rangeDateInput: rangedateinputSchema,
+  rangeDatePicker: rangedatepickerSchema,
   rangeSlider: rangesliderSchema,
   multiRangeTimeInput: multirangetimeinputSchema,
   multiRangeTimePicker: multirangetimepickerSchema,

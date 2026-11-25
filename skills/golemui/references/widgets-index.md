@@ -32,6 +32,9 @@ The reference pages for JSON form definitions, one per widget (props, per-prop e
 - `otp` - https://golemui.com/json/widgets-reference/input-fields/otp.md
 - `password` - https://golemui.com/json/widgets-reference/input-fields/password.md
 - `radiogroup` - https://golemui.com/json/widgets-reference/input-fields/radiogroup.md
+- `rangeCalendar` - https://golemui.com/json/widgets-reference/input-fields/range-calendar.md
+- `rangeDateInput` - https://golemui.com/json/widgets-reference/input-fields/range-date-input.md
+- `rangeDatePicker` - https://golemui.com/json/widgets-reference/input-fields/range-date-picker.md
 - `rangeSlider` - https://golemui.com/json/widgets-reference/input-fields/range-slider.md
 - `rating` - https://golemui.com/json/widgets-reference/input-fields/rating.md
 - `repeater` - https://golemui.com/json/widgets-reference/input-fields/repeater.md

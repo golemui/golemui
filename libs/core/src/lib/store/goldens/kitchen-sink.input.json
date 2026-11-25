@@ -125,6 +125,18 @@
               "uid": "tabRating"
             },
             {
+              "label": "Range Calendar Component",
+              "uid": "tabRangeCalendar"
+            },
+            {
+              "label": "Range Date Input Component",
+              "uid": "tabRangeDateInput"
+            },
+            {
+              "label": "Range Date Picker Component",
+              "uid": "tabRangeDatePicker"
+            },
+            {
               "label": "Multi Range Calendar Component",
               "uid": "tabMultiRangeCalendar"
             },
@@ -2247,6 +2259,312 @@
                   "type": "array",
                   "required": true
                 }
+              }
+            ]
+          },
+          {
+            "uid": "tabRangeCalendar",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "rangeCalendar",
+                "path": "rangeCalendarEmpty",
+                "label": "Empty"
+              },
+              {
+                "kind": "input",
+                "type": "rangeCalendar",
+                "path": "rangeCalendarDefault",
+                "defaultValue": {
+                  "start": "2026-02-13",
+                  "end": "2026-02-16"
+                },
+                "label": "With default value"
+              },
+              {
+                "kind": "input",
+                "type": "rangeCalendar",
+                "path": "rangeCalendarDisabled",
+                "defaultValue": {
+                  "start": "2026-02-13",
+                  "end": "2026-02-16"
+                },
+                "disabled": true,
+                "label": "Disabled"
+              },
+              {
+                "kind": "input",
+                "type": "rangeCalendar",
+                "path": "rangeCalendarReadonly",
+                "defaultValue": {
+                  "start": "2026-02-13",
+                  "end": "2026-02-16"
+                },
+                "readonly": true,
+                "label": "Read only"
+              },
+              {
+                "kind": "input",
+                "type": "rangeCalendar",
+                "path": "rangeCalendarValidation",
+                "label": "Required (validation)",
+                "validator": {
+                  "type": "range",
+                  "required": true,
+                  "messages": {
+                    "required": "Pick a start and an end date",
+                    "invalid": "Pick a start and an end date"
+                  }
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeCalendar",
+                "path": "rangeCalendarDisabledRanges",
+                "defaultValue": {
+                  "start": "2026-02-13",
+                  "end": "2026-02-16"
+                },
+                "label": "Disabled date ranges",
+                "props": {
+                  "disabledRanges": [
+                    {
+                      "start": "2026-02-09",
+                      "end": "2026-02-10"
+                    },
+                    {
+                      "start": "2026-02-17"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabRangeDateInput",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "rangeDateInput",
+                "path": "rangeDateInputEmpty",
+                "label": "Empty",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateInput",
+                "path": "rangeDateInputDefault",
+                "defaultValue": {
+                  "start": "2026-02-13",
+                  "end": "2026-02-16"
+                },
+                "label": "With default value",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateInput",
+                "path": "rangeDateInputDisabled",
+                "defaultValue": {
+                  "start": "2026-02-13",
+                  "end": "2026-02-16"
+                },
+                "disabled": true,
+                "label": "Disabled",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateInput",
+                "path": "rangeDateInputReadonly",
+                "defaultValue": {
+                  "start": "2026-02-13",
+                  "end": "2026-02-16"
+                },
+                "readonly": true,
+                "label": "Read only",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateInput",
+                "path": "rangeDateInputValidation",
+                "label": "Required (validation)",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to"
+                },
+                "validator": {
+                  "type": "range",
+                  "required": true,
+                  "messages": {
+                    "required": "Pick a start and an end date",
+                    "invalid": "Pick a start and an end date"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabRangeDatePicker",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "rangeDatePicker",
+                "path": "rangeDatePickerEmpty",
+                "label": "Empty",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDatePicker",
+                "path": "rangeDatePickerMinMax",
+                "defaultValue": {
+                  "start": "2026-02-20",
+                  "end": "2026-02-22"
+                },
+                "label": "Min/Max",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to",
+                  "minDate": "2026-02-01",
+                  "maxDate": "2026-02-28",
+                  "minDateMessage": "Min date is 01.02.2026",
+                  "maxDateMessage": "Max date is 28.02.2026"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDatePicker",
+                "path": "rangeDatePickerDefault",
+                "defaultValue": {
+                  "start": "2026-02-13",
+                  "end": "2026-02-16"
+                },
+                "label": "With default value",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDatePicker",
+                "path": "rangeDatePickerDisabled",
+                "defaultValue": {
+                  "start": "2026-02-13",
+                  "end": "2026-02-16"
+                },
+                "disabled": true,
+                "label": "Disabled",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDatePicker",
+                "path": "rangeDatePickerReadonly",
+                "defaultValue": {
+                  "start": "2026-02-13",
+                  "end": "2026-02-16"
+                },
+                "readonly": true,
+                "label": "Read only",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDatePicker",
+                "path": "rangeDatePickerValidation",
+                "label": "Required (validation)",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to"
+                },
+                "validator": {
+                  "type": "range",
+                  "required": true,
+                  "messages": {
+                    "required": "Pick a start and an end date",
+                    "invalid": "Pick a start and an end date"
+                  }
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDatePicker",
+                "path": "rangeDatePickerDisabledRanges",
+                "defaultValue": {
+                  "start": "2026-02-13",
+                  "end": "2026-02-16"
+                },
+                "label": "Disabled date ranges",
+                "props": {
+                  "icon": "calendar_month",
+                  "separator": "to",
+                  "disabledRanges": [
+                    {
+                      "start": "2026-02-09",
+                      "end": "2026-02-10"
+                    },
+                    {
+                      "start": "2026-02-17"
+                    }
+                  ]
+                }
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "rangeDatePickerDestination",
+                    "label": "Destination"
+                  },
+                  {
+                    "kind": "input",
+                    "type": "rangeDatePicker",
+                    "path": "rangeDatePickerTrip",
+                    "label": "Dates",
+                    "props": {
+                      "icon": "calendar_month",
+                      "separator": "to",
+                      "startDateAriaLabel": "Check-in",
+                      "endDateAriaLabel": "Check-out"
+                    }
+                  }
+                ]
               }
             ]
           },

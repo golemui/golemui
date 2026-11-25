@@ -1137,6 +1137,105 @@
       "interpolationWarnings": []
     }
   },
+  "rangeCalendar": {
+    "input": {
+      "form": [
+        {
+          "type": "rangeCalendar"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Missing required property `path` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "path"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "rangeDateInput": {
+    "input": {
+      "form": [
+        {
+          "type": "rangeDateInput"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Missing required property `path` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "path"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "rangeDatePicker": {
+    "input": {
+      "form": [
+        {
+          "type": "rangeDatePicker"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Missing required property `path` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "path"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
   "rangeSlider": {
     "input": {
       "form": [

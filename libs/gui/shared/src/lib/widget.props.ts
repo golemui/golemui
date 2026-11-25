@@ -11,6 +11,7 @@ import type {
 
 // The value types belong to the gui-* elements; form definitions use them through this module.
 export type {
+  CompleteDateRange,
   DateRange,
   DateTimeRange,
   DisabledTimeRange,
@@ -327,7 +328,8 @@ export type DateTimeCalendarProps = CalendarProps &
     noAvailableTimesMessage?: Localizable;
   };
 
-export type MultiRangeCalendarProps = RangeEditProps & {
+/** A calendar that picks one date range, `{ start, end }`. The multi-range calendar adds to it. */
+export type RangeCalendarProps = {
   /**
    * An optional descriptive text providing guidance or information about the associated widget or functionality.
    */
@@ -415,8 +417,8 @@ export type MultiRangeCalendarProps = RangeEditProps & {
   disabledRanges?: DateRange[];
   /**
    * Error surfaced when a selected range spans one or more disabled days. The
-   * whole range is rejected (no pill added), rather than split around the
-   * disabled days — consistent with the time pickers. Defaults to
+   * whole range is rejected, rather than split around the disabled days —
+   * consistent with the time pickers. Defaults to
    * "Invalid date: date is within a disabled range."
    */
   disabledDateRangeMessage?: Localizable;
@@ -425,11 +427,18 @@ export type MultiRangeCalendarProps = RangeEditProps & {
    * Default is 1.
    */
   numberOfMonths?: number;
+};
+
+/** The ARIA label of the remove button on each range pill of the multi-range widgets. */
+export type RemovePillProps = {
   /**
    * An optional string used as the ARIA label prefix for the remove button on each date range pill.
    */
   removePillAriaLabel?: string;
 };
+
+/** A calendar that picks several date ranges, shown as pills that can be edited. */
+export type MultiRangeCalendarProps = RangeCalendarProps & RangeEditProps & RemovePillProps;
 
 export type DateinputProps = IncompleteMessageProps & {
   hint?: string;
@@ -500,19 +509,24 @@ export type TimePickerProps = TimeInputProps &
     noAvailableTimesMessage?: Localizable;
   };
 
-export type MultiRangeDateInputProps = IncompleteMessageProps &
-  RangeEditProps & {
-    hint?: string;
-    icon?: string;
-    separator?: string;
-    removePillAriaLabel?: string;
-    startDateAriaLabel?: string;
-    endDateAriaLabel?: string;
-    dayAriaLabel?: string;
-    monthAriaLabel?: string;
-    yearAriaLabel?: string;
-    invalidDateMessage?: Localizable;
-  };
+/** A field to type one date range: the start and the end dates, each part by part. */
+export type RangeDateInputProps = IncompleteMessageProps & {
+  hint?: string;
+  icon?: string;
+  /** Text shown between the start and end dates. Defaults to '-'. */
+  separator?: string;
+  /** Accessible name of the start date field. An empty value removes it. Defaults to 'Start date'. */
+  startDateAriaLabel?: string;
+  /** Accessible name of the end date field. An empty value removes it. Defaults to 'End date'. */
+  endDateAriaLabel?: string;
+  dayAriaLabel?: string;
+  monthAriaLabel?: string;
+  yearAriaLabel?: string;
+  invalidDateMessage?: Localizable;
+};
+
+/** A field to type several date ranges, shown as pills that can be edited. */
+export type MultiRangeDateInputProps = RangeDateInputProps & RangeEditProps & RemovePillProps;
 
 export type DateBoundsMessageProps = {
   minDateMessage?: Localizable;
@@ -532,6 +546,12 @@ export type DatePickerProps = CalendarProps &
 
 export type DateTimePickerProps = DateTimeCalendarProps &
   DateTimeInputProps &
+  DateBoundsMessageProps &
+  PickerToggleProps;
+
+/** A date range field with a calendar popup that picks one range. */
+export type RangeDatePickerProps = RangeCalendarProps &
+  RangeDateInputProps &
   DateBoundsMessageProps &
   PickerToggleProps;
 
