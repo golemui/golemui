@@ -151,6 +151,33 @@ describe('a strict style-src-attr policy', () => {
       });
     });
 
+    it(`allows a single date range to be picked and typed${fallback ? ', measuring' : ''}`, () => {
+      GUIAnchorController.forceFallback = fallback;
+      const march = { start: '2026-03-02', end: '2026-03-06' };
+      cy.mount(
+        html`<gui-range-date-picker
+            label="Trip"
+            locale-id="en-US"
+            .value=${march}
+          ></gui-range-date-picker>
+          <gui-range-calendar label="Stay" locale-id="en-US" .value=${march}></gui-range-calendar>
+          <gui-range-date label="Typed" locale-id="en-US" icon="event"></gui-range-date>`,
+      );
+
+      cy.get('gui-range-date-picker .gui-range-date-picker__arrow').click();
+      cy.get('gui-range-date-picker .gui-picker__panel').should('match', ':popover-open');
+      cy.get('gui-range-date-picker [data-date="2026-03-16"]').click();
+      cy.get('gui-range-date-picker [data-date="2026-03-19"]').click();
+      cy.get('gui-range-date-picker .gui-picker__panel').should('not.exist');
+      cy.get('gui-range-calendar [data-date="2026-03-16"]').click();
+      cy.get('gui-range-calendar [data-date="2026-03-18"]').click();
+      cy.get('gui-range-date [data-type="month"]').first().type('03');
+      expectNoViolations();
+      cy.then(() => {
+        GUIAnchorController.forceFallback = false;
+      });
+    });
+
     it(`allows a dropdown's panel to float in the top layer${fallback ? ', measuring' : ''}`, () => {
       GUIAnchorController.forceFallback = fallback;
       cy.mount(html`<gui-dropdown label="Plan" .items=${options}></gui-dropdown>`);

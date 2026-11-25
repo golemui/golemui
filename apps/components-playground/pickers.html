@@ -23,6 +23,10 @@
           <gui-date-picker label="Start date" uid="all-date"></gui-date-picker>
           <gui-time-picker label="Start time" uid="all-time"></gui-time-picker>
           <gui-date-time-picker label="Delivery" uid="all-datetime"></gui-date-time-picker>
+          <gui-range-date-picker
+            label="Check-in and check-out"
+            uid="all-singlerangedate"
+          ></gui-range-date-picker>
           <gui-multi-range-date-picker
             label="Stay"
             uid="all-rangedate"
@@ -46,6 +50,37 @@
             items='[{"label":"Starter","value":"starter"},{"label":"Team","value":"team"},{"label":"Business","value":"business"},{"label":"Enterprise","value":"enterprise"}]'
           ></gui-multi-dropdown>
         </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>One range or several</h2>
+        <p>
+          The single range elements hold one <code>{ start, end }</code>: the first click starts a
+          new range and the second sets it, and the picker closes. The multi-range elements add
+          each range as a pill. The days from March 9 to 11 are disabled.
+        </p>
+        <div class="pg-fields">
+          <gui-range-date-picker
+            label="Trip"
+            uid="one-picker"
+            min-date="2026-01-01"
+            disabled-ranges='[{"start":"2026-03-09","end":"2026-03-11"}]'
+            value='{"start":"2026-03-02","end":"2026-03-06"}'
+          ></gui-range-date-picker>
+          <gui-multi-range-date-picker
+            label="Trips"
+            uid="many-picker"
+            disabled-ranges='[{"start":"2026-03-09","end":"2026-03-11"}]'
+            value='[{"start":"2026-03-02","end":"2026-03-06"}]'
+          ></gui-multi-range-date-picker>
+          <gui-range-date label="Typed trip" uid="one-typed"></gui-range-date>
+        </div>
+        <gui-range-calendar
+          label="Trip calendar"
+          uid="one-calendar"
+          disabled-ranges='[{"start":"2026-03-09","end":"2026-03-11"}]'
+          value='{"start":"2026-03-02","end":"2026-03-06"}'
+        ></gui-range-calendar>
       </section>
 
       <section class="pg-section">

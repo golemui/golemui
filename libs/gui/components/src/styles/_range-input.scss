@@ -1,0 +1,45 @@
+// The field of a typed range: the start and end groups of parts with the separator between them,
+// and an optional icon at the start. `gui-range-date` and the multi-range inputs include it, with
+// their block class; `$after-icon` is what sits after the icon, and `@content` goes after the
+// groups' rules (the multi inputs' pills).
+
+@mixin gui-range-input($block, $after-icon, $container: null) {
+  display: block;
+
+  .#{$block} {
+    display: flex;
+    align-items: center;
+    position: relative;
+    @if $container {
+      container-type: inline-size;
+      container-name: $container;
+    }
+
+    &--icon {
+      & > .gui-widget-icon {
+        flex-shrink: 0;
+        border-inline-end: 1px solid var(--gui-border-default);
+      }
+
+      & > #{$after-icon} {
+        margin-inline-start: 2.5rem;
+      }
+    }
+  }
+
+  .#{$block}__inputs {
+    display: flex;
+    padding-inline-start: 1rem;
+    gap: var(--gui-space-2);
+    flex-wrap: wrap;
+    // One line where there is room; on a narrow field the end wraps below the start (WCAG 1.4.10).
+    min-width: min(265px, 100%);
+  }
+
+  @content;
+
+  .#{$block}__separator {
+    display: flex;
+    align-items: center;
+  }
+}

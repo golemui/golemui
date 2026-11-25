@@ -117,6 +117,10 @@ export {
   GuiMultiRangeTimePicker,
   GuiMultiRangeTimePickerEvents,
 } from './lib/components/multi-range-time-picker';
+export { GuiRangeCalendar, GuiRangeCalendarEvents } from './lib/components/range-calendar';
+export { GuiRangeDateInput, GuiRangeDateInputEvents } from './lib/components/range-date-input';
+export type { GuiRangeDateInputProps } from './lib/components/range-date-input';
+export { GuiRangeDatePicker, GuiRangeDatePickerEvents } from './lib/components/range-date-picker';
 export { GuiSelect, GuiSelectEvents } from './lib/components/select';
 export type { GuiSelectProps } from './lib/components/select';
 export { GuiTab } from './lib/components/tab';
@@ -153,6 +157,7 @@ export type { WeekInfo } from './lib/utils/week-info';
 // ─── Value and service types ───
 
 export type {
+  CompleteDateRange,
   DateRange,
   DateTimeRange,
   DisabledTimeRange,

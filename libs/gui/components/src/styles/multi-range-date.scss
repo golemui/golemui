@@ -1,44 +1,12 @@
 @use 'pill' as *;
+@use 'range-input' as *;
 
 // Field and focus-ring styles come from `date-time-parts.scss` via the shared
 // `gui-parts` / `gui-parts-ring` classes
 gui-multi-range-date {
-  display: block;
-
-  .gui-multi-range-date-input {
-    display: flex;
-    align-items: center;
-    position: relative;
-    container-type: inline-size;
-    container-name: gui-pills-widget;
-
-    &--icon {
-      & > .gui-widget-icon {
-        flex-shrink: 0;
-        border-inline-end: 1px solid var(--gui-border-default);
-      }
-
-      & > gui-pills {
-        margin-inline-start: 2.5rem;
-      }
+  @include gui-range-input('gui-multi-range-date-input', 'gui-pills', gui-pills-widget) {
+    .gui-multi-range-date-input__pills {
+      border-inline-end: 1px solid var(--gui-border-default);
     }
-  }
-
-  .gui-multi-range-date-input__inputs {
-    display: flex;
-    padding-inline-start: 1rem;
-    gap: var(--gui-space-2);
-    flex-wrap: wrap;
-    // One line where there is room; on a narrow field the end wraps below the start (WCAG 1.4.10).
-    min-width: min(265px, 100%);
-  }
-
-  .gui-multi-range-date-input__pills {
-    border-inline-end: 1px solid var(--gui-border-default);
-  }
-
-  .gui-multi-range-date-input__separator {
-    display: flex;
-    align-items: center;
   }
 }

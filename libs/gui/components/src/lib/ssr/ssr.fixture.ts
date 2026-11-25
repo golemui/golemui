@@ -8,6 +8,8 @@ import '../components/menu';
 import '../components/otp';
 import '../components/popover';
 import '../components/progress';
+import '../components/range-calendar';
+import '../components/range-date-picker';
 import '../components/rating';
 import '../components/select';
 import '../components/slider';
@@ -87,6 +89,20 @@ export const serverTemplate = () =>
       options='[{"label":"Audit log","value":"audit"},{"label":"Single sign-on","value":"sso"}]'
     ></gui-checkbox-group>
     <gui-rating uid="support" name="support" label="Support so far" value="4"></gui-rating>
+    <gui-range-date-picker
+      uid="stay"
+      name="stay"
+      label="Stay"
+      locale-id="en-US"
+      value='{"start":"2026-03-02","end":"2026-03-06"}'
+    ></gui-range-date-picker>
+    <gui-range-calendar
+      uid="trip"
+      name="trip"
+      label="Trip dates"
+      locale-id="en-US"
+      value='{"start":"2026-03-02","end":"2026-03-06"}'
+    ></gui-range-calendar>
     <p>Plan status: <gui-badge variant="success">Active</gui-badge></p>
     <gui-progress
       uid="setup"

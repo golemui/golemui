@@ -5,12 +5,14 @@
   // The form adapters' host elements, and the picker elements themselves when used without a form.
   .gui-date-picker.gui-field,
   .gui-multi-range-date-picker.gui-field,
+  .gui-range-date-picker.gui-field,
   .gui-multi-range-time-picker.gui-field,
   .gui-time-picker.gui-field,
   .gui-date-time-picker.gui-field,
   .gui-multi-range-date-time-picker.gui-field,
   gui-date-picker,
   gui-multi-range-date-picker,
+  gui-range-date-picker,
   gui-multi-range-time-picker,
   gui-time-picker,
   gui-date-time-picker,
@@ -22,6 +24,7 @@
     :is(
       .gui-date-picker__arrow,
       .gui-multi-range-date-picker__arrow,
+      .gui-range-date-picker__arrow,
       .gui-multi-range-time-picker__arrow,
       .gui-time-picker__arrow,
       .gui-date-time-picker__arrow,
@@ -40,6 +43,7 @@
     > button[aria-expanded='true']:is(
         .gui-date-picker__arrow,
         .gui-multi-range-date-picker__arrow,
+        .gui-range-date-picker__arrow,
         .gui-multi-range-time-picker__arrow,
         .gui-time-picker__arrow,
         .gui-date-time-picker__arrow,
@@ -52,6 +56,7 @@
     > button:is(
         .gui-date-picker__arrow,
         .gui-multi-range-date-picker__arrow,
+        .gui-range-date-picker__arrow,
         .gui-multi-range-time-picker__arrow,
         .gui-time-picker__arrow,
         .gui-date-time-picker__arrow,
@@ -69,6 +74,7 @@
     :is(
       gui-date,
       gui-multi-range-date,
+      gui-range-date,
       gui-time,
       gui-date-time,
       gui-multi-range-date-time
@@ -84,12 +90,14 @@ $nested-in-calendar: ':is(gui-date-time-calendar, gui-multi-range-date-time-cale
   // The form adapters' host elements, and the picker elements themselves when used without a form.
   .gui-date-picker.gui-field,
   .gui-multi-range-date-picker.gui-field,
+  .gui-range-date-picker.gui-field,
   .gui-multi-range-time-picker.gui-field,
   .gui-time-picker.gui-field,
   .gui-date-time-picker.gui-field,
   .gui-multi-range-date-time-picker.gui-field,
   gui-date-picker,
   gui-multi-range-date-picker,
+  gui-range-date-picker,
   gui-multi-range-time-picker,
   gui-time-picker,
   gui-date-time-picker,
@@ -106,6 +114,7 @@ $nested-in-calendar: ':is(gui-date-time-calendar, gui-multi-range-date-time-cale
           gui-date,
           gui-time,
           gui-multi-range-date,
+          gui-range-date,
           gui-multi-range-time,
           gui-date-time,
           gui-multi-range-date-time
@@ -127,6 +136,7 @@ $nested-in-calendar: ':is(gui-date-time-calendar, gui-multi-range-date-time-cale
       > :is(
         gui-calendar,
         gui-multi-range-calendar,
+        gui-range-calendar,
         gui-date-time-calendar,
         gui-multi-range-date-time-calendar
       ) {

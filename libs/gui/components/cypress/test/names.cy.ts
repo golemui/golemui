@@ -40,6 +40,19 @@ describe('accessible names', () => {
     });
   });
 
+  describe('a part of a single range that only adds context', () => {
+    it('has a default name, which an empty one removes', () => {
+      cy.mount(html`<gui-range-date label="Trip" start-date-aria-label=""></gui-range-date>`);
+
+      cy.get('gui-range-date .gui-range-date-input__field')
+        .first()
+        .should('not.have.attr', 'aria-label');
+      cy.get('gui-range-date .gui-range-date-input__field')
+        .last()
+        .should('have.attr', 'aria-label', 'End date');
+    });
+  });
+
   describe('a field', () => {
     it('is named by its label, not a copy of it', () => {
       cy.mount(html`<gui-tags label="Topics"></gui-tags>`);
@@ -91,6 +104,18 @@ describe('accessible names', () => {
         .then((id) =>
           cy.get(`gui-multi-range-date-picker > #${id}`).should('contain.text', 'Stay'),
         );
+      cy.get('@warn').should('not.have.been.called');
+    });
+  });
+
+  describe('a single range field inside a picker', () => {
+    it('is named by the picker label', () => {
+      cy.window().then((win) => cy.spy(win.console, 'warn').as('warn'));
+      cy.mount(html`<gui-range-date-picker label="Trip"></gui-range-date-picker>`);
+
+      cy.get('gui-range-date [role="group"].gui-range-date-input')
+        .invoke('attr', 'aria-labelledby')
+        .then((id) => cy.get(`gui-range-date-picker > #${id}`).should('contain.text', 'Trip'));
       cy.get('@warn').should('not.have.been.called');
     });
   });

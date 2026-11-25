@@ -1,4 +1,5 @@
 gui-multi-range-calendar,
+gui-range-calendar,
 gui-calendar,
 gui-date-time-calendar,
 gui-multi-range-date-time-calendar {
@@ -260,6 +261,7 @@ gui-multi-range-date-time-calendar {
 
 @container gui-container (max-width: 480px) {
   gui-multi-range-calendar,
+  gui-range-calendar,
   gui-calendar,
   gui-date-time-calendar,
   gui-multi-range-date-time-calendar {

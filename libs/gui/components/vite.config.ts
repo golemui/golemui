@@ -80,6 +80,9 @@ export default defineConfig(() => ({
         'lib/components/rating': 'src/lib/components/rating.ts',
         'lib/components/slider': 'src/lib/components/slider.ts',
         'lib/components/spinner': 'src/lib/components/spinner.ts',
+        'lib/components/range-calendar': 'src/lib/components/range-calendar.ts',
+        'lib/components/range-date-input': 'src/lib/components/range-date-input.ts',
+        'lib/components/range-date-picker': 'src/lib/components/range-date-picker.ts',
         'lib/components/multi-range-calendar': 'src/lib/components/multi-range-calendar.ts',
         'lib/components/multi-range-date-input': 'src/lib/components/multi-range-date-input.ts',
         'lib/components/multi-range-date-time-input':
