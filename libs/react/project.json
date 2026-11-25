@@ -26,6 +26,16 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint"
+    },
+    "vite:test": {
+      "inputs": [
+        "default",
+        "^production",
+        { "externalDependencies": ["vitest"] },
+        { "env": "CI" },
+        { "dependentTasksOutputFiles": "**/*.js", "transitive": true },
+        { "env": "REACT18" }
+      ]
     }
   }
 }
