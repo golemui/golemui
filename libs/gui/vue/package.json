@@ -40,7 +40,7 @@
     "*.md"
   ],
   "peerDependencies": {
-    "vue": ">=3.3.0",
+    "vue": ">=3.5.0",
     "@golemui/core": "*",
     "@golemui/vue": "*",
     "@golemui/gui-components": "*",

@@ -14,17 +14,16 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import {
-  cloneObject,
   type FormEvent,
   type FormHealth,
   formHealth,
   type FormInitConfig,
   type FormSubmitEvent,
   getDirectionFromLanguage,
-  shortUUID,
   type ValidatorFn,
   type WithWidget,
 } from '@golemui/core';
+import { cloneObject, shortUUID } from '@golemui/core/internals';
 import { Observable, share, switchMap, tap } from 'rxjs';
 import { AngularFormContext } from '../../context/form.context';
 import { WidgetDirective } from '../../directives/widget.directive';

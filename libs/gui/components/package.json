@@ -454,7 +454,7 @@
     "@nuxt/kit": ">=3.0.0",
     "lit": "^3.3.1",
     "react": ">=18.0.0",
-    "vue": "^3.3.0"
+    "vue": "^3.5.0"
   },
   "peerDependenciesMeta": {
     "@lit-labs/ssr": {

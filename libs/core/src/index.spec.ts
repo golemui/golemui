@@ -12,22 +12,17 @@ describe('@golemui/core entry points', () => {
 
     expect(Object.keys(publicEntry).sort()).toEqual([
       'FormContext',
-      'assertNoPropCollisions',
-      'cloneObject',
       'createWidgetViewModelReader',
       'defineForm',
       'devToolsMiddleware',
       'enableDevMode',
       'errorCodes',
-      'filterTap',
       'formEventNames',
       'formHealth',
       'getDirectionFromLanguage',
       'identityTranslator',
       'isStandardValidateSuccess',
-      'makeRepeaterItemConfig',
       'preloadFormWidgets',
-      'shortUUID',
       'standardValidate',
       'widgetViewModel',
       'widgetViewModel$',
@@ -40,11 +35,15 @@ describe('@golemui/core entry points', () => {
     expect(Object.keys(internalsEntry).sort()).toEqual([
       'ALLOWED_EXPRESSION_METHODS',
       'EXPRESSION_LIMITS',
+      'assertNoPropCollisions',
       'buildWidgetSetForm',
       'checkExpression',
+      'cloneObject',
       'collectWidgetUids',
+      'filterTap',
       'isI18nParamExpression',
       'resolveItemRenderer',
+      'shortUUID',
       'toDomId',
     ]);
   });

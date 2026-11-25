@@ -1,6 +1,5 @@
 import {
   type Action,
-  cloneObject,
   FormContext,
   type FormEvent,
   type FormHealth,
@@ -12,6 +11,7 @@ import {
   type FormSubmitEvent,
 } from '@golemui/core';
 import { type FormInitConfig } from '@golemui/core';
+import { cloneObject } from '@golemui/core/internals';
 import {
   forwardRef,
   type RefObject,
