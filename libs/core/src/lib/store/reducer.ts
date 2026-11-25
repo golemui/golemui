@@ -21,11 +21,11 @@ import {
   calculateWidgetFlags,
   calculateWidgetProps,
   dropRemovedWidgetEntries,
-  fillCalculatedWidgets,
   hasValidationError,
   initialize,
   injectValidationIssues,
   overrideWidgetProp,
+  recalculateWidgetProps,
   setData,
   setFormHealth,
   setLanguage,
@@ -49,7 +49,7 @@ export const reducer = ({
 }) => {
   const derive = makeDerive(localization, functions, expressionPolicy);
   const validate = validateAll(validators, localization);
-  const applyWidgetProps = calculateWidgetProps(localization, functions, expressionPolicy);
+  const applyWidgetPropsAgain = recalculateWidgetProps(localization, functions, expressionPolicy);
   // Every action that changes the inputs goes through this wrapper. SET_LANGUAGE does not use it.
   const deriveAndValidateAppearingInputs = (state: State): State =>
     validateInputsAppearingAfterSubmit(state, derive, validate);
@@ -73,7 +73,7 @@ export const reducer = ({
         // A language change does not change the data, the states or the flags, so there is no
         // derive. It translates the validation messages, then it resolves the translated props.
         const translated = translateValidationMessages(setLanguage(state, action), validate);
-        const next = applyWidgetProps(translated);
+        const next = applyWidgetPropsAgain(translated);
         // A failed props pass must not replace a health that only the app can clear.
         return erroredOutsideDerive(translated)
           ? { ...next, formHealth: translated.formHealth }
@@ -169,9 +169,8 @@ function makeDerive(
     if (erroredOutsideDerive(state)) {
       return state;
     }
-    // A failed pass publishes the input state with only the new health, so an entry whose
-    // `current` is still the empty placeholder never reaches a renderer. The next derive
-    // computes everything again.
+    // A failed pass publishes the input state with only the new health, so the result of a
+    // pass that did not end never reaches a renderer. The next derive computes everything again.
     const discardPass = (formHealth: State['formHealth']): State => ({ ...state, formHealth });
 
     try {
@@ -198,7 +197,6 @@ function makeDerive(
           `[GolemUI] The conditions of this form have no stable result after ${MAX_STATES_AND_FLAGS_PASSES} passes. An include, exclude, disabled or readonly condition reads $errors or $formIsInvalid, and its result changes them.`,
         );
       }
-      next = fillCalculatedWidgets(next);
       next = applyWidgetProps(next, validationVariables);
       return next.formHealth.status === 'ok' ? next : discardPass(next.formHealth);
     } catch (err) {
@@ -288,8 +286,8 @@ function pathsOfInputsAppearingIn(
  * Marks the form submitted and replaces the touched set with every visible input path.
  *
  * `current` is what `validateAll` keys the validations by, so it is read first and the touched
- * key always matches the validation key. `source` covers an entry the props pass has not filled
- * in yet.
+ * key always matches the validation key. The props pass gives every entry a `current`, so
+ * `source` is only a fallback.
  */
 function touchAllInputs(state: State): State {
   const touchedControls: State['touchedControls'] = {};

@@ -1,9 +1,8 @@
 export { applyDefaultValues } from './apply-default-values';
 export { calculateCurrentState } from './calculate-current-state';
 export { calculateWidgetFlags } from './calculate-widget-flags';
-export { calculateWidgetProps } from './calculate-widget-props';
+export { calculateWidgetProps, recalculateWidgetProps } from './calculate-widget-props';
 export { dropRemovedWidgetEntries } from './drop-removed-widget-entries';
-export { fillCalculatedWidgets } from './fill-calculated-widgets';
 export { initialize } from './initialize';
 export { injectValidationIssues } from './inject-validation-issues';
 export { overrideWidgetProp } from './override-widget-prop';

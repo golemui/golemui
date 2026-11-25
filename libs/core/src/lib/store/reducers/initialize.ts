@@ -2,7 +2,9 @@ import { formatIssuePath } from 'ts.data.json';
 import { compileForm } from '../../compile/compile-form';
 import {
   type CompiledExpression,
+  type CompiledFailure,
   type CompiledForm,
+  type CompiledValue,
   type CompiledWidget,
   forEachCompiledWidget,
 } from '../../compile/compiled-form';
@@ -266,8 +268,9 @@ function warnUndeclaredStateReferences(
 }
 
 /**
- * In dev mode, prints the warning of each state expression and of each condition that has one.
- * A text that the form uses in several places gives one warning.
+ * In dev mode, prints the warning of each expression of the form definition that has one: the
+ * states, the conditions, the texts with `{{ }}` and the params of the translation configs. A
+ * text that the form uses in several places gives one warning.
  */
 function warnAboutExpressions(compiled: CompiledForm): void {
   if (!isDevMode()) {
@@ -296,7 +299,46 @@ function warnAboutExpressions(compiled: CompiledForm): void {
     collect(conditions.disabled);
     collect(conditions.readonly);
   });
+  forEachCompiledWidget(compiled.root, ({ coreFields, propFields, onFields }) => {
+    for (const field of [...coreFields, ...propFields, ...onFields]) {
+      for (const candidate of field.candidates) {
+        collectFromValue(candidate.value, collect);
+      }
+    }
+  });
   for (const warning of warnings) {
     console.warn(warning);
+  }
+}
+
+/** Gives every expression of one compiled value to a function, in the order of the value. */
+function collectFromValue(
+  value: CompiledValue | CompiledFailure,
+  collect: (expression: CompiledExpression) => void,
+): void {
+  // A loop over a list of the values still to visit, and no recursion: for a prop value with a
+  // cycle, the compile step gives a chain of nested values as deep as the call stack allows.
+  const pending: (CompiledValue | CompiledFailure)[] = [value];
+  let next = pending.pop();
+  while (next !== undefined) {
+    if (next.kind === 'interpolation') {
+      for (const part of next.parts) {
+        if (typeof part !== 'string') {
+          collect(part);
+        }
+      }
+    } else if (next.kind === 'translation') {
+      for (const param of next.params ?? []) {
+        if ('expression' in param) {
+          collect(param.expression);
+        }
+      }
+    } else if (next.kind === 'nested') {
+      // In reverse order, so that the list gives the entries back in their own order.
+      for (let index = next.entries.length - 1; index >= 0; index -= 1) {
+        pending.push(next.entries[index].value);
+      }
+    }
+    next = pending.pop();
   }
 }

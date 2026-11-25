@@ -113,7 +113,7 @@ export type State = {
 
   /**
    * Maps every widget produced by a repeater item (by its concrete uid) to the repeater item that owns it.
-   * Used to bind the `$item` and `$index` expression scope variables.
+   * Read by `pruneHiddenData`. The `$item` and `$index` of a row come from the instances.
    * For nested repeaters the entry points to the innermost enclosing item.
    * Written from `instances` together with `resolvedSources`.
    *
