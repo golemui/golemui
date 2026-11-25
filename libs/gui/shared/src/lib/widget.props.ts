@@ -560,8 +560,9 @@ export type MultiRangeDatePickerProps = MultiRangeCalendarProps &
   DateBoundsMessageProps &
   PickerToggleProps;
 
-export type MultiRangeDateTimeCalendarProps = Omit<
-  MultiRangeCalendarProps,
+/** A calendar with start and end time pickers that picks one date-time range. */
+export type RangeDateTimeCalendarProps = Omit<
+  RangeCalendarProps,
   'minDate' | 'maxDate' | 'disabledRanges' | 'disabledDateRangeMessage'
 > &
   IncompleteMessageProps & {
@@ -586,11 +587,6 @@ export type MultiRangeDateTimeCalendarProps = Omit<
     /** Shown in a time grid when the bounds yield no slots. Defaults to 'No available times'. */
     noAvailableTimesMessage?: Localizable;
     /**
-     * ARIA label template for the per-day count badge; a `{count}` token is
-     * substituted with the number of ranges on that day. Defaults to '{count} ranges'.
-     */
-    dayCountAriaLabel?: Localizable;
-    /**
      * ARIA label template for the grey per-day disabled-spans badge shown on
      * partially-blocked days; a `{count}` token is substituted with the number of
      * disabled spans on that day. Defaults to '{count} disabled ranges'.
@@ -598,57 +594,79 @@ export type MultiRangeDateTimeCalendarProps = Omit<
     disabledDayCountAriaLabel?: Localizable;
   };
 
-export type MultiRangeTimeInputProps = IncompleteMessageProps &
-  RangeEditProps & {
-    hint?: string;
-    icon?: string;
-    separator?: string;
-    removePillAriaLabel?: string;
-    startTimeAriaLabel?: string;
-    endTimeAriaLabel?: string;
-    hourAriaLabel?: string;
-    minuteAriaLabel?: string;
-    dayPeriodAriaLabel?: string;
-    hourFormat?: '12' | '24';
-    minuteStep?: number;
-    /** First allowed time (ISO time, inclusive). */
-    minTime?: string;
-    /** Last allowed time (ISO time, inclusive). */
-    maxTime?: string;
-    minTimeMessage?: Localizable;
-    maxTimeMessage?: Localizable;
-    /** Shown when the entered "time out" is not strictly after "time in". */
-    rangeOrderMessage?: Localizable;
+/** A calendar with time pickers that picks several date-time ranges, shown as pills. */
+export type MultiRangeDateTimeCalendarProps = RangeDateTimeCalendarProps &
+  RangeEditProps &
+  RemovePillProps & {
+    /**
+     * ARIA label template for the per-day count badge; a `{count}` token is
+     * substituted with the number of ranges on that day. Defaults to '{count} ranges'.
+     */
+    dayCountAriaLabel?: Localizable;
   };
 
-export type MultiRangeDateTimeInputProps = IncompleteMessageProps &
-  RangeEditProps & {
-    hint?: string;
-    icon?: string;
-    separator?: string;
-    removePillAriaLabel?: string;
-    startDateTimeAriaLabel?: string;
-    endDateTimeAriaLabel?: string;
-    dayAriaLabel?: string;
-    monthAriaLabel?: string;
-    yearAriaLabel?: string;
-    hourAriaLabel?: string;
-    minuteAriaLabel?: string;
-    dayPeriodAriaLabel?: string;
-    hourFormat?: '12' | '24';
-    minuteStep?: number;
-    invalidDateMessage?: Localizable;
-    /**
-     * Earliest allowed date-time (ISO date-time, inclusive). Each endpoint of the
-     * value is an instant, so the bound is an instant too: a date-only bound
-     * cannot say whether its last day is allowed until 00:00 or 23:59.
-     */
-    minDateTime?: string;
-    /** Latest allowed date-time (ISO date-time, inclusive). */
-    maxDateTime?: string;
-    minDateTimeMessage?: Localizable;
-    maxDateTimeMessage?: Localizable;
-  };
+/** A field to type one time range: the start and the end times, each part by part. */
+export type RangeTimeInputProps = IncompleteMessageProps & {
+  hint?: string;
+  icon?: string;
+  separator?: string;
+  startTimeAriaLabel?: string;
+  endTimeAriaLabel?: string;
+  hourAriaLabel?: string;
+  minuteAriaLabel?: string;
+  dayPeriodAriaLabel?: string;
+  hourFormat?: '12' | '24';
+  minuteStep?: number;
+  /** First allowed time (ISO time, inclusive). */
+  minTime?: string;
+  /** Last allowed time (ISO time, inclusive). */
+  maxTime?: string;
+  minTimeMessage?: Localizable;
+  maxTimeMessage?: Localizable;
+  /** Shown when the entered "time out" is not strictly after "time in". */
+  rangeOrderMessage?: Localizable;
+};
+
+/** A field to type several time ranges, shown as pills that can be edited. */
+export type MultiRangeTimeInputProps = RangeTimeInputProps & RangeEditProps & RemovePillProps;
+
+/** A field to type one date-time range: the start and the end, each part by part. */
+export type RangeDateTimeInputProps = IncompleteMessageProps & {
+  hint?: string;
+  icon?: string;
+  separator?: string;
+  startDateTimeAriaLabel?: string;
+  endDateTimeAriaLabel?: string;
+  dayAriaLabel?: string;
+  monthAriaLabel?: string;
+  yearAriaLabel?: string;
+  hourAriaLabel?: string;
+  minuteAriaLabel?: string;
+  dayPeriodAriaLabel?: string;
+  hourFormat?: '12' | '24';
+  minuteStep?: number;
+  invalidDateMessage?: Localizable;
+  /**
+   * Earliest allowed date-time (ISO date-time, inclusive). Each endpoint of the
+   * value is an instant, so the bound is an instant too: a date-only bound
+   * cannot say whether its last day is allowed until 00:00 or 23:59.
+   */
+  minDateTime?: string;
+  /** Latest allowed date-time (ISO date-time, inclusive). */
+  maxDateTime?: string;
+  minDateTimeMessage?: Localizable;
+  maxDateTimeMessage?: Localizable;
+};
+
+/** A field to type several date-time ranges, shown as pills that can be edited. */
+export type MultiRangeDateTimeInputProps = RangeDateTimeInputProps &
+  RangeEditProps &
+  RemovePillProps;
+
+/** A date-time range field with a calendar and two time pickers that picks one range. */
+export type RangeDateTimePickerProps = RangeDateTimeCalendarProps &
+  RangeDateTimeInputProps &
+  PickerToggleProps;
 
 /**
  * The date-time range picker is the calendar (instant-space bounds, disabled
@@ -659,7 +677,8 @@ export type MultiRangeDateTimePickerProps = MultiRangeDateTimeCalendarProps &
   MultiRangeDateTimeInputProps &
   PickerToggleProps;
 
-export type MultiRangeTimePickerProps = MultiRangeTimeInputProps &
+/** A time range field with start and end time lists in a popup, that picks one range. */
+export type RangeTimePickerProps = RangeTimeInputProps &
   PickerToggleProps & {
     /** Times inside these ranges (both ends inclusive) render disabled. */
     disabledRanges?: TimeRange[];
@@ -674,6 +693,9 @@ export type MultiRangeTimePickerProps = MultiRangeTimeInputProps &
     disabledRangeMessage?: Localizable;
     noAvailableTimesMessage?: Localizable;
   };
+
+/** A time range field with start and end time lists that picks several ranges, shown as pills. */
+export type MultiRangeTimePickerProps = RangeTimePickerProps & RangeEditProps & RemovePillProps;
 
 export type NumberinputProps = {
   placeholder?: string;

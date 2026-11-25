@@ -34,6 +34,11 @@ describe('json_get_widget_spec', () => {
     ['rangeCalendar', 'multiRangeCalendar'],
     ['rangeDateInput', 'multiRangeDateInput'],
     ['rangeDatePicker', 'multiRangeDatePicker'],
+    ['rangeTimeInput', 'multiRangeTimeInput'],
+    ['rangeTimePicker', 'multiRangeTimePicker'],
+    ['rangeDateTimeCalendar', 'multiRangeDateTimeCalendar'],
+    ['rangeDateTimeInput', 'multiRangeDateTimeInput'],
+    ['rangeDateTimePicker', 'multiRangeDateTimePicker'],
   ])('notes of %s say the value is one range and point at %s', (single, multi) => {
     const singleNotes = getWidgetSpec({ widgetType: single }).notes.join('\n');
     expect(singleNotes).toContain('The value is ONE range');

@@ -403,6 +403,9 @@ const DATE_RANGE = '{ "start": "2026-02-02", "end": "2026-02-06" }';
 const DATE_TIME_RANGE = '{ "start": "2026-02-13T09:00:00", "end": "2026-02-13T11:00:00" }';
 const TIME_RANGE = '{ "start": "09:00", "end": "12:30" }';
 
+const DATE_TIME_BOUNDS_NOTE =
+  '`minDateTime`, `maxDateTime` and `disabledRanges` (`{ start, end }` ISO date-time spans) are props, not validator rules: a range outside them or over a disabled span is rejected whole with `minDateTimeMessage`, `maxDateTimeMessage` or `disabledRangeMessage`, and the value stays as it was.';
+
 const NOTES: Record<string, string[]> = {
   rangeCalendar: [
     singleRangeNote(DATE_RANGE, 'multiRangeCalendar'),
@@ -422,11 +425,35 @@ const NOTES: Record<string, string[]> = {
   multiRangeCalendar: [multiRangeNote(DATE_RANGE, 'rangeCalendar')],
   multiRangeDateInput: [multiRangeNote(DATE_RANGE, 'rangeDateInput')],
   multiRangeDatePicker: [multiRangeNote(DATE_RANGE, 'rangeDatePicker')],
-  multiRangeDateTimeCalendar: [multiRangeNote(DATE_TIME_RANGE)],
-  multiRangeDateTimeInput: [multiRangeNote(DATE_TIME_RANGE)],
-  multiRangeDateTimePicker: [multiRangeNote(DATE_TIME_RANGE)],
-  multiRangeTimeInput: [multiRangeNote(TIME_RANGE)],
-  multiRangeTimePicker: [multiRangeNote(TIME_RANGE)],
+  rangeTimeInput: [
+    singleRangeNote(TIME_RANGE, 'multiRangeTimeInput'),
+    'The user types the start and the end time. The end must be strictly after the start, so a range never runs past midnight: otherwise `rangeOrderMessage` shows and the times are not swapped. A time outside `minTime`/`maxTime` shows `minTimeMessage`/`maxTimeMessage`. Emptying both times clears the value; leaving with one time typed shows `incompleteMessage`.',
+  ],
+  rangeTimePicker: [
+    singleRangeNote(TIME_RANGE, 'multiRangeTimePicker'),
+    'A start and an end time list in a popup. Picking a start begins a new range and empties the end; picking an end sets the value and closes the popup; picking only an end changes the end of the range. The end list offers only times after the start. Times come only from the lists unless `allowCustomTime: true`.',
+    '`minTime`, `maxTime` and `disabledRanges` (`{ start, end }` ISO times) are props, not validator rules: a range outside them or over a disabled time is rejected with `minTimeMessage`, `maxTimeMessage` or `disabledRangeMessage`, and the value stays as it was.',
+  ],
+  rangeDateTimeCalendar: [
+    singleRangeNote(DATE_TIME_RANGE, 'multiRangeDateTimeCalendar'),
+    "Two time pickers above the days show the range's times. Two clicks on the days pick new days with those times: the first starts the pick and stops showing the old range, the second sets the value. Picking a time changes that time of the range. On an empty calendar both days and both times are needed, in any order. Escape drops an unfinished pick.",
+    DATE_TIME_BOUNDS_NOTE,
+  ],
+  rangeDateTimeInput: [
+    singleRangeNote(DATE_TIME_RANGE, 'multiRangeDateTimeInput'),
+    'The user types the start and the end, each a date and a time. A reversed pair is stored in order. Emptying both clears the value; leaving with one end typed shows `incompleteMessage`.',
+    DATE_TIME_BOUNDS_NOTE,
+  ],
+  rangeDateTimePicker: [
+    singleRangeNote(DATE_TIME_RANGE, 'multiRangeDateTimePicker'),
+    'Picked in the calendar as in `rangeDateTimeCalendar`, or typed as in `rangeDateTimeInput`. The popup closes when the range is complete.',
+    DATE_TIME_BOUNDS_NOTE,
+  ],
+  multiRangeDateTimeCalendar: [multiRangeNote(DATE_TIME_RANGE, 'rangeDateTimeCalendar')],
+  multiRangeDateTimeInput: [multiRangeNote(DATE_TIME_RANGE, 'rangeDateTimeInput')],
+  multiRangeDateTimePicker: [multiRangeNote(DATE_TIME_RANGE, 'rangeDateTimePicker')],
+  multiRangeTimeInput: [multiRangeNote(TIME_RANGE, 'rangeTimeInput')],
+  multiRangeTimePicker: [multiRangeNote(TIME_RANGE, 'rangeTimePicker')],
   textinput: [
     '`path` is the dot-path into form data this field writes to.',
     '`validator.format` supports: `email`, `hostname`, `ipv4`, `ipv6`, `url`, `uuid`, `date`, `time`, `date-time`, `duration`.',

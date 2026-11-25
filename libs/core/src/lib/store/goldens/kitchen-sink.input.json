@@ -137,6 +137,26 @@
               "uid": "tabRangeDatePicker"
             },
             {
+              "label": "Range Time Input Component",
+              "uid": "tabRangeTimeInput"
+            },
+            {
+              "label": "Range Time Picker Component",
+              "uid": "tabRangeTimePicker"
+            },
+            {
+              "label": "Range Date Time Calendar Component",
+              "uid": "tabRangeDateTimeCalendar"
+            },
+            {
+              "label": "Range Date Time Input Component",
+              "uid": "tabRangeDateTimeInput"
+            },
+            {
+              "label": "Range Date Time Picker Component",
+              "uid": "tabRangeDateTimePicker"
+            },
+            {
               "label": "Multi Range Calendar Component",
               "uid": "tabMultiRangeCalendar"
             },
@@ -2562,6 +2582,571 @@
                       "separator": "to",
                       "startDateAriaLabel": "Check-in",
                       "endDateAriaLabel": "Check-out"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uid": "tabRangeTimeInput",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "rangeTimeInput",
+                "path": "rangeTimeInputEmpty",
+                "label": "Empty",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeTimeInput",
+                "path": "rangeTimeInputDefault",
+                "defaultValue": {
+                  "start": "09:00:00",
+                  "end": "11:00:00"
+                },
+                "label": "With default value",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeTimeInput",
+                "path": "rangeTimeInputConstraints",
+                "label": "With min/max time",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to",
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 15
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeTimeInput",
+                "path": "rangeTimeInputDisabled",
+                "defaultValue": {
+                  "start": "09:00:00",
+                  "end": "11:00:00"
+                },
+                "disabled": true,
+                "label": "Disabled",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeTimeInput",
+                "path": "rangeTimeInputReadonly",
+                "defaultValue": {
+                  "start": "09:00:00",
+                  "end": "11:00:00"
+                },
+                "readonly": true,
+                "label": "Read only",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeTimeInput",
+                "path": "rangeTimeInputValidation",
+                "label": "Required (validation)",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to"
+                },
+                "validator": {
+                  "type": "range",
+                  "required": true,
+                  "messages": {
+                    "required": "Pick a start and an end",
+                    "invalid": "Pick a start and an end"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabRangeTimePicker",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "rangeTimePicker",
+                "path": "rangeTimePickerEmpty",
+                "label": "Empty",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to",
+                  "hourFormat": "24",
+                  "minTime": "06:00:00",
+                  "maxTime": "22:00:00",
+                  "minuteStep": 30,
+                  "allowCustomTime": true,
+                  "startTimeLabel": "Time In",
+                  "endTimeLabel": "Time Out",
+                  "disabledRanges": [
+                    {
+                      "start": "13:00:00",
+                      "end": "14:00:00"
+                    }
+                  ],
+                  "disabledRangeMessage": "Time is withing a disabled range."
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeTimePicker",
+                "path": "rangeTimePickerDefault",
+                "defaultValue": {
+                  "start": "09:00:00",
+                  "end": "12:00:00"
+                },
+                "label": "Shift schedule",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to",
+                  "hourFormat": "24",
+                  "minTime": "06:00:00",
+                  "maxTime": "22:00:00",
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeTimePicker",
+                "path": "rangeTimePickerConstraints",
+                "label": "Booking with lunch break",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to",
+                  "hourFormat": "24",
+                  "minTime": "09:00:00",
+                  "maxTime": "18:00:00",
+                  "minuteStep": 15,
+                  "allowCustomTime": true,
+                  "disabledRanges": [
+                    {
+                      "start": "13:00:00",
+                      "end": "14:00:00"
+                    }
+                  ]
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeTimePicker",
+                "path": "rangeTimePickerDisabled",
+                "defaultValue": {
+                  "start": "09:00:00",
+                  "end": "12:00:00"
+                },
+                "disabled": true,
+                "label": "Disabled",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to",
+                  "hourFormat": "24",
+                  "minTime": "06:00:00",
+                  "maxTime": "22:00:00",
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeTimePicker",
+                "path": "rangeTimePickerReadonly",
+                "defaultValue": {
+                  "start": "09:00:00",
+                  "end": "12:00:00"
+                },
+                "readonly": true,
+                "label": "Read only",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to",
+                  "hourFormat": "24",
+                  "minTime": "06:00:00",
+                  "maxTime": "22:00:00",
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeTimePicker",
+                "path": "rangeTimePickerValidation",
+                "label": "Required (validation)",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to",
+                  "hourFormat": "24",
+                  "minTime": "06:00:00",
+                  "maxTime": "22:00:00",
+                  "minuteStep": 30
+                },
+                "validator": {
+                  "type": "range",
+                  "required": true,
+                  "messages": {
+                    "required": "Pick a start and an end",
+                    "invalid": "Pick a start and an end"
+                  }
+                }
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "rangeTimePickerShiftNote",
+                    "label": "Note"
+                  },
+                  {
+                    "kind": "input",
+                    "type": "rangeTimePicker",
+                    "path": "rangeTimePickerShift",
+                    "label": "Shift",
+                    "props": {
+                      "icon": "schedule",
+                      "separator": "to",
+                      "hourFormat": "24",
+                      "minuteStep": 30
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uid": "tabRangeDateTimeCalendar",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "rangeDateTimeCalendar",
+                "path": "rangeDateTimeCalendarEmpty",
+                "label": "Empty",
+                "props": {
+                  "minuteStep": 30,
+                  "startTimeLabel": "Check-in",
+                  "endTimeLabel": "Check-out"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimeCalendar",
+                "path": "rangeDateTimeCalendarDefault",
+                "defaultValue": {
+                  "start": "2026-02-13T09:00:00",
+                  "end": "2026-02-13T11:00:00"
+                },
+                "label": "With default value",
+                "props": {
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimeCalendar",
+                "path": "rangeDateTimeCalendarDisabled",
+                "defaultValue": {
+                  "start": "2026-02-13T09:00:00",
+                  "end": "2026-02-13T11:00:00"
+                },
+                "disabled": true,
+                "label": "Disabled",
+                "props": {
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimeCalendar",
+                "path": "rangeDateTimeCalendarReadonly",
+                "defaultValue": {
+                  "start": "2026-02-13T09:00:00",
+                  "end": "2026-02-13T11:00:00"
+                },
+                "readonly": true,
+                "label": "Read only",
+                "props": {
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimeCalendar",
+                "path": "rangeDateTimeCalendarValidation",
+                "label": "Required (validation)",
+                "validator": {
+                  "type": "range",
+                  "required": true,
+                  "messages": {
+                    "required": "Pick a start and an end",
+                    "invalid": "Pick a start and an end"
+                  }
+                },
+                "props": {
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimeCalendar",
+                "path": "rangeDateTimeCalendarConstraints",
+                "label": "With min/max date-time and disabled spans",
+                "props": {
+                  "minuteStep": 30,
+                  "minDateTime": "2026-02-01T09:00:00",
+                  "maxDateTime": "2026-07-31T18:00:00",
+                  "allowCustomTime": true,
+                  "disabledRanges": [
+                    {
+                      "start": "2026-02-09T00:00:00",
+                      "end": "2026-02-10T23:59:59"
+                    },
+                    {
+                      "start": "2026-02-17T13:00:00",
+                      "end": "2026-02-17T14:00:00"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabRangeDateTimeInput",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "rangeDateTimeInput",
+                "path": "rangeDateTimeInputEmpty",
+                "label": "Empty",
+                "props": {
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimeInput",
+                "path": "rangeDateTimeInputDefault",
+                "defaultValue": {
+                  "start": "2026-11-22T09:00:00",
+                  "end": "2026-11-22T11:00:00"
+                },
+                "label": "With default value",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimeInput",
+                "path": "rangeDateTimeInputConstraints",
+                "label": "With min/max date-time",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to",
+                  "minDateTime": "2026-01-01T09:00:00",
+                  "maxDateTime": "2026-12-31T18:00:00",
+                  "minDateTimeMessage": "No slots available before Jan 1st, 2026 at 9:00.",
+                  "maxDateTimeMessage": "No slots available after Dec 31st, 2026 at 18:00.",
+                  "minuteStep": 15
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimeInput",
+                "path": "rangeDateTimeInputDisabled",
+                "defaultValue": {
+                  "start": "2026-11-22T09:00:00",
+                  "end": "2026-11-22T11:00:00"
+                },
+                "disabled": true,
+                "label": "Disabled",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimeInput",
+                "path": "rangeDateTimeInputReadonly",
+                "defaultValue": {
+                  "start": "2026-11-22T09:00:00",
+                  "end": "2026-11-22T11:00:00"
+                },
+                "readonly": true,
+                "label": "Read only",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimeInput",
+                "path": "rangeDateTimeInputValidation",
+                "label": "Required (validation)",
+                "props": {
+                  "icon": "schedule",
+                  "separator": "to"
+                },
+                "validator": {
+                  "type": "range",
+                  "required": true,
+                  "messages": {
+                    "required": "Pick a start and an end",
+                    "invalid": "Pick a start and an end"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabRangeDateTimePicker",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "rangeDateTimePicker",
+                "path": "rangeDateTimePickerEmpty",
+                "label": "Empty",
+                "props": {
+                  "minuteStep": 30,
+                  "startTimeLabel": "Check-in",
+                  "endTimeLabel": "Check-out"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimePicker",
+                "path": "rangeDateTimePickerDefault",
+                "defaultValue": {
+                  "start": "2026-02-13T09:00:00",
+                  "end": "2026-02-13T11:00:00"
+                },
+                "label": "With default value",
+                "props": {
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimePicker",
+                "path": "rangeDateTimePickerDisabled",
+                "defaultValue": {
+                  "start": "2026-02-13T09:00:00",
+                  "end": "2026-02-13T11:00:00"
+                },
+                "disabled": true,
+                "label": "Disabled",
+                "props": {
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimePicker",
+                "path": "rangeDateTimePickerReadonly",
+                "defaultValue": {
+                  "start": "2026-02-13T09:00:00",
+                  "end": "2026-02-13T11:00:00"
+                },
+                "readonly": true,
+                "label": "Read only",
+                "props": {
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimePicker",
+                "path": "rangeDateTimePickerValidation",
+                "label": "Required (validation)",
+                "validator": {
+                  "type": "range",
+                  "required": true,
+                  "messages": {
+                    "required": "Pick a start and an end",
+                    "invalid": "Pick a start and an end"
+                  }
+                },
+                "props": {
+                  "minuteStep": 30
+                }
+              },
+              {
+                "kind": "input",
+                "type": "rangeDateTimePicker",
+                "path": "rangeDateTimePickerConstraints",
+                "label": "With min/max date-time and disabled spans",
+                "props": {
+                  "minuteStep": 30,
+                  "minDateTime": "2026-02-01T09:00:00",
+                  "maxDateTime": "2026-07-31T18:00:00",
+                  "allowCustomTime": true,
+                  "disabledDayCountAriaLabel": "Disabled slots: {count}",
+                  "disabledRanges": [
+                    {
+                      "start": "2026-02-09T00:00:00",
+                      "end": "2026-02-10T23:59:59"
+                    },
+                    {
+                      "start": "2026-02-17T13:00:00",
+                      "end": "2026-02-17T14:00:00"
+                    }
+                  ]
+                }
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "rangeDateTimePickerRentalNote",
+                    "label": "Note"
+                  },
+                  {
+                    "kind": "input",
+                    "type": "rangeDateTimePicker",
+                    "path": "rangeDateTimePickerRental",
+                    "label": "Rental",
+                    "props": {
+                      "minuteStep": 30,
+                      "startTimeLabel": "Pick-up",
+                      "endTimeLabel": "Return"
                     }
                   }
                 ]

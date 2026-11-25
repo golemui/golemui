@@ -1,0 +1,88 @@
+<script setup lang="ts">
+import type { InputWidget, Validator, WithWidget } from '@golemui/core';
+import { useInputWidget } from '@golemui/vue';
+import type { TimeRange, RangeTimeInputProps } from '@golemui/gui-shared/internals';
+import { computed, onUnmounted, ref, watch } from 'vue';
+import '@golemui/gui-components/range-time-input';
+
+const props = defineProps<WithWidget>();
+const widget = props.widget as InputWidget<TimeRange>;
+const {
+  uid,
+  formName,
+  errors,
+  value,
+  isTouched,
+  templateData,
+  onValueChanged,
+  onBlur,
+  injectValidationIssues,
+} = useInputWidget<TimeRange, RangeTimeInputProps>(widget);
+
+const required = computed(() => (templateData.value.validator as Validator)?.required);
+
+const elRef = ref<HTMLElement | null>(null);
+const changeHandler = (e: Event) => {
+  injectValidationIssues(null);
+  onValueChanged((e as CustomEvent).detail.value);
+};
+const blurHandler = () => onBlur();
+const errorHandler = (e: Event) => {
+  injectValidationIssues([(e as CustomEvent).detail.message]);
+};
+
+let currentEl: HTMLElement | null = null;
+watch(elRef, (el) => {
+  if (currentEl) {
+    currentEl.removeEventListener('gui-blur', blurHandler);
+    currentEl.removeEventListener('gui-input', changeHandler);
+    currentEl.removeEventListener('gui-input-error', errorHandler);
+  }
+  currentEl = el;
+  if (el) {
+    el.addEventListener('gui-blur', blurHandler);
+    el.addEventListener('gui-input', changeHandler);
+    el.addEventListener('gui-input-error', errorHandler);
+  }
+});
+
+onUnmounted(() => {
+  currentEl?.removeEventListener('gui-blur', blurHandler);
+  currentEl?.removeEventListener('gui-input', changeHandler);
+  currentEl?.removeEventListener('gui-input-error', errorHandler);
+});
+</script>
+
+<template>
+  <div class="gui-range-time-input gui-field">
+    <gui-range-time
+      ref="elRef"
+      :uid="uid"
+      :id-prefix="formName"
+      :label="templateData.label"
+      :hint="templateData.hint"
+      :errors="errors"
+      :touched="isTouched"
+      :required="required"
+      :disabled="templateData.disabled"
+      :readOnly="templateData.readonly"
+      :value="value"
+      :icon="templateData.icon"
+      :localeId="templateData.lang"
+      :hourAriaLabel="templateData.hourAriaLabel"
+      :minuteAriaLabel="templateData.minuteAriaLabel"
+      :dayPeriodAriaLabel="templateData.dayPeriodAriaLabel"
+      :separator="templateData.separator"
+      :startTimeAriaLabel="templateData.startTimeAriaLabel"
+      :endTimeAriaLabel="templateData.endTimeAriaLabel"
+      :hourFormat="templateData.hourFormat"
+      :minuteStep="templateData.minuteStep"
+      :minTime="templateData.minTime"
+      :maxTime="templateData.maxTime"
+      :minTimeMessage="templateData.minTimeMessage"
+      :maxTimeMessage="templateData.maxTimeMessage"
+      :rangeOrderMessage="templateData.rangeOrderMessage"
+      :incompleteMessage="templateData.incompleteMessage"
+    />
+  </div>
+</template>

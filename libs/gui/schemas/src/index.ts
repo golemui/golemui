@@ -35,7 +35,12 @@ import multirangedatetimepickerSchemaJson from './lib/components/multirangedatet
 import rangecalendarSchemaJson from './lib/components/rangecalendar.schema.json';
 import rangedateinputSchemaJson from './lib/components/rangedateinput.schema.json';
 import rangedatepickerSchemaJson from './lib/components/rangedatepicker.schema.json';
+import rangedatetimeinputSchemaJson from './lib/components/rangedatetimeinput.schema.json';
+import rangedatetimecalendarSchemaJson from './lib/components/rangedatetimecalendar.schema.json';
+import rangedatetimepickerSchemaJson from './lib/components/rangedatetimepicker.schema.json';
 import rangesliderSchemaJson from './lib/components/rangeslider.schema.json';
+import rangetimeinputSchemaJson from './lib/components/rangetimeinput.schema.json';
+import rangetimepickerSchemaJson from './lib/components/rangetimepicker.schema.json';
 import multirangetimeinputSchemaJson from './lib/components/multirangetimeinput.schema.json';
 import multirangetimepickerSchemaJson from './lib/components/multirangetimepicker.schema.json';
 import ratingSchemaJson from './lib/components/rating.schema.json';
@@ -95,7 +100,12 @@ export const multirangedatetimepickerSchema: Record<string, unknown> =
 export const rangecalendarSchema: Record<string, unknown> = rangecalendarSchemaJson;
 export const rangedateinputSchema: Record<string, unknown> = rangedateinputSchemaJson;
 export const rangedatepickerSchema: Record<string, unknown> = rangedatepickerSchemaJson;
+export const rangedatetimeinputSchema: Record<string, unknown> = rangedatetimeinputSchemaJson;
+export const rangedatetimecalendarSchema: Record<string, unknown> = rangedatetimecalendarSchemaJson;
+export const rangedatetimepickerSchema: Record<string, unknown> = rangedatetimepickerSchemaJson;
 export const rangesliderSchema: Record<string, unknown> = rangesliderSchemaJson;
+export const rangetimeinputSchema: Record<string, unknown> = rangetimeinputSchemaJson;
+export const rangetimepickerSchema: Record<string, unknown> = rangetimepickerSchemaJson;
 export const multirangetimeinputSchema: Record<string, unknown> = multirangetimeinputSchemaJson;
 export const multirangetimepickerSchema: Record<string, unknown> = multirangetimepickerSchemaJson;
 export const ratingSchema: Record<string, unknown> = ratingSchemaJson;
@@ -148,7 +158,12 @@ export const COMPONENT_SCHEMAS_BY_TYPE = {
   rangeCalendar: rangecalendarSchema,
   rangeDateInput: rangedateinputSchema,
   rangeDatePicker: rangedatepickerSchema,
+  rangeDateTimeInput: rangedatetimeinputSchema,
+  rangeDateTimeCalendar: rangedatetimecalendarSchema,
+  rangeDateTimePicker: rangedatetimepickerSchema,
   rangeSlider: rangesliderSchema,
+  rangeTimeInput: rangetimeinputSchema,
+  rangeTimePicker: rangetimepickerSchema,
   multiRangeTimeInput: multirangetimeinputSchema,
   multiRangeTimePicker: multirangetimepickerSchema,
   rating: ratingSchema,
