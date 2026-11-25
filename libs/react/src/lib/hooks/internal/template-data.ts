@@ -1,4 +1,5 @@
-import { type FormWidget, type WidgetViewModel, assertNoPropCollisions } from '@golemui/core';
+import { type FormWidget, type WidgetViewModel } from '@golemui/core';
+import { assertNoPropCollisions } from '@golemui/core/internals';
 
 export type WithFlattenedProps<
   F extends FormWidget<string>,

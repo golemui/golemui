@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { type AfterViewInit, Component, input, output, type Type, viewChild } from '@angular/core';
 import { type AngularWidgetSet, provideWidgetSet, WidgetSetFormComponent } from '@golemui/angular';
-import { cloneObject, type FormEvent, type FormHealth, type FormSubmitEvent } from '@golemui/core';
+import { type FormEvent, type FormHealth, type FormSubmitEvent } from '@golemui/core';
+import { cloneObject } from '@golemui/core/internals';
 import { type GuiFormInitConfig } from '@golemui/gui-shared';
 import { initValidators } from '@golemui/gui-validators';
 import { widgetLoaders } from '../../widget.loaders';

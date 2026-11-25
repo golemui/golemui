@@ -1,5 +1,4 @@
 import {
-  cloneObject,
   type FormEvent,
   type FormHealth,
   type FormInitConfig,
@@ -8,6 +7,7 @@ import {
 } from '@golemui/core';
 import {
   buildWidgetSetForm,
+  cloneObject,
   type WidgetSetDefinition,
   type WidgetSetFormInitConfig,
 } from '@golemui/core/internals';
