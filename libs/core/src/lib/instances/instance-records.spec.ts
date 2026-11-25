@@ -3,17 +3,20 @@ import { compileForm } from '../compile/compile-form';
 import { type CompiledWidget } from '../compile/compiled-form';
 import { formDefDecoder } from '../form';
 import { buildWidgetInstances } from './build-instances';
+import { identityTranslator } from '../i18n';
 import { computeWidgetFlags } from './compute-flags';
+import { computeWidgets } from './compute-props';
 import {
+  calculatedRecordOfInstances,
   flagsRecordOfInstances,
   type InstanceRecords,
   recordsOfInstances,
 } from './instance-records';
-import { emptyWidgetInstanceTree } from './widget-instance';
+import { emptyWidgetInstanceTree, type WidgetInstanceTree } from './widget-instance';
 
 /**
- * The four records of the state that are written from the widget instances: the source of
- * every widget, for a row widget its row and the rows around it, and the flags.
+ * The records of the state that are written from the widget instances: the source of every
+ * widget, for a row widget its row and the rows around it, the flags and the computed widgets.
  *
  * Run: npx vitest run --config libs/core/vite.config.ts src/lib/instances/instance-records.spec.ts
  */
@@ -258,5 +261,131 @@ describe('the flags in the records', () => {
     const tree = treeWithFlags(compiledRoot, { contacts: [{}] });
 
     expect(flagsRecordOfInstances(tree)).toEqual({ 'phone[0]': { hidden: false } });
+  });
+});
+
+describe('the computed widgets in the records', () => {
+  const scope = { $form: {}, $meta: {}, $errors: {}, $formIsInvalid: false, $fn: {} };
+
+  /** The instances of a form with their flags, for a form whose conditions read no data. */
+  const treeWithFlags = (compiledRoot: CompiledWidget, data: Record<string, unknown>) =>
+    computeWidgetFlags(
+      buildWidgetInstances(compiledRoot, data, emptyWidgetInstanceTree()),
+      compiledRoot,
+      data,
+      scope,
+      new Set<string>(),
+    );
+
+  const computedTree = (
+    compiledRoot: CompiledWidget,
+    data: Record<string, unknown>,
+  ): WidgetInstanceTree =>
+    computeWidgets(treeWithFlags(compiledRoot, data), compiledRoot, scope, {
+      data,
+      activeStates: new Set<string>(),
+      translator: identityTranslator('en-US'),
+      overrides: {},
+      expressionPolicy: 'warn',
+      onlyComputedWidgets: false,
+    });
+
+  const cardForm = () =>
+    compile([
+      { uid: 'title', kind: 'display', type: 'heading' },
+      {
+        uid: 'card',
+        kind: 'layout',
+        type: 'flex',
+        include: { when: 'false' },
+        children: [textInput('note', 'note')],
+      },
+      repeater('users', 'users', 'row', [textInput('name', 'users.items.name')]),
+    ]);
+
+  it('lists the computed widget of every instance that has one, in the order of the document', () => {
+    const tree = computedTree(cardForm(), { users: [{}, {}] });
+
+    const calculatedWidgets = calculatedRecordOfInstances(tree);
+
+    expect(Object.keys(calculatedWidgets)).toEqual([
+      '#0',
+      'title',
+      'users',
+      'row[0]',
+      'name[0]',
+      'row[1]',
+      'name[1]',
+    ]);
+    expect(calculatedWidgets['title']).toBe(tree.root?.children[0].calculated);
+    expect(calculatedWidgets['name[1]']).toBe(
+      tree.root?.children[2].rows[1].children[0].calculated,
+    );
+    expect(calculatedWidgets['name[1]'].current).toMatchObject({ path: 'users.1.name' });
+  });
+
+  it('has no key for a hidden widget and for a widget below it', () => {
+    const calculatedWidgets = calculatedRecordOfInstances(computedTree(cardForm(), {}));
+
+    expect(calculatedWidgets).not.toHaveProperty('card');
+    expect(calculatedWidgets).not.toHaveProperty('note');
+  });
+
+  it('gives an empty record for instances that are not computed, and for no instances', () => {
+    expect(calculatedRecordOfInstances(treeWithFlags(cardForm(), { users: [{}] }))).toEqual({});
+    expect(calculatedRecordOfInstances(emptyWidgetInstanceTree())).toEqual({});
+  });
+
+  it('writes a new record on each call', () => {
+    const tree = computedTree(cardForm(), {});
+
+    expect(calculatedRecordOfInstances(tree)).not.toBe(calculatedRecordOfInstances(tree));
+    expect(calculatedRecordOfInstances(tree)).toEqual(calculatedRecordOfInstances(tree));
+  });
+
+  it('gives a uid that two widgets have the computed widget of the last widget', () => {
+    const compiledRoot = compile([
+      repeater('contacts', 'contacts', 'row', [
+        { ...textInput('phone', 'contacts.items.home'), include: { when: 'false' } },
+        textInput('phone', 'contacts.items.mobile'),
+      ]),
+    ]);
+
+    const calculatedWidgets = calculatedRecordOfInstances(
+      computedTree(compiledRoot, { contacts: [{}] }),
+    );
+
+    expect(calculatedWidgets['phone[0]'].current).toMatchObject({ path: 'contacts.0.mobile' });
+  });
+
+  it('gives a uid that two visible widgets have the computed widget of the last widget', () => {
+    const compiledRoot = compile([
+      repeater('contacts', 'contacts', 'row', [
+        textInput('phone', 'contacts.items.home'),
+        textInput('phone', 'contacts.items.mobile'),
+      ]),
+    ]);
+
+    const calculatedWidgets = calculatedRecordOfInstances(
+      computedTree(compiledRoot, { contacts: [{}] }),
+    );
+
+    expect(calculatedWidgets['phone[0]'].current).toMatchObject({ path: 'contacts.0.mobile' });
+  });
+
+  it('has no key for a uid that two widgets have when the last widget is hidden', () => {
+    const compiledRoot = compile([
+      repeater('contacts', 'contacts', 'row', [
+        textInput('phone', 'contacts.items.home'),
+        { ...textInput('phone', 'contacts.items.mobile'), include: { when: 'false' } },
+      ]),
+    ]);
+
+    const calculatedWidgets = calculatedRecordOfInstances(
+      computedTree(compiledRoot, { contacts: [{}] }),
+    );
+
+    expect(calculatedWidgets).not.toHaveProperty('phone[0]');
+    expect(Object.keys(calculatedWidgets)).toEqual(['#0', 'contacts', 'row[0]']);
   });
 });
