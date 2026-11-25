@@ -18,6 +18,7 @@ import type {
   DatePickerProps,
   DateTimeCalendarProps,
   DateTimePickerProps,
+  CompleteDateRange,
   DateRange,
   DateinputProps,
   DropdownProps,
@@ -37,6 +38,14 @@ import type {
   RadiogroupProps,
   RatingProps,
   CheckboxGroupProps,
+  RangeCalendarProps,
+  RangeDateInputProps,
+  RangeDatePickerProps,
+  RangeDateTimeCalendarProps,
+  RangeDateTimeInputProps,
+  RangeDateTimePickerProps,
+  RangeTimeInputProps,
+  RangeTimePickerProps,
   MultiRangeCalendarProps,
   MultiRangeDateInputProps,
   MultiRangeDatePickerProps,
@@ -239,7 +248,15 @@ type GolemWidget<
   | GuiMultiRangeDateTimeInput<FormType, States, V>
   | GuiMultiRangeDateTimeCalendar<FormType, States, V>
   | GuiMultiRangeDateTimePicker<FormType, States, V>
+  | GuiRangeCalendar<FormType, States, V>
+  | GuiRangeDateInput<FormType, States, V>
+  | GuiRangeDatePicker<FormType, States, V>
+  | GuiRangeDateTimeInput<FormType, States, V>
+  | GuiRangeDateTimeCalendar<FormType, States, V>
+  | GuiRangeDateTimePicker<FormType, States, V>
   | GuiRangeSlider<FormType, States, V>
+  | GuiRangeTimeInput<FormType, States, V>
+  | GuiRangeTimePicker<FormType, States, V>
   | GuiMultiRangeTimeInput<FormType, States, V>
   | GuiMultiRangeTimePicker<FormType, States, V>
   | GuiRepeater<FormType, States, V, CustomWidget>
@@ -454,11 +471,77 @@ type GuiRangeSlider<FormType extends Record<string, any>, States extends string,
   V
 > & { type: 'rangeSlider' };
 
+type GuiRangeCalendar<FormType extends Record<string, any>, States extends string, V> = InputWidget<
+  CompleteDateRange,
+  States,
+  FormType,
+  RangeCalendarProps,
+  V
+> & {
+  type: 'rangeCalendar';
+};
+
+type GuiRangeDateInput<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+> = InputWidget<CompleteDateRange, States, FormType, RangeDateInputProps, V> & {
+  type: 'rangeDateInput';
+};
+
+type GuiRangeDatePicker<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+> = InputWidget<CompleteDateRange, States, FormType, RangeDatePickerProps, V> & {
+  type: 'rangeDatePicker';
+};
+
+type GuiRangeDateTimeInput<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+> = InputWidget<DateTimeRange, States, FormType, RangeDateTimeInputProps, V> & {
+  type: 'rangeDateTimeInput';
+};
+
+type GuiRangeDateTimeCalendar<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+> = InputWidget<DateTimeRange, States, FormType, RangeDateTimeCalendarProps, V> & {
+  type: 'rangeDateTimeCalendar';
+};
+
+type GuiRangeDateTimePicker<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+> = InputWidget<DateTimeRange, States, FormType, RangeDateTimePickerProps, V> & {
+  type: 'rangeDateTimePicker';
+};
+
+type GuiRangeTimeInput<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+> = InputWidget<TimeRange, States, FormType, RangeTimeInputProps, V> & {
+  type: 'rangeTimeInput';
+};
+
+type GuiRangeTimePicker<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+> = InputWidget<TimeRange, States, FormType, RangeTimePickerProps, V> & {
+  type: 'rangeTimePicker';
+};
+
 type GuiMultiRangeCalendar<
   FormType extends Record<string, any>,
   States extends string,
   V,
-> = InputWidget<string, States, FormType, MultiRangeCalendarProps, V> & {
+> = InputWidget<DateRange[], States, FormType, MultiRangeCalendarProps, V> & {
   type: 'multiRangeCalendar';
 };
 

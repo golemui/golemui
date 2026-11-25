@@ -429,7 +429,13 @@ describe('native form association of pickers and range fields', () => {
     { tag: 'gui-date-picker', first: 'month' },
     { tag: 'gui-time-picker', first: 'hour' },
     { tag: 'gui-date-time-picker', first: 'month' },
+    { tag: 'gui-range-date', first: 'month' },
+    { tag: 'gui-range-date-picker', first: 'month' },
     { tag: 'gui-multi-range-date', first: 'month' },
+    { tag: 'gui-range-time', first: 'hour' },
+    { tag: 'gui-range-date-time', first: 'month' },
+    { tag: 'gui-range-date-time-picker', first: 'month' },
+    { tag: 'gui-range-time-picker', first: 'hour' },
     { tag: 'gui-multi-range-time', first: 'hour' },
     { tag: 'gui-multi-range-date-time', first: 'month' },
     { tag: 'gui-multi-range-date-picker', first: 'month' },
@@ -503,6 +509,13 @@ describe('native form validity of date and time bounds', () => {
       flag: 'rangeOverflow',
     },
     {
+      tag: 'gui-range-date-picker',
+      bounds: { minDate: '2024-01-01' },
+      outside: { start: '2023-12-30', end: '2024-01-02' },
+      inside: { start: '2024-01-02', end: '2024-01-05' },
+      flag: 'rangeUnderflow',
+    },
+    {
       tag: 'gui-time-picker',
       bounds: { minTime: '09:00:00' },
       outside: '08:00:00',
@@ -539,7 +552,7 @@ describe('native form validity of date and time bounds', () => {
       control(tag).should(([el]) => expect(el.validity?.[flag]).to.equal(true));
 
       control(tag).then(([el]) => {
-        (el as unknown as { value: string }).value = inside;
+        (el as unknown as { value: unknown }).value = inside;
       });
       form().should(([element]) => expect(element.checkValidity()).to.equal(true));
     });

@@ -1,0 +1,5 @@
+@use 'range-days' as *;
+
+gui-range-calendar {
+  @include gui-range-calendar;
+}

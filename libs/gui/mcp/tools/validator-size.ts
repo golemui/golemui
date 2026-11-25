@@ -24,7 +24,7 @@ export const BUDGETS = {
    * `@golemui/gui-mcp/json` (the generators, `get-widget-spec` with the JSON schemas,
    * `get-concept`) is reported but has no budget here.
    */
-  syncValidatorMinifiedBytes: 2.6 * 1024 * 1024,
+  syncValidatorMinifiedBytes: 3.1 * 1024 * 1024,
 };
 
 /** A typical form: text input, number, select, checkbox, date picker and button. */

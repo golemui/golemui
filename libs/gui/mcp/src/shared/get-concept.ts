@@ -828,7 +828,7 @@ const ICONS_CONCEPT: GetConceptResult = {
       name: 'Widget icon props',
       description:
         'The following widgets accept `props.icon` (a Material Icons ligature name string): ' +
-        '`button`, `textinput`, `password`, `select`, `currency`, `tags`, `dateInput`, `datePicker`, `multiRangeCalendar`, `multiRangeDateInput`, `multiRangeDatePicker`. ' +
+        '`button`, `textinput`, `password`, `select`, `currency`, `tags`, `dateInput`, `datePicker`, `rangeDateInput`, `rangeDatePicker`, `multiRangeCalendar`, `multiRangeDateInput`, `multiRangeDatePicker`. ' +
         'The `button` widget additionally accepts `props.iconPosition` to control where the icon appears relative to the label. ' +
         'All other icon-capable widgets render the icon at a default position determined by the component.',
       example: {
@@ -904,7 +904,7 @@ const ICONS_CONCEPT: GetConceptResult = {
   rules: [
     'Icon values are Google Material Icons ligature names — lowercase strings, words separated by underscores: `"search"`, `"arrow_forward"`, `"check_circle"`. Wrong casing or spaces will not render correctly.',
     'The Material Icons font MUST be loaded in the host page\'s `<head>`. Without it, `props.icon` renders as the raw string (e.g. the word "search") rather than an icon glyph.',
-    'Widgets that support `props.icon`: `button`, `textinput`, `password`, `select`, `currency`, `tags`, `dateInput`, `datePicker`, `multiRangeCalendar`, `multiRangeDateInput`, `multiRangeDatePicker`.',
+    'Widgets that support `props.icon`: `button`, `textinput`, `password`, `select`, `currency`, `tags`, `dateInput`, `datePicker`, `rangeDateInput`, `rangeDatePicker`, `multiRangeCalendar`, `multiRangeDateInput`, `multiRangeDatePicker`.',
     '`button` is the only widget with `props.iconPosition`. Allowed values: `"left"` (default) and `"right"`.',
     'All icon props support state suffixes: `"icon.<stateName>": "check"` swaps the icon when that state is active. Call `get_concept({ concept: "states" })` for the full state-suffix pattern.',
     'Do not set `props.icon` on widgets that do not support it — the schema will reject it and `json_validate_form_definition` will report an error.',

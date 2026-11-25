@@ -31,6 +31,12 @@ export default defineConfig(() => ({
     include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     setupFiles: ['src/test-setup.ts'],
     reporters: ['default'],
+    // Vite, not Node's module linker, loads Lit. The loader spec imports every widget at once,
+    // and Node fails to link Lit for an element that imports only \`lit/decorators.js\` (tab,
+    // multi-list, range-calendar) while another element is linking \`lit\`.
+    server: {
+      deps: { inline: [/[\\/]node_modules[\\/](lit|lit-html|lit-element|@lit|@lit-labs)[\\/]/] },
+    },
     coverage: {
       reportsDirectory: '../../coverage/libs/gui/angular',
       provider: 'v8' as const,

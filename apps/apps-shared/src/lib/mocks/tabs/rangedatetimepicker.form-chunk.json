@@ -1,0 +1,126 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabRangeDateTimePicker",
+  "kind": "layout",
+  "type": "grid",
+  "children": [
+    {
+      "kind": "input",
+      "type": "rangeDateTimePicker",
+      "path": "rangeDateTimePickerEmpty",
+      "label": "Empty",
+      "props": {
+        "minuteStep": 30,
+        "startTimeLabel": "Check-in",
+        "endTimeLabel": "Check-out"
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeDateTimePicker",
+      "path": "rangeDateTimePickerDefault",
+      "defaultValue": {
+        "start": "2026-02-13T09:00:00",
+        "end": "2026-02-13T11:00:00"
+      },
+      "label": "With default value",
+      "props": {
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeDateTimePicker",
+      "path": "rangeDateTimePickerDisabled",
+      "defaultValue": {
+        "start": "2026-02-13T09:00:00",
+        "end": "2026-02-13T11:00:00"
+      },
+      "disabled": true,
+      "label": "Disabled",
+      "props": {
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeDateTimePicker",
+      "path": "rangeDateTimePickerReadonly",
+      "defaultValue": {
+        "start": "2026-02-13T09:00:00",
+        "end": "2026-02-13T11:00:00"
+      },
+      "readonly": true,
+      "label": "Read only",
+      "props": {
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeDateTimePicker",
+      "path": "rangeDateTimePickerValidation",
+      "label": "Required (validation)",
+      "validator": {
+        "type": "range",
+        "required": true,
+        "messages": {
+          "required": "Pick a start and an end",
+          "invalid": "Pick a start and an end"
+        }
+      },
+      "props": {
+        "minuteStep": 30
+      }
+    },
+    {
+      "kind": "input",
+      "type": "rangeDateTimePicker",
+      "path": "rangeDateTimePickerConstraints",
+      "label": "With min/max date-time and disabled spans",
+      "props": {
+        "minuteStep": 30,
+        "minDateTime": "2026-02-01T09:00:00",
+        "maxDateTime": "2026-07-31T18:00:00",
+        "allowCustomTime": true,
+        "disabledDayCountAriaLabel": "Disabled slots: {count}",
+        "disabledRanges": [
+          {
+            "start": "2026-02-09T00:00:00",
+            "end": "2026-02-10T23:59:59"
+          },
+          {
+            "start": "2026-02-17T13:00:00",
+            "end": "2026-02-17T14:00:00"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "layout",
+      "type": "grid",
+      "props": {
+        "direction": "row"
+      },
+      "children": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "rangeDateTimePickerRentalNote",
+          "label": "Note"
+        },
+        {
+          "kind": "input",
+          "type": "rangeDateTimePicker",
+          "path": "rangeDateTimePickerRental",
+          "label": "Rental",
+          "props": {
+            "minuteStep": 30,
+            "startTimeLabel": "Pick-up",
+            "endTimeLabel": "Return"
+          }
+        }
+      ]
+    }
+  ]
+}
