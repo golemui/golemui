@@ -1,38 +1,23 @@
-import {
-  type ActionWidget,
-  type FormWidget,
-  type InputWidget,
-  isActionWidget,
-  isDisplayWidget,
-  isInputWidget,
-  isLayoutWidget,
-  type LayoutWidget,
-} from '../../form-widget';
-import {
-  type I18nParams,
-  type I18nTranslator,
-  isTranslationConfig,
-  type TranslationConfig,
-} from '../../i18n';
-import { type $Errors, type ExpressionFunctions } from '../../shared';
-import { type ExpressionPolicy, isI18nParamExpression } from '../../utils/check-expression';
+import { errorCodes } from '../../errors';
+import { type I18nTranslator } from '../../i18n';
+import { computeWidgets } from '../../instances/compute-props';
+import { calculatedRecordOfInstances } from '../../instances/instance-records';
+import { type ExpressionFunctions } from '../../shared';
+import { type ExpressionPolicy } from '../../utils/check-expression';
 import { Debug } from '../../utils/debug';
 import { calculateValidationVariables, type ValidationVariables } from '../../utils/form';
-import { compileExpression, ExpressionRejectedError } from '../../utils/justin';
-import { get, isPlainObject, set, setOwnKey } from '../../utils/object';
-import { extractRepeaterIndexes, isRepeaterWidget } from '../../utils/repeater';
-import { type DerivedWidget, type State } from '../model';
-import { deepEqual, hasWhen } from './utils';
-import { errorCodes, errorMessage } from '../../errors';
-
-// -----------------------------------------------------------------------------
-// Entry point
-// -----------------------------------------------------------------------------
+import { type State } from '../model';
 
 /**
- * Resolves the props of every visible entry in `calculatedWidgets`.
+ * Computes every visible widget of a form, and writes the result to the instances and to
+ * `calculatedWidgets`. A failure gives the same state with an errored form health.
  *
- * @param validationVariables - Pass them when already computed for this pass, otherwise they are computed here.
+ * @param localization - The translator of the host.
+ * @param functions - The functions of the host, which an expression calls as `$fn.<name>(...)`.
+ * @param expressionPolicy - Which issues of the expression check make an expression fail. It is
+ *   used only for a translation config that a translator returns inside its result.
+ * @returns A function from a state and the validation variables of the derive to the state with
+ *   the computed widgets.
  */
 export const calculateWidgetProps =
   (
@@ -40,605 +25,90 @@ export const calculateWidgetProps =
     functions: ExpressionFunctions,
     expressionPolicy: ExpressionPolicy = 'warn',
   ) =>
-  (state: State, validationVariables?: ValidationVariables): State => {
-    try {
-      const variables = validationVariables ?? calculateValidationVariables(state);
-      return {
-        ...state,
-        calculatedWidgets: calculateAll(
-          state,
-          localization,
-          functions,
-          expressionPolicy,
-          variables,
-        ),
-      };
-    } catch (err) {
-      const error = err as Error & { code?: number };
-      const code = error.code ?? errorCodes.calculateWidgetPropsError;
-      return {
-        ...state,
-        formHealth: {
-          status: 'errored',
-          message: `[${code}] ${error.message}`,
-          code,
-        },
-      };
-    }
-  };
-
-// -----------------------------------------------------------------------------
-// Orchestrator
-// -----------------------------------------------------------------------------
-
-function calculateAll(
-  state: State,
-  localization: I18nTranslator,
-  functions: ExpressionFunctions,
-  expressionPolicy: ExpressionPolicy,
-  { $formIsInvalid, $errors }: ValidationVariables,
-): State['calculatedWidgets'] {
-  const ctx = makeResolverCtx(
-    state,
-    localization,
-    $formIsInvalid,
-    $errors,
-    functions,
-    expressionPolicy,
-  );
-  const result: State['calculatedWidgets'] = {};
-
-  for (const uid of Object.keys(state.calculatedWidgets)) {
-    if (state.widgetFlags[uid]?.hidden) {
-      continue;
-    }
-
-    const prev = state.calculatedWidgets[uid];
-    const itemScope = state.repeaterItemScopes[uid];
-
-    // Widgets inside a repeater item see that item through $item / $index
-    const widgetCtx = itemScope
-      ? { ...ctx, $item: get(ctx.$form, itemScope.itemPath), $index: itemScope.index }
-      : ctx;
-
-    result[uid] = computeWidget(prev, state, widgetCtx);
-  }
-
-  return result;
-}
-
-// -----------------------------------------------------------------------------
-// Compute by kind
-// -----------------------------------------------------------------------------
-
-function computeWidget(
-  prev: DerivedWidget<FormWidget<string>>,
-  state: State,
-  ctx: ResolverCtx,
-): DerivedWidget<FormWidget<string>> {
-  const source = prev.source;
-  const tracker = new ChangeTracker(source, prev.current);
-
-  // Identity fields never come from expressions/overrides/suffixes, copy directly.
-  tracker.write('uid', source.uid);
-  tracker.write('type', source.type);
-  tracker.write('kind', source.kind);
-
-  if (isDisplayWidget(source)) {
-    computeDisplayFields(tracker, ctx);
-  } else if (isActionWidget(source)) {
-    computeActionFields(tracker, ctx);
-  } else if (isInputWidget(source)) {
-    computeInputFields(tracker, ctx);
-  } else if (isLayoutWidget(source)) {
-    computeLayoutFields(tracker, ctx);
-  }
-
-  computePropsFields(source, tracker, ctx, state);
-
-  // TODO: `on` is NOT computed for LayoutWidget. Should we implement it?
-  if (isActionWidget(source) || isInputWidget(source)) {
-    computeOnFields(source, tracker, ctx);
-  }
-
-  if (isLayoutWidget(source)) {
-    computeChildren(source, tracker, state);
-  }
-
-  return tracker.changed ? { source: prev.source, current: tracker.current } : prev;
-}
-
-// -----------------------------------------------------------------------------
-// Core field computations by kind.
-// Each kind lists exactly the fields it can have.
-// -----------------------------------------------------------------------------
-
-function computeDisplayFields(t: ChangeTracker, ctx: ResolverCtx): void {
-  applyCoreField(t, ctx, 'size');
-  applyCoreField(t, ctx, 'include');
-  applyCoreField(t, ctx, 'exclude');
-}
-
-function computeActionFields(t: ChangeTracker, ctx: ResolverCtx): void {
-  applyCoreField(t, ctx, 'size');
-  applyCoreField(t, ctx, 'include');
-  applyCoreField(t, ctx, 'exclude');
-  applyCoreField(t, ctx, 'label');
-  applyCoreField(t, ctx, 'disabled');
-  applyCoreField(t, ctx, 'actionType');
-}
-
-function computeInputFields(t: ChangeTracker, ctx: ResolverCtx): void {
-  applyCoreField(t, ctx, 'size');
-  applyCoreField(t, ctx, 'include');
-  applyCoreField(t, ctx, 'exclude');
-  applyCoreField(t, ctx, 'label');
-  applyCoreField(t, ctx, 'disabled');
-  applyCoreField(t, ctx, 'readonly');
-  applyCoreField(t, ctx, 'validator');
-  applyCoreField(t, ctx, 'path');
-  applyCoreField(t, ctx, 'defaultValue');
-}
-
-function computeLayoutFields(t: ChangeTracker, ctx: ResolverCtx): void {
-  applyCoreField(t, ctx, 'size');
-  applyCoreField(t, ctx, 'include');
-  applyCoreField(t, ctx, 'exclude');
-}
-
-// -----------------------------------------------------------------------------
-// Category helpers: props, on, children
-// -----------------------------------------------------------------------------
-
-function computePropsFields(
-  source: FormWidget<string>,
-  tracker: ChangeTracker,
-  ctx: ResolverCtx,
-  state: State,
-): void {
-  const overrides = state.widgetPropOverrides[source.uid] ?? {};
-  const merged = { ...(source.props ?? {}), ...overrides };
-  for (const prop of unsuffixedUniqueKeys(Object.keys(merged))) {
-    applyPropsField(tracker, ctx, prop);
-  }
-  // No write sees a prop that only a removed override had set, so the old widget would stay.
-  if (!tracker.changed && hasRemovedKey(tracker.previous.props, tracker.current.props)) {
-    tracker.markChanged();
-  }
-}
-
-// This runs for every widget on every derive, so it allocates nothing.
-function hasRemovedKey(previous: object | undefined, current: object | undefined): boolean {
-  for (const key in previous) {
-    if (current === undefined || !Object.prototype.hasOwnProperty.call(current, key)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function computeOnFields(
-  source: ActionWidget<string> | InputWidget<any, string>,
-  tracker: ChangeTracker,
-  ctx: ResolverCtx,
-): void {
-  const on = source.on ?? {};
-  for (const prop of unsuffixedUniqueKeys(Object.keys(on))) {
-    applyOnField(tracker, ctx, prop);
-  }
-}
-
-function computeChildren(source: LayoutWidget<string>, tracker: ChangeTracker, state: State): void {
-  const repeaterIndexes = extractRepeaterIndexes(source.uid);
-  const visible = resolveVisibleChildren(source.children, repeaterIndexes, state.widgetFlags);
-
-  (tracker.current as LayoutWidget<string>).children = visible;
-
-  const prevChildren = (tracker.previous as LayoutWidget<string>).children ?? [];
-  const structurallyEqual =
-    prevChildren.length === visible.length &&
-    visible.every((_, i) => prevChildren[i] && prevChildren[i].uid === visible[i].uid);
-
-  if (!structurallyEqual) {
-    tracker.markChanged();
-  }
-}
-
-// -----------------------------------------------------------------------------
-// Apply wrappers - pick raw value, pass to the right value-type resolver,
-// write into `current` with change tracking.
-// -----------------------------------------------------------------------------
-
-type CoreField =
-  | 'size'
-  | 'include'
-  | 'exclude'
-  | 'label'
-  | 'disabled'
-  | 'readonly'
-  | 'validator'
-  | 'path'
-  | 'defaultValue'
-  | 'actionType';
-
-function applyCoreField(t: ChangeTracker, ctx: ResolverCtx, field: CoreField): void {
-  const source = t.source as Record<string, unknown>;
-  if (!sourceHasField(source, field)) {
-    return;
-  }
-
-  const raw = pickSuffixedValue(source, field, ctx.sortedStates);
-  let resolved: unknown;
-
-  switch (field) {
-    case 'disabled':
-    case 'readonly':
-      resolved = resolveBoolOrWhen(raw, ctx, t.source.uid, field);
-      break;
-    case 'defaultValue':
-      resolved = raw;
-      break;
-    default:
-      resolved = resolveValue(raw, ctx);
-  }
-
-  t.write(field, resolved);
-}
-
-function applyPropsField(t: ChangeTracker, ctx: ResolverCtx, subProp: string): void {
-  const sourceProps = (t.source as { props?: Record<string, unknown> }).props;
-  const raw = pickSuffixedValue(sourceProps, subProp, ctx.sortedStates);
-  let resolved = resolveValue(raw, ctx);
-  // Row widgets are their own `calculatedWidgets` entries and resolve the template configs with
-  // the row scope, so the template is not walked here, where `$item` is not bound.
-  if (!(isRepeaterWidget(t.source) && subProp === 'template')) {
-    resolved = resolveNestedTranslations(resolved, ctx);
-  }
-
-  // widgetPropOverrides takes precedence over everything - applied AFTER i18n translation and
-  // template substitution.
-  const override = ctx.widgetPropOverrides[t.source.uid]?.[subProp];
-  if (override !== undefined) {
-    resolved = override;
-  }
-
-  t.write(`props.${subProp}`, resolved);
-}
-
-// An event name is never a template, so the picked value is written as it is.
-function applyOnField(t: ChangeTracker, ctx: ResolverCtx, subProp: string): void {
-  const sourceOn = (t.source as { on?: Record<string, unknown> }).on;
-  t.write(`on.${subProp}`, pickSuffixedValue(sourceOn, subProp, ctx.sortedStates));
-}
-
-// -----------------------------------------------------------------------------
-// Value-type resolvers - pure: (value, ctx) -> value.
-// -----------------------------------------------------------------------------
-
-function resolveTranslationConfig(tc: TranslationConfig, ctx: ResolverCtx): string {
-  return ctx.localization.translate(tc.key, resolveI18nParams(tc.params, ctx), tc.default);
-}
-
-const STRING_INTERPOLATION_REGEX = /\{\{([^}]+)\}\}/g;
-
-function resolveString(input: string, ctx: ResolverCtx): string {
-  if (!input.includes('{{')) {
-    return input;
-  }
-
-  return input.replace(STRING_INTERPOLATION_REGEX, (_match, rawExpr: string) => {
-    try {
-      const evaluate = compileExpression(rawExpr.trim(), ctx.expressionPolicy);
-      const result = evaluate({
-        $form: ctx.$form,
-        $meta: ctx.$meta,
-        $errors: ctx.$errors,
-        $formIsInvalid: ctx.$formIsInvalid,
-        $log: Debug.log,
-        $item: ctx.$item,
-        $index: ctx.$index,
-        $fn: ctx.$fn,
-      });
-      return result == null ? '' : String(result);
-    } catch (err) {
-      // Keeps its own code, so the form health tells a rejected expression from a runtime error.
-      if (err instanceof ExpressionRejectedError) {
-        throw err;
-      }
-      throw new StringInterpolationError(
-        `Failed to evaluate '{{${rawExpr.trim()}}}': ${errorMessage(err)}`,
-      );
-    }
-  });
-}
-
-/** TranslationConfig | string-template | passthrough. */
-function resolveValue(value: unknown, ctx: ResolverCtx): unknown {
-  if (isTranslationConfig(value)) {
-    return resolveTranslationConfig(value, ctx);
-  }
-  if (typeof value === 'string') {
-    return resolveString(value, ctx);
-  }
-  return value;
-}
-
-/**
- * Objects and arrays already walked that hold no translation config. Source props keep their
- * references between passes, so each one is walked once, not on every state change.
- * Assumes the form definition is not mutated after INITIALIZE. Change detection relies on the
- * same assumption: `ChangeTracker.write` treats an unchanged reference as equal.
- */
-const holdsNoTranslation = new WeakSet<object>();
-
-/** A plain object or an array: the values a prop nests translation configs in. */
-function isWalkable(value: unknown): value is Record<string, unknown> | unknown[] {
-  return Array.isArray(value) || isPlainObject(value);
-}
-
-/**
- * A translation config nested in a prop, such as an accordion section's label. Stricter than
- * `isTranslationConfig`: nested objects are often data, so an object only counts when `key`,
- * `params` and `default` are all it has. `{ key: 'a', label: 'A' }` stays an object.
- * `default` must be a string and `params` a plain object when present, as the JSON schema says.
- */
-function isNestedTranslationConfig(value: Record<string, unknown>): value is TranslationConfig {
-  if (typeof value['key'] !== 'string') {
-    return false;
-  }
-  if (value['default'] !== undefined && typeof value['default'] !== 'string') {
-    return false;
-  }
-  const params = value['params'];
-  if (params !== undefined && (!isWalkable(params) || Array.isArray(params))) {
-    return false;
-  }
-  return Object.keys(value).every((k) => k === 'key' || k === 'params' || k === 'default');
-}
-
-/**
- * Translates the translation configs nested in a prop's arrays and plain objects, at any depth.
- * Only translation configs: nested strings are not interpolated. Copy on write: a value holding
- * no translation config comes back as the same reference.
- */
-function resolveNestedTranslations(value: unknown, ctx: ResolverCtx): unknown {
-  if (!isWalkable(value) || holdsNoTranslation.has(value)) {
-    return value;
-  }
-
-  let copy: Record<string, unknown> | unknown[] | undefined;
-  const entries: [string | number, unknown][] = Array.isArray(value)
-    ? value.map((item, index) => [index, item])
-    : Object.entries(value);
-
-  for (const [key, item] of entries) {
-    let next = item;
-    if (isWalkable(item)) {
-      next =
-        !Array.isArray(item) && isNestedTranslationConfig(item)
-          ? resolveTranslationConfig(item, ctx)
-          : resolveNestedTranslations(item, ctx);
-    }
-    if (next !== item) {
-      copy ??= Array.isArray(value) ? [...value] : { ...value };
-      (copy as Record<string | number, unknown>)[key] = next;
-    }
-  }
-
-  if (copy === undefined) {
-    holdsNoTranslation.add(value);
-    return value;
-  }
-  return copy;
-}
-
-/** For `disabled` / `readonly` - {when}->widgetFlags | string | passthrough. */
-function resolveBoolOrWhen(
-  value: unknown,
-  ctx: ResolverCtx,
-  uid: string,
-  field: 'disabled' | 'readonly',
-): unknown {
-  if (hasWhen(value)) {
-    return ctx.widgetFlags[uid]?.[field];
-  }
-  if (typeof value === 'string') {
-    return resolveString(value, ctx);
-  }
-  return value;
-}
-
-// -----------------------------------------------------------------------------
-// Suffix picking + i18n params
-// -----------------------------------------------------------------------------
-
-/**
- * Picks the longest matching state suffix for `baseKey` on `fieldSource`; falls back
- * to the base key when no state matches. `sortedStates` is expected to be
- * pre-sorted longest-first (see `makeResolverCtx`).
- */
-function pickSuffixedValue<V = unknown>(
-  fieldSource: Record<string, unknown> | undefined,
-  baseKey: string,
-  sortedStates: string[],
-): V | undefined {
-  if (!fieldSource) {
-    return undefined;
-  }
-  for (const s of sortedStates) {
-    const suffixed = fieldSource[`${baseKey}.${s}`];
-    if (suffixed !== undefined) {
-      return suffixed as V;
-    }
-  }
-  return fieldSource[baseKey] as V | undefined;
-}
-
-/**
- * Resolves i18n interpolation parameters to concrete values.
- *
- * A string that starts with $form, $meta, $errors, $item, $index, $fn or `$log(` is an
- * expression and gives its result, also `null` or `undefined`. Every other value is passed as it
- * is, so a number param stays a number for plural rules.
- */
-function resolveI18nParams(
-  params: I18nParams | undefined,
-  ctx: ResolverCtx,
-): I18nParams | undefined {
-  if (!params) {
-    return params;
-  }
-  // No prototype, so a translator that reads a name that is not a param gets `undefined`.
-  const resolved: Record<string, unknown> = Object.create(null);
-  for (const key of Object.keys(params)) {
-    const param: unknown = params[key];
-    if (typeof param === 'string' && isI18nParamExpression(param)) {
-      setOwnKey(resolved, key, evaluateI18nParam(param, ctx));
-    } else {
-      setOwnKey(resolved, key, param);
-    }
-  }
-  return resolved as I18nParams;
-}
-
-function evaluateI18nParam(param: string, ctx: ResolverCtx): unknown {
-  try {
-    const evaluate = compileExpression(param, ctx.expressionPolicy);
-    return evaluate({
-      $form: ctx.$form,
-      $meta: ctx.$meta,
-      $errors: ctx.$errors,
-      $formIsInvalid: ctx.$formIsInvalid,
-      $log: Debug.log,
-      $item: ctx.$item,
-      $index: ctx.$index,
-      $fn: ctx.$fn,
-    });
-  } catch (err) {
-    if (err instanceof ExpressionRejectedError) {
-      throw err;
-    }
-    throw new StringInterpolationError(
-      `Failed to evaluate i18n param '${param}': ${errorMessage(err)}`,
+  (state: State, validationVariables: ValidationVariables): State =>
+    computeIntoState(
+      state,
+      () => validationVariables,
+      localization,
+      functions,
+      expressionPolicy,
+      false,
     );
-  }
-}
 
-// -----------------------------------------------------------------------------
-// ChangeTracker - accumulates writes into `current`, compares against
-// `previous` for change detection.
-// -----------------------------------------------------------------------------
+/**
+ * Computes again the widgets that are computed already, for example after a language change. A
+ * widget that the last derive did not compute stays so, and no state and no flag is computed.
+ *
+ * @param localization - The translator of the host.
+ * @param functions - The functions of the host, which an expression calls as `$fn.<name>(...)`.
+ * @param expressionPolicy - Which issues of the expression check make an expression fail.
+ * @returns A function from a state to the state with the computed widgets. The validation
+ *   variables come from the validations of the state.
+ */
+export const recalculateWidgetProps =
+  (
+    localization: I18nTranslator,
+    functions: ExpressionFunctions,
+    expressionPolicy: ExpressionPolicy = 'warn',
+  ) =>
+  (state: State): State =>
+    computeIntoState(
+      state,
+      () => calculateValidationVariables(state),
+      localization,
+      functions,
+      expressionPolicy,
+      true,
+    );
 
-class ChangeTracker<F extends FormWidget<string> = FormWidget<string>> {
-  readonly source: F;
-  readonly previous: F;
-  readonly current: F;
-  private _changed = false;
-  get changed() {
-    return this._changed;
-  }
-
-  constructor(source: F, previous: F) {
-    this.source = source;
-    this.previous = previous;
-    this.current = {} as F;
-  }
-
-  markChanged(): void {
-    this._changed = true;
-  }
-
-  write(dotPath: string, value: unknown): void {
-    const prev = get(this.previous as Record<string, unknown>, dotPath);
-
-    // An expression that rebuilds an equal object or array must not count as a change,
-    // so keep the previous reference and leave `changed` alone.
-    if (deepEqual(prev, value)) {
-      set(this.current as Record<string, unknown>, dotPath, prev);
-      return;
-    }
-
-    set(this.current as Record<string, unknown>, dotPath, value);
-    this._changed = true;
-  }
-}
-
-// -----------------------------------------------------------------------------
-// ResolverCtx + small helpers
-// -----------------------------------------------------------------------------
-
-interface ResolverCtx {
-  /** `currentStates` pre-sorted longest-first, so `pickSuffixedValue` can iterate directly. */
-  sortedStates: string[];
-  widgetPropOverrides: State['widgetPropOverrides'];
-  widgetFlags: State['widgetFlags'];
-  $form: State['data'];
-  $meta: State['meta'];
-  $formIsInvalid: boolean;
-  $errors: $Errors;
-  localization: I18nTranslator;
-  /** Host-provided pure functions, exposed to expressions as `$fn`. */
-  $fn: ExpressionFunctions;
-  expressionPolicy: ExpressionPolicy;
-  /** Set only for widgets inside a repeater item: the item object itself */
-  $item?: unknown;
-  /** Set only for widgets inside a repeater item: the item's position. */
-  $index?: number;
-}
-
-function makeResolverCtx(
+/**
+ * @param validationVariablesOf - Gives the validation variables. It is called inside the try,
+ *   so that an error of the variables gives an errored form health, as every other error does.
+ */
+function computeIntoState(
   state: State,
+  validationVariablesOf: () => ValidationVariables,
   localization: I18nTranslator,
-  $formIsInvalid: boolean,
-  $errors: $Errors,
   functions: ExpressionFunctions,
   expressionPolicy: ExpressionPolicy,
-): ResolverCtx {
-  return {
-    sortedStates: [...state.currentStates].sort((a, b) => b.length - a.length),
-    widgetPropOverrides: state.widgetPropOverrides,
-    widgetFlags: state.widgetFlags,
-    $form: state.data,
-    $meta: state.meta,
-    $formIsInvalid,
-    $errors,
-    localization,
-    $fn: functions,
-    expressionPolicy,
-  };
-}
-
-/** True when `field` itself or any `field.<state>` variant is present on source. */
-function sourceHasField(source: Record<string, unknown>, field: string): boolean {
-  if (field in source) {
-    return true;
+  onlyComputedWidgets: boolean,
+): State {
+  try {
+    const { $formIsInvalid, $errors } = validationVariablesOf();
+    const instances = computeWidgets(
+      state.instances,
+      state.compiled.root,
+      {
+        $form: state.data,
+        $meta: state.meta,
+        $errors,
+        $formIsInvalid,
+        $log: Debug.log,
+        // Outside a repeater row the two names of a row have no value.
+        $item: undefined,
+        $index: undefined,
+        $fn: functions,
+      },
+      {
+        data: state.data,
+        activeStates: new Set(state.currentStates),
+        translator: localization,
+        overrides: state.widgetPropOverrides,
+        expressionPolicy,
+        onlyComputedWidgets,
+      },
+    );
+    return { ...state, instances, calculatedWidgets: calculatedRecordOfInstances(instances) };
+  } catch (err) {
+    const error = err as Error & { code?: number };
+    const code = error.code ?? errorCodes.calculateWidgetPropsError;
+    return {
+      ...state,
+      formHealth: {
+        status: 'errored',
+        message: `[${code}] ${error.message}`,
+        code,
+      },
+    };
   }
-  const prefix = `${field}.`;
-  return Object.keys(source).some((k) => k.startsWith(prefix));
-}
-
-function unsuffixedUniqueKeys(keys: string[]): string[] {
-  return Array.from(new Set(keys.map((k) => k.split('.')[0])));
-}
-
-function resolveVisibleChildren<C extends { uid?: string }>(
-  children: C[],
-  repeaterIndexes: number[],
-  widgetFlags: State['widgetFlags'],
-): C[] {
-  const suffix = repeaterIndexes.map((i) => `[${i}]`).join('');
-  return children.filter((child) => {
-    const actualUid = (child.uid as string) + suffix;
-    const flags = widgetFlags[actualUid];
-    return !flags || flags.hidden !== true;
-  });
-}
-
-// -----------------------------------------------------------------------------
-// Custom errors
-// -----------------------------------------------------------------------------
-
-class StringInterpolationError extends Error {
-  readonly code = errorCodes.resolveStringInterpolationError;
-  override name = 'StringInterpolationError';
 }

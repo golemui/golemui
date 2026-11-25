@@ -66,6 +66,33 @@ export function flagsRecordOfInstances(tree: WidgetInstanceTree): State['widgetF
   return widgetFlags;
 }
 
+/**
+ * Writes the computed widgets of the instances as the record `calculatedWidgets`.
+ *
+ * @param tree - The widget instances, after their widgets were computed.
+ * @returns A new record. Its keys are in the order of the document, except a uid that is a whole
+ *   number, which an object always puts first. A widget that is not computed, for example a
+ *   hidden one, has no entry.
+ *
+ * @example
+ * ```ts
+ * const calculatedWidgets = calculatedRecordOfInstances(tree);
+ * // calculatedWidgets['name[1]'].current.label is the label of the input in the second row
+ * ```
+ */
+export function calculatedRecordOfInstances(tree: WidgetInstanceTree): State['calculatedWidgets'] {
+  const calculatedWidgets: State['calculatedWidgets'] = {};
+  forEachInstance(tree.root, (instance) => {
+    if (instance.calculated === undefined) {
+      // Two widgets can have one uid. As in `writeFlags`, the entry is the one of the last widget.
+      delete calculatedWidgets[instance.uid];
+    } else {
+      calculatedWidgets[instance.uid] = instance.calculated;
+    }
+  });
+  return calculatedWidgets;
+}
+
 function writeFlags(widgetFlags: State['widgetFlags'], instance: WidgetInstance): void {
   if (instance.flags === undefined) {
     // Two widgets can have one uid. The entry is then the one of the last widget, as in the
