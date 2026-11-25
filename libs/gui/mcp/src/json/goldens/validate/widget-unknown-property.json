@@ -1513,6 +1513,41 @@
       "interpolationWarnings": []
     }
   },
+  "table": {
+    "input": {
+      "form": [
+        {
+          "kind": "display",
+          "type": "table",
+          "notAProperty": true
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `props` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "props"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `notAProperty` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "notAProperty"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
   "tabs": {
     "input": {
       "form": [

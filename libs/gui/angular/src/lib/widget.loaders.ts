@@ -128,6 +128,7 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
   progress: async () =>
     (await import('./components/progress/progress.component')).ProgressComponent,
   spinner: async () => (await import('./components/spinner/spinner.component')).SpinnerComponent,
+  table: async () => (await import('./components/table/table.component')).TableComponent,
   typography: async () =>
     (await import('./components/typography/typography.component')).TypographyComponent,
   markdownText: async () =>

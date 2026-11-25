@@ -6,7 +6,8 @@
       "hasSubregionRadiogroup": "!!$form.radiogroups.subregion",
       "badgeOverdue": "$form.badges?.overdue === true",
       "progressHalfway": "$form.progresses?.halfway === true",
-      "spinnerLoading": "$form.spinners?.loading === true"
+      "spinnerLoading": "$form.spinners?.loading === true",
+      "tableShowClosed": "$form.tables?.closed === true"
     },
     "form": [
       {
@@ -142,6 +143,10 @@
             {
               "label": "Spinner Component",
               "uid": "tabSpinner"
+            },
+            {
+              "label": "Table Component",
+              "uid": "tabTable"
             },
             {
               "label": "Range Calendar Component",
@@ -722,6 +727,249 @@
                       "alt": "Green hills under a sun",
                       "ratio": "4/3",
                       "caption": "{{ $form.images?.caption || \"Type a caption\" }}"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uid": "tabTable",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "uid": "ordersTable",
+                "kind": "display",
+                "type": "table",
+                "props": {
+                  "caption": "Open orders",
+                  "columns": [
+                    {
+                      "key": "id",
+                      "label": "Order"
+                    },
+                    {
+                      "key": "customer",
+                      "label": "Customer"
+                    },
+                    {
+                      "key": "date",
+                      "label": "Date",
+                      "type": "date"
+                    },
+                    {
+                      "key": "items",
+                      "label": "Items",
+                      "type": "number",
+                      "align": "center"
+                    },
+                    {
+                      "key": "total",
+                      "label": "Total",
+                      "type": "number"
+                    }
+                  ],
+                  "rows": [
+                    {
+                      "id": "A-1042",
+                      "customer": "Ada Lovelace",
+                      "date": "2026-11-20",
+                      "items": 3,
+                      "total": 1280.5
+                    },
+                    {
+                      "id": "A-1043",
+                      "customer": "Grace Hopper",
+                      "date": "2026-11-22",
+                      "items": 1,
+                      "total": 310
+                    },
+                    {
+                      "id": "A-1044",
+                      "customer": "Katherine Johnson",
+                      "date": "2026-11-23",
+                      "items": 12,
+                      "total": 4096.75
+                    }
+                  ],
+                  "emptyMessage": "No open orders"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "toggle",
+                "path": "tables.closed",
+                "label": "Show closed orders"
+              },
+              {
+                "uid": "closedTable",
+                "kind": "display",
+                "type": "table",
+                "props": {
+                  "caption": "Orders",
+                  "columns": [
+                    {
+                      "key": "id",
+                      "label": "Order"
+                    },
+                    {
+                      "key": "customer",
+                      "label": "Customer"
+                    },
+                    {
+                      "key": "date",
+                      "label": "Date",
+                      "type": "date"
+                    },
+                    {
+                      "key": "items",
+                      "label": "Items",
+                      "type": "number",
+                      "align": "center"
+                    },
+                    {
+                      "key": "total",
+                      "label": "Total",
+                      "type": "number"
+                    }
+                  ],
+                  "rows": [],
+                  "rows.tableShowClosed": [
+                    {
+                      "id": "A-1043",
+                      "customer": "Grace Hopper",
+                      "date": "2026-11-22",
+                      "items": 1,
+                      "total": 310
+                    }
+                  ],
+                  "emptyMessage": "Turn on \"Show closed orders\" to list them"
+                }
+              },
+              {
+                "kind": "display",
+                "type": "table",
+                "props": {
+                  "caption": "Shipments this week",
+                  "columns": [
+                    {
+                      "key": "id",
+                      "label": "Order"
+                    },
+                    {
+                      "key": "customer",
+                      "label": "Customer"
+                    },
+                    {
+                      "key": "date",
+                      "label": "Date",
+                      "type": "date"
+                    },
+                    {
+                      "key": "items",
+                      "label": "Items",
+                      "type": "number",
+                      "align": "center"
+                    },
+                    {
+                      "key": "total",
+                      "label": "Total",
+                      "type": "number"
+                    },
+                    {
+                      "key": "carrier",
+                      "label": "Carrier"
+                    },
+                    {
+                      "key": "from",
+                      "label": "From"
+                    },
+                    {
+                      "key": "to",
+                      "label": "To"
+                    },
+                    {
+                      "key": "status",
+                      "label": "Status"
+                    }
+                  ],
+                  "rows": [
+                    {
+                      "id": "A-1042",
+                      "customer": "Ada Lovelace",
+                      "date": "2026-11-20",
+                      "items": 3,
+                      "total": 1280.5,
+                      "carrier": "Northwind Freight",
+                      "from": "Rotterdam",
+                      "to": "Barcelona",
+                      "status": "In transit"
+                    },
+                    {
+                      "id": "A-1043",
+                      "customer": "Grace Hopper",
+                      "date": "2026-11-22",
+                      "items": 1,
+                      "total": 310,
+                      "carrier": "Blue Harbor Lines",
+                      "from": "Hamburg",
+                      "to": "Valencia",
+                      "status": "Delivered"
+                    },
+                    {
+                      "id": "A-1044",
+                      "customer": "Katherine Johnson",
+                      "date": "2026-11-23",
+                      "items": 12,
+                      "total": 4096.75,
+                      "carrier": "Contoso Cargo",
+                      "from": "Antwerp",
+                      "to": "Bilbao",
+                      "status": "Held at customs"
+                    }
+                  ]
+                }
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "tables.note",
+                    "label": "Note"
+                  },
+                  {
+                    "kind": "display",
+                    "type": "table",
+                    "props": {
+                      "caption": "Totals",
+                      "columns": [
+                        {
+                          "key": "label",
+                          "label": "Item"
+                        },
+                        {
+                          "key": "value",
+                          "label": "Amount",
+                          "type": "number"
+                        }
+                      ],
+                      "rows": [
+                        {
+                          "label": "Subtotal",
+                          "value": 5687.25
+                        },
+                        {
+                          "label": "Tax",
+                          "value": 1194.32
+                        }
+                      ]
                     }
                   }
                 ]

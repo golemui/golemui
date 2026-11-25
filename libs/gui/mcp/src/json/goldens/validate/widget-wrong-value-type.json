@@ -2670,6 +2670,51 @@
       "interpolationWarnings": []
     }
   },
+  "table": {
+    "input": {
+      "form": [
+        {
+          "kind": "display",
+          "type": "table",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `path` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "path"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `label` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "label"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
   "tabs": {
     "input": {
       "form": [

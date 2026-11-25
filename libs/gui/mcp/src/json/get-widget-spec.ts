@@ -351,6 +351,23 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
       caption: 'Room 204',
     },
   },
+  table: {
+    kind: 'display',
+    type: 'table',
+    props: {
+      caption: 'Open orders',
+      columns: [
+        { key: 'id', label: 'Order' },
+        { key: 'date', label: 'Date', type: 'date' },
+        { key: 'total', label: 'Total', type: 'number' },
+      ],
+      rows: [
+        { id: 'A-1042', date: '2026-11-20', total: 1280.5 },
+        { id: 'A-1043', date: '2026-11-22', total: 310 },
+      ],
+      emptyMessage: 'No open orders',
+    },
+  },
   markdownText: {
     kind: 'display',
     type: 'markdownText',
@@ -633,6 +650,12 @@ const NOTES: Record<string, string[]> = {
     '`props.ratio` is one of `"1/1"`, `"4/3"`, `"3/2"`, `"16/9"`, `"21/9"` (no other values, no CSS); without it the image keeps its own proportions. `props.fit` (`cover` by default, `contain`, `fill`, `none`) says how it fills that box. `props.caption` (localizable) shows below it. `props.loading` is `lazy` by default; use `eager` for an image at the top of the page.',
     '`src` interpolates `{{ }}` like any top-level string, so a definition can put form data in an image URL that the browser then requests. The host controls where images may load from with its Content Security Policy (`img-src`). Prefer fixed URLs, and never interpolate personal data into `src`.',
     'A broken image shows its `alt` text, as the browser does; there is no fallback image.',
+  ],
+  table: [
+    "A data table written in the definition. `props.caption` (localizable) is REQUIRED: it names the table for screen readers. `props.columns` is an array of `{ key, label, type?, align? }`; `props.rows` an array of objects keyed by the columns' `key`, each cell a string, a number, a boolean or null. Keys no column names are ignored, so a record can be passed as it is. `props.emptyMessage` is the one row shown when `rows` is empty.",
+    'Column `type`: `text` (default) shows the value as it is; `number` formats it in the form\'s language (and aligns it at the end unless `align` says otherwise); `date` formats an ISO date such as `"2026-11-20"`. Pass numbers and ISO dates, not formatted strings: the widget formats them. A value that doesn\'t parse is shown as it is.',
+    'The rows travel in the definition, so keep a table to a few dozen rows. Strings inside `rows` do NOT interpolate `{{ }}`, and rows cannot read `$form`: a table shows what the definition (or a state override such as `"rows.<stateName>"`) gives it. There is no sorting, paging, row selection or row actions.',
+    'A table wider than its cell scrolls sideways inside its own region, never the page, and the region is keyboard-focusable while it does. Labels and the caption are localizable; cell text is not translated.',
   ],
   spinner: [
     'An indeterminate spinner for a wait of unknown length. Show it only while a named state holds: `include: { in: ["loading"] }` with a state such as `"loading": "$form.status === \'loading\'"`. Call `get_concept({ concept: "states" })` for the pattern.',

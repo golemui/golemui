@@ -44,6 +44,7 @@ import type { GuiMultiRangeDatePicker } from '@golemui/gui-components/multi-rang
 import type { GuiMultiRangeTimePicker } from '@golemui/gui-components/multi-range-time-picker';
 import type { GuiSelect } from '@golemui/gui-components/select';
 import type { GuiTab } from '@golemui/gui-components/tab';
+import type { GuiTable } from '@golemui/gui-components/table';
 import type { GuiTabList } from '@golemui/gui-components/tab-list';
 import type { GuiTabPanel } from '@golemui/gui-components/tab-panel';
 import type { GuiTags } from '@golemui/gui-components/tags';
@@ -227,6 +228,8 @@ declare module 'react' {
         Partial<GuiTimeList>;
       'gui-tab': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         OwnProps<GuiTab>;
+      'gui-table': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        OwnProps<GuiTable>;
       'gui-tab-list': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         OwnProps<GuiTabList>;
       'gui-tab-panel': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &

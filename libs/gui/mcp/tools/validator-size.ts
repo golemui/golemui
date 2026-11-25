@@ -16,7 +16,7 @@ import { planStandaloneValidators } from '../src/json/schemas/validator-schemas'
 
 export const BUDGETS = {
   /** Everything the lazy entry loads to validate {@link REFERENCE_FORM}, gzipped. */
-  lazyReferenceFormGzipBytes: 50 * 1024,
+  lazyReferenceFormGzipBytes: 52 * 1024,
   /** The largest single validator module of the lazy entry, minified. */
   largestValidatorMinifiedBytes: 300 * 1024,
   /**

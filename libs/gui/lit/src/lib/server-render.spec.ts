@@ -147,6 +147,19 @@ const config: FormInitConfig<Type<WithWidget>> = {
           type: 'image',
           props: { src: '/plan.png', alt: 'The pro plan', ratio: '16/9', caption: 'Pro' },
         },
+        {
+          uid: 'seats',
+          kind: 'display',
+          type: 'table',
+          props: {
+            caption: 'Plan seats',
+            columns: [
+              { key: 'name', label: 'Seat' },
+              { key: 'cost', label: 'Cost', type: 'number' },
+            ],
+            rows: [{ name: 'Ada', cost: 1200 }],
+          },
+        },
       ],
     },
   },
@@ -215,6 +228,16 @@ describe('server rendering the gui widget set in plain node', () => {
     );
     expect(markup).toMatch(/<img[^>]*src="\/plan.png"[^>]*alt="The pro plan"[^>]*loading="lazy"/);
     expect(markup).toMatch(/<figcaption>(<!--[^>]*-->)*Pro/);
+  });
+
+  it('renders a table widget as a native table in gui-table, its cells formatted', () => {
+    expect(markup).toMatch(/<gui-table-display[^>]*class="[^"]*gui-table[^"]*gui-field/);
+    expect(markup).toMatch(/<gui-table[^>]*id="gui-lit-ssr-form-seats"/);
+    expect(markup).toMatch(/<caption>\s*(<!--[^>]*-->)*\s*Plan seats/);
+    expect(markup).toMatch(
+      /<th scope="col"[^>]*class="gui-table__cell--end"[^>]*>\s*(<!--[^>]*-->)*\s*Cost/,
+    );
+    expect(markup).toMatch(/<td[^>]*class="gui-table__cell--end"[^>]*>\s*(<!--[^>]*-->)*\s*1,200/);
   });
 
   it('renders labels, values and the layout structure', () => {

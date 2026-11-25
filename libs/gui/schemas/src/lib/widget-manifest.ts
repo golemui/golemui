@@ -74,6 +74,7 @@ export const guiWidgetManifest: readonly WidgetManifestEntry[] = [
   { type: 'markdownText', schemaFile: 'markdowntext.schema.json', kind: 'display' },
   { type: 'progress', schemaFile: 'progress.schema.json', kind: 'display' },
   { type: 'spinner', schemaFile: 'spinner.schema.json', kind: 'display' },
+  { type: 'table', schemaFile: 'table.schema.json', kind: 'display' },
   { type: 'typography', schemaFile: 'typography.schema.json', kind: 'display' },
   { type: 'button', schemaFile: 'button.schema.json', kind: 'action' },
   { type: 'menuButton', schemaFile: 'menubutton.schema.json', kind: 'action' },

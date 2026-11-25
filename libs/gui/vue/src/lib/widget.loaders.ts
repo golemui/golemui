@@ -73,6 +73,7 @@ export const widgetLoaders: WidgetLoaders<Component<WithWidget>, GolemWidget> = 
   image: async () => (await import('./components/Image.vue')).default,
   progress: async () => (await import('./components/Progress.vue')).default,
   spinner: async () => (await import('./components/Spinner.vue')).default,
+  table: async () => (await import('./components/Table.vue')).default,
   typography: async () => (await import('./components/Typography.vue')).default,
   markdownText: async () => (await import('./components/MarkdownText.vue')).default,
 };

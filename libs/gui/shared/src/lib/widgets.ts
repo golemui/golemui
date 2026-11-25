@@ -55,6 +55,7 @@ export const displayWidgets = [
   'markdownText',
   'progress',
   'spinner',
+  'table',
   'typography',
 ] as const;
 export const actionWidgets = ['button', 'menuButton'] as const;

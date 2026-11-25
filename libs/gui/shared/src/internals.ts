@@ -44,6 +44,10 @@ export type {
   ImageProps,
   ImageRatio,
   ImageFit,
+  TableCell,
+  TableColumn,
+  TableProps,
+  TableRow,
   MenuButtonAction,
   MenuButtonItem,
   MenuButtonProps,
@@ -122,6 +126,7 @@ export {
 } from './lib/utils/layout-ids';
 export { repeaterIndexSuffix } from './lib/utils/repeater';
 export { imageClasses, typographyClasses, typographyTag } from './lib/utils/content';
+export { tableCellClass, tableCellText } from './lib/utils/table';
 export { findRepeaterRowFocus, focusAfterRowRemoval } from './lib/utils/repeater-focus';
 export type { RepeaterRowFocus } from './lib/utils/repeater-focus';
 export {

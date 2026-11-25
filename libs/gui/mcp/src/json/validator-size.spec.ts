@@ -16,7 +16,7 @@ describe('form-definition validator size', () => {
     console.info(formatValidatorSizeReport(report));
   });
 
-  it('loads at most 50 KB gzipped to validate a typical form with the lazy entry', () => {
+  it('loads at most 52 KB gzipped to validate a typical form with the lazy entry', () => {
     expect(report.lazy.referenceFormGzipBytes).toBeLessThanOrEqual(
       BUDGETS.lazyReferenceFormGzipBytes,
     );

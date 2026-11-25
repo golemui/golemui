@@ -6,7 +6,8 @@
     "hasSubregionRadiogroup": "!!$form.radiogroups.subregion",
     "badgeOverdue": "$form.badges?.overdue === true",
     "progressHalfway": "$form.progresses?.halfway === true",
-    "spinnerLoading": "$form.spinners?.loading === true"
+    "spinnerLoading": "$form.spinners?.loading === true",
+    "tableShowClosed": "$form.tables?.closed === true"
   },
   "form": [
     {
@@ -53,6 +54,7 @@
           { "label": "Checkbox Group Component", "uid": "tabCheckboxGroup" },
           { "label": "Rating Component", "uid": "tabRating" },
           { "label": "Spinner Component", "uid": "tabSpinner" },
+          { "label": "Table Component", "uid": "tabTable" },
           { "label": "Range Calendar Component", "uid": "tabRangeCalendar" },
           { "label": "Range Date Input Component", "uid": "tabRangeDateInput" },
           { "label": "Range Date Picker Component", "uid": "tabRangeDatePicker" },
@@ -97,6 +99,7 @@
         { "$ref": "./tabs/spinner.form-chunk.json" },
         { "$ref": "./tabs/typography.form-chunk.json" },
         { "$ref": "./tabs/image.form-chunk.json" },
+        { "$ref": "./tabs/table.form-chunk.json" },
         { "$ref": "./tabs/button.form-chunk.json" },
         { "$ref": "./tabs/menubutton.form-chunk.json" },
         { "$ref": "./tabs/markdown-text.form-chunk.json" },

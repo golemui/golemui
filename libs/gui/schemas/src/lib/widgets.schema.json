@@ -63,6 +63,7 @@
         "markdownText",
         "progress",
         "spinner",
+        "table",
         "typography",
         "button",
         "menuButton"
@@ -127,6 +128,7 @@
         { "$ref": "./components/markdowntext.schema.json" },
         { "$ref": "./components/progress.schema.json" },
         { "$ref": "./components/spinner.schema.json" },
+        { "$ref": "./components/table.schema.json" },
         { "$ref": "./components/typography.schema.json" },
         { "$ref": "./components/button.schema.json" },
         { "$ref": "./components/menubutton.schema.json" },

@@ -63,6 +63,7 @@ import type {
   SelectProps,
   SliderProps,
   SpinnerProps,
+  TableProps,
   TypographyProps,
   SliderRange,
   RangeSliderProps,
@@ -228,6 +229,7 @@ type GolemWidget<
   | GuiSpinner<FormType, States>
   | GuiTypography<FormType, States>
   | GuiImage<FormType, States>
+  | GuiTable<FormType, States>
   | GuiButton<FormType, States>
   | GuiMenuButton<FormType, States>
   | GuiCalendar<FormType, States, V>
@@ -328,6 +330,12 @@ type GuiImage<FormType extends Record<string, any>, States extends string> = Dis
   FormType,
   ImageProps
 > & { type: 'image' };
+
+type GuiTable<FormType extends Record<string, any>, States extends string> = DisplayWidget<
+  States,
+  FormType,
+  TableProps
+> & { type: 'table' };
 
 type GuiButton<FormType extends Record<string, any>, States extends string> = ActionWidget<
   States,

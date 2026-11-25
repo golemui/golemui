@@ -833,6 +833,37 @@ export type ImageProps = {
   loading?: 'lazy' | 'eager';
 };
 
+/** A table's cell: what a row holds under a column's `key`. */
+export type TableCell = string | number | boolean | null;
+
+/** A table's row: its cells by column `key`. Keys no column names are ignored. */
+export type TableRow = Record<string, TableCell>;
+
+export type TableColumn = {
+  /** The key of each row whose value the column shows. */
+  key: string;
+  /** The column's header. */
+  label: Localizable;
+  /** Where the column's cells sit. Defaults to `end` for a number column, `start` otherwise. */
+  align?: 'start' | 'center' | 'end';
+  /**
+   * How the cells are shown: `text` (the default) as they are, `number` and `date` (an ISO date)
+   * formatted in the form's language. A value that doesn't parse is shown as it is.
+   */
+  type?: 'text' | 'number' | 'date';
+};
+
+export type TableProps = {
+  /** The table's name, shown above it. Screen readers announce it with the table. */
+  caption: Localizable;
+  /** The columns, in order. */
+  columns: TableColumn[];
+  /** The rows, in order. */
+  rows: TableRow[];
+  /** The text of the one row shown when `rows` is empty. */
+  emptyMessage?: Localizable;
+};
+
 export type MarkdownTextProps = {
   md: string;
 };

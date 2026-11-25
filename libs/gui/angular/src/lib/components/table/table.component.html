@@ -1,0 +1,38 @@
+@let templateData = adapter.templateData();
+@let columns = templateData.columns ?? [];
+
+<gui-table [attr.defer-hydration]="deferHydration" [id]="adapter.domId">
+  <table>
+    <caption>
+      {{
+        templateData.caption
+      }}
+    </caption>
+    <thead>
+      <tr>
+        @for (column of columns; track column.key) {
+          <th scope="col" [class]="tableCellClass(column) ?? ''">{{ column.label }}</th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of templateData.rows ?? []; track $index) {
+        <tr>
+          @for (column of columns; track column.key) {
+            <td [class]="tableCellClass(column) ?? ''">
+              {{ tableCellText(row[column.key], column, templateData.lang) }}
+            </td>
+          }
+        </tr>
+      } @empty {
+        @if (templateData.emptyMessage) {
+          <tr>
+            <td class="gui-table__empty" [attr.colspan]="columns.length">
+              {{ templateData.emptyMessage }}
+            </td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+</gui-table>
