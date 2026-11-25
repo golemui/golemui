@@ -667,11 +667,11 @@
       "interpolationWarnings": []
     }
   },
-  "menu": {
+  "menuButton": {
     "input": {
       "form": [
         {
-          "type": "menu"
+          "type": "menuButton"
         }
       ]
     },

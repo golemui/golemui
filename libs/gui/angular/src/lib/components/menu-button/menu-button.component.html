@@ -29,14 +29,14 @@
     }
   </button>
 </div>
-<gui-menu
+<gui-menu-button
   [attr.defer-hydration]="deferHydration"
   [placement]="templateData.placement ?? defaultPlacement"
   (gui-action)="onAction($event)"
 >
   <div [id]="panelId" [attr.data-cy]="panelCy" popover>
     @for (item of templateData?.items ?? []; track $index) {
-      @if (isMenuSeparator(item)) {
+      @if (isMenuButtonSeparator(item)) {
         <hr />
       } @else {
         <button
@@ -50,4 +50,4 @@
       }
     }
   </div>
-</gui-menu>
+</gui-menu-button>

@@ -5,7 +5,8 @@ import type { GolemWidget } from '@golemui/gui-shared/internals';
 export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
   // ACTION WIDGETS
   button: async () => (await import('./components/button/button.component')).ButtonComponent,
-  menu: async () => (await import('./components/menu/menu.component')).MenuComponent,
+  menuButton: async () =>
+    (await import('./components/menu-button/menu-button.component')).MenuButtonComponent,
 
   // INPUT WIDGETS
   repeater: async () =>

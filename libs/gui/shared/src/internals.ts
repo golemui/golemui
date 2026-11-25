@@ -44,10 +44,10 @@ export type {
   ImageProps,
   ImageRatio,
   ImageFit,
-  MenuAction,
-  MenuItem,
-  MenuProps,
-  MenuSeparator,
+  MenuButtonAction,
+  MenuButtonItem,
+  MenuButtonProps,
+  MenuButtonSeparator,
   MultiDropdownProps,
   MultiFileUploadProps,
   MultiListProps,
@@ -125,10 +125,10 @@ export { imageClasses, typographyClasses, typographyTag } from './lib/utils/cont
 export { findRepeaterRowFocus, focusAfterRowRemoval } from './lib/utils/repeater-focus';
 export type { RepeaterRowFocus } from './lib/utils/repeater-focus';
 export {
-  DEFAULT_MENU_PLACEMENT,
-  isMenuSeparator,
+  DEFAULT_MENU_BUTTON_PLACEMENT,
+  isMenuButtonSeparator,
   menuButtonAriaLabel,
   menuButtonClasses,
-  menuPanelId,
-} from './lib/utils/menu';
+  menuButtonPanelId,
+} from './lib/utils/menu-button';
 export { gridCellClasses, gridClasses, resolveGrid, type ResolvedGrid } from './lib/utils/grid';

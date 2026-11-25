@@ -6,21 +6,21 @@ import { property } from 'lit/decorators.js';
 import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
 import {
-  DEFAULT_MENU_PLACEMENT,
-  isMenuSeparator,
+  DEFAULT_MENU_BUTTON_PLACEMENT,
+  isMenuButtonSeparator,
   menuButtonAriaLabel,
   menuButtonClasses,
-  menuPanelId,
-  type MenuProps,
+  menuButtonPanelId,
+  type MenuButtonProps,
 } from '@golemui/gui-shared/internals';
 import type { GuiActionEventDetail } from '@golemui/gui-components';
-import '@golemui/gui-components/menu';
+import '@golemui/gui-components/menu-button';
 
 /**
- * The menu action widget: a button that opens a `gui-menu` of actions. Picking an item emits the
- * widget's `click` event with `{ value }` as its detail.
+ * The menuButton action widget: a button that opens a menu of actions, with `gui-menu-button`.
+ * Picking an item emits the widget's `click` event with `{ value }` as its detail.
  */
-export class MenuElement extends LitElement implements WithWidget {
+export class MenuButtonElement extends LitElement implements WithWidget {
   widget!: ActionWidget;
 
   @consume({ context: formContext })
@@ -28,7 +28,7 @@ export class MenuElement extends LitElement implements WithWidget {
   formContext!: LitFormContext<any>;
 
   @provide({ context: actionContext })
-  adapter = new ActionWidgetAdapter<MenuProps>();
+  adapter = new ActionWidgetAdapter<MenuButtonProps>();
 
   subscriptions: Subscription[] = [];
 
@@ -56,7 +56,7 @@ export class MenuElement extends LitElement implements WithWidget {
       this.adapter.templateData;
     const uid = this.widget.uid;
     const { domId } = this.adapter;
-    const panelId = menuPanelId(domId);
+    const panelId = menuButtonPanelId(domId);
     const iconPart = icon
       ? html`<span
           class="gui-widget-icon gui-button-icon ${icon}"
@@ -81,10 +81,13 @@ export class MenuElement extends LitElement implements WithWidget {
           ${iconOnRight ? iconPart : nothing}
         </button>
       </div>
-      <gui-menu placement=${placement ?? DEFAULT_MENU_PLACEMENT} @gui-action=${this.onAction}>
-        <div id=${panelId} data-cy=${menuPanelId(uid)} popover>
+      <gui-menu-button
+        placement=${placement ?? DEFAULT_MENU_BUTTON_PLACEMENT}
+        @gui-action=${this.onAction}
+      >
+        <div id=${panelId} data-cy=${menuButtonPanelId(uid)} popover>
           ${(items ?? []).map((item) =>
-            isMenuSeparator(item)
+            isMenuButtonSeparator(item)
               ? html`<hr />`
               : html`<button
                   type="button"
@@ -96,7 +99,7 @@ export class MenuElement extends LitElement implements WithWidget {
                 </button>`,
           )}
         </div>
-      </gui-menu>
+      </gui-menu-button>
     `;
   }
 
@@ -107,4 +110,4 @@ export class MenuElement extends LitElement implements WithWidget {
   }
 }
 
-safeDefine('gui-menu-interactive', MenuElement);
+safeDefine('gui-menu-button-interactive', MenuButtonElement);

@@ -2,7 +2,7 @@
 @use 'overlay' as *;
 
 // The element only enhances its panel, which the browser shows in the top layer.
-gui-menu {
+gui-menu-button {
   display: contents;
 
   > [popover] {

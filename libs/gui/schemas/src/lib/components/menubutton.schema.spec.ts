@@ -6,12 +6,12 @@ import {
   specValidationErrorsLogger,
 } from '../schema.spec.utils';
 
-const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/gui/components/menu.schema.json';
+const SCHEMA_ID_UNDER_TEST = 'https://golemui.com/schemas/gui/components/menubutton.schema.json';
 
 const menu = (overrides: Record<string, unknown> = {}, props: Record<string, unknown> = {}) => ({
   uid: 'rowActions',
   kind: 'action',
-  type: 'menu',
+  type: 'menuButton',
   label: 'Actions',
   props: {
     items: [

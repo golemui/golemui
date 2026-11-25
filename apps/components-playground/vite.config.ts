@@ -9,7 +9,7 @@ const pages = [
   'content',
   'dialog',
   'index',
-  'menu',
+  'menu-button',
   'otp',
   'pickers',
   'popover',

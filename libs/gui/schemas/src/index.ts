@@ -64,7 +64,7 @@ import progressSchemaJson from './lib/components/progress.schema.json';
 import spinnerSchemaJson from './lib/components/spinner.schema.json';
 import typographySchemaJson from './lib/components/typography.schema.json';
 import buttonSchemaJson from './lib/components/button.schema.json';
-import menuSchemaJson from './lib/components/menu.schema.json';
+import menubuttonSchemaJson from './lib/components/menubutton.schema.json';
 import customSchemaJson from './lib/components/custom.schema.json';
 
 export const commonSchema: Record<string, unknown> = commonSchemaJson;
@@ -134,7 +134,7 @@ export const progressSchema: Record<string, unknown> = progressSchemaJson;
 export const spinnerSchema: Record<string, unknown> = spinnerSchemaJson;
 export const typographySchema: Record<string, unknown> = typographySchemaJson;
 export const buttonSchema: Record<string, unknown> = buttonSchemaJson;
-export const menuSchema: Record<string, unknown> = menuSchemaJson;
+export const menubuttonSchema: Record<string, unknown> = menubuttonSchemaJson;
 export const customSchema: Record<string, unknown> = customSchemaJson;
 
 /** Component schemas keyed by widget `type`. Excludes the custom fallback and schema-less types. */
@@ -197,5 +197,5 @@ export const COMPONENT_SCHEMAS_BY_TYPE = {
   spinner: spinnerSchema,
   typography: typographySchema,
   button: buttonSchema,
-  menu: menuSchema,
+  menuButton: menubuttonSchema,
 } as const;

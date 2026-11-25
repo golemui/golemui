@@ -4,7 +4,7 @@ import { realPress, takesRealInput } from '../support/real-input';
 
 const actions = () =>
   html`<button type="button" id="actions" popovertarget="row-actions">Actions</button>
-    <gui-menu>
+    <gui-menu-button>
       <div id="row-actions" popover>
         <button type="button" value="edit">Edit</button>
         <button type="button" value="duplicate">Duplicate</button>
@@ -13,7 +13,7 @@ const actions = () =>
         <hr />
         <button type="button" value="delete">Delete</button>
       </div>
-    </gui-menu>
+    </gui-menu-button>
     <button type="button" id="after">After</button>`;
 
 const panel = () => cy.get('#row-actions');
@@ -23,18 +23,18 @@ const isOpen = (expected: boolean) =>
   panel().should(([element]) => expect(element.matches(':popover-open')).to.equal(expected));
 
 overlaySuite({
-  name: 'gui-menu',
+  name: 'gui-menu-button',
   template: actions,
   invoker: '#actions',
   floating: '#row-actions',
-  host: 'gui-menu',
+  host: 'gui-menu-button',
   openState: ':popover-open',
   focusable: '#row-actions > button:first-child',
   outsideClick: 'closes',
   anchored: 'start',
 });
 
-describe('gui-menu', () => {
+describe('gui-menu-button', () => {
   describe('semantics', () => {
     it('gives the panel, its items and its button their roles, and names the menu', () => {
       cy.mount(actions());
@@ -49,11 +49,11 @@ describe('gui-menu', () => {
     it('keeps the roles and the name the app gives it', () => {
       cy.mount(
         html`<button type="button" popovertarget="sort">Sort</button>
-          <gui-menu>
+          <gui-menu-button>
             <div id="sort" popover role="menu" aria-label="Sort by">
               <button type="button" role="menuitemradio" aria-checked="true">Name</button>
             </div>
-          </gui-menu>`,
+          </gui-menu-button>`,
       );
 
       cy.get('#sort')
@@ -66,9 +66,9 @@ describe('gui-menu', () => {
       cy.window().then((win) => cy.spy(win.console, 'warn').as('warn'));
       cy.mount(
         html`<button type="button" popovertarget="late">Actions</button>
-          <gui-menu>
+          <gui-menu-button>
             <div id="late" popover><button type="button">Edit</button></div>
-          </gui-menu>`,
+          </gui-menu-button>`,
       );
 
       cy.get('[popovertarget="late"]').invoke('attr', 'id', 'late-actions').click();
@@ -81,15 +81,18 @@ describe('gui-menu', () => {
       cy.window().then((win) => cy.spy(win.console, 'warn').as('warn'));
       cy.mount(
         html`<button type="button" popovertarget="unnamed">Actions</button>
-          <gui-menu>
+          <gui-menu-button>
             <div id="unnamed" popover><button type="button">Edit</button></div>
-          </gui-menu>`,
+          </gui-menu-button>`,
       );
       cy.get('@warn').should('not.have.been.called');
 
       cy.get('[popovertarget="unnamed"]').click();
 
-      cy.get('@warn').should('have.been.calledWithMatch', /<gui-menu> has a menu with no name/);
+      cy.get('@warn').should(
+        'have.been.calledWithMatch',
+        /<gui-menu-button> has a menu with no name/,
+      );
     });
   });
 

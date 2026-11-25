@@ -17,18 +17,19 @@ const ITEMS = ':scope > :is(button, a[href], [role="menuitem"])';
 /**
  * A menu of actions, opened from a button: the menu button pattern. It is a `gui-popover` whose
  * panel holds the actions, so it opens, places itself and closes the same way, and fires
- * `gui-toggle`.
+ * `gui-toggle`. The tag names the pattern: the element wraps the panel, and the button is the
+ * app's own markup.
  *
  * ```html
  * <button popovertarget="row-actions">Actions</button>
- * <gui-menu>
+ * <gui-menu-button>
  *   <div id="row-actions" popover>
  *     <button value="edit">Edit</button>
  *     <button value="duplicate">Duplicate</button>
  *     <hr />
  *     <button value="delete">Delete</button>
  *   </div>
- * </gui-menu>
+ * </gui-menu-button>
  * ```
  *
  * The element gives the panel the `menu` role and its buttons and links the `menuitem` role (an
@@ -48,7 +49,7 @@ const ITEMS = ':scope > :is(button, a[href], [role="menuitem"])';
  * @fires gui-action - The user picked an item. `detail.value` is its `value` (or its text), and
  *   `detail.item` the item.
  */
-export class GuiMenu extends GuiPopover {
+export class GuiMenuButton extends GuiPopover {
   private roving = new GUIRovingFocusController(this, {
     items: () => this.items,
     orientation: 'vertical',
@@ -192,16 +193,16 @@ export class GuiMenu extends GuiPopover {
   };
 }
 
-/** The events `gui-menu` fires, with their types. */
-export const GuiMenuEvents = {
+/** The events `gui-menu-button` fires, with their types. */
+export const GuiMenuButtonEvents = {
   'gui-toggle': fires<CustomEvent<GuiToggleEventDetail>>(),
   'gui-action': fires<CustomEvent<GuiActionEventDetail>>(),
 };
 
 declare global {
   interface HTMLElementTagNameMap {
-    'gui-menu': GuiMenu;
+    'gui-menu-button': GuiMenuButton;
   }
 }
 
-safeDefine('gui-menu', GuiMenu);
+safeDefine('gui-menu-button', GuiMenuButton);

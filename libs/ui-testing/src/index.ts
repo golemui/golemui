@@ -32,7 +32,7 @@ export * from './lib/gui-features/radiogroup.cy';
 export * from './lib/gui-features/rangeslider.cy';
 export * from './lib/gui-features/checkboxgroup.cy';
 export * from './lib/gui-features/rating.cy';
-export * from './lib/gui-features/menu.cy';
+export * from './lib/gui-features/menubutton.cy';
 export * from './lib/gui-features/alert.cy';
 export * from './lib/gui-features/badge.cy';
 export * from './lib/gui-features/progress.cy';

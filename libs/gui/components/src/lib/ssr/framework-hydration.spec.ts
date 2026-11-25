@@ -4,7 +4,14 @@ import { hydrateRoot } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { resumeServerRendered } from '@golemui/lit-utils';
-import { GuiDialog, GuiMenu, GuiPopover, GuiTextinput, GuiToaster, GuiTooltip } from '../../react';
+import {
+  GuiDialog,
+  GuiMenuButton,
+  GuiPopover,
+  GuiTextinput,
+  GuiToaster,
+  GuiTooltip,
+} from '../../react';
 import '../components/dropdown';
 import type { GuiDropdown } from '../components/dropdown';
 import '../components/list';
@@ -205,7 +212,7 @@ describe('a gui-dialog', () => {
   });
 });
 
-describe('a gui-menu', () => {
+describe('a gui-menu-button', () => {
   it('hydrates in React without a mismatch, then gives its parts their roles', async () => {
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
     const app = () =>
@@ -218,7 +225,7 @@ describe('a gui-menu', () => {
           'Actions',
         ),
         createElement(
-          GuiMenu,
+          GuiMenuButton,
           null,
           createElement(
             'div',
