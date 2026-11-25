@@ -39,6 +39,8 @@
   @include meta.load-css('range-date');
   @include meta.load-css('range-time');
   @include meta.load-css('range-time-picker');
+  @include meta.load-css('range-date-time');
+  @include meta.load-css('range-date-time-calendar');
   @include meta.load-css('slider');
   @include meta.load-css('multi-range-calendar');
   @include meta.load-css('multi-range-date');

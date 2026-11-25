@@ -85,6 +85,9 @@ export default defineConfig(() => ({
         'lib/components/range-date-picker': 'src/lib/components/range-date-picker.ts',
         'lib/components/range-time-input': 'src/lib/components/range-time-input.ts',
         'lib/components/range-time-picker': 'src/lib/components/range-time-picker.ts',
+        'lib/components/range-date-time-calendar': 'src/lib/components/range-date-time-calendar.ts',
+        'lib/components/range-date-time-input': 'src/lib/components/range-date-time-input.ts',
+        'lib/components/range-date-time-picker': 'src/lib/components/range-date-time-picker.ts',
         'lib/components/multi-range-calendar': 'src/lib/components/multi-range-calendar.ts',
         'lib/components/multi-range-date-input': 'src/lib/components/multi-range-date-input.ts',
         'lib/components/multi-range-date-time-input':

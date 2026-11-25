@@ -36,7 +36,8 @@ export const file: FileItem = {
 
 const singleDateRange = { start: '2026-03-01', end: '2026-03-05' };
 const dateRange = [singleDateRange];
-const dateTimeRange = [{ start: '2026-03-01T09:00:00', end: '2026-03-05T17:00:00' }];
+const singleDateTimeRange = { start: '2026-03-01T09:00:00', end: '2026-03-05T17:00:00' };
+const dateTimeRange = [singleDateTimeRange];
 const singleTimeRange = { start: '09:00:00', end: '17:00:00' };
 const timeRange = [singleTimeRange];
 
@@ -234,6 +235,21 @@ export const elements: ElementCase[] = [
     tag: 'gui-multi-range-date-time-picker',
     props: { label: 'Stay' },
     form: { property: 'value', sample: dateTimeRange },
+  },
+  {
+    tag: 'gui-range-date-time',
+    props: { label: 'Rental' },
+    form: { property: 'value', sample: singleDateTimeRange },
+  },
+  {
+    tag: 'gui-range-date-time-calendar',
+    props: { label: 'Rental' },
+    form: { property: 'value', sample: singleDateTimeRange },
+  },
+  {
+    tag: 'gui-range-date-time-picker',
+    props: { label: 'Rental' },
+    form: { property: 'value', sample: singleDateTimeRange },
   },
   {
     tag: 'gui-range-time',

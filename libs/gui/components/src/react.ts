@@ -116,6 +116,18 @@ import {
   GuiRangeTimePickerEvents,
 } from './lib/components/range-time-picker';
 import {
+  GuiRangeDateTimeCalendar as GuiRangeDateTimeCalendarElement,
+  GuiRangeDateTimeCalendarEvents,
+} from './lib/components/range-date-time-calendar';
+import {
+  GuiRangeDateTimeInput as GuiRangeDateTimeInputElement,
+  GuiRangeDateTimeInputEvents,
+} from './lib/components/range-date-time-input';
+import {
+  GuiRangeDateTimePicker as GuiRangeDateTimePickerElement,
+  GuiRangeDateTimePickerEvents,
+} from './lib/components/range-date-time-picker';
+import {
   GuiMultiRangeCalendar as GuiMultiRangeCalendarElement,
   GuiMultiRangeCalendarEvents,
 } from './lib/components/multi-range-calendar';
@@ -382,6 +394,21 @@ export const GuiRangeTimePicker = wrap(
   'gui-range-time-picker',
   GuiRangeTimePickerElement,
   GuiRangeTimePickerEvents,
+);
+export const GuiRangeDateTimeCalendar = wrap(
+  'gui-range-date-time-calendar',
+  GuiRangeDateTimeCalendarElement,
+  GuiRangeDateTimeCalendarEvents,
+);
+export const GuiRangeDateTimeInput = wrap(
+  'gui-range-date-time',
+  GuiRangeDateTimeInputElement,
+  GuiRangeDateTimeInputEvents,
+);
+export const GuiRangeDateTimePicker = wrap(
+  'gui-range-date-time-picker',
+  GuiRangeDateTimePickerElement,
+  GuiRangeDateTimePickerEvents,
 );
 export const GuiMultiRangeCalendar = wrap(
   'gui-multi-range-calendar',

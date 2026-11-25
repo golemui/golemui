@@ -36,6 +36,10 @@
             label="Opening hours"
             uid="all-rangetime"
           ></gui-multi-range-time-picker>
+          <gui-range-date-time-picker
+            label="Rental pick-up"
+            uid="all-singlerangedatetime"
+          ></gui-range-date-time-picker>
           <gui-multi-range-date-time-picker
             label="Rental"
             uid="all-rangedatetime"
@@ -85,7 +89,22 @@
             value='{"start":"09:00:00","end":"12:00:00"}'
           ></gui-range-time-picker>
           <gui-range-time label="Typed shift" uid="one-typed-time"></gui-range-time>
+          <gui-range-date-time-picker
+            label="Car rental"
+            uid="one-date-time-picker"
+            minute-step="30"
+            disabled-ranges='[{"start":"2026-03-10T12:00:00","end":"2026-03-10T14:00:00"}]'
+            value='{"start":"2026-03-02T09:00:00","end":"2026-03-06T17:00:00"}'
+          ></gui-range-date-time-picker>
+          <gui-range-date-time label="Typed rental" uid="one-typed-date-time"></gui-range-date-time>
         </div>
+        <gui-range-date-time-calendar
+          label="Rental calendar"
+          uid="one-date-time-calendar"
+          minute-step="30"
+          disabled-ranges='[{"start":"2026-03-10T12:00:00","end":"2026-03-10T14:00:00"}]'
+          value='{"start":"2026-03-02T09:00:00","end":"2026-03-06T17:00:00"}'
+        ></gui-range-date-time-calendar>
         <gui-range-calendar
           label="Trip calendar"
           uid="one-calendar"

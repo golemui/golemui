@@ -151,6 +151,42 @@ describe('a strict style-src-attr policy', () => {
       });
     });
 
+    it(`allows a single date-time range to be picked and typed${fallback ? ', measuring' : ''}`, () => {
+      GUIAnchorController.forceFallback = fallback;
+      const june = { start: '2026-06-10T09:00:00', end: '2026-06-12T17:00:00' };
+      cy.mount(
+        html`<gui-range-date-time-picker
+            label="Rental"
+            locale-id="en-US"
+            .value=${june}
+          ></gui-range-date-time-picker>
+          <gui-range-date-time-calendar
+            label="Return"
+            locale-id="en-US"
+            .disabledRanges=${[{ start: '2026-06-15T12:00:00', end: '2026-06-15T13:00:00' }]}
+            .value=${june}
+          ></gui-range-date-time-calendar>
+          <gui-range-date-time label="Typed" locale-id="en-US" icon="event"></gui-range-date-time>`,
+      );
+
+      cy.get('gui-range-date-time-picker .gui-range-date-time-picker__arrow').click();
+      cy.get('gui-range-date-time-picker > .gui-widget > .gui-picker__panel').should(
+        'match',
+        ':popover-open',
+      );
+      cy.get('gui-range-date-time-picker [data-date="2026-06-16"]').click();
+      cy.get('gui-range-date-time-picker [data-date="2026-06-18"]').click();
+      cy.get('gui-range-date-time-picker > .gui-widget > .gui-picker__panel').should('not.exist');
+      cy.get('gui-range-date-time-calendar .gui-range-date-time-calendar__disabled-count')
+        .first()
+        .trigger('mouseover');
+      cy.get('gui-range-date-time[icon] [data-type="month"]').first().type('06');
+      expectNoViolations();
+      cy.then(() => {
+        GUIAnchorController.forceFallback = false;
+      });
+    });
+
     it(`allows a single time range to be picked and typed${fallback ? ', measuring' : ''}`, () => {
       GUIAnchorController.forceFallback = fallback;
       cy.mount(

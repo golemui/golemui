@@ -1085,6 +1085,426 @@
 
   </div>
     </gui-range-time-picker>
+    <gui-range-date-time-picker
+
+
+
+
+
+
+     uid="rental" name="rental" label="Rental" locale-id="en-US" hour-format="24" value="{&quot;start&quot;:&quot;2026-03-02T09:00:00&quot;,&quot;end&quot;:&quot;2026-03-06T17:30:00&quot;}" class="gui-field" data-golemui-ssr defer-hydration>
+      <span class="gui-label" data-cy="rental_label" id="rental_label">
+      <span class="gui-label__text"
+        >Rental</span
+      >
+
+
+    </span>
+
+      <div
+        class="gui-widget"
+
+
+
+      >
+        <gui-range-date-time
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         id="rental_date" class="gui-field" data-golemui-ssr defer-hydration>
+
+
+      <div class="gui-widget" >
+        <div
+          id="rental"
+          class="gui-widget-input gui-parts-ring gui-range-date-time-input "
+          role="group"
+          aria-labelledby="rental_label"
+        >
+
+
+          <div class="gui-range-date-time-input__inputs">
+            <div
+              class="gui-parts gui-range-date-time-input__field"
+              role="group"
+              aria-label="Start date-time"
+            >
+
+
+    <div class="gui-parts__touch-target gui-range-date-time-input__touch-target">
+      <input
+        type="text"
+        inputmode="numeric"
+        role="spinbutton"
+        class="gui-parts__part gui-range-date-time-input__part "
+        data-type="month"
+        data-group="start"
+        maxlength="2"
+        placeholder="mm"
+        tabindex="0"
+        aria-label="Month"
+        aria-valuemin="1"
+        aria-valuemax="12"
+        aria-valuenow="3"
+
+
+        autocomplete="off"
+        value="03"
+
+
+
+
+
+      />
+      <div class="gui-parts__visual-underline gui-range-date-time-input__visual-underline"></div>
+    </div>
+  <span class="gui-range-date-time-input__separator">/</span>
+    <div class="gui-parts__touch-target gui-range-date-time-input__touch-target">
+      <input
+        type="text"
+        inputmode="numeric"
+        role="spinbutton"
+        class="gui-parts__part gui-range-date-time-input__part "
+        data-type="day"
+        data-group="start"
+        maxlength="2"
+        placeholder="dd"
+        tabindex="-1"
+        aria-label="Day"
+        aria-valuemin="1"
+        aria-valuemax="31"
+        aria-valuenow="2"
+
+
+        autocomplete="off"
+        value="02"
+
+
+
+
+
+      />
+      <div class="gui-parts__visual-underline gui-range-date-time-input__visual-underline"></div>
+    </div>
+  <span class="gui-range-date-time-input__separator">/</span>
+    <div class="gui-parts__touch-target gui-range-date-time-input__touch-target">
+      <input
+        type="text"
+        inputmode="numeric"
+        role="spinbutton"
+        class="gui-parts__part gui-range-date-time-input__part gui-parts__year gui-range-date-time-input__year"
+        data-type="year"
+        data-group="start"
+        maxlength="4"
+        placeholder="yyyy"
+        tabindex="-1"
+        aria-label="Year"
+        aria-valuemin="1900"
+        aria-valuemax="9999"
+        aria-valuenow="2026"
+
+
+        autocomplete="off"
+        value="2026"
+
+
+
+
+
+      />
+      <div class="gui-parts__visual-underline gui-range-date-time-input__visual-underline"></div>
+    </div>
+  <span class="gui-range-date-time-input__separator">, </span>
+    <div class="gui-parts__time-cluster gui-range-date-time-input__time-cluster" dir="ltr">
+
+    <div class="gui-parts__touch-target gui-range-date-time-input__touch-target">
+      <input
+        type="text"
+        inputmode="numeric"
+        role="spinbutton"
+        class="gui-parts__part gui-range-date-time-input__part "
+        data-type="hour"
+        data-group="start"
+        maxlength="2"
+        placeholder="hh"
+        tabindex="-1"
+        aria-label="Hour"
+        aria-valuemin="0"
+        aria-valuemax="23"
+        aria-valuenow="9"
+
+
+        autocomplete="off"
+        value="09"
+
+
+
+
+
+      />
+      <div class="gui-parts__visual-underline gui-range-date-time-input__visual-underline"></div>
+    </div>
+  <span class="gui-range-date-time-input__separator">:</span>
+    <div class="gui-parts__touch-target gui-range-date-time-input__touch-target">
+      <input
+        type="text"
+        inputmode="numeric"
+        role="spinbutton"
+        class="gui-parts__part gui-range-date-time-input__part "
+        data-type="minute"
+        data-group="start"
+        maxlength="2"
+        placeholder="mm"
+        tabindex="-1"
+        aria-label="Minute"
+        aria-valuemin="0"
+        aria-valuemax="59"
+        aria-valuenow="0"
+
+
+        autocomplete="off"
+        value="00"
+
+
+
+
+
+      />
+      <div class="gui-parts__visual-underline gui-range-date-time-input__visual-underline"></div>
+    </div>
+
+    </div>
+
+
+            </div>
+
+            <span class="gui-range-date-time-input__separator" aria-hidden="true"
+              >-</span
+            >
+
+            <div
+              class="gui-parts gui-range-date-time-input__field"
+              role="group"
+              aria-label="End date-time"
+            >
+
+
+    <div class="gui-parts__touch-target gui-range-date-time-input__touch-target">
+      <input
+        type="text"
+        inputmode="numeric"
+        role="spinbutton"
+        class="gui-parts__part gui-range-date-time-input__part "
+        data-type="month"
+        data-group="end"
+        maxlength="2"
+        placeholder="mm"
+        tabindex="-1"
+        aria-label="Month"
+        aria-valuemin="1"
+        aria-valuemax="12"
+        aria-valuenow="3"
+
+
+        autocomplete="off"
+        value="03"
+
+
+
+
+
+      />
+      <div class="gui-parts__visual-underline gui-range-date-time-input__visual-underline"></div>
+    </div>
+  <span class="gui-range-date-time-input__separator">/</span>
+    <div class="gui-parts__touch-target gui-range-date-time-input__touch-target">
+      <input
+        type="text"
+        inputmode="numeric"
+        role="spinbutton"
+        class="gui-parts__part gui-range-date-time-input__part "
+        data-type="day"
+        data-group="end"
+        maxlength="2"
+        placeholder="dd"
+        tabindex="-1"
+        aria-label="Day"
+        aria-valuemin="1"
+        aria-valuemax="31"
+        aria-valuenow="6"
+
+
+        autocomplete="off"
+        value="06"
+
+
+
+
+
+      />
+      <div class="gui-parts__visual-underline gui-range-date-time-input__visual-underline"></div>
+    </div>
+  <span class="gui-range-date-time-input__separator">/</span>
+    <div class="gui-parts__touch-target gui-range-date-time-input__touch-target">
+      <input
+        type="text"
+        inputmode="numeric"
+        role="spinbutton"
+        class="gui-parts__part gui-range-date-time-input__part gui-parts__year gui-range-date-time-input__year"
+        data-type="year"
+        data-group="end"
+        maxlength="4"
+        placeholder="yyyy"
+        tabindex="-1"
+        aria-label="Year"
+        aria-valuemin="1900"
+        aria-valuemax="9999"
+        aria-valuenow="2026"
+
+
+        autocomplete="off"
+        value="2026"
+
+
+
+
+
+      />
+      <div class="gui-parts__visual-underline gui-range-date-time-input__visual-underline"></div>
+    </div>
+  <span class="gui-range-date-time-input__separator">, </span>
+    <div class="gui-parts__time-cluster gui-range-date-time-input__time-cluster" dir="ltr">
+
+    <div class="gui-parts__touch-target gui-range-date-time-input__touch-target">
+      <input
+        type="text"
+        inputmode="numeric"
+        role="spinbutton"
+        class="gui-parts__part gui-range-date-time-input__part "
+        data-type="hour"
+        data-group="end"
+        maxlength="2"
+        placeholder="hh"
+        tabindex="-1"
+        aria-label="Hour"
+        aria-valuemin="0"
+        aria-valuemax="23"
+        aria-valuenow="17"
+
+
+        autocomplete="off"
+        value="17"
+
+
+
+
+
+      />
+      <div class="gui-parts__visual-underline gui-range-date-time-input__visual-underline"></div>
+    </div>
+  <span class="gui-range-date-time-input__separator">:</span>
+    <div class="gui-parts__touch-target gui-range-date-time-input__touch-target">
+      <input
+        type="text"
+        inputmode="numeric"
+        role="spinbutton"
+        class="gui-parts__part gui-range-date-time-input__part "
+        data-type="minute"
+        data-group="end"
+        maxlength="2"
+        placeholder="mm"
+        tabindex="-1"
+        aria-label="Minute"
+        aria-valuemin="0"
+        aria-valuemax="59"
+        aria-valuenow="30"
+
+
+        autocomplete="off"
+        value="30"
+
+
+
+
+
+      />
+      <div class="gui-parts__visual-underline gui-range-date-time-input__visual-underline"></div>
+    </div>
+
+    </div>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </gui-range-date-time>
+        <button
+          type="button"
+          class="gui-range-date-time-picker__arrow"
+          aria-label="Show calendar"
+          aria-haspopup="dialog"
+          aria-expanded="false"
+          aria-controls="rental_popup"
+
+
+        >
+          <span class="gui-caret" aria-hidden="true"></span>
+        </button>
+
+
+      </div>
+
+      <div
+    class=" gui-validator gui-validator--empty "
+    id="rental_errors"
+    role="alert"
+
+
+  >
+
+  </div>
+    </gui-range-date-time-picker>
     <gui-range-calendar
 
 

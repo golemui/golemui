@@ -11,6 +11,7 @@ import '../components/progress';
 import '../components/range-calendar';
 import '../components/range-date-picker';
 import '../components/range-time-picker';
+import '../components/range-date-time-picker';
 import '../components/rating';
 import '../components/select';
 import '../components/slider';
@@ -105,6 +106,14 @@ export const serverTemplate = () =>
       hour-format="24"
       value='{"start":"09:00:00","end":"17:30:00"}'
     ></gui-range-time-picker>
+    <gui-range-date-time-picker
+      uid="rental"
+      name="rental"
+      label="Rental"
+      locale-id="en-US"
+      hour-format="24"
+      value='{"start":"2026-03-02T09:00:00","end":"2026-03-06T17:30:00"}'
+    ></gui-range-date-time-picker>
     <gui-range-calendar
       uid="trip"
       name="trip"

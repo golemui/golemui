@@ -121,6 +121,24 @@ describe('accessible names', () => {
     });
   });
 
+  describe('a part of a single date-time range that only adds context', () => {
+    it('has a default name, which an empty one removes', () => {
+      cy.mount(
+        html`<gui-range-date-time
+          label="Rental"
+          start-date-time-aria-label=""
+        ></gui-range-date-time>`,
+      );
+
+      cy.get('gui-range-date-time .gui-range-date-time-input__field')
+        .first()
+        .should('not.have.attr', 'aria-label');
+      cy.get('gui-range-date-time .gui-range-date-time-input__field')
+        .last()
+        .should('have.attr', 'aria-label', 'End date-time');
+    });
+  });
+
   describe('a single range field inside a picker', () => {
     it('is named by the picker label', () => {
       cy.window().then((win) => cy.spy(win.console, 'warn').as('warn'));

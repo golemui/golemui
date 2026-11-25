@@ -124,6 +124,19 @@ export { GuiRangeDatePicker, GuiRangeDatePickerEvents } from './lib/components/r
 export { GuiRangeTimeInput, GuiRangeTimeInputEvents } from './lib/components/range-time-input';
 export type { GuiRangeTimeInputProps } from './lib/components/range-time-input';
 export { GuiRangeTimePicker, GuiRangeTimePickerEvents } from './lib/components/range-time-picker';
+export {
+  GuiRangeDateTimeCalendar,
+  GuiRangeDateTimeCalendarEvents,
+} from './lib/components/range-date-time-calendar';
+export {
+  GuiRangeDateTimeInput,
+  GuiRangeDateTimeInputEvents,
+} from './lib/components/range-date-time-input';
+export type { GuiRangeDateTimeInputProps } from './lib/components/range-date-time-input';
+export {
+  GuiRangeDateTimePicker,
+  GuiRangeDateTimePickerEvents,
+} from './lib/components/range-date-time-picker';
 export { GuiSelect, GuiSelectEvents } from './lib/components/select';
 export type { GuiSelectProps } from './lib/components/select';
 export { GuiTab } from './lib/components/tab';

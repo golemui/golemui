@@ -51,6 +51,10 @@ describe('server rendering standalone elements in plain node', () => {
     expect(markup).toMatch(/<label[^>]*for="setup"/);
     expect(markup).toMatch(/<progress[^>]*id="setup"[^>]*max="100"[^>]*value="40"/);
     expect(markup).toMatch(/<span class="gui-progress__value" aria-hidden="true"\s*>40%<\/span/);
+    // The range date-time picker shows its date-times in its parts.
+    expect(markup).toMatch(
+      /data-type="day"\s+data-group="end"[^>]*value="06"[\s\S]*data-type="minute"\s+data-group="end"[^>]*value="30"/,
+    );
     // The range time picker shows its times in its parts.
     expect(markup).toMatch(/data-type="hour"\s+data-group="end"[^>]*value="17"/);
     expect(markup).toMatch(/data-type="minute"\s+data-group="end"[^>]*value="30"/);
@@ -87,7 +91,7 @@ describe('server rendering standalone elements in plain node', () => {
 
   it('holds every GolemUI element inert through defer-hydration', () => {
     const tags = [...markup.matchAll(/<(gui-[a-z-]+)([^>]*)>/g)];
-    expect(tags.length).toBe(26);
+    expect(tags.length).toBe(28);
     for (const [, tag, attributes] of tags) {
       expect(attributes, tag).toContain('defer-hydration');
     }

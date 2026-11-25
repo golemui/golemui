@@ -1,0 +1,144 @@
+// The parts of a date-time range calendar besides the month grid: the start and end time pickers
+// above it, and the count bubbles on a day with their hover labels. `gui-range-date-time-calendar`
+// and `gui-multi-range-date-time-calendar` include it with their block class.
+
+@mixin gui-range-date-time-parts($block) {
+  .gui-calendar__panel {
+    min-width: min(100%, calc(7 * var(--gui-calendar-day-button-size) + 6px));
+  }
+
+  .#{$block}__time-row {
+    display: flex;
+    gap: var(--gui-space-2);
+    margin-block-end: var(--gui-space-2);
+  }
+
+  .#{$block}__time-column {
+    flex: 1 1 0;
+    min-width: 0;
+
+    .gui-time-picker.gui-field {
+      width: 100%;
+    }
+  }
+
+  .#{$block}__time-row.is-list-open {
+    .#{$block}__time-column:not(.is-open) {
+      display: none;
+    }
+
+    .#{$block}__time-column.is-open {
+      flex-basis: 100%;
+    }
+  }
+
+  .gui-calendar__day-button .#{$block}__badges {
+    position: absolute;
+    inset-block-start: -4px;
+    inset-inline-end: -4px;
+    display: flex;
+    gap: 2px;
+    z-index: 1;
+  }
+
+  .#{$block}__day-count,
+  .#{$block}__disabled-count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 14px;
+    height: 14px;
+    padding: 0 2px;
+    font-size: 9px;
+    line-height: 1;
+    border-radius: var(--gui-radius-full);
+  }
+
+  .#{$block}__day-count {
+    color: var(--gui-intent-primary-text);
+    background-color: var(--gui-intent-primary);
+  }
+
+  .#{$block}__disabled-count {
+    color: var(--gui-text-default);
+    background-color: var(--gui-bg-disabled);
+  }
+
+  .#{$block}__badge-tooltip {
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--gui-space-1) var(--gui-space-2);
+    font-size: 11px;
+    white-space: nowrap;
+    text-align: start;
+    font-variant-numeric: tabular-nums;
+    color: var(--gui-text-default);
+    background-color: var(--gui-bg-surface);
+    border: 1px solid var(--gui-border-default);
+    border-radius: var(--gui-radius-md);
+    box-shadow: var(--gui-shadow-md);
+    z-index: 30;
+  }
+
+  @supports not (position-area: center) {
+    .#{$block}__badge-tooltip {
+      position: absolute;
+      inset-block-end: calc(100% + 4px);
+      inset-inline-end: 0;
+    }
+
+    .gui-calendar__rows > .gui-calendar__day-button:nth-child(-n + 3) .#{$block}__badge-tooltip {
+      inset-inline-end: auto;
+      inset-inline-start: 0;
+    }
+  }
+
+  @supports (position-area: center) {
+    .#{$block}__day-count,
+    .#{$block}__disabled-count {
+      anchor-name: --gui-rdtc-badge;
+    }
+
+    .#{$block}__badge-tooltip {
+      position: fixed;
+      position-anchor: --gui-rdtc-badge;
+      position-area: block-start span-inline-start;
+      position-try-fallbacks: flip-inline, flip-block;
+      margin-block: 4px;
+    }
+  }
+
+  :is(.#{$block}__day-count, .#{$block}__disabled-count):hover + .#{$block}__badge-tooltip {
+    display: flex;
+  }
+}
+
+// A time picker embedded in a date-time range calendar shows its list inline, not as a popup.
+@mixin gui-embedded-time-picker {
+  > .gui-picker__panel {
+    position: static;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    width: auto;
+  }
+
+  gui-time-list {
+    position: static;
+    width: auto;
+
+    .gui-time-list__viewport {
+      max-height: var(--gui-calendar-time-grid-height);
+    }
+
+    .gui-time-list__option {
+      height: var(--gui-calendar-time-button-height);
+      font-variant-numeric: tabular-nums;
+    }
+  }
+}

@@ -318,6 +318,21 @@
       "import": "./lib/components/range-time-picker.js",
       "require": "./lib/components/range-time-picker.umd.cjs"
     },
+    "./range-date-time-calendar": {
+      "types": "./lib/components/range-date-time-calendar.d.ts",
+      "import": "./lib/components/range-date-time-calendar.js",
+      "require": "./lib/components/range-date-time-calendar.umd.cjs"
+    },
+    "./range-date-time-input": {
+      "types": "./lib/components/range-date-time-input.d.ts",
+      "import": "./lib/components/range-date-time-input.js",
+      "require": "./lib/components/range-date-time-input.umd.cjs"
+    },
+    "./range-date-time-picker": {
+      "types": "./lib/components/range-date-time-picker.d.ts",
+      "import": "./lib/components/range-date-time-picker.js",
+      "require": "./lib/components/range-date-time-picker.umd.cjs"
+    },
     "./multi-range-date-picker": {
       "types": "./lib/components/multi-range-date-picker.d.ts",
       "import": "./lib/components/multi-range-date-picker.js",

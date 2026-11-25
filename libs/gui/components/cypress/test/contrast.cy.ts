@@ -64,6 +64,11 @@ const controls: [string, TemplateResult, string, string?][] = [
     html`<gui-range-time label="Shift"></gui-range-time>`,
     '.gui-range-time-input',
   ],
+  [
+    'gui-range-date-time',
+    html`<gui-range-date-time label="Rental"></gui-range-date-time>`,
+    '.gui-range-date-time-input',
+  ],
   ['gui-otp', html`<gui-otp label="Code"></gui-otp>`, '.gui-otp__box'],
   ['gui-markdown', html`<gui-markdown label="Bio"></gui-markdown>`, '.gui-widget'],
   ['gui-toggle', html`<gui-toggle label="Notifications"></gui-toggle>`, '.gui-toggle--slider'],
