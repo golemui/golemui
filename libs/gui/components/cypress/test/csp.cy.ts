@@ -151,6 +151,33 @@ describe('a strict style-src-attr policy', () => {
       });
     });
 
+    it(`allows a single time range to be picked and typed${fallback ? ', measuring' : ''}`, () => {
+      GUIAnchorController.forceFallback = fallback;
+      cy.mount(
+        html`<gui-range-time-picker
+            label="Opening hours"
+            locale-id="en-US"
+            minute-step="30"
+          ></gui-range-time-picker>
+          <gui-range-time label="Typed" locale-id="en-US" icon="schedule"></gui-range-time>`,
+      );
+
+      cy.get('gui-range-time-picker .gui-range-time-picker__arrow').click();
+      cy.get('gui-range-time-picker .gui-picker__panel').should('match', ':popover-open');
+      cy.get(
+        'gui-range-time-picker .gui-range-time-picker__column:first-child .gui-time-list__option[data-value="09:00:00"]',
+      ).click();
+      cy.get(
+        'gui-range-time-picker .gui-range-time-picker__column:last-child .gui-time-list__option[data-value="12:00:00"]',
+      ).click();
+      cy.get('gui-range-time-picker .gui-picker__panel').should('not.exist');
+      cy.get('gui-range-time[icon] [data-type="hour"]').first().type('09');
+      expectNoViolations();
+      cy.then(() => {
+        GUIAnchorController.forceFallback = false;
+      });
+    });
+
     it(`allows a single date range to be picked and typed${fallback ? ', measuring' : ''}`, () => {
       GUIAnchorController.forceFallback = fallback;
       const march = { start: '2026-03-02', end: '2026-03-06' };

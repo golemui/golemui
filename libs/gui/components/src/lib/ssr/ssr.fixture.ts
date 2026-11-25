@@ -10,6 +10,7 @@ import '../components/popover';
 import '../components/progress';
 import '../components/range-calendar';
 import '../components/range-date-picker';
+import '../components/range-time-picker';
 import '../components/rating';
 import '../components/select';
 import '../components/slider';
@@ -96,6 +97,14 @@ export const serverTemplate = () =>
       locale-id="en-US"
       value='{"start":"2026-03-02","end":"2026-03-06"}'
     ></gui-range-date-picker>
+    <gui-range-time-picker
+      uid="hours"
+      name="hours"
+      label="Opening hours"
+      locale-id="en-US"
+      hour-format="24"
+      value='{"start":"09:00:00","end":"17:30:00"}'
+    ></gui-range-time-picker>
     <gui-range-calendar
       uid="trip"
       name="trip"

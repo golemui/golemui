@@ -31,6 +31,7 @@
             label="Stay"
             uid="all-rangedate"
           ></gui-multi-range-date-picker>
+          <gui-range-time-picker label="Shift" uid="all-singlerangetime"></gui-range-time-picker>
           <gui-multi-range-time-picker
             label="Opening hours"
             uid="all-rangetime"
@@ -56,8 +57,8 @@
         <h2>One range or several</h2>
         <p>
           The single range elements hold one <code>{ start, end }</code>: the first click starts a
-          new range and the second sets it, and the picker closes. The multi-range elements add
-          each range as a pill. The days from March 9 to 11 are disabled.
+          new range and the second sets it, and the picker closes. The multi-range elements add each
+          range as a pill. The days from March 9 to 11 and the hour from 1 PM are disabled.
         </p>
         <div class="pg-fields">
           <gui-range-date-picker
@@ -74,6 +75,16 @@
             value='[{"start":"2026-03-02","end":"2026-03-06"}]'
           ></gui-multi-range-date-picker>
           <gui-range-date label="Typed trip" uid="one-typed"></gui-range-date>
+          <gui-range-time-picker
+            label="Shift"
+            uid="one-time-picker"
+            minute-step="30"
+            min-time="08:00:00"
+            max-time="20:00:00"
+            disabled-ranges='[{"start":"13:00:00","end":"14:00:00"}]'
+            value='{"start":"09:00:00","end":"12:00:00"}'
+          ></gui-range-time-picker>
+          <gui-range-time label="Typed shift" uid="one-typed-time"></gui-range-time>
         </div>
         <gui-range-calendar
           label="Trip calendar"

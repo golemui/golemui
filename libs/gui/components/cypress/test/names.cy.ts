@@ -108,6 +108,19 @@ describe('accessible names', () => {
     });
   });
 
+  describe('a part of a single time range that only adds context', () => {
+    it('has a default name, which an empty one removes', () => {
+      cy.mount(html`<gui-range-time label="Shift" end-time-aria-label=""></gui-range-time>`);
+
+      cy.get('gui-range-time .gui-range-time-input__field')
+        .first()
+        .should('have.attr', 'aria-label', 'Start time');
+      cy.get('gui-range-time .gui-range-time-input__field')
+        .last()
+        .should('not.have.attr', 'aria-label');
+    });
+  });
+
   describe('a single range field inside a picker', () => {
     it('is named by the picker label', () => {
       cy.window().then((win) => cy.spy(win.console, 'warn').as('warn'));

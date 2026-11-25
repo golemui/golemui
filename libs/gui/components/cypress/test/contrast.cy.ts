@@ -59,6 +59,11 @@ const controls: [string, TemplateResult, string, string?][] = [
   ],
   ['gui-number', html`<gui-number label="Age"></gui-number>`, '.gui-widget'],
   ['gui-range-date', html`<gui-range-date label="Trip"></gui-range-date>`, '.gui-range-date-input'],
+  [
+    'gui-range-time',
+    html`<gui-range-time label="Shift"></gui-range-time>`,
+    '.gui-range-time-input',
+  ],
   ['gui-otp', html`<gui-otp label="Code"></gui-otp>`, '.gui-otp__box'],
   ['gui-markdown', html`<gui-markdown label="Bio"></gui-markdown>`, '.gui-widget'],
   ['gui-toggle', html`<gui-toggle label="Notifications"></gui-toggle>`, '.gui-toggle--slider'],
@@ -214,7 +219,10 @@ describe('control boundaries (WCAG 1.4.11)', () => {
         cy.get('gui-range-calendar').should(([host]) => {
           const page = toRgb(getComputedStyle(document.body).backgroundColor, [255, 255, 255]);
           for (const part of ['.range-start', '.range-end']) {
-            const color = getComputedStyle(host.querySelector(part)!).backgroundColor;
+            const end = host.querySelector(part);
+            expect(end, part).not.to.equal(null);
+            if (!end) return;
+            const color = getComputedStyle(end).backgroundColor;
             expect(contrast(toRgb(color, page), page), `${part} against the page`).to.be.gte(3);
           }
         });

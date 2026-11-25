@@ -1,6 +1,7 @@
 import { weekInfoData } from './week-info';
 import type { CompleteDateRange, DateRange } from '../types';
 import { message } from './messages';
+import { completeRange } from './range-commit';
 
 /**
  * Converts a Date object to a string formatted as an ISO 8601 date (YYYY-MM-DD).
@@ -382,11 +383,7 @@ export function getDayLabel(
  * @return {CompleteDateRange | undefined} The range when both ends are set.
  */
 export function completeDateRange(value: unknown): CompleteDateRange | undefined {
-  if (!value || typeof value !== 'object') return undefined;
-  const { start, end } = value as Partial<CompleteDateRange>;
-  return typeof start === 'string' && start && typeof end === 'string' && end
-    ? { start, end }
-    : undefined;
+  return completeRange(value);
 }
 
 /**

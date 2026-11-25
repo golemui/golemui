@@ -835,6 +835,256 @@
 
   </div>
     </gui-range-date-picker>
+    <gui-range-time-picker
+
+
+
+
+
+
+     uid="hours" name="hours" label="Opening hours" locale-id="en-US" hour-format="24" value="{&quot;start&quot;:&quot;09:00:00&quot;,&quot;end&quot;:&quot;17:30:00&quot;}" class="gui-field" data-golemui-ssr defer-hydration>
+      <span class="gui-label" data-cy="hours_label" id="hours_label">
+      <span class="gui-label__text"
+        >Opening hours</span
+      >
+
+
+    </span>
+
+      <div
+        class="gui-widget"
+
+
+
+      >
+        <gui-range-time
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         id="hours_time" class="gui-field" data-golemui-ssr defer-hydration>
+
+
+      <div class="gui-widget" >
+        <div
+          id="hours"
+          class="gui-widget-input gui-parts-ring gui-range-time-input "
+          role="group"
+          aria-labelledby="hours_label"
+        >
+
+
+          <div class="gui-range-time-input__inputs">
+            <div
+              class="gui-parts gui-range-time-input__field"
+              role="group"
+              aria-label="Start time"
+            >
+
+
+    <div class="gui-parts__time-cluster gui-range-time-input__time-cluster" dir="ltr">
+
+    <div class="gui-parts__touch-target gui-range-time-input__touch-target">
+      <input
+        type="text"
+        inputmode="numeric"
+        role="spinbutton"
+        class="gui-parts__part gui-range-time-input__part "
+        data-type="hour"
+        data-group="start"
+        maxlength="2"
+        placeholder="hh"
+        tabindex="0"
+        aria-label="Hour"
+        aria-valuemin="0"
+        aria-valuemax="23"
+        aria-valuenow="9"
+
+        readonly
+        autocomplete="off"
+        value="09"
+
+
+
+
+
+      />
+      <div class="gui-parts__visual-underline gui-range-time-input__visual-underline"></div>
+    </div>
+  <span class="gui-range-time-input__separator">:</span>
+    <div class="gui-parts__touch-target gui-range-time-input__touch-target">
+      <input
+        type="text"
+        inputmode="numeric"
+        role="spinbutton"
+        class="gui-parts__part gui-range-time-input__part "
+        data-type="minute"
+        data-group="start"
+        maxlength="2"
+        placeholder="mm"
+        tabindex="-1"
+        aria-label="Minute"
+        aria-valuemin="0"
+        aria-valuemax="59"
+        aria-valuenow="0"
+
+        readonly
+        autocomplete="off"
+        value="00"
+
+
+
+
+
+      />
+      <div class="gui-parts__visual-underline gui-range-time-input__visual-underline"></div>
+    </div>
+
+    </div>
+
+
+            </div>
+
+            <span class="gui-range-time-input__separator" aria-hidden="true"
+              >-</span
+            >
+
+            <div
+              class="gui-parts gui-range-time-input__field"
+              role="group"
+              aria-label="End time"
+            >
+
+
+    <div class="gui-parts__time-cluster gui-range-time-input__time-cluster" dir="ltr">
+
+    <div class="gui-parts__touch-target gui-range-time-input__touch-target">
+      <input
+        type="text"
+        inputmode="numeric"
+        role="spinbutton"
+        class="gui-parts__part gui-range-time-input__part "
+        data-type="hour"
+        data-group="end"
+        maxlength="2"
+        placeholder="hh"
+        tabindex="-1"
+        aria-label="Hour"
+        aria-valuemin="0"
+        aria-valuemax="23"
+        aria-valuenow="17"
+
+        readonly
+        autocomplete="off"
+        value="17"
+
+
+
+
+
+      />
+      <div class="gui-parts__visual-underline gui-range-time-input__visual-underline"></div>
+    </div>
+  <span class="gui-range-time-input__separator">:</span>
+    <div class="gui-parts__touch-target gui-range-time-input__touch-target">
+      <input
+        type="text"
+        inputmode="numeric"
+        role="spinbutton"
+        class="gui-parts__part gui-range-time-input__part "
+        data-type="minute"
+        data-group="end"
+        maxlength="2"
+        placeholder="mm"
+        tabindex="-1"
+        aria-label="Minute"
+        aria-valuemin="0"
+        aria-valuemax="59"
+        aria-valuenow="30"
+
+        readonly
+        autocomplete="off"
+        value="30"
+
+
+
+
+
+      />
+      <div class="gui-parts__visual-underline gui-range-time-input__visual-underline"></div>
+    </div>
+
+    </div>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </gui-range-time>
+        <button
+          type="button"
+          class="gui-range-time-picker__arrow"
+          aria-label="Show time list"
+          aria-haspopup="dialog"
+          aria-expanded="false"
+          aria-controls="hours_popup"
+
+
+        >
+          <span class="gui-caret" aria-hidden="true"></span>
+        </button>
+
+
+      </div>
+
+      <div
+    class=" gui-validator gui-validator--empty "
+    id="hours_errors"
+    role="alert"
+
+
+  >
+
+  </div>
+    </gui-range-time-picker>
     <gui-range-calendar
 
 

@@ -1,3 +1,18 @@
+/**
+ * The value as a range with both ends, or undefined. The single range elements hold one range with
+ * both ends or nothing, so a partial or malformed value set from outside reads as empty.
+ *
+ * @param {unknown} value - A value set on the element.
+ * @return {{ start: string; end: string } | undefined} The range when both ends are set.
+ */
+export function completeRange(value: unknown): { start: string; end: string } | undefined {
+  if (!value || typeof value !== 'object') return undefined;
+  const { start, end } = value as { start?: unknown; end?: unknown };
+  return typeof start === 'string' && start && typeof end === 'string' && end
+    ? { start, end }
+    : undefined;
+}
+
 /** One parsed endpoint (start or end group) of a range commit. */
 export type RangeEndpoint<V> =
   | { kind: 'incomplete' }
