@@ -59,7 +59,7 @@ import tabsSchemaJson from './lib/components/tabs.schema.json';
 import alertSchemaJson from './lib/components/alert.schema.json';
 import markdowntextSchemaJson from './lib/components/markdowntext.schema.json';
 import buttonSchemaJson from './lib/components/button.schema.json';
-import menuSchemaJson from './lib/components/menu.schema.json';
+import menubuttonSchemaJson from './lib/components/menubutton.schema.json';
 import customSchemaJson from './lib/components/custom.schema.json';
 
 export const commonSchema: Record<string, unknown> = commonSchemaJson;
@@ -124,7 +124,7 @@ export const tabsSchema: Record<string, unknown> = tabsSchemaJson;
 export const alertSchema: Record<string, unknown> = alertSchemaJson;
 export const markdowntextSchema: Record<string, unknown> = markdowntextSchemaJson;
 export const buttonSchema: Record<string, unknown> = buttonSchemaJson;
-export const menuSchema: Record<string, unknown> = menuSchemaJson;
+export const menubuttonSchema: Record<string, unknown> = menubuttonSchemaJson;
 export const customSchema: Record<string, unknown> = customSchemaJson;
 
 /** Component schemas keyed by widget `type`. Excludes the custom fallback and schema-less types. */
@@ -182,5 +182,5 @@ export const COMPONENT_SCHEMAS_BY_TYPE = {
   alert: alertSchema,
   markdownText: markdowntextSchema,
   button: buttonSchema,
-  menu: menuSchema,
+  menuButton: menubuttonSchema,
 } as const;

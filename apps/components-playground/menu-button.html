@@ -3,13 +3,13 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Menu · GolemUI Components playground</title>
+    <title>Menu button · GolemUI Components playground</title>
     <link rel="stylesheet" href="/src/styles.scss" />
   </head>
   <body data-pg-events="gui-action gui-toggle">
     <main class="pg-main">
       <section class="pg-section">
-        <h1>gui-menu</h1>
+        <h1>gui-menu-button</h1>
         <p>
           A menu of actions opened from a button (the APG menu button pattern). Click the button, or
           focus it and press Enter, Space, ArrowDown (first item) or ArrowUp (last item). In the
@@ -30,7 +30,7 @@
           >
             Actions
           </button>
-          <gui-menu>
+          <gui-menu-button>
             <div id="row-actions" popover>
               <button type="button" value="edit">Edit</button>
               <button type="button" value="duplicate">Duplicate</button>
@@ -39,7 +39,7 @@
               <hr />
               <button type="button" value="delete">Delete</button>
             </div>
-          </gui-menu>
+          </gui-menu-button>
         </div>
       </section>
 
@@ -60,13 +60,13 @@
           >
             ⋯
           </button>
-          <gui-menu placement="bottom-end">
+          <gui-menu-button placement="bottom-end">
             <div id="more" popover>
               <button type="button" value="download">Download PDF</button>
               <button type="button" value="send">Send again</button>
               <button type="button" value="void">Void invoice</button>
             </div>
-          </gui-menu>
+          </gui-menu-button>
         </div>
       </section>
 
@@ -76,13 +76,13 @@
           <button type="button" class="pg-button" id="rtl-menu-button" popovertarget="rtl-menu">
             Sort
           </button>
-          <gui-menu>
+          <gui-menu-button>
             <div id="rtl-menu" popover>
               <button type="button" value="name">By name</button>
               <button type="button" value="date">By date</button>
               <button type="button" value="size">By size</button>
             </div>
-          </gui-menu>
+          </gui-menu-button>
         </div>
       </section>
 
@@ -100,12 +100,12 @@
               <button type="button" class="pg-button" id="share-button" popovertarget="share">
                 Share with
               </button>
-              <gui-menu>
+              <gui-menu-button>
                 <div id="share" popover>
                   <button type="button" value="team">The team</button>
                   <button type="button" value="link">Anyone with the link</button>
                 </div>
-              </gui-menu>
+              </gui-menu-button>
               <button type="button" class="pg-button" commandfor="menu-dialog" command="close">
                 Close
               </button>
@@ -114,6 +114,6 @@
         </gui-dialog>
       </section>
     </main>
-    <script type="module" src="/src/pages/menu.ts"></script>
+    <script type="module" src="/src/pages/menu-button.ts"></script>
   </body>
 </html>

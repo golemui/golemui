@@ -136,8 +136,8 @@ export const elements: ElementCase[] = [
     tag: 'gui-markdown-text',
     props: { md: 'Hello', dependencies: { markdown: { parse: (md: string) => `<p>${md}</p>` } } },
   },
-  // Its panel and items are the app's children: menu.cy.ts checks it with them, open and closed.
-  { tag: 'gui-menu', props: {}, hostRendersChildren: true },
+  // Its panel and items are the app's children: menu-button.cy.ts checks it with them, open and closed.
+  { tag: 'gui-menu-button', props: {}, hostRendersChildren: true },
   {
     tag: 'gui-multi-dropdown',
     props: { label: 'Colors', items: options },

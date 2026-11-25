@@ -8,7 +8,7 @@ const pages = [
   'checkbox-group',
   'dialog',
   'index',
-  'menu',
+  'menu-button',
   'otp',
   'pickers',
   'popover',

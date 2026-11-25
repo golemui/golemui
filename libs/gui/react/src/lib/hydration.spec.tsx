@@ -53,11 +53,11 @@ const config: GuiFormInitConfig = {
           },
         ],
       },
-      // A plain <button> React renders, which gui-menu gives aria-haspopup once it connects: its
+      // A plain <button> React renders, which gui-menu-button gives aria-haspopup once it connects: its
       // React wrapper holds that until React has hydrated.
       {
         kind: 'action',
-        type: 'menu',
+        type: 'menuButton',
         uid: 'rowActions',
         label: 'Actions',
         props: {

@@ -142,7 +142,7 @@ The same `formDef` value renders in every supported framework. See [Integrations
 | Kind      | Purpose           | Types (examples)                                                                                                                                                                              |
 | --------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `input`   | Field widgets     | `textinput`, `number`, `password`, `textarea`, `checkbox`, `dropdown`, `select`, `radiogroup`, `currency`, `tags`, `datePicker`, `timeInput`, `dateTimeInput`, `calendar`, `repeater`, `list` |
-| `action`  | Buttons and menus | `button`, `menu`                                                                                                                                                                              |
+| `action`  | Buttons and menus | `button`, `menuButton`                                                                                                                                                                        |
 | `display` | Non-input content | `alert`, `markdownText`                                                                                                                                                                       |
 | `layout`  | Containers        | `grid`, `tabs`, `accordion`                                                                                                                                                                   |
 

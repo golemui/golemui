@@ -5,7 +5,7 @@ import type { Component } from 'vue';
 export const widgetLoaders: WidgetLoaders<Component<WithWidget>, GolemWidget> = {
   // INTERACTIVE
   button: async () => (await import('./components/Button.vue')).default,
-  menu: async () => (await import('./components/Menu.vue')).default,
+  menuButton: async () => (await import('./components/MenuButton.vue')).default,
 
   // CONTROLS
   calendar: async () => (await import('./components/Calendar.vue')).default,

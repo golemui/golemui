@@ -80,7 +80,7 @@ describe('server rendering standalone elements in plain node', () => {
       /<gui-popover[^>]*>\s*<div id="plan-help" popover>Every plan includes email support.<\/div>/,
     );
     expect(markup).toMatch(/<gui-tooltip\s+for="plan-help-button"[^>]*>Opens the plan details</);
-    expect(markup).toMatch(/<gui-menu[^>]*>\s*<div id="plan-actions" popover>\s*<button/);
+    expect(markup).toMatch(/<gui-menu-button[^>]*>\s*<div id="plan-actions" popover>\s*<button/);
     // A closed dialog, with the fields inside it rendered too.
     expect(markup).toMatch(/<gui-dialog[^>]*>\s*<dialog id="plan-dialog"[^>]*>\s*<h2/);
     expect(markup).not.toMatch(/<dialog[^>]*\sopen/);

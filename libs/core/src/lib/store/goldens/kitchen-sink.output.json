@@ -765,14 +765,14 @@
       "#0.1.1.4": "action button",
       "#0.1.1.5": "action button",
       "#0.1.1.6": "action button",
-      "tabMenu": "layout grid",
-      "menuActions": "action menu",
-      "menuOutlined": "action menu",
-      "menuLink": "action menu",
-      "menuIcon": "action menu",
-      "menuIconOnly": "action menu",
-      "menuTop": "action menu",
-      "menuDisabled": "action menu",
+      "tabMenuButton": "layout grid",
+      "menuActions": "action menuButton",
+      "menuOutlined": "action menuButton",
+      "menuLink": "action menuButton",
+      "menuIcon": "action menuButton",
+      "menuIconOnly": "action menuButton",
+      "menuTop": "action menuButton",
+      "menuDisabled": "action menuButton",
       "tabMarkdownText": "layout grid",
       "#0.1.3.0": "display markdownText",
       "tabAccordion": "layout accordion",
@@ -1214,8 +1214,8 @@
               "uid": "tabButton"
             },
             {
-              "label": "Menu Component",
-              "uid": "tabMenu"
+              "label": "Menu Button Component",
+              "uid": "tabMenuButton"
             },
             {
               "label": "Calendar Component",
@@ -1418,7 +1418,7 @@
         "children": [
           "tabAlert",
           "tabButton",
-          "tabMenu",
+          "tabMenuButton",
           "tabMarkdownText",
           "tabAccordion",
           "tabGrid",
@@ -1616,8 +1616,8 @@
         },
         "keysWithUndefined": "size include exclude label disabled actionType"
       },
-      "tabMenu": {
-        "uid": "tabMenu",
+      "tabMenuButton": {
+        "uid": "tabMenuButton",
         "type": "grid",
         "kind": "layout",
         "children": [
@@ -1633,7 +1633,7 @@
       },
       "menuActions": {
         "uid": "menuActions",
-        "type": "menu",
+        "type": "menuButton",
         "kind": "action",
         "label": "Actions",
         "props": {
@@ -1671,7 +1671,7 @@
       },
       "menuOutlined": {
         "uid": "menuOutlined",
-        "type": "menu",
+        "type": "menuButton",
         "kind": "action",
         "label": "Actions",
         "props": {
@@ -1710,7 +1710,7 @@
       },
       "menuLink": {
         "uid": "menuLink",
-        "type": "menu",
+        "type": "menuButton",
         "kind": "action",
         "label": "Actions",
         "props": {
@@ -1749,7 +1749,7 @@
       },
       "menuIcon": {
         "uid": "menuIcon",
-        "type": "menu",
+        "type": "menuButton",
         "kind": "action",
         "label": "More",
         "props": {
@@ -1790,7 +1790,7 @@
       },
       "menuIconOnly": {
         "uid": "menuIconOnly",
-        "type": "menu",
+        "type": "menuButton",
         "kind": "action",
         "props": {
           "items": [
@@ -1831,7 +1831,7 @@
       },
       "menuTop": {
         "uid": "menuTop",
-        "type": "menu",
+        "type": "menuButton",
         "kind": "action",
         "label": "Opens above",
         "props": {
@@ -1870,7 +1870,7 @@
       },
       "menuDisabled": {
         "uid": "menuDisabled",
-        "type": "menu",
+        "type": "menuButton",
         "kind": "action",
         "label": "Actions",
         "disabled": true,
@@ -10281,7 +10281,7 @@
         "#0.1.1.4",
         "#0.1.1.5",
         "#0.1.1.6",
-        "tabMenu",
+        "tabMenuButton",
         "menuActions",
         "menuOutlined",
         "menuLink",
@@ -10706,19 +10706,19 @@
         "#0.1.50.0.t[0]": "layout grid",
         "repeaters.users.items.firstName-textinput[0]": "input textinput repeaters.users.0.firstName",
         "repeaters.users.items.lastName-textinput[0]": "input textinput repeaters.users.0.lastName",
-        "userRowMenu[0]": "action menu",
+        "userRowMenu[0]": "action menuButton",
         "#0.1.50.0.t[1]": "layout grid",
         "repeaters.users.items.firstName-textinput[1]": "input textinput repeaters.users.1.firstName",
         "repeaters.users.items.lastName-textinput[1]": "input textinput repeaters.users.1.lastName",
-        "userRowMenu[1]": "action menu",
+        "userRowMenu[1]": "action menuButton",
         "#0.1.50.0.t[2]": "layout grid",
         "repeaters.users.items.firstName-textinput[2]": "input textinput repeaters.users.2.firstName",
         "repeaters.users.items.lastName-textinput[2]": "input textinput repeaters.users.2.lastName",
-        "userRowMenu[2]": "action menu",
+        "userRowMenu[2]": "action menuButton",
         "#0.1.50.0.t[3]": "layout grid",
         "repeaters.users.items.firstName-textinput[3]": "input textinput repeaters.users.3.firstName",
         "repeaters.users.items.lastName-textinput[3]": "input textinput repeaters.users.3.lastName",
-        "userRowMenu[3]": "action menu"
+        "userRowMenu[3]": "action menuButton"
       }
     },
     "repeaterItemScopes": {
@@ -10945,7 +10945,7 @@
         },
         "userRowMenu[0]": {
           "uid": "userRowMenu[0]",
-          "type": "menu",
+          "type": "menuButton",
           "kind": "action",
           "props": {
             "items": [
@@ -11010,7 +11010,7 @@
         },
         "userRowMenu[1]": {
           "uid": "userRowMenu[1]",
-          "type": "menu",
+          "type": "menuButton",
           "kind": "action",
           "props": {
             "items": [
@@ -11075,7 +11075,7 @@
         },
         "userRowMenu[2]": {
           "uid": "userRowMenu[2]",
-          "type": "menu",
+          "type": "menuButton",
           "kind": "action",
           "props": {
             "items": [
@@ -11140,7 +11140,7 @@
         },
         "userRowMenu[3]": {
           "uid": "userRowMenu[3]",
-          "type": "menu",
+          "type": "menuButton",
           "kind": "action",
           "props": {
             "items": [

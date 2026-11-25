@@ -1,27 +1,27 @@
 /**
- * @internal Used by framework menu widgets, not part of the end-user public API.
+ * @internal Used by the framework menuButton widgets, not part of the end-user public API.
  *
- * The parts of the menu widget the four adapters must render the same way.
+ * The parts of the menuButton widget the four adapters must render the same way.
  */
-import type { MenuItem, MenuProps, MenuSeparator } from '../widget.props';
+import type { MenuButtonItem, MenuButtonProps, MenuButtonSeparator } from '../widget.props';
 
 /** Where a menu opens when its props don't say. */
-export const DEFAULT_MENU_PLACEMENT = 'bottom-start';
+export const DEFAULT_MENU_BUTTON_PLACEMENT = 'bottom-start';
 
 /**
  * The id of a menu's panel, which its button names in `popovertarget`.
  *
- * @param uid - The menu widget's uid, row index suffix included.
+ * @param uid - The menuButton widget's uid, row index suffix included.
  * @example
- * menuPanelId('rowActions[2]'); // 'rowActions[2]_menu'
+ * menuButtonPanelId('rowActions[2]'); // 'rowActions[2]_menu'
  */
-export function menuPanelId(uid: string): string {
+export function menuButtonPanelId(uid: string): string {
   return `${uid}_menu`;
 }
 
 /** Whether a menu item is a separator rather than an action. */
-export function isMenuSeparator(item: MenuItem): item is MenuSeparator {
-  return (item as MenuSeparator).separator === true;
+export function isMenuButtonSeparator(item: MenuButtonItem): item is MenuButtonSeparator {
+  return (item as MenuButtonSeparator).separator === true;
 }
 
 /**
@@ -38,13 +38,13 @@ export function menuButtonAriaLabel(label: unknown, ariaLabel: unknown): string 
 
 /**
  * The classes of a menu's button. It is a native `<button>` styled as a `gui-button`, not a
- * `<gui-button>`, so `gui-menu` finds it, named by `popovertarget`, as soon as both connect.
+ * `<gui-button>`, so `gui-menu-button` finds it, named by `popovertarget`, as soon as both connect.
  */
 export function menuButtonClasses({
   variant,
   icon,
   iconPosition,
-}: Pick<MenuProps, 'variant' | 'icon' | 'iconPosition'>): string {
+}: Pick<MenuButtonProps, 'variant' | 'icon' | 'iconPosition'>): string {
   return [
     'gui-button',
     `gui-button-icon-${iconPosition || 'left'}`,

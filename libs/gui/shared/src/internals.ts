@@ -36,10 +36,10 @@ export type {
   ListProps,
   MarkdownProps,
   MarkdownTextProps,
-  MenuAction,
-  MenuItem,
-  MenuProps,
-  MenuSeparator,
+  MenuButtonAction,
+  MenuButtonItem,
+  MenuButtonProps,
+  MenuButtonSeparator,
   MultiDropdownProps,
   MultiFileUploadProps,
   MultiListProps,
@@ -116,10 +116,10 @@ export { repeaterIndexSuffix } from './lib/utils/repeater';
 export { findRepeaterRowFocus, focusAfterRowRemoval } from './lib/utils/repeater-focus';
 export type { RepeaterRowFocus } from './lib/utils/repeater-focus';
 export {
-  DEFAULT_MENU_PLACEMENT,
-  isMenuSeparator,
+  DEFAULT_MENU_BUTTON_PLACEMENT,
+  isMenuButtonSeparator,
   menuButtonAriaLabel,
   menuButtonClasses,
-  menuPanelId,
-} from './lib/utils/menu';
+  menuButtonPanelId,
+} from './lib/utils/menu-button';
 export { gridCellClasses, gridClasses, resolveGrid, type ResolvedGrid } from './lib/utils/grid';

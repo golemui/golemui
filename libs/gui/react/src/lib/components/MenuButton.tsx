@@ -1,25 +1,25 @@
 import type { ActionWidget, WithWidget } from '@golemui/core';
 import { useActionWidget } from '@golemui/react';
 import {
-  DEFAULT_MENU_PLACEMENT,
-  isMenuSeparator,
+  DEFAULT_MENU_BUTTON_PLACEMENT,
+  isMenuButtonSeparator,
   menuButtonAriaLabel,
   menuButtonClasses,
-  menuPanelId,
-  type MenuProps,
+  menuButtonPanelId,
+  type MenuButtonProps,
 } from '@golemui/gui-shared/internals';
-import { GuiMenuReact } from '../web-components';
+import { GuiMenuButtonReact } from '../web-components';
 import '../styles.scss';
 
 /**
- * The menu action widget: a button that opens a `gui-menu` of actions. Picking an item emits the
- * widget's `click` event with `{ value }` as its detail.
+ * The menuButton action widget: a button that opens a menu of actions, with `gui-menu-button`.
+ * Picking an item emits the widget's `click` event with `{ value }` as its detail.
  */
-export function Menu(widgetInstance: WithWidget) {
+export function MenuButton(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as ActionWidget;
-  const { uid, domId, templateData, emitClick } = useActionWidget<MenuProps>(widget);
+  const { uid, domId, templateData, emitClick } = useActionWidget<MenuButtonProps>(widget);
   const { variant, icon, iconPosition } = templateData;
-  const panelId = menuPanelId(domId);
+  const panelId = menuButtonPanelId(domId);
   const iconPart = icon ? (
     <span
       className={`gui-widget-icon gui-button-icon ${icon}`}
@@ -46,13 +46,13 @@ export function Menu(widgetInstance: WithWidget) {
           {iconOnRight ? iconPart : null}
         </button>
       </div>
-      <GuiMenuReact
-        placement={templateData.placement ?? DEFAULT_MENU_PLACEMENT}
+      <GuiMenuButtonReact
+        placement={templateData.placement ?? DEFAULT_MENU_BUTTON_PLACEMENT}
         onGuiAction={(event) => emitClick({ value: event.detail.value })}
       >
-        <div id={panelId} data-cy={menuPanelId(uid)} popover="auto">
+        <div id={panelId} data-cy={menuButtonPanelId(uid)} popover="auto">
           {(templateData.items ?? []).map((item, index) =>
-            isMenuSeparator(item) ? (
+            isMenuButtonSeparator(item) ? (
               <hr key={`separator-${index}`} />
             ) : (
               <button
@@ -67,7 +67,7 @@ export function Menu(widgetInstance: WithWidget) {
             ),
           )}
         </div>
-      </GuiMenuReact>
+      </GuiMenuButtonReact>
     </div>
   );
 }
