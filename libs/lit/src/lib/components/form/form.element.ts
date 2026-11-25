@@ -1,5 +1,4 @@
 import {
-  cloneObject,
   type FormEvent,
   type FormHealth,
   type FormInitConfig,
@@ -11,8 +10,8 @@ import {
   formEventNames,
   formHealth,
   getDirectionFromLanguage,
-  shortUUID,
 } from '@golemui/core';
+import { cloneObject, shortUUID } from '@golemui/core/internals';
 import { provide } from '@lit/context';
 import { html, LitElement, nothing, notEqual, type PropertyDeclaration } from 'lit';
 import { property, state } from 'lit/decorators.js';

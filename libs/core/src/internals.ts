@@ -34,3 +34,9 @@ export type {
   WidgetSetFormBundle,
   WidgetSetFormInitConfig,
 } from './lib/widget-set-form';
+
+// Helpers of the bindings, of @golemui/gui-angular and of @golemui/gui-validators.
+export { filterTap } from './lib/utils/array';
+export { assertNoPropCollisions } from './lib/utils/assert-no-prop-collisions';
+export { cloneObject } from './lib/utils/object';
+export { shortUUID } from './lib/utils/random';

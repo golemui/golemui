@@ -2,10 +2,9 @@ import {
   type FormWidget,
   type WidgetViewModel,
   type WithWidget,
-  assertNoPropCollisions,
   widgetViewModel$,
 } from '@golemui/core';
-import { toDomId } from '@golemui/core/internals';
+import { assertNoPropCollisions, toDomId } from '@golemui/core/internals';
 import { Subject, takeUntil } from 'rxjs';
 import { type LitFormContext } from '../context/form.context';
 

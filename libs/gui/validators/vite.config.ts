@@ -28,7 +28,13 @@ export default defineConfig(() => ({
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
-      external: ['@golemui/core', '@standard-schema/spec', 'zod', 'zod/mini'],
+      external: [
+        '@golemui/core',
+        /^@golemui\/core\/.+/,
+        '@standard-schema/spec',
+        'zod',
+        'zod/mini',
+      ],
     },
   },
   test: {

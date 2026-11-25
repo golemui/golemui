@@ -1,9 +1,4 @@
-import {
-  type FormWidget,
-  type InputWidget,
-  isInputWidget,
-  type LayoutWidget,
-} from '../form-widget';
+import { type FormWidget, type InputWidget, type LayoutWidget } from '../form-widget';
 import { type DotPath, type FormEventRow, type Uid } from '../shared';
 import { type RepeaterRow, type State } from '../store/model';
 
@@ -49,55 +44,6 @@ export function getFormEventRow(state: State, uid: Uid): FormEventRow | undefine
 /** The path segment that stands for "the current row" in template paths, e.g. `users.items.name`. */
 export const ITEMS_TOKEN = 'items';
 
-/**
- * Derives a concrete widget config for a specific repeater item by materializing the provided indexes into the
- * widget's `uid` (and `path` for input widgets).
- *
- * Every path segment named `items`, except the first, is a row token, filled in order. With indexes
- * alone a property named `items` cannot be told apart from a token, so such a path throws.
- * The form itself places each row by the path of its repeater and has no such limit.
- *
- * @param widget - The base widget config defined on the repeater template.
- * @param repeaterIndexes - Ordered list of indexes for each nesting level
- *   e.g. `[2, 0]` for the first item of a nested repeater inside the third item of an outer repeater.
- * @returns A new widget config with the indexes baked in. The original is not mutated.
- *
- * @example
- * makeRepeaterItemConfig(widget, [1]) // { uid: 'user-name[1]', path: 'users.1.name' }
- *
- * @example
- * // Nested repeater: the first item of an inner repeater inside the third item of the outer one.
- * makeRepeaterItemConfig(widget, [2, 0]) // { uid: 'dev-name[2][0]', path: 'teams.2.devs.0.name' }
- */
-export function makeRepeaterItemConfig(
-  widget: FormWidget<string>,
-  repeaterIndexes: number[],
-): FormWidget<string> {
-  return materializeWidget(widget, repeaterIndexes, (path) =>
-    toRepeaterItemPath(path, repeaterIndexes),
-  );
-}
-
-function materializeWidget(
-  widget: FormWidget<string>,
-  repeaterIndexes: number[],
-  materializePath: (path: DotPath) => string,
-): FormWidget<string> {
-  const uid = toRepeaterItemUid(widget.uid, repeaterIndexes);
-  if (isInputWidget(widget)) {
-    return {
-      ...widget,
-      uid,
-      path: materializePath(widget.path),
-    };
-  } else {
-    return {
-      ...widget,
-      uid,
-    };
-  }
-}
-
 export function toRepeaterItemUid(uid: Uid, repeaterIndexes: number[]): Uid {
   if (repeaterIndexes.length === 0) {
     throw new Error('Repeater indexes cannot be an empty array');
@@ -105,29 +51,6 @@ export function toRepeaterItemUid(uid: Uid, repeaterIndexes: number[]): Uid {
   // converts the array `[1,2,3]` into the string `'[1][2][3]'`
   const indexes = repeaterIndexes.reduce((acc, n) => `${acc}[${n}]`, '');
   return `${uid}${indexes}` as Uid;
-}
-
-function toRepeaterItemPath(path: DotPath, repeaterIndexes: number[]): string {
-  if (repeaterIndexes.length === 0) {
-    throw new Error('Repeater indexes cannot be an empty array');
-  }
-
-  const segments = path.split('.');
-  // The first segment is never a token, because a repeater path cannot be empty.
-  const tokenPositions = segments
-    .map((segment, position) => (position > 0 && segment === ITEMS_TOKEN ? position : -1))
-    .filter((position) => position !== -1);
-
-  if (tokenPositions.length !== repeaterIndexes.length) {
-    throw new Error(
-      `Path contains ${tokenPositions.length} '${ITEMS_TOKEN}' occurrences, but ${repeaterIndexes.length} indexes were provided.`,
-    );
-  }
-
-  tokenPositions.forEach((position, level) => {
-    segments[position] = String(repeaterIndexes[level]);
-  });
-  return segments.join('.');
 }
 
 /**
