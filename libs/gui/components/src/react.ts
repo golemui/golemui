@@ -96,6 +96,38 @@ import { GuiSlider as GuiSliderElement, GuiSliderEvents } from './lib/components
 import { GuiSpinner as GuiSpinnerElement } from './lib/components/spinner';
 import { GuiRating as GuiRatingElement, GuiRatingEvents } from './lib/components/rating';
 import {
+  GuiRangeCalendar as GuiRangeCalendarElement,
+  GuiRangeCalendarEvents,
+} from './lib/components/range-calendar';
+import {
+  GuiRangeDateInput as GuiRangeDateInputElement,
+  GuiRangeDateInputEvents,
+} from './lib/components/range-date-input';
+import {
+  GuiRangeDatePicker as GuiRangeDatePickerElement,
+  GuiRangeDatePickerEvents,
+} from './lib/components/range-date-picker';
+import {
+  GuiRangeTimeInput as GuiRangeTimeInputElement,
+  GuiRangeTimeInputEvents,
+} from './lib/components/range-time-input';
+import {
+  GuiRangeTimePicker as GuiRangeTimePickerElement,
+  GuiRangeTimePickerEvents,
+} from './lib/components/range-time-picker';
+import {
+  GuiRangeDateTimeCalendar as GuiRangeDateTimeCalendarElement,
+  GuiRangeDateTimeCalendarEvents,
+} from './lib/components/range-date-time-calendar';
+import {
+  GuiRangeDateTimeInput as GuiRangeDateTimeInputElement,
+  GuiRangeDateTimeInputEvents,
+} from './lib/components/range-date-time-input';
+import {
+  GuiRangeDateTimePicker as GuiRangeDateTimePickerElement,
+  GuiRangeDateTimePickerEvents,
+} from './lib/components/range-date-time-picker';
+import {
   GuiMultiRangeCalendar as GuiMultiRangeCalendarElement,
   GuiMultiRangeCalendarEvents,
 } from './lib/components/multi-range-calendar';
@@ -338,6 +370,46 @@ export const GuiRangeSlider = wrap('gui-range-slider', GuiRangeSliderElement, Gu
 export const GuiRating = wrap('gui-rating', GuiRatingElement, GuiRatingEvents);
 export const GuiSlider = wrap('gui-slider', GuiSliderElement, GuiSliderEvents);
 export const GuiSpinner = wrap('gui-spinner', GuiSpinnerElement);
+export const GuiRangeCalendar = wrap(
+  'gui-range-calendar',
+  GuiRangeCalendarElement,
+  GuiRangeCalendarEvents,
+);
+export const GuiRangeDateInput = wrap(
+  'gui-range-date',
+  GuiRangeDateInputElement,
+  GuiRangeDateInputEvents,
+);
+export const GuiRangeDatePicker = wrap(
+  'gui-range-date-picker',
+  GuiRangeDatePickerElement,
+  GuiRangeDatePickerEvents,
+);
+export const GuiRangeTimeInput = wrap(
+  'gui-range-time',
+  GuiRangeTimeInputElement,
+  GuiRangeTimeInputEvents,
+);
+export const GuiRangeTimePicker = wrap(
+  'gui-range-time-picker',
+  GuiRangeTimePickerElement,
+  GuiRangeTimePickerEvents,
+);
+export const GuiRangeDateTimeCalendar = wrap(
+  'gui-range-date-time-calendar',
+  GuiRangeDateTimeCalendarElement,
+  GuiRangeDateTimeCalendarEvents,
+);
+export const GuiRangeDateTimeInput = wrap(
+  'gui-range-date-time',
+  GuiRangeDateTimeInputElement,
+  GuiRangeDateTimeInputEvents,
+);
+export const GuiRangeDateTimePicker = wrap(
+  'gui-range-date-time-picker',
+  GuiRangeDateTimePickerElement,
+  GuiRangeDateTimePickerEvents,
+);
 export const GuiMultiRangeCalendar = wrap(
   'gui-multi-range-calendar',
   GuiMultiRangeCalendarElement,

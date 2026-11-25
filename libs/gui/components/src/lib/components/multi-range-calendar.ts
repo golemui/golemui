@@ -1,33 +1,14 @@
 import { html, nothing, type PropertyValues, type TemplateResult } from 'lit';
-import { property, state } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import { booleanAttribute } from '../utils/converters';
 import { safeDefine } from '@golemui/lit-utils';
-import { classMap } from 'lit/directives/class-map.js';
-import { GUIAriaController } from '../controllers/aria.controller';
-import { GUICalendarKeyboardController } from '../controllers/calendar-keyboard.controller';
 import { GUIEditSessionController } from '../controllers/edit-session.controller';
-import { GUIFocusLeaveController } from '../controllers/focus-leave.controller';
-import { GUIMonthNavigationController } from '../controllers/month-navigation.controller';
 import {
   createDateRange,
-  getDayLabel,
-  getFullDateLabel,
   mergeDateRanges,
   parseISODateString,
-  rangeSpansDisabledDay,
   toISODateString,
 } from '../utils/date';
-import {
-  renderCalendarChrome,
-  renderCalendarMonthPanel,
-  renderCalendarPanelBody,
-} from '../utils/calendar-templates';
-import {
-  buildMonthDays,
-  computeDayStatus,
-  orderedDaySpan,
-  type DaySpan,
-} from '../utils/day-status';
 import {
   buildPillItems,
   findRangeByKey,
@@ -37,22 +18,13 @@ import {
   sameRanges,
   sortRangesByStart,
 } from '../utils/pill-ranges';
-import {
-  idleRangeSelection,
-  reduceRangeSelection,
-  selectionPreviewSpan,
-  workingPhase,
-  type RangeSelectionState,
-} from '../utils/range-selection';
+import { idleRangeSelection } from '../utils/range-selection';
 import './pills';
 import type { GuiPillEventDetail, GuiPillItem } from './pills';
 import type { DateRange } from '../types';
-import { GuiFormControl, type GuiValidity } from '../gui-form-control';
-import { dateRangesValidity } from '../utils/range-validity';
+import { GuiRangeCalendarBase, type RangeCalendarDay } from './range-calendar-base';
 import {
   stopPropagation,
-  dispatch,
-  dispatchBlur,
   dispatchValue,
   fires,
   valueEvents,
@@ -60,25 +32,8 @@ import {
 } from '../utils/events';
 import { message, requiredName } from '../utils/messages';
 
-export interface MultiRangeCalendarDay {
-  date: Date;
-  isCurrentMonth: boolean;
-  isDisabled: boolean;
-  isFocusable: boolean;
-  dayLabel: string;
-  isToday: boolean;
-  isRangeStart: boolean;
-  isRangeEnd: boolean;
-  isInRange: boolean;
-  isOneDayRange: boolean;
-  isAnchor: boolean;
-  isSelecting: boolean;
-  isInvalidStart: boolean;
-  isInvalidEnd: boolean;
-  isInvalidInRange: boolean;
-  isEditSelected: boolean;
-  isEditMuted: boolean;
-}
+/** One day of the multi-range calendar's grid. */
+export type MultiRangeCalendarDay = RangeCalendarDay;
 
 /**
  * A calendar to pick one or more date ranges.
@@ -106,80 +61,9 @@ export interface MultiRangeCalendarDay {
  * @cssprop --gui-pill-action-size - Size of the icons inside a pill.
  * @cssprop --gui-pill-action-hit - Clickable area of the buttons inside a pill.
  */
-export class GuiMultiRangeCalendar extends GuiFormControl {
-  /**
-   * Whether the element renders its hint. Elements that embed it turn it off and show the hint
-   * themselves: `aria-describedby` still points at the hint by its id.
-   */
-  @property({ attribute: 'show-hint', converter: booleanAttribute }) showHint: boolean | undefined =
-    true;
-  /** BCP 47 locale for formatting and parsing, such as `en-US` or `es`. */
-  @property({ type: String, attribute: 'locale-id' }) localeId: string | undefined = undefined;
-
-  /** Icon class name of the previous-month button. */
-  @property({ type: String, attribute: 'prev-month-icon' }) prevMonthIcon: string | undefined = '';
-  /** Icon class name of the next-month button. */
-  @property({ type: String, attribute: 'next-month-icon' }) nextMonthIcon: string | undefined = '';
-  /** Accessible name of the previous-month button. An empty value keeps the default. */
-  @property({ type: String, attribute: 'prev-month-aria-label' }) prevMonthAriaLabel:
-    | string
-    | undefined = undefined;
-  /** Accessible name of the next-month button. An empty value keeps the default. */
-  @property({ type: String, attribute: 'next-month-aria-label' }) nextMonthAriaLabel:
-    | string
-    | undefined = undefined;
-  /** Accessible name of the button that opens the year grid. An empty value keeps the default. */
-  @property({ type: String, attribute: 'select-year-aria-label' }) selectYearAriaLabel:
-    | string
-    | undefined = undefined;
-  /** Accessible name of the year grid. An empty value keeps the default. */
-  @property({ type: String, attribute: 'year-grid-aria-label' }) yearGridAriaLabel:
-    | string
-    | undefined = undefined;
-  /** How day numbers are written. */
-  @property({ type: String, attribute: 'day-format' }) dayFormat:
-    | 'numeric'
-    | '2-digit'
-    | undefined = 'numeric';
-  /** How weekday names are written in the header. */
-  @property({ type: String, attribute: 'weekday-format' }) weekdayFormat:
-    | 'short'
-    | 'long'
-    | 'narrow'
-    | undefined = 'narrow';
-  /** How the month is written in the header. */
-  @property({ type: String, attribute: 'month-format' }) monthFormat:
-    | 'numeric'
-    | '2-digit'
-    | 'long'
-    | 'short'
-    | 'narrow'
-    | undefined = 'long';
-  /** Earliest selectable date, as an ISO date (`YYYY-MM-DD`). */
-  @property({ type: String, attribute: 'min-date' }) minDate: string | undefined = undefined;
-  /** Latest selectable date, as an ISO date (`YYYY-MM-DD`). */
-  @property({ type: String, attribute: 'max-date' }) maxDate: string | undefined = undefined;
-  /** Dates that cannot be picked, as `{ start, end }` ISO date ranges. */
-  @property({ type: Array, attribute: 'disabled-ranges' }) disabledRanges: DateRange[] | undefined =
-    undefined;
-  /** Number of months shown side by side. */
-  @property({ type: Number, attribute: 'number-of-months' }) numberOfMonths: number | undefined = 1;
-
+export class GuiMultiRangeCalendar extends GuiRangeCalendarBase {
   /** The date ranges, as `{ start, end }` ISO dates. */
   @property({ type: Array }) value: DateRange[] | undefined = [];
-  /** @internal */
-  @property({ type: String, attribute: 'focus-date' }) focusDate: string | undefined = undefined;
-  /**
-   * The host picker's working endpoints — typed into its input, or picked here
-   * and held there across the popover's unmount/remount cycle. One endpoint
-   * renders as an in-progress anchor, both as a parked span.
-   *
-   * @internal
-   */
-  @property({ type: String, attribute: 'working-start' }) workingStart: string | undefined =
-    undefined;
-  /** @internal */
-  @property({ type: String, attribute: 'working-end' }) workingEnd: string | undefined = undefined;
   /** @internal */
   @property({ attribute: 'hide-pills', converter: booleanAttribute }) hidePills:
     | boolean
@@ -188,13 +72,6 @@ export class GuiMultiRangeCalendar extends GuiFormControl {
   @property({ type: String, attribute: 'remove-pill-aria-label' }) removePillAriaLabel:
     | string
     | undefined = undefined;
-  /** Error for a date inside `disabledRanges`. */
-  @property({ type: String, attribute: 'disabled-date-range-message' }) disabledDateRangeMessage:
-    | string
-    | undefined = undefined;
-  /** @internal */
-  @property({ attribute: 'invalid-range' }) invalidRange: { start: string; end: string } | null =
-    null;
   /**
    * The host picker's allowEdit-selected range: its days are marked so the
    * range being inspected or edited stands out among its neighbors.
@@ -242,73 +119,6 @@ export class GuiMultiRangeCalendar extends GuiFormControl {
     | string
     | undefined = undefined;
 
-  @state() protected _selection: RangeSelectionState = idleRangeSelection();
-  @state() protected _invalidRange: { start: Date; end: Date } | null = null;
-  @state() protected _workingStart: string | undefined = undefined;
-  @state() protected _workingEnd: string | undefined = undefined;
-
-  protected _skipValueNavigation = false;
-
-  /**
-   * Month/year navigation state and guards, shared with the single calendar.
-   * The controller requests host updates on every state change, replacing the
-   * former `_currentDate`/`_yearSelectorOpen` reactive state.
-   */
-  protected _nav = new GUIMonthNavigationController(this, {
-    getMinDate: () => this.minDate,
-    getMaxDate: () => this.maxDate,
-    getNumberOfMonths: () => this.numberOfMonths,
-    getDisabledRanges: () => this.disabledRanges,
-    onYearSelectorToggled: () => this._keyboard.onYearGridToggled(),
-  });
-
-  /**
-   * The nav controller's month cursor, kept under its historical name.
-   *
-   * @internal
-   */
-  get _currentDate(): Date {
-    return this._nav.currentDate;
-  }
-
-  /** @internal */
-  set _currentDate(date: Date) {
-    this._nav.currentDate = date;
-  }
-
-  protected ariaController: GUIAriaController<unknown, any> = new GUIAriaController(this, {
-    getTargets: () => this.querySelectorAll(`.gui-calendar-input`),
-    getState: () => ({
-      domId: this.domId,
-      templateData: {
-        hint: this.hint,
-        errors: this.errors,
-        readonly: this.readOnly,
-        disabled: this.disabled,
-        touched: this.touched,
-        required: this.required,
-      },
-    }),
-  });
-
-  private _keyboard = new GUICalendarKeyboardController(this, {
-    canGoPrev: () => this._nav.canGoPrev(),
-    canGoNext: () => this._nav.canGoNext(),
-    goPrev: () => this._nav.prevMonth(),
-    goNext: () => this._nav.nextMonth(),
-    onActivateDay: (isoDate, event) => this.selectDate(this.activationDay(isoDate), event),
-    onSelectYear: (year) => this._nav.selectYear(year),
-    onCloseYearGrid: () => this._nav.closeYearSelector(),
-    isYearGridOpen: () => this._nav.yearSelectorOpen,
-  });
-
-  private _focusLeave = new GUIFocusLeaveController(this, {
-    onLeave: () => {
-      this.settleEditOnLeave();
-      dispatchBlur(this);
-    },
-  });
-
   protected _edit = new GUIEditSessionController<DateRange>(this, {
     isEnabled: () => this.editEnabled,
     getRanges: () => this.value,
@@ -328,55 +138,16 @@ export class GuiMultiRangeCalendar extends GuiFormControl {
     return !!this.allowEdit && !this.disabled && !this.readOnly;
   }
 
-  /** ISO day of the in-progress anchor, or undefined while idle. */
-  protected anchorISO(): string | undefined {
-    return this._selection.anchor ? toISODateString(this._selection.anchor) : undefined;
-  }
-
-  /**
-   * Live-syncs the in-progress selection to a host picker, which holds it
-   * across the popover's unmount/remount cycle and mirrors it into its input.
-   * Never wired by the form layer, so it can't trigger validation.
-   */
-  protected emitWorkingChange(): void {
-    dispatch(this, 'gui-parts-change', {
-      anchor: this.anchorISO() ?? null,
-      start: this._workingStart ?? null,
-      end: this._workingEnd ?? null,
-    });
-  }
-
-  protected get workingSpan(): DaySpan | undefined {
-    if (!this._workingStart || !this._workingEnd) return undefined;
-    return orderedDaySpan(this.endpointDay(this._workingStart), this.endpointDay(this._workingEnd));
-  }
-
-  protected adoptWorkingEndpoints(): void {
-    const phase = workingPhase(this.workingStart, this.workingEnd);
-
-    if (phase.kind === 'span') {
-      if (this._workingStart === phase.start && this._workingEnd === phase.end) return;
-      this._workingStart = phase.start;
-      this._workingEnd = phase.end;
-      this._selection = idleRangeSelection();
-      this._nav.navigateToDate(this.workingSpan?.start ?? this.endpointDay(phase.start));
-      return;
+  /** A plain ISO date set from outside still counts as the start of one range. */
+  protected valueRanges(): DateRange[] {
+    if (this.value && !Array.isArray(this.value)) {
+      return [{ start: this.value as unknown as string }];
     }
+    return this.value ?? [];
+  }
 
-    this._workingStart = undefined;
-    this._workingEnd = undefined;
-
-    if (phase.kind === 'idle') {
-      if (this._selection.anchor) this._selection = idleRangeSelection();
-      return;
-    }
-
-    if (this.anchorISO() === phase.iso) return;
-
-    const anchor = this.endpointDay(phase.iso);
-    if (isNaN(anchor.getTime())) return;
-    this._selection = { anchor, hover: null, selecting: true };
-    this._nav.navigateToDate(anchor);
+  protected override markedRange(): DateRange | null {
+    return this.selectedRange ?? this._edit.selectedRange;
   }
 
   /**
@@ -388,31 +159,13 @@ export class GuiMultiRangeCalendar extends GuiFormControl {
     return parseISODateString(iso);
   }
 
-  /**
-   * Midnight-truncated calendar day of an endpoint, used to highlight the day
-   * grid.
-   */
-  protected endpointDay(iso: string): Date {
-    return parseISODateString(iso);
-  }
-
   /** Pill text for one committed range. */
   protected formatPillLabel(range: DateRange): string {
     return formatRangeLabel(range, (iso) => formatISODateForDisplay(iso, this.localeId));
   }
 
-  /** Day-button inner content. */
-  protected renderDayContent(day: MultiRangeCalendarDay): TemplateResult {
-    return html`${day.dayLabel}`;
-  }
-
-  override createRenderRoot() {
-    return this;
-  }
-
   override connectedCallback() {
     super.connectedCallback();
-    this.classList.add('gui-field');
     this.addEventListener('keydown', this.onHostKeyDown);
   }
 
@@ -431,308 +184,27 @@ export class GuiMultiRangeCalendar extends GuiFormControl {
 
   override willUpdate(changedProperties: PropertyValues): void {
     this._edit.reconcileValue(this.value);
-    if (changedProperties.has('workingStart') || changedProperties.has('workingEnd')) {
-      this.adoptWorkingEndpoints();
-    }
-    if (changedProperties.has('invalidRange')) {
-      if (this.invalidRange) {
-        const start = this.endpointDay(this.invalidRange.start);
-        const end = this.endpointDay(this.invalidRange.end);
-        this._invalidRange = isNaN(start.getTime()) || isNaN(end.getTime()) ? null : { start, end };
-      } else {
-        this._invalidRange = null;
-      }
-    }
-    if (changedProperties.has('value') && !changedProperties.has('focusDate')) {
-      if (this._skipValueNavigation) {
-        this._skipValueNavigation = false;
-      } else if (this.value) {
-        const value = Array.isArray(this.value)
-          ? this.value
-          : [{ start: this.value as unknown as string }];
-
-        if (value.length > 0 && value[0].start) {
-          this._nav.navigateToDate(this.endpointDay(value[0].start));
-        }
-      }
-    }
-    if (changedProperties.has('focusDate')) {
-      if (this.focusDate) {
-        const date = parseISODateString(this.focusDate);
-        if (!isNaN(date.getTime())) {
-          this._nav.navigateToDate(date);
-          // Reset so the same pill click triggers a change next time
-          this.focusDate = undefined;
-        }
-      }
-    }
+    super.willUpdate(changedProperties);
   }
 
-  /** A range outside `minDate`/`maxDate` or over a disabled day, then `required`. */
-  protected override validate(): GuiValidity | null {
-    return dateRangesValidity(this.value, this) ?? super.validate();
-  }
-
-  override render() {
-    return renderCalendarChrome({
-      ids: this,
-      label: this.label,
-      hint: this.hint,
-      showHint: this.showHint,
-      errors: this.errors,
-      touched: this.touched,
-      required: this.required,
-      disabled: this.disabled,
-      numberOfMonths: this.numberOfMonths,
-      localeId: this.localeId,
-      currentDate: this._nav.currentDate,
-      prevMonthIcon: this.prevMonthIcon,
-      nextMonthIcon: this.nextMonthIcon,
-      prevMonthAriaLabel: this.prevMonthAriaLabel,
-      nextMonthAriaLabel: this.nextMonthAriaLabel,
-      canGoPrev: this._nav.canGoPrev(),
-      canGoNext: this._nav.canGoNext(),
-      onPrevMonthClick: this._keyboard.onPrevMonthClick,
-      onNextMonthClick: this._keyboard.onNextMonthClick,
-      onFocusOut: this._focusLeave.onFocusOut,
-      renderAboveCalendar: () => this.renderAboveCalendar(),
-      renderMonthPanel: (offset) =>
-        renderCalendarMonthPanel({
-          currentDate: this._nav.currentDate,
-          offset,
-          localeId: this.localeId,
-          monthFormat: this.monthFormat,
-          yearSelectorOpen: this._nav.yearSelectorOpen,
-          selectYearAriaLabel: this.selectYearAriaLabel,
-          disabled: this.disabled,
-          onToggleYearSelector: () => this.toggleYearSelector(),
-          renderBelowHeader: (panelOffset) => this.renderBelowHeader(panelOffset),
-          renderPanelBody: (panelOffset) => this.renderPanelBody(panelOffset),
-        }),
-    });
-  }
-
-  /** Hook rendered between the header and the panel body. Default: nothing. */
-  protected renderBelowHeader(_offset: number): TemplateResult | typeof nothing {
-    return nothing;
+  protected override onFocusLeave(): void {
+    this.settleEditOnLeave();
   }
 
   /**
-   * The panel content below the header: the year grid replaces the days grid
-   * of the first panel while the year selector is open. Subclasses can swap
-   * in other bodies (e.g. the date-time calendar's time grid).
+   * An open edit session, or a host picker that defers the commit, parks the span as the working
+   * selection; otherwise it merges into the value.
    */
-  protected renderPanelBody(offset: number): TemplateResult {
-    return renderCalendarPanelBody({
-      offset,
-      yearSelectorOpen: this._nav.yearSelectorOpen,
-      years: this._nav.yearList,
-      currentYear: this._nav.currentDate.getFullYear(),
-      onSelectYear: (year) => this._keyboard.selectYear(year),
-      onYearKeydown: this._keyboard.handleYearKeydown,
-      localeId: this.localeId,
-      currentDate: this._nav.currentDate,
-      yearGridAriaLabel: this.yearGridAriaLabel,
-      weekdayFormat: this.weekdayFormat,
-      disabled: this.disabled,
-      getDays: (o) => this.getDaysInMonth(o),
-      renderDay: (day) => this.renderDay(day),
-    });
-  }
-
-  /**
-   * Kept as a thin override point — the multi-range date-time subclass closes its
-   * time pickers before delegating to the nav controller.
-   */
-  protected toggleYearSelector() {
-    this._nav.toggleYearSelector();
-  }
-
-  protected isDisabled(date: Date): boolean {
-    return this._nav.isDisabled(date);
-  }
-
-  /**
-   * Rebuilds the day context for an Enter/Space activation from the button's
-   * `data-date`. Legitimate because a day button can only be focused when it
-   * is enabled and in-month; the `disabled`/`readOnly` guards stay in
-   * `selectDate`.
-   */
-  private activationDay(isoDate: string): MultiRangeCalendarDay {
-    const date = parseISODateString(isoDate);
-    return {
-      date,
-      isCurrentMonth: true,
-      isDisabled: this.isDisabled(date),
-      isFocusable: true,
-      dayLabel: '',
-      isToday: false,
-      isRangeStart: false,
-      isRangeEnd: false,
-      isInRange: false,
-      isOneDayRange: false,
-      isAnchor: false,
-      isSelecting: false,
-      isInvalidStart: false,
-      isInvalidEnd: false,
-      isInvalidInRange: false,
-      isEditSelected: false,
-      isEditMuted: false,
-    };
-  }
-
-  /** @internal */
-  renderDay(day: MultiRangeCalendarDay): TemplateResult {
-    const isInvalidSingle = day.isInvalidStart && day.isInvalidEnd;
-    const classes = {
-      'gui-calendar__day-button': true,
-      today: day.isToday,
-      'other-month': !day.isCurrentMonth,
-      'range-start': day.isRangeStart && !day.isOneDayRange,
-      'range-end': day.isRangeEnd && !day.isOneDayRange,
-      selected: day.isOneDayRange,
-      'in-range': day.isInRange,
-      'invalid-range-start': day.isInvalidStart && !isInvalidSingle,
-      'invalid-range-end': day.isInvalidEnd && !isInvalidSingle,
-      'invalid-range-single': isInvalidSingle,
-      'invalid-in-range': day.isInvalidInRange,
-      'is-anchor': day.isAnchor,
-      'is-selecting': day.isSelecting,
-      'edit-selected': day.isEditSelected,
-      'range-muted': day.isEditMuted,
-      disabled: day.isDisabled,
-    };
-
-    return html`
-      <button
-        type="button"
-        role="gridcell"
-        class=${classMap(classes)}
-        tabindex=${day.isFocusable && !this.disabled ? 0 : -1}
-        ?disabled=${!day.isCurrentMonth || this.disabled}
-        aria-disabled=${day.isCurrentMonth && day.isDisabled ? 'true' : nothing}
-        aria-label=${getFullDateLabel(this.localeId, day.date)}
-        aria-current=${day.isToday ? 'date' : nothing}
-        data-date=${toISODateString(day.date)}
-        @click=${(e: MouseEvent) => this.selectDate(day, e)}
-        @mouseover=${() => this.onMouseOver(day)}
-        @focus=${() => this.onMouseOver(day)}
-        @keydown=${(e: KeyboardEvent) => this._keyboard.handleDayKeydown(e)}
-        aria-selected=${day.isRangeStart || day.isRangeEnd || day.isInRange ? 'true' : 'false'}
-      >
-        ${this.renderDayContent(day)}
-      </button>
-    `;
-  }
-
-  /** @internal */
-  getDaysInMonth(offset: number): MultiRangeCalendarDay[] {
-    const ranges = (this.value ?? []).map((range) => ({
-      start: this.endpointDay(range.start),
-      end: range.end ? this.endpointDay(range.end) : undefined,
-    }));
-    const selectingSpan = selectionPreviewSpan(this._selection) ?? this.workingSpan ?? null;
-    const markedRange = this.selectedRange ?? this._edit.selectedRange;
-    const editSelectedSpan = markedRange
-      ? orderedDaySpan(
-          this.endpointDay(markedRange.start),
-          this.endpointDay(markedRange.end ?? markedRange.start),
-        )
-      : null;
-
-    return buildMonthDays({
-      currentDate: this._currentDate,
-      offset,
-      localeId: this.localeId,
-      numberOfMonths: this.numberOfMonths ?? 1,
-      isDisabled: (date) => this.isDisabled(date),
-      toDay: (base) => {
-        const status = computeDayStatus(base.date, {
-          ranges,
-          anchor: this._selection.anchor,
-          selectingSpan,
-          invalidRange: this._invalidRange,
-          editSelectedSpan,
-        });
-
-        return {
-          date: base.date,
-          dayLabel: getDayLabel(this.localeId, base.date, this.dayFormat),
-          isCurrentMonth: base.isCurrentMonth,
-          isToday: base.isToday,
-          isRangeStart: status.isRangeStart,
-          isRangeEnd: status.isRangeEnd,
-          isInRange: status.isInRange,
-          isInvalidStart: status.isInvalidStart && base.isCurrentMonth,
-          isInvalidEnd: status.isInvalidEnd && base.isCurrentMonth,
-          isInvalidInRange: status.isInvalidInRange && base.isCurrentMonth,
-          isDisabled: base.isDisabled,
-          isOneDayRange: status.isOneDayRange,
-          isAnchor: status.isAnchor,
-          isFocusable: base.isToday || status.isRangeStart,
-          isSelecting: status.isSelecting && base.isCurrentMonth,
-          isEditSelected: status.isEditSelected && base.isCurrentMonth,
-          isEditMuted: status.isEditMuted && base.isCurrentMonth,
-        };
-      },
-      focusFallbackDates: [
-        new Date(),
-        ...(this.value ?? []).map((range) => this.endpointDay(range.start)),
-      ],
-    });
-  }
-
-  /** @internal */
-  selectDate(day: MultiRangeCalendarDay, _e: MouseEvent | KeyboardEvent | null = null) {
-    if (!day.isCurrentMonth || day.isDisabled || this.disabled || this.readOnly) return;
-
-    const { state, commit } = reduceRangeSelection(this._selection, {
-      type: 'pick',
-      date: day.date,
-    });
-    this._selection = state;
-    this._workingStart = undefined;
-    this._workingEnd = undefined;
-    this.emitWorkingChange();
-
-    // Start selection
-    if (!commit) {
-      // Starting over clears any previously rejected range still shown in red.
-      this._invalidRange = null;
-      return;
-    }
-
-    // A range that spans any disabled day is rejected, throw error, and no pill added.
-    if (
-      rangeSpansDisabledDay(
-        toISODateString(commit.start),
-        toISODateString(commit.end),
-        this.disabledRanges,
-        this.minDate,
-        this.maxDate,
-      )
-    ) {
-      this._invalidRange = { start: commit.start, end: commit.end };
-      // The rejected span rides along so a host picker can show it in its input.
-      dispatch(this, 'gui-input-error', {
-        message: message('disabledDateRange', this.disabledDateRangeMessage),
-        range: { start: toISODateString(commit.start), end: toISODateString(commit.end) },
-      });
-      this.requestUpdate();
-      return;
-    }
-
+  protected commitPick(start: Date, end: Date): void {
     if (this.deferCommit || this._edit.editing) {
-      this._invalidRange = null;
-      this._workingStart = toISODateString(commit.start);
-      this._workingEnd = toISODateString(commit.end);
+      this._workingStart = toISODateString(start);
+      this._workingEnd = toISODateString(end);
       this._selection = idleRangeSelection();
       this.emitWorkingChange();
       return;
     }
 
-    this._invalidRange = null;
-    this.commitWorking(commit.start, commit.end, this.value || []);
+    this.commitWorking(start, end, this.value || []);
   }
 
   /** Merges one ordered span into `base` and emits the resulting value. */
@@ -744,19 +216,10 @@ export class GuiMultiRangeCalendar extends GuiFormControl {
     return this.value;
   }
 
-  protected onMouseOver(day: MultiRangeCalendarDay) {
-    if (day.isDisabled) return;
-
-    this._selection = reduceRangeSelection(this._selection, {
-      type: 'hover',
-      date: day.date,
-    }).state;
-  }
-
   // --- Pills ---
 
   /** @internal */
-  renderAboveCalendar(): TemplateResult | typeof nothing {
+  override renderAboveCalendar(): TemplateResult | typeof nothing {
     const liveRegion = this.allowEdit
       ? html`<div class="gui-visually-hidden" aria-live="polite">${this._edit.announcement}</div>`
       : nothing;
@@ -966,10 +429,6 @@ export class GuiMultiRangeCalendar extends GuiFormControl {
       this.value,
       (a, b) => this.parseEndpoint(a).getTime() - this.parseEndpoint(b).getTime(),
     );
-  }
-
-  protected navigateToDate(isoDate: string) {
-    this._nav.navigateToDate(this.endpointDay(isoDate));
   }
 }
 

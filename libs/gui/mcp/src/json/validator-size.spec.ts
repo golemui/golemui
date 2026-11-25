@@ -30,7 +30,7 @@ describe('form-definition validator size', () => {
     );
   });
 
-  it('keeps the synchronous validator under 2.6 MB minified', () => {
+  it('keeps the synchronous validator under 3.1 MB minified', () => {
     expect(report.sync.validator.minifiedBytes).toBeLessThanOrEqual(
       BUDGETS.syncValidatorMinifiedBytes,
     );

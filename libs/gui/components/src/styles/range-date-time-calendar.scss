@@ -1,0 +1,11 @@
+@use 'range-days' as *;
+@use 'range-date-time-parts' as *;
+
+gui-range-date-time-calendar {
+  @include gui-range-calendar;
+  @include gui-range-date-time-parts('gui-range-date-time-calendar');
+}
+
+gui-range-date-time-calendar .gui-time-picker.gui-field > .gui-widget {
+  @include gui-embedded-time-picker;
+}

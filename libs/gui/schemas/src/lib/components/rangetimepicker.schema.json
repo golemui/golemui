@@ -1,0 +1,275 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/gui/components/rangetimepicker.schema.json",
+  "title": "RangeTimePicker Widget",
+  "type": "object",
+  "$defs": {
+    "labelDef": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "disabledDef": {
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
+    },
+    "readonlyDef": {
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
+    },
+    "hintProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "iconProp": {
+      "type": "string"
+    },
+    "separatorProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "startTimeAriaLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "endTimeAriaLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "hourFormatProp": {
+      "enum": ["12", "24"]
+    },
+    "minuteStepProp": {
+      "type": "number",
+      "minimum": 1
+    },
+    "isoTimeProp": {
+      "$ref": "../ranges.schema.json#/$defs/isoTime"
+    },
+    "disabledRangesProp": {
+      "type": "array",
+      "items": {
+        "$ref": "../ranges.schema.json#/$defs/timeRange"
+      }
+    },
+    "allowCustomTimeProp": {
+      "type": "boolean"
+    },
+    "sizeProp": {
+      "type": "number"
+    },
+    "toggleAriaLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "hourAriaLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "minuteAriaLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "dayPeriodAriaLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "input"
+    },
+    "type": {
+      "const": "rangeTimePicker"
+    },
+    "path": {
+      "$ref": "../core/common.schema.json#/$defs/dotPath"
+    },
+    "label": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "readonly": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "on": {
+      "$ref": "../core/common.schema.json#/$defs/on"
+    },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
+    "defaultValue": {
+      "$ref": "../ranges.schema.json#/$defs/timeRange"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "hint": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "icon": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "separator": {
+          "$ref": "#/$defs/separatorProp"
+        },
+        "startTimeAriaLabel": {
+          "$ref": "#/$defs/startTimeAriaLabelProp"
+        },
+        "endTimeAriaLabel": {
+          "$ref": "#/$defs/endTimeAriaLabelProp"
+        },
+        "startTimeLabel": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "endTimeLabel": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "hourFormat": {
+          "$ref": "#/$defs/hourFormatProp"
+        },
+        "minuteStep": {
+          "$ref": "#/$defs/minuteStepProp"
+        },
+        "minTime": {
+          "$ref": "#/$defs/isoTimeProp"
+        },
+        "maxTime": {
+          "$ref": "#/$defs/isoTimeProp"
+        },
+        "minTimeMessage": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "maxTimeMessage": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "rangeOrderMessage": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "disabledRanges": {
+          "$ref": "#/$defs/disabledRangesProp"
+        },
+        "allowCustomTime": {
+          "$ref": "#/$defs/allowCustomTimeProp"
+        },
+        "height": {
+          "$ref": "#/$defs/sizeProp"
+        },
+        "itemHeight": {
+          "$ref": "#/$defs/sizeProp"
+        },
+        "disabledRangeMessage": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "noAvailableTimesMessage": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "incompleteMessage": {
+          "$ref": "../core/common.schema.json#/$defs/localizable",
+          "description": "Error surfaced when focus leaves the widget with a partially filled entry behind; the value goes to null so validators report it even on non-required fields."
+        },
+        "toggleAriaLabel": {
+          "$ref": "#/$defs/toggleAriaLabelProp"
+        },
+        "hourAriaLabel": {
+          "$ref": "#/$defs/hourAriaLabelProp"
+        },
+        "minuteAriaLabel": {
+          "$ref": "#/$defs/minuteAriaLabelProp"
+        },
+        "dayPeriodAriaLabel": {
+          "$ref": "#/$defs/dayPeriodAriaLabelProp"
+        }
+      },
+      "patternProperties": {
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^icon\\.[^.]+$": {
+          "$ref": "#/$defs/iconProp"
+        },
+        "^separator\\.[^.]+$": {
+          "$ref": "#/$defs/separatorProp"
+        },
+        "^startTimeAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/startTimeAriaLabelProp"
+        },
+        "^endTimeAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/endTimeAriaLabelProp"
+        },
+        "^startTimeLabel\\.[^.]+$": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "^endTimeLabel\\.[^.]+$": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "^hourFormat\\.[^.]+$": {
+          "$ref": "#/$defs/hourFormatProp"
+        },
+        "^minuteStep\\.[^.]+$": {
+          "$ref": "#/$defs/minuteStepProp"
+        },
+        "^minTime\\.[^.]+$": {
+          "$ref": "#/$defs/isoTimeProp"
+        },
+        "^maxTime\\.[^.]+$": {
+          "$ref": "#/$defs/isoTimeProp"
+        },
+        "^minTimeMessage\\.[^.]+$": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "^maxTimeMessage\\.[^.]+$": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "^rangeOrderMessage\\.[^.]+$": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "^disabledRanges\\.[^.]+$": {
+          "$ref": "#/$defs/disabledRangesProp"
+        },
+        "^allowCustomTime\\.[^.]+$": {
+          "$ref": "#/$defs/allowCustomTimeProp"
+        },
+        "^height\\.[^.]+$": {
+          "$ref": "#/$defs/sizeProp"
+        },
+        "^itemHeight\\.[^.]+$": {
+          "$ref": "#/$defs/sizeProp"
+        },
+        "^disabledRangeMessage\\.[^.]+$": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "^noAvailableTimesMessage\\.[^.]+$": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "^incompleteMessage\\.[^.]+$": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "^toggleAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/toggleAriaLabelProp"
+        },
+        "^hourAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/hourAriaLabelProp"
+        },
+        "^minuteAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/minuteAriaLabelProp"
+        },
+        "^dayPeriodAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/dayPeriodAriaLabelProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "^validator\\.[^.]+$": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    }
+  },
+  "required": ["kind", "type", "path"],
+  "unevaluatedProperties": false
+}

@@ -10,6 +10,12 @@ export interface DateRange {
   end?: string;
 }
 
+/** A date range with both ends, as ISO dates (`YYYY-MM-DD`): the value of the single range elements. */
+export interface CompleteDateRange {
+  start: string;
+  end: string;
+}
+
 /**
  * A selected date-time range value. Both ends are local ISO date-time strings
  * (`YYYY-MM-DDTHH:mm:ss`).
