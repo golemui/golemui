@@ -1,6 +1,4 @@
-import { CHANGED_IN_V3 } from './errors';
 import { COMPONENT_SCHEMAS, VALIDATORS_SCHEMA, type WidgetSchema } from './schemas/index';
-import { lookupOwn } from './schemas/validator-lookup';
 
 export type GetWidgetSpecInput = {
   widgetType: string;
@@ -377,7 +375,27 @@ const DROPDOWN_LOAD_NOTE =
 const DROPDOWN_FILTER_NOTE =
   'Server-side search: add `on: { filter: "<event name>" }`. The widget then stops filtering locally: it emits the typed text as `event.detail`, `props.inputDebounce` ms after the last keystroke (default 500), and the host answers with the same `OVERRIDE_WIDGET_PROP`. Without `on.filter`, the widget filters its current items itself.';
 
+/** The value note of the multiRange* widgets: an array of ranges, never one range. */
+function multiRangeNote(example: string): string {
+  return (
+    `The value is a LIST of ranges, an array such as \`[${example}]\`, never one \`{ start, end }\` object. ` +
+    'The user adds ranges one at a time and each shows as a pill. Validate with an array validator: ' +
+    '`{ type: "array", required: true, minItems: 1 }`; `maxItems` sets the most ranges the value may hold.'
+  );
+}
+const DATE_RANGE = '{ "start": "2026-02-02", "end": "2026-02-06" }';
+const DATE_TIME_RANGE = '{ "start": "2026-02-13T09:00:00", "end": "2026-02-13T11:00:00" }';
+const TIME_RANGE = '{ "start": "09:00", "end": "12:30" }';
+
 const NOTES: Record<string, string[]> = {
+  multiRangeCalendar: [multiRangeNote(DATE_RANGE)],
+  multiRangeDateInput: [multiRangeNote(DATE_RANGE)],
+  multiRangeDatePicker: [multiRangeNote(DATE_RANGE)],
+  multiRangeDateTimeCalendar: [multiRangeNote(DATE_TIME_RANGE)],
+  multiRangeDateTimeInput: [multiRangeNote(DATE_TIME_RANGE)],
+  multiRangeDateTimePicker: [multiRangeNote(DATE_TIME_RANGE)],
+  multiRangeTimeInput: [multiRangeNote(TIME_RANGE)],
+  multiRangeTimePicker: [multiRangeNote(TIME_RANGE)],
   textinput: [
     '`path` is the dot-path into form data this field writes to.',
     '`validator.format` supports: `email`, `hostname`, `ipv4`, `ipv6`, `url`, `uuid`, `date`, `time`, `date-time`, `duration`.',
@@ -438,7 +456,7 @@ const NOTES: Record<string, string[]> = {
     '`props.valuePlacement`: `"label"` (default) shows the value at the end of the label, `"bubble"` over the thumb while it is hovered, focused or dragged, `"both"`, or `"hidden"`. Screen readers read the formatted value in every case.',
   ],
   rangeSlider: [
-    'A range picked with two thumbs on one track. The value is ONE object `{ start, end }` of numbers, not an array (unlike the date and time range widgets). The thumbs can meet but not cross.',
+    'A range picked with two thumbs on one track. The value is ONE object `{ start, end }` of numbers, not an array (unlike the `multiRange*` date and time widgets). The thumbs can meet but not cross.',
     'Same props as `slider`: `minimum`, `maximum`, `step`, `marks`, `format`, `valuePlacement`. `props.startLabel` and `props.endLabel` rename the thumbs for screen readers (default "Minimum" and "Maximum"), e.g. "From" and "To".',
     'Validate with a range validator: `{ type: "range", required: true }`. It has no other rules: `required` fails while there is no range, and anything that is not a `{ start, end }` with both ends set and `start <= end` is `invalid`. Message keys: `required`, `invalid`.',
   ],
@@ -522,12 +540,6 @@ function synthesizeExample(widgetType: string, schema: WidgetSchema): Record<str
 export function getWidgetSpec(input: GetWidgetSpecInput): GetWidgetSpecResult {
   const schema = COMPONENT_SCHEMAS[input.widgetType];
   if (!schema) {
-    const replacement = lookupOwn(CHANGED_IN_V3, input.widgetType);
-    if (replacement !== null) {
-      throw new Error(
-        `Widget type \`${input.widgetType}\` was removed in GolemUI 3.0. ${replacement}`,
-      );
-    }
     const known = Object.keys(COMPONENT_SCHEMAS).sort().join(', ');
     throw new Error(`Unknown widget type \`${input.widgetType}\`. Known: ${known}.`);
   }

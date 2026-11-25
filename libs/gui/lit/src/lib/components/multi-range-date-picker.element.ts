@@ -1,0 +1,115 @@
+import type { InputWidget, WithWidget } from '@golemui/core';
+import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
+import type { DateRange, MultiRangeDatePickerProps } from '@golemui/gui-shared/internals';
+import '@golemui/gui-components/multi-range-date-picker';
+import { consume, provide } from '@lit/context';
+import { html, LitElement } from 'lit';
+import { property } from 'lit/decorators.js';
+import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
+import { type Subscription } from 'rxjs';
+
+export class MultiRangeDatePickerElement extends LitElement implements WithWidget {
+  widget!: InputWidget<DateRange[]>;
+
+  @consume({ context: formContext })
+  @property({ attribute: false })
+  formContext!: LitFormContext<any>;
+
+  @provide({ context: inputContext })
+  adapter = new InputWidgetAdapter<DateRange[], MultiRangeDatePickerProps>();
+
+  subscriptions: Subscription[] = [];
+
+  override createRenderRoot() {
+    return this;
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-multi-range-date-picker', 'gui-field');
+    this.adapter.context = this.formContext;
+    this.adapter.init(this.widget);
+
+    this.subscriptions.push(
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
+    );
+  }
+
+  override render() {
+    super.render();
+
+    const templateData = this.adapter.templateData;
+
+    return html`
+      <gui-multi-range-date-picker
+        .uid=${this.widget.uid}
+        .idPrefix=${this.adapter.formName}
+        .label=${templateData.label}
+        .hint=${templateData.hint}
+        .errors=${templateData.errors}
+        .touched=${templateData.touched}
+        ?required=${templateData.validator?.required}
+        ?disabled=${templateData.disabled}
+        ?readonly=${templateData.readonly}
+        .value=${templateData.value}
+        .icon=${templateData.icon}
+        .localeId=${templateData.lang}
+        .toggleAriaLabel=${templateData.toggleAriaLabel}
+        .dayAriaLabel=${templateData.dayAriaLabel}
+        .monthAriaLabel=${templateData.monthAriaLabel}
+        .yearAriaLabel=${templateData.yearAriaLabel}
+        .separator=${templateData.separator}
+        .removePillAriaLabel=${templateData.removePillAriaLabel}
+        .startDateAriaLabel=${templateData.startDateAriaLabel}
+        .endDateAriaLabel=${templateData.endDateAriaLabel}
+        .prevMonthIcon=${templateData.prevMonthIcon}
+        .nextMonthIcon=${templateData.nextMonthIcon}
+        .prevMonthAriaLabel=${templateData.prevMonthAriaLabel}
+        .nextMonthAriaLabel=${templateData.nextMonthAriaLabel}
+        .selectYearAriaLabel=${templateData.selectYearAriaLabel}
+        .yearGridAriaLabel=${templateData.yearGridAriaLabel}
+        .dayFormat=${templateData.dayFormat}
+        .weekdayFormat=${templateData.weekdayFormat}
+        .monthFormat=${templateData.monthFormat}
+        .minDate=${templateData.minDate}
+        .maxDate=${templateData.maxDate}
+        .disabledRanges=${templateData.disabledRanges}
+        .numberOfMonths=${templateData.numberOfMonths}
+        .invalidDateMessage=${templateData.invalidDateMessage as string}
+        .minDateMessage=${templateData.minDateMessage as string}
+        .maxDateMessage=${templateData.maxDateMessage as string}
+        .disabledDateRangeMessage=${templateData.disabledDateRangeMessage as string}
+        .incompleteMessage=${templateData.incompleteMessage as string}
+        ?allow-edit=${templateData.allowEdit}
+        .editLabel=${templateData.editLabel as string}
+        .editAriaLabel=${templateData.editAriaLabel as string}
+        .confirmEditLabel=${templateData.confirmEditLabel as string}
+        .cancelEditLabel=${templateData.cancelEditLabel as string}
+        .editStartedMessage=${templateData.editStartedMessage as string}
+        .editCommittedMessage=${templateData.editCommittedMessage as string}
+        .editCancelledMessage=${templateData.editCancelledMessage as string}
+        @gui-input-error=${this.onInputError}
+        @gui-blur=${() => this.adapter.onBlur()}
+        @gui-input=${this.valueChanged}
+      ></gui-multi-range-date-picker>
+    `;
+  }
+
+  valueChanged(event: CustomEvent) {
+    this.adapter.injectValidationIssues(null);
+    this.adapter.valueChanged(event.detail.value);
+  }
+
+  onInputError(event: CustomEvent) {
+    this.adapter.injectValidationIssues([event.detail.message]);
+    this.adapter.onBlur();
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.adapter.destroy();
+    unsubscribeAll(this.subscriptions);
+  }
+}
+
+safeDefine('gui-multi-range-date-picker-input', MultiRangeDatePickerElement);

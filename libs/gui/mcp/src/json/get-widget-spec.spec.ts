@@ -15,9 +15,18 @@ describe('json_get_widget_spec', () => {
     expect(() => getWidgetSpec({ widgetType: 'nope' })).toThrow(/textinput/);
   });
 
-  it('throws on a type removed in 3.0 with what to use instead', () => {
-    expect(() => getWidgetSpec({ widgetType: 'flex' })).toThrow(
-      /`flex` was removed in GolemUI 3\.0\. Use `type: 'grid'`/,
+  it.each([
+    'multiRangeCalendar',
+    'multiRangeDateInput',
+    'multiRangeDatePicker',
+    'multiRangeDateTimeCalendar',
+    'multiRangeDateTimeInput',
+    'multiRangeDateTimePicker',
+    'multiRangeTimeInput',
+    'multiRangeTimePicker',
+  ])('notes of %s say the value is a list of ranges', (widgetType) => {
+    expect(getWidgetSpec({ widgetType }).notes.join('\n')).toContain(
+      'The value is a LIST of ranges',
     );
   });
 

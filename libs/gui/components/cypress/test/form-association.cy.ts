@@ -429,12 +429,12 @@ describe('native form association of pickers and range fields', () => {
     { tag: 'gui-date-picker', first: 'month' },
     { tag: 'gui-time-picker', first: 'hour' },
     { tag: 'gui-date-time-picker', first: 'month' },
-    { tag: 'gui-range-date', first: 'month' },
-    { tag: 'gui-range-time', first: 'hour' },
-    { tag: 'gui-range-date-time', first: 'month' },
-    { tag: 'gui-range-date-picker', first: 'month' },
-    { tag: 'gui-range-time-picker', first: 'hour' },
-    { tag: 'gui-range-date-time-picker', first: 'month' },
+    { tag: 'gui-multi-range-date', first: 'month' },
+    { tag: 'gui-multi-range-time', first: 'hour' },
+    { tag: 'gui-multi-range-date-time', first: 'month' },
+    { tag: 'gui-multi-range-date-picker', first: 'month' },
+    { tag: 'gui-multi-range-time-picker', first: 'hour' },
+    { tag: 'gui-multi-range-date-time-picker', first: 'month' },
   ];
 
   for (const { tag, first } of partlyTyped) {
@@ -470,15 +470,17 @@ describe('native form association of pickers and range fields', () => {
     });
   }
 
-  it('gui-range-date-picker blocks submission when a typed endpoint is impossible', () => {
-    mount('gui-range-date-picker');
+  it('gui-multi-range-date-picker blocks submission when a typed endpoint is impossible', () => {
+    mount('gui-multi-range-date-picker');
 
-    part('gui-range-date-picker', 'month').type('02');
+    part('gui-multi-range-date-picker', 'month').type('02');
     cy.focused().type('31');
     cy.focused().type('2024');
 
     expectValid(false);
-    control('gui-range-date-picker').should(([el]) => expect(el.validity?.badInput).to.equal(true));
+    control('gui-multi-range-date-picker').should(([el]) =>
+      expect(el.validity?.badInput).to.equal(true),
+    );
   });
 });
 

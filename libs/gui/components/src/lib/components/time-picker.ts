@@ -165,7 +165,9 @@ export class GuiTimePicker extends GuiFormControl {
    * calendar's own panel, rather than floating.
    */
   private get inCalendar(): boolean {
-    return !isServer && !!this.closest('gui-date-time-calendar, gui-range-date-time-calendar');
+    return (
+      !isServer && !!this.closest('gui-date-time-calendar, gui-multi-range-date-time-calendar')
+    );
   }
 
   override render() {

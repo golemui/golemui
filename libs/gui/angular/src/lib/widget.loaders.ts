@@ -23,26 +23,36 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
   dateTimeCalendar: async () =>
     (await import('./components/date-time-calendar/date-time-calendar.component'))
       .DateTimeCalendarComponent,
-  rangeCalendar: async () =>
-    (await import('./components/range-calendar/range-calendar.component')).RangeCalendarComponent,
-  rangeDateInput: async () =>
-    (await import('./components/range-date/range-date.component')).RangeDateComponent,
-  rangeTimeInput: async () =>
-    (await import('./components/range-time/range-time.component')).RangeTimeComponent,
-  rangeDateTimeInput: async () =>
-    (await import('./components/range-date-time/range-date-time.component')).RangeDateTimeComponent,
-  rangeDateTimeCalendar: async () =>
-    (await import('./components/range-date-time-calendar/range-date-time-calendar.component'))
-      .RangeDateTimeCalendarComponent,
-  rangeDateTimePicker: async () =>
-    (await import('./components/range-date-time-picker/range-date-time-picker.component'))
-      .RangeDateTimePickerComponent,
-  rangeDatePicker: async () =>
-    (await import('./components/range-date-picker/range-date-picker.component'))
-      .RangeDatePickerComponent,
-  rangeTimePicker: async () =>
-    (await import('./components/range-time-picker/range-time-picker.component'))
-      .RangeTimePickerComponent,
+  multiRangeCalendar: async () =>
+    (await import('./components/multi-range-calendar/multi-range-calendar.component'))
+      .MultiRangeCalendarComponent,
+  multiRangeDateInput: async () =>
+    (await import('./components/multi-range-date/multi-range-date.component'))
+      .MultiRangeDateComponent,
+  multiRangeTimeInput: async () =>
+    (await import('./components/multi-range-time/multi-range-time.component'))
+      .MultiRangeTimeComponent,
+  multiRangeDateTimeInput: async () =>
+    (await import('./components/multi-range-date-time/multi-range-date-time.component'))
+      .MultiRangeDateTimeComponent,
+  multiRangeDateTimeCalendar: async () =>
+    (
+      await import(
+        './components/multi-range-date-time-calendar/multi-range-date-time-calendar.component'
+      )
+    ).MultiRangeDateTimeCalendarComponent,
+  multiRangeDateTimePicker: async () =>
+    (
+      await import(
+        './components/multi-range-date-time-picker/multi-range-date-time-picker.component'
+      )
+    ).MultiRangeDateTimePickerComponent,
+  multiRangeDatePicker: async () =>
+    (await import('./components/multi-range-date-picker/multi-range-date-picker.component'))
+      .MultiRangeDatePickerComponent,
+  multiRangeTimePicker: async () =>
+    (await import('./components/multi-range-time-picker/multi-range-time-picker.component'))
+      .MultiRangeTimePickerComponent,
   dateInput: async () => (await import('./components/date-input/date.component')).DateComponent,
   timeInput: async () => (await import('./components/time-input/time.component')).TimeComponent,
   timePicker: async () =>

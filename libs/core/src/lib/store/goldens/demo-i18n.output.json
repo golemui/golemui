@@ -27,7 +27,7 @@
       "extras": "layout tabs",
       "pets": "layout grid",
       "includePets": "input toggle includePets",
-      "preferredDates": "input rangeCalendar preferredDates"
+      "preferredDates": "input multiRangeCalendar preferredDates"
     },
     "repeaterItemScopes": {},
     "repeaterRows": {},
@@ -184,7 +184,7 @@
       },
       "preferredDates": {
         "uid": "preferredDates",
-        "type": "rangeCalendar",
+        "type": "multiRangeCalendar",
         "kind": "input",
         "size": 1,
         "label": "translated[travelPlanner.field.preferredDates.label] (default: Select Preferred Dates)",

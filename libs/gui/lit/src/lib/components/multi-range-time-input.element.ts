@@ -1,0 +1,100 @@
+import type { InputWidget, WithWidget } from '@golemui/core';
+import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
+import type { TimeRange, MultiRangeTimeInputProps } from '@golemui/gui-shared/internals';
+import '@golemui/gui-components/multi-range-time-input';
+import { consume, provide } from '@lit/context';
+import { html, LitElement } from 'lit';
+import { property } from 'lit/decorators.js';
+import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
+import { type Subscription } from 'rxjs';
+
+export class MultiRangeTimeInputElement extends LitElement implements WithWidget {
+  widget!: InputWidget<TimeRange[]>;
+
+  @consume({ context: formContext })
+  @property({ attribute: false })
+  formContext!: LitFormContext<any>;
+
+  @provide({ context: inputContext })
+  adapter = new InputWidgetAdapter<TimeRange[], MultiRangeTimeInputProps>();
+
+  subscriptions: Subscription[] = [];
+
+  override createRenderRoot() {
+    return this;
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-multi-range-time', 'gui-field');
+    this.adapter.context = this.formContext;
+    this.adapter.init(this.widget);
+
+    this.subscriptions.push(
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
+    );
+  }
+
+  override render() {
+    super.render();
+
+    return html`
+      <gui-multi-range-time
+        .uid=${this.widget.uid}
+        .idPrefix=${this.adapter.formName}
+        .label=${this.adapter.templateData.label}
+        .hint=${this.adapter.templateData.hint}
+        .icon=${this.adapter.templateData.icon}
+        .errors=${this.adapter.templateData.errors}
+        .touched=${this.adapter.templateData.touched}
+        ?required=${this.adapter.templateData.validator?.required}
+        ?disabled=${this.adapter.templateData.disabled}
+        ?readonly=${this.adapter.templateData.readonly}
+        .value=${this.adapter.templateData.value}
+        .localeId=${this.adapter.templateData.lang}
+        .hourAriaLabel=${this.adapter.templateData.hourAriaLabel}
+        .minuteAriaLabel=${this.adapter.templateData.minuteAriaLabel}
+        .dayPeriodAriaLabel=${this.adapter.templateData.dayPeriodAriaLabel}
+        .separator=${this.adapter.templateData.separator}
+        .removePillAriaLabel=${this.adapter.templateData.removePillAriaLabel}
+        .startTimeAriaLabel=${this.adapter.templateData.startTimeAriaLabel}
+        .endTimeAriaLabel=${this.adapter.templateData.endTimeAriaLabel}
+        .hourFormat=${this.adapter.templateData.hourFormat}
+        .minuteStep=${this.adapter.templateData.minuteStep}
+        .minTime=${this.adapter.templateData.minTime}
+        .maxTime=${this.adapter.templateData.maxTime}
+        .minTimeMessage=${this.adapter.templateData.minTimeMessage as string}
+        .maxTimeMessage=${this.adapter.templateData.maxTimeMessage as string}
+        .rangeOrderMessage=${this.adapter.templateData.rangeOrderMessage as string}
+        .incompleteMessage=${this.adapter.templateData.incompleteMessage as string}
+        ?allow-edit=${this.adapter.templateData.allowEdit}
+        .editLabel=${this.adapter.templateData.editLabel as string}
+        .editAriaLabel=${this.adapter.templateData.editAriaLabel as string}
+        .confirmEditLabel=${this.adapter.templateData.confirmEditLabel as string}
+        .cancelEditLabel=${this.adapter.templateData.cancelEditLabel as string}
+        .editStartedMessage=${this.adapter.templateData.editStartedMessage as string}
+        .editCommittedMessage=${this.adapter.templateData.editCommittedMessage as string}
+        .editCancelledMessage=${this.adapter.templateData.editCancelledMessage as string}
+        @gui-input=${this.valueChanged}
+        @gui-input-error=${this.onInputError}
+      ></gui-multi-range-time>
+    `;
+  }
+
+  valueChanged(event: CustomEvent) {
+    this.adapter.injectValidationIssues(null);
+    this.adapter.valueChanged(event.detail.value);
+  }
+
+  onInputError(event: CustomEvent) {
+    this.adapter.injectValidationIssues([event.detail.message]);
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.adapter.destroy();
+    unsubscribeAll(this.subscriptions);
+  }
+}
+
+safeDefine('gui-multi-range-time-input', MultiRangeTimeInputElement);

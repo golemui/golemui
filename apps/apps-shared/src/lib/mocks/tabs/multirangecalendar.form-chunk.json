@@ -1,0 +1,115 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabMultiRangeCalendar",
+  "kind": "layout",
+  "type": "grid",
+  "children": [
+    {
+      "kind": "input",
+      "type": "multiRangeCalendar",
+      "path": "multiRangeCalendarEmpty",
+      "label": "Empty"
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeCalendar",
+      "path": "multiRangeCalendarDefault",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "label": "With default value"
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeCalendar",
+      "path": "multiRangeCalendarEditable",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "label": "Editable",
+      "props": {
+        "allowEdit": true
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeCalendar",
+      "path": "multiRangeCalendarDisabled",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "disabled": true,
+      "label": "Disabled"
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeCalendar",
+      "path": "multiRangeCalendarReadonly",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "readonly": true,
+      "label": "Read only"
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeCalendar",
+      "path": "multiRangeCalendarValidation",
+      "label": "Required (validation)",
+      "validator": {
+        "type": "array",
+        "required": true
+      }
+    },
+    {
+      "kind": "input",
+      "type": "multiRangeCalendar",
+      "path": "multiRangeCalendarDisabledRanges",
+      "defaultValue": [
+        {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        {
+          "start": "2026-02-20"
+        }
+      ],
+      "label": "Disabled date ranges",
+      "props": {
+        "disabledRanges": [
+          {
+            "start": "2026-02-09",
+            "end": "2026-02-10"
+          },
+          {
+            "start": "2026-02-17"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -32,7 +32,7 @@ export function orderedDaySpan(a: Date, b: Date): DaySpan {
 
 /**
  * A committed range normalized to calendar-day Dates — the caller applies its
- * `endpointDay` policy first (plain parse for the range calendar, date-part
+ * `endpointDay` policy first (plain parse for the multi-range calendar, date-part
  * parse for the date-time flavor), so this module never sees ISO endpoint
  * strings. A missing `end` is an open-ended (single-day) range.
  */
@@ -205,7 +205,7 @@ export interface BuildMonthDaysOptions<D extends MonthDayFlags> {
   /**
    * The reference days whose visibility suppresses the focusable fallback
    * (see {@link buildMonthDays}). GuiCalendar passes `[selected ?? today]`;
-   * GuiRangeCalendar passes `[today, ...range starts]`. When none is visible
+   * GuiMultiRangeCalendar passes `[today, ...range starts]`. When none is visible
    * in the months window (or the list is empty/omitted), the fallback applies.
    */
   focusFallbackDates?: Date[];

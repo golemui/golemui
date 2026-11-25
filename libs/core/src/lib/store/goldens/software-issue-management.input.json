@@ -178,7 +178,7 @@
                           {
                             "uid": "dev-holidays",
                             "kind": "input",
-                            "type": "rangeDatePicker",
+                            "type": "multiRangeDatePicker",
                             "path": "developers.items.holidays",
                             "label": "Holidays",
                             "size": 4

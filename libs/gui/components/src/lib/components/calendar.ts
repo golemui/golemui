@@ -114,7 +114,7 @@ export class GuiCalendar extends GuiFormControl {
   @property({ type: String }) value: string | undefined = undefined;
 
   /**
-   * Month/year navigation state and guards, shared with the range calendar.
+   * Month/year navigation state and guards, shared with the multi-range calendar.
    * The controller requests host updates on every state change, replacing the
    * former `_currentDate`/`_yearSelectorOpen` reactive state.
    */

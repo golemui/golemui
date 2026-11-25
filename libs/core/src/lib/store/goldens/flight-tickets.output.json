@@ -22,7 +22,7 @@
       "from-dropdown": "input dropdown from",
       "to-dropdown": "input dropdown to",
       "passengers-number": "input number passengers",
-      "dates-rangeCalendar": "input rangeCalendar dates"
+      "dates-multiRangeCalendar": "input multiRangeCalendar dates"
     },
     "repeaterItemScopes": {},
     "repeaterRows": {},
@@ -33,7 +33,7 @@
         "kind": "layout",
         "children": [
           "tab15",
-          "dates-rangeCalendar"
+          "dates-multiRangeCalendar"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -110,9 +110,9 @@
         "defaultValue": 1,
         "keysWithUndefined": "size include exclude disabled readonly validator"
       },
-      "dates-rangeCalendar": {
-        "uid": "dates-rangeCalendar",
-        "type": "rangeCalendar",
+      "dates-multiRangeCalendar": {
+        "uid": "dates-multiRangeCalendar",
+        "type": "multiRangeCalendar",
         "kind": "input",
         "label": "Outbound/Return Dates",
         "path": "dates",

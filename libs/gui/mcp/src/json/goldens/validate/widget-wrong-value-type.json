@@ -1165,6 +1165,430 @@
       "interpolationWarnings": []
     }
   },
+  "multiRangeCalendar": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "multiRangeCalendar",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiRangeDateInput": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "multiRangeDateInput",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiRangeDatePicker": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "multiRangeDatePicker",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiRangeDateTimeCalendar": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "multiRangeDateTimeCalendar",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiRangeDateTimeInput": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "multiRangeDateTimeInput",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiRangeDateTimePicker": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "multiRangeDateTimePicker",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiRangeTimeInput": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "multiRangeTimeInput",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "multiRangeTimePicker": {
+    "input": {
+      "form": [
+        {
+          "kind": "input",
+          "type": "multiRangeTimePicker",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/label",
+          "message": "Expected type string at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "string"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Expected type object at `/form/0/label`, got 5",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0/label",
+          "message": "Value at `/form/0/label` does not match any allowed variant",
+          "keyword": "oneOf",
+          "params": {
+            "passingSchemas": null
+          }
+        },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
   "number": {
     "input": {
       "form": [
@@ -1377,436 +1801,12 @@
       "interpolationWarnings": []
     }
   },
-  "rangeCalendar": {
-    "input": {
-      "form": [
-        {
-          "kind": "input",
-          "type": "rangeCalendar",
-          "path": "field",
-          "label": 5,
-          "props": "not an object"
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0/label",
-          "message": "Expected type string at `/form/0/label`, got 5",
-          "keyword": "type",
-          "params": {
-            "type": "string"
-          }
-        },
-        {
-          "path": "/form/0/label",
-          "message": "Expected type object at `/form/0/label`, got 5",
-          "keyword": "type",
-          "params": {
-            "type": "object"
-          }
-        },
-        {
-          "path": "/form/0/label",
-          "message": "Value at `/form/0/label` does not match any allowed variant",
-          "keyword": "oneOf",
-          "params": {
-            "passingSchemas": null
-          }
-        },
-        {
-          "path": "/form/0/props",
-          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
-          "keyword": "type",
-          "params": {
-            "type": "object"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
-  "rangeDateInput": {
-    "input": {
-      "form": [
-        {
-          "kind": "input",
-          "type": "rangeDateInput",
-          "path": "field",
-          "label": 5,
-          "props": "not an object"
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0/label",
-          "message": "Expected type string at `/form/0/label`, got 5",
-          "keyword": "type",
-          "params": {
-            "type": "string"
-          }
-        },
-        {
-          "path": "/form/0/label",
-          "message": "Expected type object at `/form/0/label`, got 5",
-          "keyword": "type",
-          "params": {
-            "type": "object"
-          }
-        },
-        {
-          "path": "/form/0/label",
-          "message": "Value at `/form/0/label` does not match any allowed variant",
-          "keyword": "oneOf",
-          "params": {
-            "passingSchemas": null
-          }
-        },
-        {
-          "path": "/form/0/props",
-          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
-          "keyword": "type",
-          "params": {
-            "type": "object"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
-  "rangeDatePicker": {
-    "input": {
-      "form": [
-        {
-          "kind": "input",
-          "type": "rangeDatePicker",
-          "path": "field",
-          "label": 5,
-          "props": "not an object"
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0/label",
-          "message": "Expected type string at `/form/0/label`, got 5",
-          "keyword": "type",
-          "params": {
-            "type": "string"
-          }
-        },
-        {
-          "path": "/form/0/label",
-          "message": "Expected type object at `/form/0/label`, got 5",
-          "keyword": "type",
-          "params": {
-            "type": "object"
-          }
-        },
-        {
-          "path": "/form/0/label",
-          "message": "Value at `/form/0/label` does not match any allowed variant",
-          "keyword": "oneOf",
-          "params": {
-            "passingSchemas": null
-          }
-        },
-        {
-          "path": "/form/0/props",
-          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
-          "keyword": "type",
-          "params": {
-            "type": "object"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
-  "rangeDateTimeCalendar": {
-    "input": {
-      "form": [
-        {
-          "kind": "input",
-          "type": "rangeDateTimeCalendar",
-          "path": "field",
-          "label": 5,
-          "props": "not an object"
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0/label",
-          "message": "Expected type string at `/form/0/label`, got 5",
-          "keyword": "type",
-          "params": {
-            "type": "string"
-          }
-        },
-        {
-          "path": "/form/0/label",
-          "message": "Expected type object at `/form/0/label`, got 5",
-          "keyword": "type",
-          "params": {
-            "type": "object"
-          }
-        },
-        {
-          "path": "/form/0/label",
-          "message": "Value at `/form/0/label` does not match any allowed variant",
-          "keyword": "oneOf",
-          "params": {
-            "passingSchemas": null
-          }
-        },
-        {
-          "path": "/form/0/props",
-          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
-          "keyword": "type",
-          "params": {
-            "type": "object"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
-  "rangeDateTimeInput": {
-    "input": {
-      "form": [
-        {
-          "kind": "input",
-          "type": "rangeDateTimeInput",
-          "path": "field",
-          "label": 5,
-          "props": "not an object"
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0/label",
-          "message": "Expected type string at `/form/0/label`, got 5",
-          "keyword": "type",
-          "params": {
-            "type": "string"
-          }
-        },
-        {
-          "path": "/form/0/label",
-          "message": "Expected type object at `/form/0/label`, got 5",
-          "keyword": "type",
-          "params": {
-            "type": "object"
-          }
-        },
-        {
-          "path": "/form/0/label",
-          "message": "Value at `/form/0/label` does not match any allowed variant",
-          "keyword": "oneOf",
-          "params": {
-            "passingSchemas": null
-          }
-        },
-        {
-          "path": "/form/0/props",
-          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
-          "keyword": "type",
-          "params": {
-            "type": "object"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
-  "rangeDateTimePicker": {
-    "input": {
-      "form": [
-        {
-          "kind": "input",
-          "type": "rangeDateTimePicker",
-          "path": "field",
-          "label": 5,
-          "props": "not an object"
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0/label",
-          "message": "Expected type string at `/form/0/label`, got 5",
-          "keyword": "type",
-          "params": {
-            "type": "string"
-          }
-        },
-        {
-          "path": "/form/0/label",
-          "message": "Expected type object at `/form/0/label`, got 5",
-          "keyword": "type",
-          "params": {
-            "type": "object"
-          }
-        },
-        {
-          "path": "/form/0/label",
-          "message": "Value at `/form/0/label` does not match any allowed variant",
-          "keyword": "oneOf",
-          "params": {
-            "passingSchemas": null
-          }
-        },
-        {
-          "path": "/form/0/props",
-          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
-          "keyword": "type",
-          "params": {
-            "type": "object"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
   "rangeSlider": {
     "input": {
       "form": [
         {
           "kind": "input",
           "type": "rangeSlider",
-          "path": "field",
-          "label": 5,
-          "props": "not an object"
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0/label",
-          "message": "Expected type string at `/form/0/label`, got 5",
-          "keyword": "type",
-          "params": {
-            "type": "string"
-          }
-        },
-        {
-          "path": "/form/0/label",
-          "message": "Expected type object at `/form/0/label`, got 5",
-          "keyword": "type",
-          "params": {
-            "type": "object"
-          }
-        },
-        {
-          "path": "/form/0/label",
-          "message": "Value at `/form/0/label` does not match any allowed variant",
-          "keyword": "oneOf",
-          "params": {
-            "passingSchemas": null
-          }
-        },
-        {
-          "path": "/form/0/props",
-          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
-          "keyword": "type",
-          "params": {
-            "type": "object"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
-  "rangeTimeInput": {
-    "input": {
-      "form": [
-        {
-          "kind": "input",
-          "type": "rangeTimeInput",
-          "path": "field",
-          "label": 5,
-          "props": "not an object"
-        }
-      ]
-    },
-    "result": {
-      "valid": false,
-      "errors": [
-        {
-          "path": "/form/0/label",
-          "message": "Expected type string at `/form/0/label`, got 5",
-          "keyword": "type",
-          "params": {
-            "type": "string"
-          }
-        },
-        {
-          "path": "/form/0/label",
-          "message": "Expected type object at `/form/0/label`, got 5",
-          "keyword": "type",
-          "params": {
-            "type": "object"
-          }
-        },
-        {
-          "path": "/form/0/label",
-          "message": "Value at `/form/0/label` does not match any allowed variant",
-          "keyword": "oneOf",
-          "params": {
-            "passingSchemas": null
-          }
-        },
-        {
-          "path": "/form/0/props",
-          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
-          "keyword": "type",
-          "params": {
-            "type": "object"
-          }
-        }
-      ],
-      "warnings": [],
-      "expressionWarnings": [],
-      "interpolationWarnings": []
-    }
-  },
-  "rangeTimePicker": {
-    "input": {
-      "form": [
-        {
-          "kind": "input",
-          "type": "rangeTimePicker",
           "path": "field",
           "label": 5,
           "props": "not an object"

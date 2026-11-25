@@ -1,0 +1,102 @@
+import type { InputWidget, WithWidget } from '@golemui/core';
+import { InputWidgetAdapter, type LitFormContext, formContext, inputContext } from '@golemui/lit';
+import type { DateRange, MultiRangeCalendarProps } from '@golemui/gui-shared/internals';
+import '@golemui/gui-components/multi-range-calendar';
+import { consume, provide } from '@lit/context';
+import { html, LitElement } from 'lit';
+import { property } from 'lit/decorators.js';
+import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
+import { type Subscription } from 'rxjs';
+
+export class MultiRangeCalendarElement extends LitElement implements WithWidget {
+  widget!: InputWidget<DateRange[]>;
+
+  @consume({ context: formContext })
+  @property({ attribute: false })
+  formContext!: LitFormContext<any>;
+
+  @provide({ context: inputContext })
+  adapter = new InputWidgetAdapter<DateRange[], MultiRangeCalendarProps>();
+
+  subscriptions: Subscription[] = [];
+
+  override createRenderRoot() {
+    return this;
+  }
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.classList.add('gui-calendar', 'gui-field');
+    this.adapter.context = this.formContext;
+    this.adapter.init(this.widget);
+
+    this.subscriptions.push(
+      this.adapter.templateDataChanged$.subscribe(() => this.requestUpdate()),
+    );
+  }
+
+  override render() {
+    super.render();
+
+    return html`
+      <gui-multi-range-calendar
+        .uid=${this.widget.uid}
+        .idPrefix=${this.adapter.formName}
+        .label=${this.adapter.templateData.label}
+        .hint=${this.adapter.templateData.hint}
+        .errors=${this.adapter.templateData.errors}
+        .touched=${this.adapter.templateData.touched}
+        ?required=${this.adapter.templateData.validator?.required}
+        ?disabled=${this.adapter.templateData.disabled}
+        ?readonly=${this.adapter.templateData.readonly}
+        .value=${this.adapter.templateData.value}
+        .prevMonthIcon=${this.adapter.templateData.prevMonthIcon}
+        .nextMonthIcon=${this.adapter.templateData.nextMonthIcon}
+        .prevMonthAriaLabel=${this.adapter.templateData.prevMonthAriaLabel}
+        .nextMonthAriaLabel=${this.adapter.templateData.nextMonthAriaLabel}
+        .selectYearAriaLabel=${this.adapter.templateData.selectYearAriaLabel}
+        .yearGridAriaLabel=${this.adapter.templateData.yearGridAriaLabel}
+        .dayFormat=${this.adapter.templateData.dayFormat}
+        .weekdayFormat=${this.adapter.templateData.weekdayFormat}
+        .monthFormat=${this.adapter.templateData.monthFormat}
+        .minDate=${this.adapter.templateData.minDate}
+        .maxDate=${this.adapter.templateData.maxDate}
+        .disabledRanges=${this.adapter.templateData.disabledRanges}
+        .disabledDateRangeMessage=${this.adapter.templateData.disabledDateRangeMessage as string}
+        .numberOfMonths=${this.adapter.templateData.numberOfMonths}
+        .hidePills=${false}
+        .removePillAriaLabel=${this.adapter.templateData.removePillAriaLabel}
+        ?allow-edit=${this.adapter.templateData.allowEdit}
+        .editLabel=${this.adapter.templateData.editLabel as string}
+        .editAriaLabel=${this.adapter.templateData.editAriaLabel as string}
+        .confirmEditLabel=${this.adapter.templateData.confirmEditLabel as string}
+        .cancelEditLabel=${this.adapter.templateData.cancelEditLabel as string}
+        .editStartedMessage=${this.adapter.templateData.editStartedMessage as string}
+        .editCommittedMessage=${this.adapter.templateData.editCommittedMessage as string}
+        .editCancelledMessage=${this.adapter.templateData.editCancelledMessage as string}
+        .localeId=${this.adapter.templateData.lang}
+        @gui-input=${this.valueChanged}
+        @gui-input-error=${this.onInputError}
+        @gui-blur=${() => this.adapter.onBlur()}
+      ></gui-multi-range-calendar>
+    `;
+  }
+
+  valueChanged(event: CustomEvent) {
+    this.adapter.injectValidationIssues(null);
+    this.adapter.valueChanged(event.detail.value);
+  }
+
+  onInputError(event: CustomEvent) {
+    this.adapter.injectValidationIssues([event.detail.message]);
+    this.adapter.onBlur();
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.adapter.destroy();
+    unsubscribeAll(this.subscriptions);
+  }
+}
+
+safeDefine('gui-multi-range-calendar-input', MultiRangeCalendarElement);

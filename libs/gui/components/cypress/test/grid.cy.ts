@@ -115,7 +115,7 @@ describe('gui-grid', () => {
           <div class="gui-grid__cell"><gui-date-picker uid="b" label="Date"></gui-date-picker></div>
           <div class="gui-grid__cell"><gui-time-picker uid="c" label="Time"></gui-time-picker></div>
           <div class="gui-grid__cell">
-            <gui-range-date-picker uid="d" label="Dates"></gui-range-date-picker>
+            <gui-multi-range-date-picker uid="d" label="Dates"></gui-multi-range-date-picker>
           </div>
         </div>`,
       );

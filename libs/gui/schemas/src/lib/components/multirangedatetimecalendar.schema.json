@@ -1,0 +1,382 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/gui/components/multirangedatetimecalendar.schema.json",
+  "title": "MultiRangeDateTimeCalendar Widget",
+  "type": "object",
+  "$defs": {
+    "labelDef": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "disabledDef": {
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
+    },
+    "readonlyDef": {
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
+    },
+    "hintProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "prevMonthIconProp": {
+      "type": "string"
+    },
+    "nextMonthIconProp": {
+      "type": "string"
+    },
+    "prevMonthAriaLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "nextMonthAriaLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "selectYearAriaLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "yearGridAriaLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "removePillAriaLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "dayFormatProp": {
+      "description": "Formatting of day numbers in the calendar grid (`numeric` = 1-31, `2-digit` = 01-31)",
+      "enum": ["numeric", "2-digit"]
+    },
+    "weekdayFormatProp": {
+      "description": "Formatting of weekday column headers (`short` = Mon, `long` = Monday, `narrow` = M)",
+      "enum": ["short", "long", "narrow"]
+    },
+    "monthFormatProp": {
+      "description": "Formatting of the month heading (`long` = January, `short` = Jan, `narrow` = J, `numeric` = 1, `2-digit` = 01)",
+      "enum": ["numeric", "2-digit", "long", "short", "narrow"]
+    },
+    "numberOfMonthsProp": {
+      "type": "number",
+      "description": "Number of month panels to display side by side. Defaults to 1. The time row renders on the first panel only."
+    },
+    "hourFormatProp": {
+      "enum": ["12", "24"]
+    },
+    "minuteStepProp": {
+      "type": "number",
+      "minimum": 1
+    },
+    "allowCustomTimeProp": {
+      "type": "boolean"
+    },
+    "minDateTimeProp": {
+      "type": "string",
+      "description": "ISO-8601 date-time string for the earliest selectable instant (inclusive). Endpoints are instants, so the bound is an instant too."
+    },
+    "maxDateTimeProp": {
+      "type": "string",
+      "description": "ISO-8601 date-time string for the latest selectable instant (inclusive)"
+    },
+    "disabledRangesProp": {
+      "type": "array",
+      "description": "Disabled instant spans (in this widget's DateTimeRange coordinate system). Blocking a whole day is a span of 00:00:00-23:59:59.",
+      "items": {
+        "$ref": "../ranges.schema.json#/$defs/dateTimeRange"
+      }
+    },
+    "allowEditProp": {
+      "type": "boolean"
+    },
+    "editLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "editAriaLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "confirmEditLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "cancelEditLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "editStartedMessageProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "editCommittedMessageProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    },
+    "editCancelledMessageProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable"
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "input"
+    },
+    "type": {
+      "const": "multiRangeDateTimeCalendar"
+    },
+    "path": {
+      "$ref": "../core/common.schema.json#/$defs/dotPath"
+    },
+    "label": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "readonly": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "on": {
+      "$ref": "../core/common.schema.json#/$defs/on"
+    },
+    "validator": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    },
+    "defaultValue": {
+      "type": "array",
+      "items": {
+        "$ref": "../ranges.schema.json#/$defs/dateTimeRange"
+      }
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "hint": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "prevMonthIcon": {
+          "$ref": "#/$defs/prevMonthIconProp"
+        },
+        "nextMonthIcon": {
+          "$ref": "#/$defs/nextMonthIconProp"
+        },
+        "prevMonthAriaLabel": {
+          "$ref": "#/$defs/prevMonthAriaLabelProp"
+        },
+        "nextMonthAriaLabel": {
+          "$ref": "#/$defs/nextMonthAriaLabelProp"
+        },
+        "selectYearAriaLabel": {
+          "$ref": "#/$defs/selectYearAriaLabelProp"
+        },
+        "yearGridAriaLabel": {
+          "$ref": "#/$defs/yearGridAriaLabelProp"
+        },
+        "removePillAriaLabel": {
+          "$ref": "#/$defs/removePillAriaLabelProp"
+        },
+        "dayFormat": {
+          "$ref": "#/$defs/dayFormatProp"
+        },
+        "weekdayFormat": {
+          "$ref": "#/$defs/weekdayFormatProp"
+        },
+        "monthFormat": {
+          "$ref": "#/$defs/monthFormatProp"
+        },
+        "numberOfMonths": {
+          "$ref": "#/$defs/numberOfMonthsProp"
+        },
+        "hourFormat": {
+          "$ref": "#/$defs/hourFormatProp"
+        },
+        "minuteStep": {
+          "$ref": "#/$defs/minuteStepProp"
+        },
+        "allowCustomTime": {
+          "$ref": "#/$defs/allowCustomTimeProp"
+        },
+        "startTimeLabel": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "endTimeLabel": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "minDateTime": {
+          "$ref": "#/$defs/minDateTimeProp"
+        },
+        "maxDateTime": {
+          "$ref": "#/$defs/maxDateTimeProp"
+        },
+        "minDateTimeMessage": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "maxDateTimeMessage": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "disabledRanges": {
+          "$ref": "#/$defs/disabledRangesProp"
+        },
+        "disabledRangeMessage": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "noAvailableTimesMessage": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "incompleteMessage": {
+          "$ref": "../core/common.schema.json#/$defs/localizable",
+          "description": "Error surfaced when focus leaves the widget with a half-finished range selection behind; the committed pills are untouched, the injected issue alone flags the field."
+        },
+        "dayCountAriaLabel": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "disabledDayCountAriaLabel": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "allowEdit": {
+          "$ref": "#/$defs/allowEditProp",
+          "description": "Enables the select → edit → confirm flow on the pills: clicking a pill selects it and reveals its action icons; Edit (icon, or F2/E on the focused pill) loads it back into the input, Confirm commits the replacement (Escape cancels). Defaults to false."
+        },
+        "editLabel": {
+          "$ref": "#/$defs/editLabelProp"
+        },
+        "editAriaLabel": {
+          "$ref": "#/$defs/editAriaLabelProp",
+          "description": "Edit hint joined into the pill's aria-description (the edit icon itself is decorative); a `{label}` token is substituted with the range's display label. Defaults to 'Edit range {label}'."
+        },
+        "confirmEditLabel": {
+          "$ref": "#/$defs/confirmEditLabelProp"
+        },
+        "cancelEditLabel": {
+          "$ref": "#/$defs/cancelEditLabelProp"
+        },
+        "editStartedMessage": {
+          "$ref": "#/$defs/editStartedMessageProp",
+          "description": "Screen-reader announcement when an edit session starts; `{label}` carries the range. Defaults to 'Editing range {label}.'."
+        },
+        "editCommittedMessage": {
+          "$ref": "#/$defs/editCommittedMessageProp",
+          "description": "Screen-reader announcement when an edit commits its replacement; `{label}` carries the resulting range. Defaults to 'Range updated to {label}.'."
+        },
+        "editCancelledMessage": {
+          "$ref": "#/$defs/editCancelledMessageProp"
+        }
+      },
+      "patternProperties": {
+        "^hint\\.[^.]+$": {
+          "$ref": "#/$defs/hintProp"
+        },
+        "^prevMonthIcon\\.[^.]+$": {
+          "$ref": "#/$defs/prevMonthIconProp"
+        },
+        "^nextMonthIcon\\.[^.]+$": {
+          "$ref": "#/$defs/nextMonthIconProp"
+        },
+        "^prevMonthAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/prevMonthAriaLabelProp"
+        },
+        "^nextMonthAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/nextMonthAriaLabelProp"
+        },
+        "^selectYearAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/selectYearAriaLabelProp"
+        },
+        "^yearGridAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/yearGridAriaLabelProp"
+        },
+        "^removePillAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/removePillAriaLabelProp"
+        },
+        "^dayFormat\\.[^.]+$": {
+          "$ref": "#/$defs/dayFormatProp"
+        },
+        "^weekdayFormat\\.[^.]+$": {
+          "$ref": "#/$defs/weekdayFormatProp"
+        },
+        "^monthFormat\\.[^.]+$": {
+          "$ref": "#/$defs/monthFormatProp"
+        },
+        "^numberOfMonths\\.[^.]+$": {
+          "$ref": "#/$defs/numberOfMonthsProp"
+        },
+        "^hourFormat\\.[^.]+$": {
+          "$ref": "#/$defs/hourFormatProp"
+        },
+        "^minuteStep\\.[^.]+$": {
+          "$ref": "#/$defs/minuteStepProp"
+        },
+        "^allowCustomTime\\.[^.]+$": {
+          "$ref": "#/$defs/allowCustomTimeProp"
+        },
+        "^startTimeLabel\\.[^.]+$": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "^endTimeLabel\\.[^.]+$": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "^minDateTime\\.[^.]+$": {
+          "$ref": "#/$defs/minDateTimeProp"
+        },
+        "^maxDateTime\\.[^.]+$": {
+          "$ref": "#/$defs/maxDateTimeProp"
+        },
+        "^minDateTimeMessage\\.[^.]+$": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "^maxDateTimeMessage\\.[^.]+$": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "^disabledRanges\\.[^.]+$": {
+          "$ref": "#/$defs/disabledRangesProp"
+        },
+        "^disabledRangeMessage\\.[^.]+$": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "^noAvailableTimesMessage\\.[^.]+$": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "^incompleteMessage\\.[^.]+$": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "^dayCountAriaLabel\\.[^.]+$": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "^disabledDayCountAriaLabel\\.[^.]+$": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "^allowEdit\\.[^.]+$": {
+          "$ref": "#/$defs/allowEditProp"
+        },
+        "^editLabel\\.[^.]+$": {
+          "$ref": "#/$defs/editLabelProp"
+        },
+        "^editAriaLabel\\.[^.]+$": {
+          "$ref": "#/$defs/editAriaLabelProp"
+        },
+        "^confirmEditLabel\\.[^.]+$": {
+          "$ref": "#/$defs/confirmEditLabelProp"
+        },
+        "^cancelEditLabel\\.[^.]+$": {
+          "$ref": "#/$defs/cancelEditLabelProp"
+        },
+        "^editStartedMessage\\.[^.]+$": {
+          "$ref": "#/$defs/editStartedMessageProp"
+        },
+        "^editCommittedMessage\\.[^.]+$": {
+          "$ref": "#/$defs/editCommittedMessageProp"
+        },
+        "^editCancelledMessage\\.[^.]+$": {
+          "$ref": "#/$defs/editCancelledMessageProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "^readonly\\.[^.]+$": {
+      "$ref": "#/$defs/readonlyDef"
+    },
+    "^validator\\.[^.]+$": {
+      "$ref": "../validators.schema.json#/$defs/validator"
+    }
+  },
+  "required": ["kind", "type", "path"],
+  "unevaluatedProperties": false
+}

@@ -154,7 +154,7 @@
       },
       {
         "kind": "input",
-        "type": "rangeCalendar",
+        "type": "multiRangeCalendar",
         "path": "tags",
         "label": "Selected Dates",
         "validator": {

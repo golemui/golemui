@@ -80,28 +80,43 @@ export { GuiRating, GuiRatingEvents } from './lib/components/rating';
 export { GuiSlider, GuiSliderEvents } from './lib/components/slider';
 export type { GuiSliderMark, GuiSliderRange, GuiSliderValuePlacement } from './lib/utils/slider';
 export { GuiSpinner } from './lib/components/spinner';
-export { GuiRangeCalendar, GuiRangeCalendarEvents } from './lib/components/range-calendar';
-export type { RangeCalendarDay } from './lib/components/range-calendar';
+export {
+  GuiMultiRangeCalendar,
+  GuiMultiRangeCalendarEvents,
+} from './lib/components/multi-range-calendar';
+export type { MultiRangeCalendarDay } from './lib/components/multi-range-calendar';
 
-export { GuiRangeDateInput, GuiRangeDateInputEvents } from './lib/components/range-date-input';
-export type { GuiRangeDateInputProps } from './lib/components/range-date-input';
 export {
-  GuiRangeDateTimeInput,
-  GuiRangeDateTimeInputEvents,
-} from './lib/components/range-date-time-input';
-export type { GuiRangeDateTimeInputProps } from './lib/components/range-date-time-input';
+  GuiMultiRangeDateInput,
+  GuiMultiRangeDateInputEvents,
+} from './lib/components/multi-range-date-input';
+export type { GuiMultiRangeDateInputProps } from './lib/components/multi-range-date-input';
 export {
-  GuiRangeDateTimeCalendar,
-  GuiRangeDateTimeCalendarEvents,
-} from './lib/components/range-date-time-calendar';
+  GuiMultiRangeDateTimeInput,
+  GuiMultiRangeDateTimeInputEvents,
+} from './lib/components/multi-range-date-time-input';
+export type { GuiMultiRangeDateTimeInputProps } from './lib/components/multi-range-date-time-input';
 export {
-  GuiRangeDateTimePicker,
-  GuiRangeDateTimePickerEvents,
-} from './lib/components/range-date-time-picker';
-export { GuiRangeTimeInput, GuiRangeTimeInputEvents } from './lib/components/range-time-input';
-export type { GuiRangeTimeInputProps } from './lib/components/range-time-input';
-export { GuiRangeDatePicker, GuiRangeDatePickerEvents } from './lib/components/range-date-picker';
-export { GuiRangeTimePicker, GuiRangeTimePickerEvents } from './lib/components/range-time-picker';
+  GuiMultiRangeDateTimeCalendar,
+  GuiMultiRangeDateTimeCalendarEvents,
+} from './lib/components/multi-range-date-time-calendar';
+export {
+  GuiMultiRangeDateTimePicker,
+  GuiMultiRangeDateTimePickerEvents,
+} from './lib/components/multi-range-date-time-picker';
+export {
+  GuiMultiRangeTimeInput,
+  GuiMultiRangeTimeInputEvents,
+} from './lib/components/multi-range-time-input';
+export type { GuiMultiRangeTimeInputProps } from './lib/components/multi-range-time-input';
+export {
+  GuiMultiRangeDatePicker,
+  GuiMultiRangeDatePickerEvents,
+} from './lib/components/multi-range-date-picker';
+export {
+  GuiMultiRangeTimePicker,
+  GuiMultiRangeTimePickerEvents,
+} from './lib/components/multi-range-time-picker';
 export { GuiSelect, GuiSelectEvents } from './lib/components/select';
 export type { GuiSelectProps } from './lib/components/select';
 export { GuiTab } from './lib/components/tab';

@@ -37,15 +37,17 @@ export const widgetLoaders: WidgetLoaders<Component<WithWidget>, GolemWidget> = 
   otp: async () => (await import('./components/Otp.vue')).default,
   slider: async () => (await import('./components/Slider.vue')).default,
   rangeSlider: async () => (await import('./components/RangeSlider.vue')).default,
-  rangeCalendar: async () => (await import('./components/RangeCalendar.vue')).default,
-  rangeDateInput: async () => (await import('./components/RangeDateInput.vue')).default,
-  rangeTimeInput: async () => (await import('./components/RangeTimeInput.vue')).default,
-  rangeDateTimeInput: async () => (await import('./components/RangeDateTimeInput.vue')).default,
-  rangeDateTimeCalendar: async () =>
-    (await import('./components/RangeDateTimeCalendar.vue')).default,
-  rangeDateTimePicker: async () => (await import('./components/RangeDateTimePicker.vue')).default,
-  rangeDatePicker: async () => (await import('./components/RangeDatePicker.vue')).default,
-  rangeTimePicker: async () => (await import('./components/RangeTimePicker.vue')).default,
+  multiRangeCalendar: async () => (await import('./components/MultiRangeCalendar.vue')).default,
+  multiRangeDateInput: async () => (await import('./components/MultiRangeDateInput.vue')).default,
+  multiRangeTimeInput: async () => (await import('./components/MultiRangeTimeInput.vue')).default,
+  multiRangeDateTimeInput: async () =>
+    (await import('./components/MultiRangeDateTimeInput.vue')).default,
+  multiRangeDateTimeCalendar: async () =>
+    (await import('./components/MultiRangeDateTimeCalendar.vue')).default,
+  multiRangeDateTimePicker: async () =>
+    (await import('./components/MultiRangeDateTimePicker.vue')).default,
+  multiRangeDatePicker: async () => (await import('./components/MultiRangeDatePicker.vue')).default,
+  multiRangeTimePicker: async () => (await import('./components/MultiRangeTimePicker.vue')).default,
   tags: async () => (await import('./components/Tags.vue')).default,
 
   // REPEATER

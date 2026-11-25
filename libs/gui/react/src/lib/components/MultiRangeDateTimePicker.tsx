@@ -1,0 +1,107 @@
+import type { InputWidget, Validator, WithWidget } from '@golemui/core';
+import { useInputWidget } from '@golemui/react';
+import type { DateTimeRange, MultiRangeDateTimePickerProps } from '@golemui/gui-shared/internals';
+import { useCallback } from 'react';
+import { GuiMultiRangeDateTimePickerReact } from '../web-components';
+import '../styles.scss';
+
+export function MultiRangeDateTimePicker(widgetInstance: WithWidget) {
+  const widget = widgetInstance.widget as InputWidget<DateTimeRange[]>;
+  const {
+    uid,
+    formName,
+    errors,
+    value,
+    isTouched,
+    templateData,
+    onBlur,
+    onValueChanged,
+    injectValidationIssues,
+  } = useInputWidget<DateTimeRange[], MultiRangeDateTimePickerProps>(widget);
+
+  const handleChange = useCallback(
+    (e: Event) => {
+      injectValidationIssues(null);
+      onValueChanged((e as CustomEvent).detail.value);
+    },
+    [injectValidationIssues, onValueChanged],
+  );
+
+  const handleInputError = useCallback(
+    (e: Event) => {
+      injectValidationIssues([(e as CustomEvent).detail.message]);
+      // Surface the error immediately on a completed selection.
+      onBlur();
+    },
+    [injectValidationIssues, onBlur],
+  );
+
+  const isRequired = (templateData.validator as Validator)?.required;
+
+  return (
+    <div className="gui-multi-range-date-time-picker gui-field">
+      <GuiMultiRangeDateTimePickerReact
+        uid={uid}
+        idPrefix={formName}
+        label={templateData.label as string}
+        hint={templateData.hint}
+        icon={templateData.icon}
+        errors={errors}
+        touched={isTouched}
+        required={isRequired}
+        disabled={templateData.disabled as boolean}
+        readOnly={templateData.readonly as boolean}
+        value={value}
+        separator={templateData.separator as string}
+        removePillAriaLabel={templateData.removePillAriaLabel}
+        startDateTimeAriaLabel={templateData.startDateTimeAriaLabel as string}
+        endDateTimeAriaLabel={templateData.endDateTimeAriaLabel as string}
+        invalidDateMessage={templateData.invalidDateMessage as string}
+        prevMonthIcon={templateData.prevMonthIcon}
+        nextMonthIcon={templateData.nextMonthIcon}
+        prevMonthAriaLabel={templateData.prevMonthAriaLabel}
+        nextMonthAriaLabel={templateData.nextMonthAriaLabel}
+        selectYearAriaLabel={templateData.selectYearAriaLabel}
+        yearGridAriaLabel={templateData.yearGridAriaLabel}
+        dayFormat={templateData.dayFormat}
+        weekdayFormat={templateData.weekdayFormat}
+        monthFormat={templateData.monthFormat}
+        numberOfMonths={templateData.numberOfMonths}
+        localeId={templateData.lang}
+        toggleAriaLabel={templateData.toggleAriaLabel}
+        dayAriaLabel={templateData.dayAriaLabel}
+        monthAriaLabel={templateData.monthAriaLabel}
+        yearAriaLabel={templateData.yearAriaLabel}
+        hourAriaLabel={templateData.hourAriaLabel}
+        minuteAriaLabel={templateData.minuteAriaLabel}
+        dayPeriodAriaLabel={templateData.dayPeriodAriaLabel}
+        hourFormat={templateData.hourFormat}
+        minuteStep={templateData.minuteStep}
+        allowCustomTime={templateData.allowCustomTime}
+        startTimeLabel={templateData.startTimeLabel as string}
+        endTimeLabel={templateData.endTimeLabel as string}
+        minDateTime={templateData.minDateTime}
+        maxDateTime={templateData.maxDateTime}
+        disabledRanges={templateData.disabledRanges}
+        minDateTimeMessage={templateData.minDateTimeMessage as string}
+        maxDateTimeMessage={templateData.maxDateTimeMessage as string}
+        disabledRangeMessage={templateData.disabledRangeMessage as string}
+        noAvailableTimesMessage={templateData.noAvailableTimesMessage as string}
+        incompleteMessage={templateData.incompleteMessage as string}
+        allowEdit={templateData.allowEdit}
+        editLabel={templateData.editLabel as string}
+        editAriaLabel={templateData.editAriaLabel as string}
+        confirmEditLabel={templateData.confirmEditLabel as string}
+        cancelEditLabel={templateData.cancelEditLabel as string}
+        editStartedMessage={templateData.editStartedMessage as string}
+        editCommittedMessage={templateData.editCommittedMessage as string}
+        editCancelledMessage={templateData.editCancelledMessage as string}
+        dayCountAriaLabel={templateData.dayCountAriaLabel as string}
+        disabledDayCountAriaLabel={templateData.disabledDayCountAriaLabel as string}
+        onGuiInput={handleChange}
+        onGuiBlur={onBlur}
+        onGuiInputError={handleInputError}
+      />
+    </div>
+  );
+}

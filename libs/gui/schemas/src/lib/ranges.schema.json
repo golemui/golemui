@@ -6,7 +6,7 @@
   "$defs": {
     "dateRange": {
       "type": "object",
-      "description": "A single date range. Used as the value of the range calendar and range date widgets, and by calendar/date-picker widgets to mark days as disabled.",
+      "description": "A single date range. The multiRange date widgets hold a list of them, and calendar and date-picker widgets use them to mark days as disabled.",
       "properties": {
         "start": {
           "type": "string",
@@ -22,7 +22,7 @@
     },
     "dateTimeRange": {
       "type": "object",
-      "description": "A single date-time range (two ISO date-times). Used as the value of the range date-time widgets, and by those widgets for disabled instant spans.",
+      "description": "A single date-time range (two ISO date-times). The multiRange date-time widgets hold a list of them, and use them for disabled instant spans.",
       "properties": {
         "start": {
           "type": "string",
@@ -43,7 +43,7 @@
     },
     "timeRange": {
       "type": "object",
-      "description": "A single time-of-day range. Used as the value of the range time widgets, and by time-picker widgets to mark times as disabled.",
+      "description": "A single time-of-day range. The multiRange time widgets hold a list of them, and time-picker widgets use them to mark times as disabled.",
       "properties": {
         "start": {
           "$ref": "#/$defs/isoTime"
