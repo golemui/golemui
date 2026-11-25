@@ -1,7 +1,11 @@
 import { type CompiledForm, emptyCompiledForm } from '../compile/compiled-form';
 import { type Form, formDefDecoder } from '../form';
 import type { FormWidget } from '../form-widget';
-import { emptyWidgetInstanceTree, type WidgetInstanceTree } from '../instances/widget-instance';
+import {
+  emptyWidgetInstanceTree,
+  type WidgetFlags,
+  type WidgetInstanceTree,
+} from '../instances/widget-instance';
 import { type DotPath, type Uid, type ValidationStatus } from '../shared';
 
 // ------------------------------
@@ -103,8 +107,9 @@ export type State = {
   /**
    * The hidden, readonly and disabled flags for every widget in `resolvedSources`, recomputed on
    * every derive. A hidden layout propagates its flag to its descendants.
+   * Written from `instances`, where each instance has its flags.
    */
-  widgetFlags: Record<Uid, { hidden?: boolean; readonly?: boolean; disabled?: boolean }>;
+  widgetFlags: Record<Uid, WidgetFlags>;
 
   /**
    * Maps every widget produced by a repeater item (by its concrete uid) to the repeater item that owns it.
@@ -119,7 +124,7 @@ export type State = {
 
   /**
    * Maps every widget produced by a repeater item (by its concrete uid) to the rows that own it,
-   * outermost first. The flags stage uses it to rewrite `items` tokens in `when` expressions.
+   * outermost first. Read by `getFormEventRow` and `moveRowState`.
    * Written from `instances` together with `resolvedSources`.
    *
    * @example Nested repeater: { 'dev-name[2][0]': [

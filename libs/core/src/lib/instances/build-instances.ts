@@ -3,7 +3,13 @@ import { type FormWidget, isInputWidget } from '../form-widget';
 import { type DotPath, type Uid } from '../shared';
 import { get } from '../utils/object';
 import { toRepeaterItemUid } from '../utils/repeater';
-import { innermostRowIndex, type WidgetInstance, type WidgetInstanceTree } from './widget-instance';
+import {
+  hasSameInstances,
+  innermostRowIndex,
+  previousIfSameInstances,
+  type WidgetInstance,
+  type WidgetInstanceTree,
+} from './widget-instance';
 
 // One list for every instance without children or rows, so "no entries" is one object. Every
 // form of the process shares the two lists, so they are frozen: a write into one throws.
@@ -129,6 +135,7 @@ function createInstance(
     itemPath,
     children: NO_INSTANCES,
     rows: NO_INSTANCES,
+    flags: undefined,
   };
 }
 
@@ -228,20 +235,4 @@ function readerOfRows(rows: WidgetInstance[]): (rowIndex: number) => WidgetInsta
       ? candidate
       : undefined;
   };
-}
-
-/** True when the two lists hold the same instances, in the same order. */
-function hasSameInstances(first: WidgetInstance[], second: WidgetInstance[]): boolean {
-  return (
-    first.length === second.length &&
-    second.every((instance, position) => instance === first[position])
-  );
-}
-
-/** Returns `previous` when it holds exactly the instances of `built`, in the same order. */
-function previousIfSameInstances(
-  previous: WidgetInstance[],
-  built: WidgetInstance[],
-): WidgetInstance[] {
-  return hasSameInstances(previous, built) ? previous : built;
 }
