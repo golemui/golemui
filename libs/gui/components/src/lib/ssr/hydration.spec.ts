@@ -160,6 +160,16 @@ describe('resuming server-rendered standalone elements', () => {
     expect(badge().outerHTML).toBe(before.replace(' defer-hydration=""', ''));
   });
 
+  it('leaves a table that fits as the server sent it', async () => {
+    const table = () => document.querySelector('gui-table') as HTMLElement;
+    const before = table().outerHTML;
+    resumeServerRendered();
+    await settle();
+
+    // Only the hold goes: jsdom lays nothing out, so the table fits and needs no region.
+    expect(table().outerHTML).toBe(before.replace(' defer-hydration=""', ''));
+  });
+
   it('accepts user input after the resume', async () => {
     resumeServerRendered();
     await settle();

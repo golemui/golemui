@@ -4,7 +4,7 @@ import type { GolemWidget } from '@golemui/gui-shared/internals';
 export const widgetLoaders: WidgetLoaders<React.ComponentType<WithWidget>, GolemWidget> = {
   // INTERACTIVE
   button: async () => (await import('./components/Button')).Button,
-  menu: async () => (await import('./components/Menu')).Menu,
+  menuButton: async () => (await import('./components/MenuButton')).MenuButton,
 
   // CONTROLS
   calendar: async () => (await import('./components/Calendar')).Calendar,
@@ -75,5 +75,11 @@ export const widgetLoaders: WidgetLoaders<React.ComponentType<WithWidget>, Golem
 
   // DISPLAY
   alert: async () => (await import('./components/Alert')).Alert,
+  badge: async () => (await import('./components/Badge')).Badge,
+  image: async () => (await import('./components/Image')).Image,
+  progress: async () => (await import('./components/Progress')).Progress,
+  spinner: async () => (await import('./components/Spinner')).Spinner,
+  table: async () => (await import('./components/Table')).Table,
+  typography: async () => (await import('./components/Typography')).Typography,
   markdownText: async () => (await import('./components/MarkdownText')).MarkdownText,
 };

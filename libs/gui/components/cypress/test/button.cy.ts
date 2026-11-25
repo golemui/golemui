@@ -238,11 +238,11 @@ describe('gui-button', () => {
             commandfor="row-actions"
             command="toggle-popover"
           ></gui-button>
-          <gui-menu>
+          <gui-menu-button>
             <div id="row-actions" popover>
               <button type="button" value="edit">Edit</button>
             </div>
-          </gui-menu>`,
+          </gui-menu-button>`,
       );
 
       button().should('have.attr', 'aria-haspopup', 'menu');

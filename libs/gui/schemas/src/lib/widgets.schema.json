@@ -58,9 +58,15 @@
         "grid",
         "tabs",
         "alert",
+        "badge",
+        "image",
         "markdownText",
+        "progress",
+        "spinner",
+        "table",
+        "typography",
         "button",
-        "menu"
+        "menuButton"
       ]
     },
     "formWidget": {
@@ -117,9 +123,15 @@
         { "$ref": "./components/grid.schema.json" },
         { "$ref": "./components/tabs.schema.json" },
         { "$ref": "./components/alert.schema.json" },
+        { "$ref": "./components/badge.schema.json" },
+        { "$ref": "./components/image.schema.json" },
         { "$ref": "./components/markdowntext.schema.json" },
+        { "$ref": "./components/progress.schema.json" },
+        { "$ref": "./components/spinner.schema.json" },
+        { "$ref": "./components/table.schema.json" },
+        { "$ref": "./components/typography.schema.json" },
         { "$ref": "./components/button.schema.json" },
-        { "$ref": "./components/menu.schema.json" },
+        { "$ref": "./components/menubutton.schema.json" },
         { "$ref": "./components/custom.schema.json" },
         { "$ref": "./core/common.schema.json#/$defs/chunkRef" }
       ]

@@ -136,8 +136,8 @@ export const elements: ElementCase[] = [
     tag: 'gui-markdown-text',
     props: { md: 'Hello', dependencies: { markdown: { parse: (md: string) => `<p>${md}</p>` } } },
   },
-  // Its panel and items are the app's children: menu.cy.ts checks it with them, open and closed.
-  { tag: 'gui-menu', props: {}, hostRendersChildren: true },
+  // Its panel and items are the app's children: menu-button.cy.ts checks it with them, open and closed.
+  { tag: 'gui-menu-button', props: {}, hostRendersChildren: true },
   {
     tag: 'gui-multi-dropdown',
     props: { label: 'Colors', items: options },
@@ -279,6 +279,15 @@ export const elements: ElementCase[] = [
     form: { property: 'value', sample: 'red' },
   },
   // Its parts are the app's children: tabs.cy.ts checks it with them.
+  // Its table is the app's children: give it a captioned one, as table.cy.ts does.
+  {
+    tag: 'gui-table',
+    props: {},
+    setup: (table) =>
+      (table.innerHTML =
+        '<table><caption>Open orders</caption><thead><tr><th scope="col">Order</th><th scope="col">Total</th></tr></thead><tbody><tr><td>A-1042</td><td class="gui-table__cell--end">1,280.50</td></tr></tbody></table>'),
+    hostRendersChildren: true,
+  },
   { tag: 'gui-tabs', props: {}, hostRendersChildren: true },
   {
     tag: 'gui-tags',

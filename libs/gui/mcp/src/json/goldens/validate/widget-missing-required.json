@@ -73,6 +73,39 @@
       "interpolationWarnings": []
     }
   },
+  "badge": {
+    "input": {
+      "form": [
+        {
+          "type": "badge"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Missing required property `props` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "props"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
   "button": {
     "input": {
       "form": [
@@ -502,6 +535,39 @@
       "interpolationWarnings": []
     }
   },
+  "image": {
+    "input": {
+      "form": [
+        {
+          "type": "image"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Missing required property `props` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "props"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
   "list": {
     "input": {
       "form": [
@@ -601,11 +667,11 @@
       "interpolationWarnings": []
     }
   },
-  "menu": {
+  "menuButton": {
     "input": {
       "form": [
         {
-          "type": "menu"
+          "type": "menuButton"
         }
       ]
     },
@@ -1104,6 +1170,39 @@
       "interpolationWarnings": []
     }
   },
+  "progress": {
+    "input": {
+      "form": [
+        {
+          "type": "progress"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Missing required property `props` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "props"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
   "radiogroup": {
     "input": {
       "form": [
@@ -1574,6 +1673,64 @@
       "interpolationWarnings": []
     }
   },
+  "spinner": {
+    "input": {
+      "form": [
+        {
+          "type": "spinner"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "table": {
+    "input": {
+      "form": [
+        {
+          "type": "table"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Missing required property `props` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "props"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
   "tabs": {
     "input": {
       "form": [
@@ -1805,6 +1962,39 @@
           "keyword": "required",
           "params": {
             "missingProperty": "path"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "typography": {
+    "input": {
+      "form": [
+        {
+          "type": "typography"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Missing required property `props` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "props"
           }
         }
       ],

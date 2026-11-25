@@ -1,0 +1,52 @@
+import { describe, expect, it } from 'vitest';
+import {
+  isMenuButtonSeparator,
+  menuButtonAriaLabel,
+  menuButtonClasses,
+  menuButtonPanelId,
+} from './menu-button';
+
+describe('menu helpers', () => {
+  it('names the panel after the widget uid, row index included', () => {
+    expect(menuButtonPanelId('rowActions[2]')).toBe('rowActions[2]_menu');
+  });
+
+  it('tells a separator from an action', () => {
+    expect(isMenuButtonSeparator({ separator: true })).toBe(true);
+    expect(isMenuButtonSeparator({ label: 'Edit', value: 'edit' })).toBe(false);
+  });
+
+  it('names the button with ariaLabel only when it shows no label', () => {
+    expect(menuButtonAriaLabel(undefined, 'Row actions')).toBe('Row actions');
+    expect(menuButtonAriaLabel('Actions', 'Row actions')).toBeUndefined();
+    expect(menuButtonAriaLabel(undefined, undefined)).toBeUndefined();
+  });
+
+  it('gives the button the gui-button classes for its variant and icon', () => {
+    expect(menuButtonClasses({})).toBe('gui-button gui-button-icon-left');
+    expect(
+      menuButtonClasses({ variant: 'outlined', icon: 'more_vert', iconPosition: 'right' }),
+    ).toBe('gui-button gui-button-icon-right gui-button-with-icon gui-button--outlined');
+  });
+
+  it('uses the aria label when the label is an empty string', () => {
+    expect(menuButtonAriaLabel('', 'Row')).toBe('Row');
+  });
+
+  it('gives no aria label when it is empty or not a string', () => {
+    expect(menuButtonAriaLabel(undefined, '')).toBeUndefined();
+    expect(menuButtonAriaLabel(undefined, { key: 'k' })).toBeUndefined();
+  });
+
+  it('adds the link class for the link variant', () => {
+    expect(menuButtonClasses({ variant: 'link' })).toBe(
+      'gui-button gui-button-icon-left gui-button--link',
+    );
+  });
+
+  it('adds the icon classes when an icon is set', () => {
+    expect(menuButtonClasses({ icon: 'x' })).toBe(
+      'gui-button gui-button-icon-left gui-button-with-icon',
+    );
+  });
+});

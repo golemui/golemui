@@ -97,6 +97,14 @@ code {
   max-inline-size: 32rem;
 }
 
+// Columns that wrap on a narrow screen.
+.pg-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(10rem, 100%), 1fr));
+  gap: var(--gui-space-4);
+  align-items: start;
+}
+
 .pg-button {
   font: inherit;
   padding: var(--gui-space-1) var(--gui-space-3);

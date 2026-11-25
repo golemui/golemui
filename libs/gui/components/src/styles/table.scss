@@ -1,0 +1,57 @@
+@use 'content' as *;
+@use 'scroll-shadow' as *;
+
+// `gui-table`: the scroll region of the app's `<table>`. The table fills its width, and a wider
+// one scrolls inside it, never the page. The cells look like a table's in `gui-markdown-text`.
+gui-table {
+  display: block;
+  max-inline-size: 100%;
+  overflow-x: auto;
+  @include gui-scroll-shadow-backgrounds(var(--gui-table-bg, var(--gui-bg-default)));
+
+  // Focusable only while the table overflows, so the arrow keys scroll it.
+  &:focus-visible {
+    outline: 2px solid var(--gui-border-focus);
+    outline-offset: 2px;
+  }
+
+  > table {
+    @include gui-content-table;
+    color: var(--gui-text-default);
+    font-size: var(--gui-font-sm);
+    line-height: var(--gui-md-line-height);
+
+    // The caption stays in view while the table scrolls under it.
+    > caption {
+      position: sticky;
+      inset-inline-start: 0;
+      inline-size: max-content;
+      // The region's width, which the element sets while the table overflows it.
+      max-inline-size: var(--gui-table-region-width, 100%);
+      padding-block-end: var(--gui-space-2);
+      color: var(--gui-text-default);
+      font-weight: 600;
+      text-align: start;
+    }
+
+    :is(th, td) {
+      @include gui-content-table-cell;
+    }
+
+    th {
+      @include gui-content-table-header;
+    }
+  }
+
+  @each $align in start, center, end {
+    .gui-table__cell--#{$align} {
+      text-align: $align;
+    }
+  }
+
+  // The one cell of a row that says the table has no rows.
+  .gui-table__empty {
+    color: var(--gui-text-secondary);
+    text-align: center;
+  }
+}

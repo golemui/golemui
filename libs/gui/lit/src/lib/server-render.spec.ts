@@ -123,9 +123,42 @@ const config: FormInitConfig<Type<WithWidget>> = {
         {
           uid: 'moreActions',
           kind: 'action',
-          type: 'menu',
+          type: 'menuButton',
           label: 'More',
           props: { items: [{ label: 'Save as draft', value: 'draft' }] },
+        },
+        { uid: 'planBadge', kind: 'display', type: 'badge', props: { text: 'Pro', level: 'info' } },
+        {
+          uid: 'setup',
+          kind: 'display',
+          type: 'progress',
+          props: { label: 'Setup', value: 60, showValue: true },
+        },
+        { uid: 'saving', kind: 'display', type: 'spinner', props: { label: 'Saving' } },
+        {
+          uid: 'planTitle',
+          kind: 'display',
+          type: 'typography',
+          props: { text: 'Your plan', variant: 'h2' },
+        },
+        {
+          uid: 'planImage',
+          kind: 'display',
+          type: 'image',
+          props: { src: '/plan.png', alt: 'The pro plan', ratio: '16/9', caption: 'Pro' },
+        },
+        {
+          uid: 'seats',
+          kind: 'display',
+          type: 'table',
+          props: {
+            caption: 'Plan seats',
+            columns: [
+              { key: 'name', label: 'Seat' },
+              { key: 'cost', label: 'Cost', type: 'number' },
+            ],
+            rows: [{ name: 'Ada', cost: 1200 }],
+          },
         },
       ],
     },
@@ -168,7 +201,43 @@ describe('server rendering the gui widget set in plain node', () => {
     expect(markup).toMatch(/<gui-grid-layout[^>]*class="[^"]*gui-field/);
     expect(markup).toMatch(/<gui-textinput-input[^>]*class="[^"]*gui-textinput[^"]*gui-field/);
     expect(markup).toMatch(/<gui-button-interactive[^>]*class="[^"]*gui-button[^"]*gui-field/);
-    expect(markup).toMatch(/<gui-menu-interactive[^>]*class="[^"]*gui-menu-button[^"]*gui-field/);
+    expect(markup).toMatch(
+      /<gui-menu-button-interactive[^>]*class="[^"]*gui-menu-button[^"]*gui-field/,
+    );
+  });
+
+  it('renders the badge, the progress bar and the spinner with their content', () => {
+    expect(markup).toMatch(/<gui-badge-display[^>]*class="[^"]*gui-badge[^"]*gui-field/);
+    expect(markup).toMatch(
+      /<gui-badge[^>]*id="gui-lit-ssr-form-planBadge"[^>]*variant="info"[^>]*>\s*(<!--[^>]*-->)*Pro/,
+    );
+    expect(markup).toMatch(
+      /<progress[^>]*id="gui-lit-ssr-form-setup"[^>]*max="100"[^>]*value="60"/,
+    );
+    expect(markup).toContain('Setup');
+    expect(markup).toMatch(/<gui-spinner[^>]*id="gui-lit-ssr-form-saving"/);
+    expect(markup).toMatch(/role="status"[^>]*>(<!--[^>]*-->)*Saving/);
+  });
+
+  it('renders typography on the tag of its variant, and an image in a figure', () => {
+    expect(markup).toMatch(
+      /<h2[^>]*id="gui-lit-ssr-form-planTitle"[^>]*class="gui-typography gui-typography--h2"[^>]*>(<!--[^>]*-->)*Your plan/,
+    );
+    expect(markup).toMatch(
+      /<figure[^>]*id="gui-lit-ssr-form-planImage"[^>]*class="gui-image gui-image--ratio-16-9"/,
+    );
+    expect(markup).toMatch(/<img[^>]*src="\/plan.png"[^>]*alt="The pro plan"[^>]*loading="lazy"/);
+    expect(markup).toMatch(/<figcaption>(<!--[^>]*-->)*Pro/);
+  });
+
+  it('renders a table widget as a native table in gui-table, its cells formatted', () => {
+    expect(markup).toMatch(/<gui-table-display[^>]*class="[^"]*gui-table[^"]*gui-field/);
+    expect(markup).toMatch(/<gui-table[^>]*id="gui-lit-ssr-form-seats"/);
+    expect(markup).toMatch(/<caption>\s*(<!--[^>]*-->)*\s*Plan seats/);
+    expect(markup).toMatch(
+      /<th scope="col"[^>]*class="gui-table__cell--end"[^>]*>\s*(<!--[^>]*-->)*\s*Cost/,
+    );
+    expect(markup).toMatch(/<td[^>]*class="gui-table__cell--end"[^>]*>\s*(<!--[^>]*-->)*\s*1,200/);
   });
 
   it('renders labels, values and the layout structure', () => {

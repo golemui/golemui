@@ -5,7 +5,7 @@ import type { Component } from 'vue';
 export const widgetLoaders: WidgetLoaders<Component<WithWidget>, GolemWidget> = {
   // INTERACTIVE
   button: async () => (await import('./components/Button.vue')).default,
-  menu: async () => (await import('./components/Menu.vue')).default,
+  menuButton: async () => (await import('./components/MenuButton.vue')).default,
 
   // CONTROLS
   calendar: async () => (await import('./components/Calendar.vue')).default,
@@ -69,5 +69,11 @@ export const widgetLoaders: WidgetLoaders<Component<WithWidget>, GolemWidget> = 
 
   // DISPLAY
   alert: async () => (await import('./components/Alert.vue')).default,
+  badge: async () => (await import('./components/Badge.vue')).default,
+  image: async () => (await import('./components/Image.vue')).default,
+  progress: async () => (await import('./components/Progress.vue')).default,
+  spinner: async () => (await import('./components/Spinner.vue')).default,
+  table: async () => (await import('./components/Table.vue')).default,
+  typography: async () => (await import('./components/Typography.vue')).default,
   markdownText: async () => (await import('./components/MarkdownText.vue')).default,
 };

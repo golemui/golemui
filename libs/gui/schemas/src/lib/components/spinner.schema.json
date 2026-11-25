@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/gui/components/spinner.schema.json",
+  "title": "Spinner Widget",
+  "description": "An indeterminate spinner, for a wait of unknown length. Show it with `include` while a loading state holds.",
+  "type": "object",
+  "$defs": {
+    "labelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable",
+      "description": "What the wait is for, such as \"Loading results\". Screen readers announce it when it changes. Without it the spinner is decorative."
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "display"
+    },
+    "type": {
+      "const": "spinner"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "$ref": "#/$defs/labelProp"
+        }
+      },
+      "patternProperties": {
+        "^label\\.[^.]+$": {
+          "$ref": "#/$defs/labelProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["kind", "type"],
+  "unevaluatedProperties": false
+}

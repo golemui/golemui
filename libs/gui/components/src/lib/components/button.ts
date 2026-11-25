@@ -59,7 +59,7 @@ export class GuiButton extends GuiElement {
   @property({ type: String }) form: string | undefined = undefined;
   /**
    * The id of the popover, menu or dialog the button acts on with `command`: the native
-   * `commandfor`. A link ignores it. It reflects, so `gui-popover` and `gui-menu` find the button.
+   * `commandfor`. A link ignores it. It reflects, so `gui-popover` and `gui-menu-button` find the button.
    */
   @property({ type: String, attribute: 'commandfor', reflect: true }) commandFor:
     | string

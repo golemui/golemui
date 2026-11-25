@@ -116,13 +116,13 @@
       <div id="plan-help" popover>Every plan includes email support.</div>
     </gui-popover>
     <button type="button" popovertarget="plan-actions" id="plan-actions-button">Plan</button>
-    <gui-menu defer-hydration>
+    <gui-menu-button defer-hydration>
       <div id="plan-actions" popover>
         <button type="button" value="upgrade">Upgrade</button>
         <hr />
         <button type="button" value="cancel">Cancel the plan</button>
       </div>
-    </gui-menu>
+    </gui-menu-button>
     <gui-dialog  placement="end" defer-hydration>
       <dialog id="plan-dialog" aria-labelledby="plan-dialog-title">
         <h2 id="plan-dialog-title">Compare plans</h2>
@@ -2319,5 +2319,24 @@
       ><span class="gui-spinner__status gui-visually-hidden" role="status"
         >Checking your coupon</span
       ></gui-spinner>
+    <gui-table defer-hydration>
+      <table>
+        <caption>
+          Plan seats
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Seat</th>
+            <th scope="col" class="gui-table__cell--end">Cost</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Ada</td>
+            <td class="gui-table__cell--end">12.00</td>
+          </tr>
+        </tbody>
+      </table>
+    </gui-table>
     <gui-toaster  placement="top-end" defer-hydration></gui-toaster>
   </form>

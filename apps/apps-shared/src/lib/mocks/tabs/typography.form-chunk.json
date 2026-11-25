@@ -1,0 +1,95 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabTypography",
+  "kind": "layout",
+  "type": "grid",
+  "children": [
+    {
+      "kind": "display",
+      "type": "typography",
+      "props": {
+        "text": "Heading 1",
+        "variant": "h1"
+      }
+    },
+    {
+      "kind": "display",
+      "type": "typography",
+      "props": {
+        "text": "Heading 2",
+        "variant": "h2"
+      }
+    },
+    {
+      "kind": "display",
+      "type": "typography",
+      "props": {
+        "text": "Heading 3",
+        "variant": "h3"
+      }
+    },
+    {
+      "kind": "display",
+      "type": "typography",
+      "props": {
+        "text": "Heading 4",
+        "variant": "h4"
+      }
+    },
+    {
+      "kind": "display",
+      "type": "typography",
+      "props": {
+        "text": "Heading 5",
+        "variant": "h5"
+      }
+    },
+    {
+      "kind": "display",
+      "type": "typography",
+      "props": {
+        "text": "Heading 6",
+        "variant": "h6"
+      }
+    },
+    {
+      "kind": "display",
+      "type": "typography",
+      "props": {
+        "text": "Body text. A line break in the text\nis a line break on screen."
+      }
+    },
+    {
+      "kind": "display",
+      "type": "typography",
+      "props": {
+        "text": "Prices include taxes. Last updated today.",
+        "variant": "small"
+      }
+    },
+    {
+      "kind": "layout",
+      "type": "grid",
+      "props": {
+        "direction": "row"
+      },
+      "children": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "typography.name",
+          "label": "Name"
+        },
+        {
+          "uid": "greeting",
+          "kind": "display",
+          "type": "typography",
+          "props": {
+            "text": "Hello, {{ $form.typography?.name || \"guest\" }}",
+            "variant": "h3"
+          }
+        }
+      ]
+    }
+  ]
+}

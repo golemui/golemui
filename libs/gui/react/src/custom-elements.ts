@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-namespace
 import type * as React from 'react';
 import type { GuiAlert } from '@golemui/gui-components/alert';
+import type { GuiBadge } from '@golemui/gui-components/badge';
 import type { GuiButton } from '@golemui/gui-components/button';
 import type { GuiCalendar } from '@golemui/gui-components/calendar';
 import type { GuiDateTimeCalendar } from '@golemui/gui-components/date-time-calendar';
@@ -43,6 +44,7 @@ import type { GuiMultiRangeDatePicker } from '@golemui/gui-components/multi-rang
 import type { GuiMultiRangeTimePicker } from '@golemui/gui-components/multi-range-time-picker';
 import type { GuiSelect } from '@golemui/gui-components/select';
 import type { GuiTab } from '@golemui/gui-components/tab';
+import type { GuiTable } from '@golemui/gui-components/table';
 import type { GuiTabList } from '@golemui/gui-components/tab-list';
 import type { GuiTabPanel } from '@golemui/gui-components/tab-panel';
 import type { GuiTags } from '@golemui/gui-components/tags';
@@ -64,6 +66,8 @@ declare module 'react' {
     interface IntrinsicElements {
       'gui-alert': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         OwnProps<GuiAlert>;
+      'gui-badge': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        OwnProps<GuiBadge>;
       'gui-button': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         Partial<GuiButton>;
       'gui-calendar': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
@@ -224,6 +228,8 @@ declare module 'react' {
         Partial<GuiTimeList>;
       'gui-tab': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         OwnProps<GuiTab>;
+      'gui-table': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        OwnProps<GuiTable>;
       'gui-tab-list': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         OwnProps<GuiTabList>;
       'gui-tab-panel': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &

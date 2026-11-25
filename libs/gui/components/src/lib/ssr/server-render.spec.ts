@@ -80,7 +80,11 @@ describe('server rendering standalone elements in plain node', () => {
       /<gui-popover[^>]*>\s*<div id="plan-help" popover>Every plan includes email support.<\/div>/,
     );
     expect(markup).toMatch(/<gui-tooltip\s+for="plan-help-button"[^>]*>Opens the plan details</);
-    expect(markup).toMatch(/<gui-menu[^>]*>\s*<div id="plan-actions" popover>\s*<button/);
+    expect(markup).toMatch(/<gui-menu-button[^>]*>\s*<div id="plan-actions" popover>\s*<button/);
+    // A table, with none of the attributes the element writes while it overflows.
+    expect(markup).toMatch(
+      /<gui-table defer-hydration>\s*<table>\s*<caption>\s*Plan seats\s*<\/caption>/,
+    );
     // A closed dialog, with the fields inside it rendered too.
     expect(markup).toMatch(/<gui-dialog[^>]*>\s*<dialog id="plan-dialog"[^>]*>\s*<h2/);
     expect(markup).not.toMatch(/<dialog[^>]*\sopen/);
@@ -91,7 +95,7 @@ describe('server rendering standalone elements in plain node', () => {
 
   it('holds every GolemUI element inert through defer-hydration', () => {
     const tags = [...markup.matchAll(/<(gui-[a-z-]+)([^>]*)>/g)];
-    expect(tags.length).toBe(28);
+    expect(tags.length).toBe(29);
     for (const [, tag, attributes] of tags) {
       expect(attributes, tag).toContain('defer-hydration');
     }

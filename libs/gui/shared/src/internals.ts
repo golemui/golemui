@@ -12,6 +12,7 @@
 export type {
   AccordionProps,
   AlertProps,
+  BadgeProps,
   ButtonProps,
   CalendarProps,
   DateTimeCalendarProps,
@@ -36,10 +37,21 @@ export type {
   ListProps,
   MarkdownProps,
   MarkdownTextProps,
-  MenuAction,
-  MenuItem,
-  MenuProps,
-  MenuSeparator,
+  ProgressProps,
+  SpinnerProps,
+  TypographyProps,
+  TypographyVariant,
+  ImageProps,
+  ImageRatio,
+  ImageFit,
+  TableCell,
+  TableColumn,
+  TableProps,
+  TableRow,
+  MenuButtonAction,
+  MenuButtonItem,
+  MenuButtonProps,
+  MenuButtonSeparator,
   MultiDropdownProps,
   MultiFileUploadProps,
   MultiListProps,
@@ -113,13 +125,15 @@ export {
   tabPanelId,
 } from './lib/utils/layout-ids';
 export { repeaterIndexSuffix } from './lib/utils/repeater';
+export { imageClasses, typographyClasses, typographyTag } from './lib/utils/content';
+export { tableCellClass, tableCellText } from './lib/utils/table';
 export { findRepeaterRowFocus, focusAfterRowRemoval } from './lib/utils/repeater-focus';
 export type { RepeaterRowFocus } from './lib/utils/repeater-focus';
 export {
-  DEFAULT_MENU_PLACEMENT,
-  isMenuSeparator,
+  DEFAULT_MENU_BUTTON_PLACEMENT,
+  isMenuButtonSeparator,
   menuButtonAriaLabel,
   menuButtonClasses,
-  menuPanelId,
-} from './lib/utils/menu';
+  menuButtonPanelId,
+} from './lib/utils/menu-button';
 export { gridCellClasses, gridClasses, resolveGrid, type ResolvedGrid } from './lib/utils/grid';

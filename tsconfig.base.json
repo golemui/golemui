@@ -76,7 +76,9 @@
       "@golemui/gui-components/markdown-text": [
         "libs/gui/components/src/lib/components/markdown-text.ts"
       ],
-      "@golemui/gui-components/menu": ["libs/gui/components/src/lib/components/menu.ts"],
+      "@golemui/gui-components/menu-button": [
+        "libs/gui/components/src/lib/components/menu-button.ts"
+      ],
       "@golemui/gui-components/toast": ["libs/gui/components/src/lib/components/toast.ts"],
       "@golemui/gui-components/file-upload": [
         "libs/gui/components/src/lib/components/file-upload.ts"
@@ -108,6 +110,7 @@
       "@golemui/gui-components/rating": ["libs/gui/components/src/lib/components/rating.ts"],
       "@golemui/gui-components/slider": ["libs/gui/components/src/lib/components/slider.ts"],
       "@golemui/gui-components/spinner": ["libs/gui/components/src/lib/components/spinner.ts"],
+      "@golemui/gui-components/table": ["libs/gui/components/src/lib/components/table.ts"],
       "@golemui/gui-components/multi-range-calendar": [
         "libs/gui/components/src/lib/components/multi-range-calendar.ts"
       ],

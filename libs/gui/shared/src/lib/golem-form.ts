@@ -11,6 +11,7 @@ import { type Validator } from '@golemui/gui-validators';
 import type {
   AccordionProps,
   AlertProps,
+  BadgeProps,
   ButtonProps,
   CalendarProps,
   CheckboxProps,
@@ -23,6 +24,7 @@ import type {
   DateinputProps,
   DropdownProps,
   FileUploadProps,
+  ImageProps,
   MultiDropdownProps,
   MultiFileUploadProps,
   MultiListProps,
@@ -30,7 +32,8 @@ import type {
   ListProps,
   MarkdownProps,
   MarkdownTextProps,
-  MenuProps,
+  MenuButtonProps,
+  ProgressProps,
   NumberinputProps,
   OptionValue,
   OtpProps,
@@ -59,6 +62,9 @@ import type {
   RepeaterProps,
   SelectProps,
   SliderProps,
+  SpinnerProps,
+  TableProps,
+  TypographyProps,
   SliderRange,
   RangeSliderProps,
   TabsProps,
@@ -218,8 +224,14 @@ type GolemWidget<
 > =
   | GuiAccordion<FormType, States, V, CustomWidget>
   | GuiAlert<FormType, States>
+  | GuiBadge<FormType, States>
+  | GuiProgress<FormType, States>
+  | GuiSpinner<FormType, States>
+  | GuiTypography<FormType, States>
+  | GuiImage<FormType, States>
+  | GuiTable<FormType, States>
   | GuiButton<FormType, States>
-  | GuiMenu<FormType, States>
+  | GuiMenuButton<FormType, States>
   | GuiCalendar<FormType, States, V>
   | GuiCheckbox<FormType, States, V>
   | GuiDateTimeCalendar<FormType, States, V>
@@ -289,17 +301,53 @@ type GuiAlert<FormType extends Record<string, any>, States extends string> = Dis
   AlertProps
 > & { type: 'alert' };
 
+type GuiBadge<FormType extends Record<string, any>, States extends string> = DisplayWidget<
+  States,
+  FormType,
+  BadgeProps
+> & { type: 'badge' };
+
+type GuiProgress<FormType extends Record<string, any>, States extends string> = DisplayWidget<
+  States,
+  FormType,
+  ProgressProps
+> & { type: 'progress' };
+
+type GuiSpinner<FormType extends Record<string, any>, States extends string> = DisplayWidget<
+  States,
+  FormType,
+  SpinnerProps
+> & { type: 'spinner' };
+
+type GuiTypography<FormType extends Record<string, any>, States extends string> = DisplayWidget<
+  States,
+  FormType,
+  TypographyProps
+> & { type: 'typography' };
+
+type GuiImage<FormType extends Record<string, any>, States extends string> = DisplayWidget<
+  States,
+  FormType,
+  ImageProps
+> & { type: 'image' };
+
+type GuiTable<FormType extends Record<string, any>, States extends string> = DisplayWidget<
+  States,
+  FormType,
+  TableProps
+> & { type: 'table' };
+
 type GuiButton<FormType extends Record<string, any>, States extends string> = ActionWidget<
   States,
   FormType,
   ButtonProps
 > & { type: 'button' };
 
-type GuiMenu<FormType extends Record<string, any>, States extends string> = ActionWidget<
+type GuiMenuButton<FormType extends Record<string, any>, States extends string> = ActionWidget<
   States,
   FormType,
-  MenuProps
-> & { type: 'menu' };
+  MenuButtonProps
+> & { type: 'menuButton' };
 
 type GuiCalendar<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   string,

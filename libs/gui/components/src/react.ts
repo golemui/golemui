@@ -61,7 +61,10 @@ import { GuiLabel as GuiLabelElement } from './lib/components/label';
 import { GuiList as GuiListElement, GuiListEvents } from './lib/components/list';
 import { GuiMarkdown as GuiMarkdownElement, GuiMarkdownEvents } from './lib/components/markdown';
 import { GuiMarkdownText as GuiMarkdownTextElement } from './lib/components/markdown-text';
-import { GuiMenu as GuiMenuElement, GuiMenuEvents } from './lib/components/menu';
+import {
+  GuiMenuButton as GuiMenuButtonElement,
+  GuiMenuButtonEvents,
+} from './lib/components/menu-button';
 import {
   GuiMultiDropdown as GuiMultiDropdownElement,
   GuiMultiDropdownEvents,
@@ -94,6 +97,7 @@ import {
 } from './lib/components/range-slider';
 import { GuiSlider as GuiSliderElement, GuiSliderEvents } from './lib/components/slider';
 import { GuiSpinner as GuiSpinnerElement } from './lib/components/spinner';
+import { GuiTable as GuiTableElement } from './lib/components/table';
 import { GuiRating as GuiRatingElement, GuiRatingEvents } from './lib/components/rating';
 import {
   GuiRangeCalendar as GuiRangeCalendarElement,
@@ -342,7 +346,7 @@ export const GuiLabel = wrap('gui-label', GuiLabelElement);
 export const GuiList = wrap('gui-list', GuiListElement, GuiListEvents);
 export const GuiMarkdown = wrap('gui-markdown', GuiMarkdownElement, GuiMarkdownEvents);
 export const GuiMarkdownText = wrap('gui-markdown-text', GuiMarkdownTextElement);
-export const GuiMenu = wrap('gui-menu', GuiMenuElement, GuiMenuEvents);
+export const GuiMenuButton = wrap('gui-menu-button', GuiMenuButtonElement, GuiMenuButtonEvents);
 export const GuiMultiDropdown = wrap(
   'gui-multi-dropdown',
   GuiMultiDropdownElement,
@@ -370,6 +374,7 @@ export const GuiRangeSlider = wrap('gui-range-slider', GuiRangeSliderElement, Gu
 export const GuiRating = wrap('gui-rating', GuiRatingElement, GuiRatingEvents);
 export const GuiSlider = wrap('gui-slider', GuiSliderElement, GuiSliderEvents);
 export const GuiSpinner = wrap('gui-spinner', GuiSpinnerElement);
+export const GuiTable = wrap('gui-table', GuiTableElement);
 export const GuiRangeCalendar = wrap(
   'gui-range-calendar',
   GuiRangeCalendarElement,

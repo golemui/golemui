@@ -1,0 +1,16 @@
+@let templateData = adapter.templateData();
+
+<figure
+  [id]="adapter.domId"
+  [class]="imageClasses({ ratio: templateData.ratio, fit: templateData.fit })"
+>
+  <img
+    [src]="templateData.src"
+    [alt]="templateData.alt"
+    [attr.loading]="templateData.loading || 'lazy'"
+    decoding="async"
+  />
+  @if (templateData.caption) {
+    <figcaption>{{ templateData.caption }}</figcaption>
+  }
+</figure>

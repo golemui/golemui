@@ -1,0 +1,7 @@
+@let templateData = adapter.templateData();
+
+<gui-spinner
+  [attr.defer-hydration]="deferHydration"
+  [id]="adapter.domId"
+  [label]="templateData.label"
+></gui-spinner>

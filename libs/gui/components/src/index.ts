@@ -43,7 +43,7 @@ export { matchesAccept } from './lib/utils/file-upload';
 export { GuiMarkdown, GuiMarkdownEvents } from './lib/components/markdown';
 export type { GuiMarkdownProps } from './lib/components/markdown';
 export { GuiMarkdownText } from './lib/components/markdown-text';
-export { GuiMenu, GuiMenuEvents } from './lib/components/menu';
+export { GuiMenuButton, GuiMenuButtonEvents } from './lib/components/menu-button';
 export { GuiMultiDropdown, GuiMultiDropdownEvents } from './lib/components/multi-dropdown';
 export { GuiMultiFileUpload, GuiMultiFileUploadEvents } from './lib/components/multi-file-upload';
 export { GuiMultiList, GuiMultiListEvents } from './lib/components/multi-list';
@@ -80,6 +80,7 @@ export { GuiRating, GuiRatingEvents } from './lib/components/rating';
 export { GuiSlider, GuiSliderEvents } from './lib/components/slider';
 export type { GuiSliderMark, GuiSliderRange, GuiSliderValuePlacement } from './lib/utils/slider';
 export { GuiSpinner } from './lib/components/spinner';
+export { GuiTable } from './lib/components/table';
 export {
   GuiMultiRangeCalendar,
   GuiMultiRangeCalendarEvents,

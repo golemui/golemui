@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/gui/components/image.schema.json",
+  "title": "Image Widget",
+  "description": "An image that fills its width, in a figure with an optional caption. `ratio` and `fit` give it a box of fixed proportions.",
+  "type": "object",
+  "$defs": {
+    "srcProp": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The image's URL. It interpolates `{{ }}` like any top-level string, so restrict where images may come from with the host page's Content Security Policy (`img-src`)."
+    },
+    "altProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable",
+      "description": "What the image shows, for screen readers and when it fails to load. `\"\"` marks a decorative image, which screen readers skip."
+    },
+    "ratioProp": {
+      "enum": ["1/1", "4/3", "3/2", "16/9", "21/9"],
+      "description": "The proportions of the image's box, width to height. Without it the image keeps its own."
+    },
+    "fitProp": {
+      "enum": ["cover", "contain", "fill", "none"],
+      "description": "How the image fills a box of another shape, as CSS `object-fit`. Defaults to `cover`."
+    },
+    "captionProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable",
+      "description": "A caption shown below the image."
+    },
+    "loadingProp": {
+      "enum": ["lazy", "eager"],
+      "description": "When the browser loads it: `lazy` (the default) waits until it is near the screen; `eager` suits an image at the top of the page."
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "display"
+    },
+    "type": {
+      "const": "image"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "src": {
+          "$ref": "#/$defs/srcProp"
+        },
+        "alt": {
+          "$ref": "#/$defs/altProp"
+        },
+        "ratio": {
+          "$ref": "#/$defs/ratioProp"
+        },
+        "fit": {
+          "$ref": "#/$defs/fitProp"
+        },
+        "caption": {
+          "$ref": "#/$defs/captionProp"
+        },
+        "loading": {
+          "$ref": "#/$defs/loadingProp"
+        }
+      },
+      "patternProperties": {
+        "^src\\.[^.]+$": {
+          "$ref": "#/$defs/srcProp"
+        },
+        "^alt\\.[^.]+$": {
+          "$ref": "#/$defs/altProp"
+        },
+        "^ratio\\.[^.]+$": {
+          "$ref": "#/$defs/ratioProp"
+        },
+        "^fit\\.[^.]+$": {
+          "$ref": "#/$defs/fitProp"
+        },
+        "^caption\\.[^.]+$": {
+          "$ref": "#/$defs/captionProp"
+        },
+        "^loading\\.[^.]+$": {
+          "$ref": "#/$defs/loadingProp"
+        }
+      },
+      "required": ["src", "alt"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["kind", "type", "props"],
+  "unevaluatedProperties": false
+}
