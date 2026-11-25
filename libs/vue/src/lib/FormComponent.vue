@@ -6,10 +6,9 @@ import {
   type LayoutWidget,
   formHealth as watchFormHealth,
   getDirectionFromLanguage,
-  shortUUID,
 } from '@golemui/core';
-import * as vueRuntime from 'vue';
-import { onMounted, onUnmounted, ref, watch } from 'vue';
+import { shortUUID } from '@golemui/core/internals';
+import { onMounted, onUnmounted, ref, useId, watch } from 'vue';
 import DefaultFormHealthBoundary from './DefaultFormHealthBoundary.vue';
 import WidgetErrorBoundary from './WidgetErrorBoundary.vue';
 import WidgetRenderer from './WidgetRenderer.vue';
@@ -24,17 +23,13 @@ const emit = defineEmits<{
   'form-health': [health: FormHealth];
 }>();
 
-// `useId` exists from Vue 3.5 and gives the same id on the server and the client.
-// Vue versions before 3.5 keep the random fallback and need an explicit formName to server-render.
-const useStableId = (vueRuntime as { useId?: () => string }).useId;
-
 const formContext = new VueFormContext();
-// The id of this component for every config without a formName. `useId` runs only when the
-// first config has no formName, because each call changes the `useId` values of the
-// components that render after this form.
+// The id of this component for every config without a formName. `useId` gives the same id on
+// the server and the client. It runs only when the first config has no formName, because each
+// call changes the `useId` values of the components that render after this form.
 let generatedFormName: string | undefined;
 if (props.config.formName === undefined || props.config.formName === null) {
-  generatedFormName = useStableId?.();
+  generatedFormName = useId();
 }
 
 const formNameOfCurrentConfig = (): string => {
