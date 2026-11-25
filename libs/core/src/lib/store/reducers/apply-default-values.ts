@@ -19,8 +19,9 @@ const MAX_PASSES = 50;
  *
  * @param state - The state to derive the defaults for
  * @returns The state with `data` (only when something was written) and `instances`. When the
- *   instances changed, `resolvedSources`, `repeaterItemScopes` and `repeaterRows` are written
- *   again from them. `touched` and `touchedControls` are never modified.
+ *   instances changed, the records that `recordsOfInstances` writes are written again from them,
+ *   with the flags that the instances have from the last derive. `touched` and `touchedControls`
+ *   are never modified.
  */
 export const applyDefaultValues = (state: State): State => {
   const compiledRoot = state.compiled.root;

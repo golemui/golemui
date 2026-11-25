@@ -174,7 +174,8 @@ function replaceRowReferences(expression: string, row: RepeaterRow): string {
   );
 }
 
-// The same declared item path is rewritten for every row of every derive.
+// Many conditions rewrite the same declared item path, and a row condition that names its row
+// inside a quoted text rewrites it for each row.
 const rowReferencePatterns = new Map<DotPath, RegExp>();
 
 /**
@@ -198,58 +199,4 @@ function rowReferencePattern(declaredItemPath: DotPath): RegExp {
 
 function escapeRegExp(text: string): string {
   return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-const WHEN_FIELDS = ['include', 'exclude', 'disabled', 'readonly'] as const;
-
-/**
- * Returns a copy of a repeater item widget whose reactive flag conditions
- * (`include.when`, `exclude.when`, `disabled.when`, `readonly.when`) are rewritten
- * for a concrete item via {@link transformRepeaterItemWhenExpression}.
- *
- * State-based flags (`include.in`, `exclude.from`) carry no expression and are left untouched.
- *
- * @param widget - A widget already materialized for a repeater item (see {@link makeRepeaterItemConfig}).
- * @param rows - The rows that own the widget, outermost first, see `State['repeaterRows']`.
- * @returns A new widget config with item-concrete `when` expressions, or the input widget by
- * reference when no flag field has a `when` expression. The original is never mutated.
- *
- * @example
- * // rows = [{ declaredItemPath: 'lineItems.items', itemPath: 'lineItems.1', index: 1 }]
- * // { include: { when: '$form.lineItems.items.active' } }
- * //   -> { include: { when: '$form.lineItems.1.active' } }
- */
-export function transformWidgetWhenExpressions(
-  widget: FormWidget<string>,
-  rows: RepeaterRow[],
-): FormWidget<string> {
-  const hasAnyWhenExpression = WHEN_FIELDS.some((field) =>
-    hasWhenExpression((widget as Record<string, unknown>)[field]),
-  );
-  if (!hasAnyWhenExpression) {
-    return widget;
-  }
-
-  const transformed = { ...widget } as Record<string, unknown>;
-
-  for (const field of WHEN_FIELDS) {
-    const value = transformed[field];
-    if (hasWhenExpression(value)) {
-      transformed[field] = {
-        ...value,
-        when: transformRepeaterItemWhenExpression(value.when, rows),
-      };
-    }
-  }
-
-  return transformed as FormWidget<string>;
-}
-
-function hasWhenExpression(value: unknown): value is { when: string } {
-  return (
-    value !== null &&
-    typeof value === 'object' &&
-    'when' in value &&
-    typeof (value as { when: unknown }).when === 'string'
-  );
 }

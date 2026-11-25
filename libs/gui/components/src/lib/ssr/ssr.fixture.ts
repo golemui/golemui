@@ -8,6 +8,10 @@ import '../components/menu-button';
 import '../components/otp';
 import '../components/popover';
 import '../components/progress';
+import '../components/range-calendar';
+import '../components/range-date-picker';
+import '../components/range-time-picker';
+import '../components/range-date-time-picker';
 import '../components/rating';
 import '../components/select';
 import '../components/slider';
@@ -87,6 +91,36 @@ export const serverTemplate = () =>
       options='[{"label":"Audit log","value":"audit"},{"label":"Single sign-on","value":"sso"}]'
     ></gui-checkbox-group>
     <gui-rating uid="support" name="support" label="Support so far" value="4"></gui-rating>
+    <gui-range-date-picker
+      uid="stay"
+      name="stay"
+      label="Stay"
+      locale-id="en-US"
+      value='{"start":"2026-03-02","end":"2026-03-06"}'
+    ></gui-range-date-picker>
+    <gui-range-time-picker
+      uid="hours"
+      name="hours"
+      label="Opening hours"
+      locale-id="en-US"
+      hour-format="24"
+      value='{"start":"09:00:00","end":"17:30:00"}'
+    ></gui-range-time-picker>
+    <gui-range-date-time-picker
+      uid="rental"
+      name="rental"
+      label="Rental"
+      locale-id="en-US"
+      hour-format="24"
+      value='{"start":"2026-03-02T09:00:00","end":"2026-03-06T17:30:00"}'
+    ></gui-range-date-time-picker>
+    <gui-range-calendar
+      uid="trip"
+      name="trip"
+      label="Trip dates"
+      locale-id="en-US"
+      value='{"start":"2026-03-02","end":"2026-03-06"}'
+    ></gui-range-calendar>
     <p>Plan status: <gui-badge variant="success">Active</gui-badge></p>
     <gui-progress
       uid="setup"

@@ -128,6 +128,30 @@
       "@golemui/gui-components/multi-range-time-input": [
         "libs/gui/components/src/lib/components/multi-range-time-input.ts"
       ],
+      "@golemui/gui-components/range-calendar": [
+        "libs/gui/components/src/lib/components/range-calendar.ts"
+      ],
+      "@golemui/gui-components/range-date-input": [
+        "libs/gui/components/src/lib/components/range-date-input.ts"
+      ],
+      "@golemui/gui-components/range-date-picker": [
+        "libs/gui/components/src/lib/components/range-date-picker.ts"
+      ],
+      "@golemui/gui-components/range-time-input": [
+        "libs/gui/components/src/lib/components/range-time-input.ts"
+      ],
+      "@golemui/gui-components/range-time-picker": [
+        "libs/gui/components/src/lib/components/range-time-picker.ts"
+      ],
+      "@golemui/gui-components/range-date-time-calendar": [
+        "libs/gui/components/src/lib/components/range-date-time-calendar.ts"
+      ],
+      "@golemui/gui-components/range-date-time-input": [
+        "libs/gui/components/src/lib/components/range-date-time-input.ts"
+      ],
+      "@golemui/gui-components/range-date-time-picker": [
+        "libs/gui/components/src/lib/components/range-date-time-picker.ts"
+      ],
       "@golemui/gui-components/multi-range-date-picker": [
         "libs/gui/components/src/lib/components/multi-range-date-picker.ts"
       ],
