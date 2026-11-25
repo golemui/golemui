@@ -1,0 +1,33 @@
+@use 'sass:map';
+
+// The look of headings and images in content: `gui-markdown-text` styles its rendered markdown
+// with these, and the `.gui-typography` and `.gui-image` classes their own markup, so a heading
+// or an image looks the same in both. The `--gui-md-heading-*` tokens style the headings of both.
+
+$gui-heading-sizes: (
+  1: var(--gui-font-3xl),
+  2: var(--gui-font-2xl),
+  3: var(--gui-font-xl),
+  4: var(--gui-font-lg),
+  5: var(--gui-font-base),
+  6: var(--gui-font-base),
+);
+
+// A heading's color, weight and line height. Its size comes from `gui-heading-size`.
+@mixin gui-heading {
+  color: var(--gui-md-heading-color);
+  font-weight: var(--gui-md-heading-weight);
+  line-height: 1.25;
+}
+
+// The font size of a heading level, from 1 to 6.
+@mixin gui-heading-size($level) {
+  font-size: map.get($gui-heading-sizes, $level);
+}
+
+// An image that never overflows its container and keeps its proportions.
+@mixin gui-content-image($radius: var(--gui-radius-md)) {
+  max-width: 100%;
+  height: auto;
+  border-radius: $radius;
+}

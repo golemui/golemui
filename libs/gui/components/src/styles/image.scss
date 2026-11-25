@@ -1,0 +1,53 @@
+@use 'content' as *;
+
+// `.gui-image`: a `<figure>` with an image that fills its width, and an optional caption. The
+// image keeps its own proportions, or takes those of a `--ratio-*` modifier.
+//
+// ```html
+// <figure class="gui-image gui-image--ratio-16-9 gui-image--fit-cover">
+//   <img src="room.jpg" alt="Double room with a sea view" loading="lazy" decoding="async" />
+//   <figcaption>Room 204</figcaption>
+// </figure>
+// ```
+//
+// The proportions and the fit are classes, not inline styles, so a strict CSP allows them.
+// `--gui-image-radius` rounds the image's corners (`--gui-radius-md`).
+$ratios: (
+  '1-1': '1 / 1',
+  '4-3': '4 / 3',
+  '3-2': '3 / 2',
+  '16-9': '16 / 9',
+  '21-9': '21 / 9',
+);
+
+.gui-image {
+  display: block;
+  margin: 0;
+
+  > img {
+    @include gui-content-image(var(--gui-image-radius, var(--gui-radius-md)));
+    display: block;
+    inline-size: 100%;
+    // With a ratio the box is not the image's own shape: fill it without stretching the image.
+    object-fit: cover;
+  }
+
+  > figcaption {
+    margin-block-start: var(--gui-space-2);
+    color: var(--gui-text-secondary);
+    font-size: var(--gui-font-xs);
+    line-height: var(--gui-md-line-height);
+  }
+
+  @each $name, $ratio in $ratios {
+    &--ratio-#{$name} > img {
+      aspect-ratio: #{$ratio};
+    }
+  }
+
+  @each $fit in cover, contain, fill, none {
+    &--fit-#{$fit} > img {
+      object-fit: $fit;
+    }
+  }
+}

@@ -1,3 +1,5 @@
+@use 'content' as *;
+
 // The element styles itself: it needs no wrapper class, so a bare <gui-markdown-text> and the
 // preview of <gui-markdown> look the same.
 gui-markdown-text {
@@ -13,9 +15,7 @@ gui-markdown-text {
   h4,
   h5,
   h6 {
-    color: var(--gui-md-heading-color);
-    font-weight: var(--gui-md-heading-weight);
-    line-height: 1.25;
+    @include gui-heading;
     margin-top: var(--gui-space-6);
     margin-bottom: var(--gui-space-2);
 
@@ -25,24 +25,24 @@ gui-markdown-text {
   }
 
   h1 {
-    font-size: var(--gui-font-3xl);
+    @include gui-heading-size(1);
   }
 
   h2 {
-    font-size: var(--gui-font-2xl);
+    @include gui-heading-size(2);
   }
 
   h3 {
-    font-size: var(--gui-font-xl);
+    @include gui-heading-size(3);
   }
 
   h4 {
-    font-size: var(--gui-font-lg);
+    @include gui-heading-size(4);
   }
 
   h5,
   h6 {
-    font-size: var(--gui-font-base);
+    @include gui-heading-size(5);
   }
 
   /* Paragraphs */
@@ -168,9 +168,7 @@ gui-markdown-text {
 
   /* Images */
   img {
-    max-width: 100%;
-    height: auto;
-    border-radius: var(--gui-radius-md);
+    @include gui-content-image;
   }
 
   /* Tables */

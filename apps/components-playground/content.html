@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Typography and images · GolemUI Components playground</title>
+    <link rel="stylesheet" href="/src/styles.scss" />
+  </head>
+  <body>
+    <main class="pg-main">
+      <section class="pg-section">
+        <h1>.gui-typography and .gui-image</h1>
+        <p>
+          Two classes, not elements: they style the app's own headings, paragraphs and figures so
+          they look like the same content in <code>gui-markdown-text</code>, shown side by side
+          below. Neither has outer margins: the gap of the stack spaces them.
+        </p>
+      </section>
+
+      <section class="pg-section">
+        <h2>Typography</h2>
+        <div class="pg-stack">
+          <h2 class="gui-typography gui-typography--h1">Heading 1</h2>
+          <h3 class="gui-typography gui-typography--h2">Heading 2</h3>
+          <h4 class="gui-typography gui-typography--h3">Heading 3</h4>
+          <h5 class="gui-typography gui-typography--h4">Heading 4</h5>
+          <h6 class="gui-typography gui-typography--h5">Heading 5</h6>
+          <p class="gui-typography gui-typography--h6">Heading 6, on a paragraph here</p>
+          <!-- prettier-ignore -->
+          <p class="gui-typography gui-typography--body">Body text. A line break in the text&#10;is a line break on screen, as here.</p>
+          <!-- prettier-ignore -->
+          <p class="gui-typography gui-typography--small">Small text, for a note or a timestamp: the size and color of a hint.</p>
+          <p class="gui-typography">Without a modifier, a paragraph is body text.</p>
+          <!-- prettier-ignore -->
+          <p class="gui-typography gui-typography--body">Averyveryverylongwordwithnobreaksthatwouldotherwiseoverflowitscolumnonanarrowscreen.</p>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>Next to markdown</h2>
+        <div class="pg-columns">
+          <div class="pg-stack">
+            <h3 class="gui-typography gui-typography--h2">Your booking</h3>
+            <p class="gui-typography gui-typography--body">Two nights in a double room.</p>
+          </div>
+          <gui-markdown-text id="markdown"></gui-markdown-text>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>Images</h2>
+        <div class="pg-stack">
+          <figure class="gui-image">
+            <img
+              src="/landscape.svg"
+              alt="Green hills under a sun"
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption>Its own proportions, 3:2</figcaption>
+          </figure>
+          <div class="pg-columns">
+            <figure class="gui-image gui-image--ratio-1-1 gui-image--fit-cover">
+              <img src="/landscape.svg" alt="" loading="lazy" decoding="async" />
+              <figcaption>1:1, cover</figcaption>
+            </figure>
+            <figure class="gui-image gui-image--ratio-1-1 gui-image--fit-contain">
+              <img src="/landscape.svg" alt="" loading="lazy" decoding="async" />
+              <figcaption>1:1, contain</figcaption>
+            </figure>
+            <figure class="gui-image gui-image--ratio-1-1 gui-image--fit-fill">
+              <img src="/landscape.svg" alt="" loading="lazy" decoding="async" />
+              <figcaption>1:1, fill</figcaption>
+            </figure>
+            <figure class="gui-image gui-image--ratio-1-1 gui-image--fit-none">
+              <img src="/landscape.svg" alt="" loading="lazy" decoding="async" />
+              <figcaption>1:1, none</figcaption>
+            </figure>
+          </div>
+          <div class="pg-columns">
+            <figure class="gui-image gui-image--ratio-4-3">
+              <img src="/landscape.svg" alt="" loading="lazy" decoding="async" />
+              <figcaption>4:3</figcaption>
+            </figure>
+            <figure class="gui-image gui-image--ratio-16-9">
+              <img src="/landscape.svg" alt="" loading="lazy" decoding="async" />
+              <figcaption>16:9</figcaption>
+            </figure>
+            <figure class="gui-image gui-image--ratio-21-9">
+              <img src="/landscape.svg" alt="" loading="lazy" decoding="async" />
+              <figcaption>21:9</figcaption>
+            </figure>
+          </div>
+          <figure class="gui-image gui-image--ratio-16-9">
+            <img src="/missing.jpg" alt="A picture that failed to load shows its alt text" />
+            <figcaption>A broken image shows its alt, as the browser does</figcaption>
+          </figure>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/pages/content.ts"></script>
+  </body>
+</html>

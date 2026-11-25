@@ -1,0 +1,39 @@
+@use 'content' as *;
+
+// `.gui-typography`: a heading or a line of text, on the app's own tag, that looks like the same
+// text in `gui-markdown-text`. It has no outer margins: the gap of the layout around it spaces it.
+//
+// ```html
+// <h2 class="gui-typography gui-typography--h2">Your booking</h2>
+// <p class="gui-typography gui-typography--small">Prices include taxes.</p>
+// ```
+//
+// The modifier sets the look and the tag sets the outline: put `--h2` on an `<h2>`, `--body` and
+// `--small` on a `<p>`. Without a modifier it is body text.
+.gui-typography {
+  margin: 0;
+  color: var(--gui-md-text-color);
+  font-size: var(--gui-font-sm);
+  line-height: var(--gui-md-line-height);
+  // `anywhere`, not `break-word`: a long word then also stops widening the grid track around it.
+  overflow-wrap: anywhere;
+
+  // A line break in the text is a line break on screen.
+  &--body,
+  &--small {
+    white-space: pre-line;
+  }
+
+  // Secondary text, such as a note or a timestamp: the size and color of a hint.
+  &--small {
+    font-size: var(--gui-font-xs);
+    color: var(--gui-text-secondary);
+  }
+
+  @for $level from 1 through 6 {
+    &--h#{$level} {
+      @include gui-heading;
+      @include gui-heading-size($level);
+    }
+  }
+}

@@ -6,6 +6,7 @@ import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 const pages = [
   'badge',
   'checkbox-group',
+  'content',
   'dialog',
   'index',
   'menu',
