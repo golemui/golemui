@@ -1,5 +1,6 @@
 import { type FormWidget } from '../form-widget';
 import { type DotPath, type Uid } from '../shared';
+import { type DerivedWidget } from '../store/model';
 
 /**
  * What the conditions of a widget give. A flag has a key only when the widget has that
@@ -13,8 +14,8 @@ export type WidgetFlags = { hidden?: boolean; disabled?: boolean; readonly?: boo
  * instance. A widget of a repeater row has one instance for each row.
  *
  * An instance is never changed after it is built. A derive gives a new instance only to a
- * repeater whose rows changed and to a widget whose flags changed, together with the widgets
- * above them. Every other instance stays the same object.
+ * repeater whose rows changed and to a widget whose flags or computed widget changed, together
+ * with the widgets above them. Every other instance stays the same object.
  */
 export type WidgetInstance = {
   /** The uid of the widget, with the index of each row around it, for example `name[2][1]`. */
@@ -43,6 +44,13 @@ export type WidgetInstance = {
    * that is not below a hidden widget, and for an instance that no derive has computed yet.
    */
   flags: WidgetFlags | undefined;
+  /**
+   * The computed widget of the last derive or language change that succeeded: every field and
+   * prop has its value for the active states, each text with `{{ }}` is evaluated, and each
+   * translation config is translated. `undefined` while the widget is hidden, and for an
+   * instance that no derive has computed yet.
+   */
+  calculated: DerivedWidget<FormWidget<string>> | undefined;
 };
 
 /** The widget instances of a form, as a tree below the root layout. */

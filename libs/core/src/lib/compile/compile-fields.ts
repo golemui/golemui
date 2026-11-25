@@ -157,6 +157,24 @@ export function compileOnFields(
   }));
 }
 
+/**
+ * Compiles the translation configs inside a value that is known only while the form runs, for
+ * example an array that a translator returns.
+ *
+ * @param value - Any value. Only an array or a plain object can hold a translation config.
+ * @param policy - Which issues of the expression check make an expression of a param fail.
+ * @returns The compiled entries, or `undefined` when the value holds no translation config.
+ */
+export function compileNestedTranslationsOf(
+  value: unknown,
+  policy: ExpressionPolicy,
+): CompiledNestedTranslations | undefined {
+  if (!canHoldTranslations(value)) {
+    return undefined;
+  }
+  return compileNestedTranslations(value, createFieldCompileContext([], policy));
+}
+
 function coreFieldNames(source: FormWidget<string>): string[] {
   if (isActionWidget(source)) {
     return ACTION_FIELDS;

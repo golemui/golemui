@@ -136,6 +136,7 @@ function createInstance(
     children: NO_INSTANCES,
     rows: NO_INSTANCES,
     flags: undefined,
+    calculated: undefined,
   };
 }
 
