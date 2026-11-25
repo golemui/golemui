@@ -28,8 +28,8 @@ export function useActionWidget<ExtraProps extends Record<string, any>>(
       ),
   );
 
-  // A repeater row widget arrives as a new object whenever the row set changes, so emit
-  // `load` once per uid and store, not once per widget object identity.
+  // The effect runs again for a new `widget` or `formContext` object, which is not a new
+  // widget. So emit `load` once per uid and store, not once per widget object identity.
   const lastLoad = useRef<{ store: unknown; uid: string } | undefined>(undefined);
   useEffect(() => {
     if (lastLoad.current?.store === formContext.store && lastLoad.current?.uid === widget.uid) {

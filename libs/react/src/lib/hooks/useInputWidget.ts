@@ -38,8 +38,8 @@ export function useInputWidget<T, ExtraProps extends Record<string, any>>(
   // `errors` is shared between widgets while the form is untouched, so never write into it.
   const { value, errors, touched: isTouched } = viewModel;
 
-  // A repeater row widget arrives as a new object whenever the row set changes, so emit
-  // `load` once per uid and store, not once per widget object identity.
+  // The effect runs again for a new `widget` or `formContext` object, which is not a new
+  // widget. So emit `load` once per uid and store, not once per widget object identity.
   const lastLoad = useRef<{ store: unknown; uid: string } | undefined>(undefined);
   useEffect(() => {
     if (lastLoad.current?.store === formContext.store && lastLoad.current?.uid === widget.uid) {

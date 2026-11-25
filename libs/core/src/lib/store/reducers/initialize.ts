@@ -4,9 +4,10 @@ import { type CompiledForm } from '../../compile/compiled-form';
 import { errorCodes, errorMessage } from '../../errors';
 import { type Form, formDefDecoder } from '../../form';
 import { type FormWidget, isInputWidget, isLayoutWidget } from '../../form-widget';
+import { buildWidgetInstances } from '../../instances/build-instances';
+import { recordsOfInstances } from '../../instances/instance-records';
 import { type ExpressionPolicy } from '../../utils/check-expression';
 import { flattenForm } from '../../utils/form';
-import { expandSources } from '../../utils/repeater';
 import type { INITIALIZE } from '../actions';
 import { createInitialState, type FormHealth, type State } from '../model';
 
@@ -105,13 +106,15 @@ export const initialize = (
       compiled = { ...compiled, root: undefined };
     }
 
-    // No data yet, so this adds the static widgets only. SET_DATA expands the repeater rows.
+    // No data yet, so no repeater has a row. The first derive builds the rows.
+    const instances = buildWidgetInstances(compiled.root, {}, initialState.instances);
     return {
       ...initialState,
       formDef: decodedFormDef,
       compiled,
+      instances,
       flatForm,
-      ...expandSources(flatForm, {}),
+      ...recordsOfInstances(instances, compiled.root),
       formHealth,
     };
   }
