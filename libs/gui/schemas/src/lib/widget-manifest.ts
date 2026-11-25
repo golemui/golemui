@@ -46,7 +46,6 @@ export const guiWidgetManifest: readonly WidgetManifestEntry[] = [
   { type: 'timePicker', schemaFile: 'timepicker.schema.json', kind: 'input' },
   { type: 'toggle', schemaFile: 'toggle.schema.json', kind: 'input' },
   { type: 'accordion', schemaFile: 'accordion.schema.json', kind: 'layout' },
-  { type: 'flex', schemaFile: 'flex.schema.json', kind: 'layout' },
   { type: 'grid', schemaFile: 'grid.schema.json', kind: 'layout' },
   { type: 'tabs', schemaFile: 'tabs.schema.json', kind: 'layout' },
   { type: 'alert', schemaFile: 'alert.schema.json', kind: 'display' },

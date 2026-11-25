@@ -34,6 +34,15 @@ const STRING_FORMATS = [
 ];
 const WIDGET_TYPES = Object.keys(widgetKindByType);
 
+/**
+ * Widget types that 2.x had and 3.0 removed, with what to write instead. A type here is reported
+ * as removed before any fuzzy match, so it never gets a "Did you mean" guess or the custom-widget
+ * warning. Only types that are no longer built in belong here.
+ */
+export const CHANGED_IN_V3: Readonly<Record<string, string>> = {
+  flex: "Use `type: 'grid'`: `direction: 'row'` for a row, the default for a stack.",
+};
+
 // The state variants of a repeater template, as the repeater schema's patternProperties has them.
 const TEMPLATE_STATE_KEY = /^template\.[^.]+$/;
 
@@ -240,8 +249,12 @@ function formatError(err: ErrorObject): FormattedError {
       const { widget } = err.params as PositionParams;
       suggestion =
         widget === 'chunkRef'
-          ? 'Make the template a layout and put the chunk reference in its `children`, for example `{ "kind": "layout", "type": "flex", "children": [{ "$ref": "./x.form-chunk.json" }] }`.'
-          : 'Wrap the widget in a layout, for example `{ "kind": "layout", "type": "flex", "children": [<the widget>] }`.';
+          ? 'Make the template a layout and put the chunk reference in its `children`, for example `{ "kind": "layout", "type": "grid", "children": [{ "$ref": "./x.form-chunk.json" }] }`.'
+          : 'Wrap the widget in a layout, for example `{ "kind": "layout", "type": "grid", "children": [<the widget>] }`.';
+      break;
+    }
+    case 'removedType': {
+      suggestion = lookupOwn(CHANGED_IN_V3, (err.params as { type: string }).type) ?? undefined;
       break;
     }
     case 'oneOf':
@@ -377,9 +390,21 @@ function collectWidgetErrors(
     return;
   }
 
+  const widgetType = (widget as { type?: unknown } | undefined)?.type;
+  if (typeof widgetType === 'string' && lookupOwn(CHANGED_IN_V3, widgetType) !== null) {
+    out.push({
+      keyword: 'removedType',
+      instancePath: `${widgetPath}/type`,
+      schemaPath: '',
+      params: { type: widgetType },
+      message: `Widget type \`${widgetType}\` at \`${widgetPath}\` was removed in GolemUI 3.0`,
+    } as unknown as ErrorObject);
+    recurseIntoChildren(widget, widgetPath, context);
+    return;
+  }
+
   const intended = pickIntendedBranch(widget);
   if (!intended) {
-    const widgetType = (widget as { type?: unknown } | undefined)?.type;
     if (typeof widgetType !== 'string' || !widgetType) {
       // No usable `type` at all - that's a hard error.
       out.push({

@@ -79,10 +79,6 @@ const cardClass = computed(() => {
   return cls;
 });
 
-const isLimitReached = computed(() =>
-  templateData.value.limit ? templateData.value.limit === (value.value?.length ?? 0) : false,
-);
-
 const hostClass = computed(() => ({
   'gui-repeater--readonly': readonly.value,
   'gui-repeater--disabled': disabled.value,
@@ -142,7 +138,7 @@ const hostClass = computed(() => ({
         type="button"
         tabindex="0"
         class="gui-button gui-repeater__add-btn"
-        :disabled="disabled || isLimitReached"
+        :disabled="disabled"
         @click="addItem"
       >
         <span

@@ -133,7 +133,7 @@
           "children": [
             {
               "kind": "layout",
-              "type": "flex",
+              "type": "grid",
               "children": [
                 {
                   "kind": "input",
@@ -187,15 +187,14 @@
       "errors": [
         {
           "path": "/form/0/props/template",
-          "message": "A repeater template must be a built-in layout widget (`accordion`, `flex`, `grid`, `tabs`), got `textinput` at `/form/0/props/template`",
-          "suggestion": "Wrap the widget in a layout, for example `{ \"kind\": \"layout\", \"type\": \"flex\", \"children\": [<the widget>] }`.",
+          "message": "A repeater template must be a built-in layout widget (`accordion`, `grid`, `tabs`), got `textinput` at `/form/0/props/template`",
+          "suggestion": "Wrap the widget in a layout, for example `{ \"kind\": \"layout\", \"type\": \"grid\", \"children\": [<the widget>] }`.",
           "keyword": "position",
           "params": {
             "widget": "builtIn",
             "type": "textinput",
             "allowedTypes": [
               "accordion",
-              "flex",
               "grid",
               "tabs"
             ]

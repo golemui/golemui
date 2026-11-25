@@ -23,11 +23,6 @@
       "description": "Label for the button that removes an existing repeated item",
       "$ref": "../core/common.schema.json#/$defs/localizable"
     },
-    "limitProp": {
-      "type": "number",
-      "deprecated": true,
-      "description": "Deprecated: use `validator.maxItems`. It disables the add button at this many items, with no message. It will be removed in v3.0.0."
-    },
     "templateProp": {
       "description": "Widget tree used as the template for each repeated item. Paths inside are resolved relative to the item's index in the array. Widgets inside the template can reference the current item in reactive expressions ('when' conditions, '{{}}' interpolation slots, and i18n params) through the scope variables '$item' (the item object, e.g. '$item.quantity') and '$index' (the item's zero-based position). For nested repeaters these bind to the innermost enclosing item.",
       "$ref": "../layout-widget.schema.json"
@@ -90,9 +85,6 @@
         "removeLabel": {
           "$ref": "#/$defs/removeLabelProp"
         },
-        "limit": {
-          "$ref": "#/$defs/limitProp"
-        },
         "template": {
           "$ref": "#/$defs/templateProp"
         },
@@ -113,9 +105,6 @@
         },
         "^removeLabel\\.[^.]+$": {
           "$ref": "#/$defs/removeLabelProp"
-        },
-        "^limit\\.[^.]+$": {
-          "$ref": "#/$defs/limitProp"
         },
         "^template\\.[^.]+$": {
           "$ref": "#/$defs/templateProp"

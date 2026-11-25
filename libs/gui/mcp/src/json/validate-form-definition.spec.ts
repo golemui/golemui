@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { CHANGED_IN_V3 } from './errors';
+import { widgetKindByType } from './schemas/generated/metadata.js';
 import { validateFormDefinition } from './validate-form-definition';
 
 describe('json_validate_form_definition', () => {
@@ -227,6 +229,58 @@ describe('json_validate_form_definition', () => {
     expect(result.errors.some((e) => e.path === '/form/0/children/0/type')).toBe(true);
   });
 
+  describe('widget types removed in 3.0', () => {
+    it('rejects a flex layout and names the grid that replaces it', () => {
+      const result = validateFormDefinition({
+        formDefinition: {
+          form: [
+            {
+              kind: 'layout',
+              type: 'flex',
+              props: { direction: 'row' },
+              children: [{ kind: 'input', type: 'textimput', path: 'name' }],
+            } as never,
+          ],
+        },
+      });
+      expect(result.valid).toBe(false);
+      expect(result.warnings).toEqual([]);
+      const removed = result.errors.find((e) => e.keyword === 'removedType');
+      expect(removed).toMatchObject({ path: '/form/0/type', params: { type: 'flex' } });
+      expect(removed!.message).toMatch(/removed in GolemUI 3\.0/);
+      expect(removed!.suggestion).toMatch(/type: 'grid'/);
+      // Its children are still checked.
+      expect(result.errors.some((e) => e.path === '/form/0/children/0/type')).toBe(true);
+    });
+
+    it('reports a flex repeater template once, as removed', () => {
+      const result = validateFormDefinition({
+        formDefinition: {
+          form: [
+            {
+              kind: 'input',
+              type: 'repeater',
+              path: 'rows',
+              props: {
+                template: {
+                  kind: 'layout',
+                  type: 'flex',
+                  children: [{ kind: 'input', type: 'textinput', path: 'rows.items.name' }],
+                },
+              },
+            } as never,
+          ],
+        },
+      });
+      expect(result.errors.map((e) => e.keyword)).toEqual(['removedType']);
+      expect(result.errors[0]!.path).toBe('/form/0/props/template/type');
+    });
+
+    it('lists only types that are no longer built in', () => {
+      expect(Object.keys(CHANGED_IN_V3).filter((type) => type in widgetKindByType)).toEqual([]);
+    });
+  });
+
   describe('chunk references', () => {
     it('accepts a chunk ref at the top level of the form', () => {
       const result = validateFormDefinition({
@@ -245,7 +299,7 @@ describe('json_validate_form_definition', () => {
           form: [
             {
               kind: 'layout',
-              type: 'flex',
+              type: 'grid',
               props: { direction: 'column' },
               children: [{ $ref: './address.form-chunk.json' } as never],
             },
@@ -382,7 +436,7 @@ describe('json_validate_form_definition', () => {
             props: {
               template: {
                 kind: 'layout',
-                type: 'flex',
+                type: 'grid',
                 props: { direction: 'column' },
                 children: [{ kind: 'input', type: 'textimput', path: 'name' }],
               },
@@ -459,7 +513,7 @@ describe('json_validate_form_definition', () => {
     // hints like "Missing required property `sections`". Should now collapse to one clean error.
     const result = validateFormDefinition({
       formDefinition: {
-        form: [{ kind: 'layout', type: 'grid', props: { columnGap: 12 } }],
+        form: [{ kind: 'layout', type: 'grid', props: { gap: 'sm' } }],
       },
     });
     expect(result.valid).toBe(false);
@@ -493,7 +547,7 @@ describe('json_validate_form_definition', () => {
         form: [
           {
             kind: 'layout',
-            type: 'flex',
+            type: 'grid',
             props: { direction: 'column' },
             children: [{ kind: 'input', type: 'textimput', path: 'name' }],
           },
@@ -661,7 +715,7 @@ describe('json_validate_form_definition', () => {
             props: {
               template: {
                 kind: 'layout',
-                type: 'flex',
+                type: 'grid',
                 props: { direction: 'column' },
                 children: [
                   {
@@ -881,7 +935,7 @@ describe('json_validate_form_definition', () => {
           form: [
             {
               kind: 'layout',
-              type: 'flex',
+              type: 'grid',
               props: { direction: 'column' },
               children: [
                 {
@@ -977,12 +1031,12 @@ describe('json_validate_form_definition', () => {
       props: { text: 'Title' },
       ...(uid === undefined ? {} : { uid }),
     });
-    const flex = (children: unknown[]) => ({ kind: 'layout', type: 'flex', children });
+    const grid = (children: unknown[]) => ({ kind: 'layout', type: 'grid', children });
     const repeaterWith = (path: string, children: unknown[]) => ({
       kind: 'input',
       type: 'repeater',
       path,
-      props: { template: flex(children) },
+      props: { template: grid(children) },
     });
     const chunkReference = { $ref: './contact.form-chunk.json' };
     const duplicateUidErrors = (result: ReturnType<typeof validateFormDefinition>) =>
@@ -1041,7 +1095,7 @@ describe('json_validate_form_definition', () => {
       },
       {
         name: 'a repeated uid inside a layout inside a layout',
-        form: [flex([flex([textInput('email')])]), textInput('email')],
+        form: [grid([grid([textInput('email')])]), textInput('email')],
         errorPaths: ['/form/1'],
         firstPath: '/form/0/children/0/children/0',
         messageParts: ['`email-textinput`', topLevelEffect],
@@ -1126,8 +1180,8 @@ describe('json_validate_form_definition', () => {
           textInput('email'),
           { kind: 'input', type: 'number', path: 'email' },
           textInput('phone', 'phone'),
-          flex([textInput('street')]),
-          flex([textInput('city')]),
+          grid([textInput('street')]),
+          grid([textInput('city')]),
           repeaterWith('contacts', [
             textInput('contacts.items.email'),
             textInput('contacts.items.phone'),

@@ -226,7 +226,7 @@ function nestedAndChunkCases(): Record<string, unknown> {
           children: [
             {
               kind: 'layout',
-              type: 'flex',
+              type: 'grid',
               children: [{ kind: 'input', type: 'checkbox', path: 'field', notAProperty: true }],
             },
           ],

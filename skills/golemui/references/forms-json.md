@@ -43,7 +43,7 @@ from a backend. All docs for JSON forms live under `https://golemui.com/json/<pa
 - Layouts (`"kind": "layout"`, types `grid`/`tabs`/`accordion`) hold a `children` array
   of widgets. A `grid` stacks them by default; `"direction": "row"` puts them on one line,
   `"columns"` wraps them, and `"gap"` is a step (`"sm"`, `"md"`, `"lg"`…), never a number.
-  `flex` is deprecated: never generate it.
+  There is no `flex` layout: 3.0 removed it. Use a `grid`.
 - Validators in JSON always carry an explicit `"type"` (`string`, `number`, `boolean`, `array`)
   plus rules and optional per-rule `messages`.
 - Event handlers are **names** (`"on": { "click": "save" }`). The form sends each event to the

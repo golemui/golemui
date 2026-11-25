@@ -332,8 +332,6 @@ export function guiPreset(options: GuiPresetOptions = {}): Preset {
       multipleChoice(node, context, 'multiDropdown') as FormWidgetJson,
     tags: (node, context) => tags(node, context) as FormWidgetJson,
     repeater: (node, context) => repeater(node, context) as FormWidgetJson,
-    // `flex` is deprecated: the layout it named renders as a grid stack.
-    flex: (node, context) => object(node, context) as FormWidgetJson,
     grid: (node, context) => object(node, context, true) as FormWidgetJson,
     ...Object.fromEntries(
       [

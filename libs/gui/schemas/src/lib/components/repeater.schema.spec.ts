@@ -39,7 +39,7 @@ describe('Repeater schema validation', () => {
               template: {
                 uid: 'tpl-1',
                 kind: 'layout',
-                type: 'flex',
+                type: 'grid',
                 children: [
                   {
                     uid: 'child-1',
@@ -73,14 +73,13 @@ describe('Repeater schema validation', () => {
             props: {
               addLabel: 'Add Item',
               removeLabel: 'Remove Item',
-              limit: 5,
               title: 'Items',
               addButtonIcon: 'plus',
               removeButtonIcon: 'trash',
               template: {
                 uid: 'tpl-1',
                 kind: 'layout',
-                type: 'flex',
+                type: 'grid',
                 children: [
                   {
                     uid: 'child-1',
@@ -115,7 +114,7 @@ describe('Repeater schema validation', () => {
               template: {
                 uid: 'tpl-1',
                 kind: 'layout',
-                type: 'flex',
+                type: 'grid',
                 children: [
                   {
                     uid: 'child-1',
@@ -125,7 +124,6 @@ describe('Repeater schema validation', () => {
                   },
                 ],
               },
-              'limit.isFreePlan': 3,
             },
           },
         ],
@@ -153,7 +151,7 @@ describe('Repeater schema validation', () => {
               template: {
                 uid: 'tpl-1',
                 kind: 'layout',
-                type: 'flex',
+                type: 'grid',
                 children: [
                   {
                     uid: 'child-1',
@@ -176,7 +174,7 @@ describe('Repeater schema validation', () => {
       expect(isValid).toBe(true);
     });
 
-    it('should validate template using any layout widget kind (grid, tabs, accordion, flex)', () => {
+    it('should validate a grid template with props', () => {
       const formDef = golemForm().create({
         form: [
           {
@@ -190,7 +188,7 @@ describe('Repeater schema validation', () => {
                 uid: 'row-tpl',
                 kind: 'layout',
                 type: 'grid',
-                props: { autoFit: false, direction: 'row' },
+                props: { columns: 12 },
                 children: [
                   {
                     uid: 'name',
@@ -223,7 +221,7 @@ describe('Repeater schema validation', () => {
               template: {
                 uid: 'team-tpl',
                 kind: 'layout',
-                type: 'flex',
+                type: 'grid',
                 children: [
                   {
                     uid: 'team-name',
@@ -239,11 +237,10 @@ describe('Repeater schema validation', () => {
                     props: {
                       addLabel: 'Add Member',
                       removeLabel: 'Remove Member',
-                      limit: 10,
                       template: {
                         uid: 'member-tpl',
                         kind: 'layout',
-                        type: 'flex',
+                        type: 'grid',
                         children: [
                           {
                             uid: 'member-name',
@@ -283,7 +280,7 @@ describe('Repeater schema validation', () => {
               template: {
                 uid: 'tpl-1',
                 kind: 'layout',
-                type: 'flex',
+                type: 'grid',
                 children: [{ uid: 'f-1', kind: 'input', type: 'textinput', path: 'value' }],
               },
             },
@@ -319,7 +316,7 @@ describe('Repeater schema validation', () => {
         template: {
           uid: 'tpl-1',
           kind: 'layout',
-          type: 'flex',
+          type: 'grid',
           children: [{ uid: 'f-1', kind: 'input', type: 'textinput', path: 'value' }],
         },
       },
@@ -347,35 +344,30 @@ describe('Repeater schema validation', () => {
   });
 
   describe('Invalid configurations', () => {
-    it('should fail on invalid type for limit', () => {
-      const formDef = golemForm().create({
-        form: [
-          {
-            uid: 'rep-1',
-            path: 'items',
-            // @ts-expect-error Expected, the kind of a repeater is 'input'
-            kind: 'array',
-            type: 'repeater',
-            props: {
-              template: {
-                uid: 'tpl-1',
-                // @ts-expect-error Expected, the template of a repeater is a layout
-                kind: 'input',
-                type: 'textinput',
-                path: 'value',
-              },
-              // @ts-expect-error Expected, invalid type for limit
-              limit: 'five',
-            },
+    it('should fail on the limit prop that 3.0 removed', () => {
+      const isValid = validate({
+        uid: 'rep-1',
+        path: 'items',
+        kind: 'input',
+        type: 'repeater',
+        props: {
+          template: {
+            uid: 'tpl-1',
+            kind: 'layout',
+            type: 'grid',
+            children: [{ uid: 'f-1', kind: 'input', type: 'textinput', path: 'value' }],
           },
-        ],
+          limit: 5,
+        },
       });
-
-      const invalidRepeater = formDef.form.children[0];
-      const isValid = validate(invalidRepeater);
       expect(isValid).toBe(false);
       expect(
-        validate.errors?.some((e) => e.keyword === 'type' && e.instancePath === '/props/limit'),
+        validate.errors?.some(
+          (e) =>
+            e.keyword === 'additionalProperties' &&
+            e.instancePath === '/props' &&
+            e.params['additionalProperty'] === 'limit',
+        ),
       ).toBe(true);
     });
   });

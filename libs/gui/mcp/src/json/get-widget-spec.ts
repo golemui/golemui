@@ -1,4 +1,6 @@
+import { CHANGED_IN_V3 } from './errors';
 import { COMPONENT_SCHEMAS, VALIDATORS_SCHEMA, type WidgetSchema } from './schemas/index';
+import { lookupOwn } from './schemas/validator-lookup';
 
 export type GetWidgetSpecInput = {
   widgetType: string;
@@ -324,19 +326,6 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
     type: 'markdownText',
     props: { md: 'Welcome to the form.' },
   },
-  flex: {
-    kind: 'layout',
-    type: 'flex',
-    props: { direction: 'column', gap: 12 },
-    children: [
-      {
-        kind: 'input',
-        type: 'textinput',
-        path: 'firstName',
-        label: 'First name',
-      },
-    ],
-  },
   grid: {
     kind: 'layout',
     type: 'grid',
@@ -468,9 +457,6 @@ const NOTES: Record<string, string[]> = {
     '`props.options[]` is the simple form: `[{ label: "United States", value: "us" }, ...]`. Use this for ANY short fixed list of plain text options — countries, plans, sizes, status enums. Switch to `dropdown` when the user needs to search, the list is long, the items load at runtime, or the items need custom rendering (icons, flags, rich layouts).',
     'For very large lists (>50 items) consider `dropdown` for its virtualization (`height`, `itemHeight`, `searchFields`).',
   ],
-  flex: [
-    '**Deprecated: use `grid`.** A `flex` layout still renders, as a grid: `row` and `row-reverse` become a row, `column` and `column-reverse` a stack, `align` becomes `justify` and a pixel `gap` the nearest gap step. Never generate `flex` in new definitions.',
-  ],
   grid: [
     'The one layout for everything: stacking sections, putting fields side by side, wrapping them in columns and placing a row of buttons.',
     '`props.direction`: `"column"` (default) stacks the children; `"row"` puts them on one line, sharing the width by each child\'s `size` (a child with `size: 2` is twice as wide as one with `size: 1`).',
@@ -479,7 +465,6 @@ const NOTES: Record<string, string[]> = {
     '`props.justify`, rows only: `"stretch"` (default) shares the width by `size`; `"start"` | `"center"` | `"end"` | `"space-between"` keep each child at its own width and place them. Use `{ direction: "row", justify: "end" }` for submit/cancel buttons on the right.',
     'In a row or columns, fields line up by part: labels and hints on top, controls in the middle (checkboxes, toggles and buttons centred on them), errors below. No sizing or alignment props are needed for that.',
     'Every grid stacks its children when its container is narrower than 480px.',
-    'Deprecated props, still accepted: `autoFit` (use `columns`), `columnGap` / `rowGap` (use `gap`), `align` (use `justify`).',
     'All `grid` props support state suffixes: `"direction.<stateName>": "column"` swaps the direction when a state is active. Call `get_concept({ concept: "states" })` for the full pattern.',
   ],
   tabs: [
@@ -537,6 +522,12 @@ function synthesizeExample(widgetType: string, schema: WidgetSchema): Record<str
 export function getWidgetSpec(input: GetWidgetSpecInput): GetWidgetSpecResult {
   const schema = COMPONENT_SCHEMAS[input.widgetType];
   if (!schema) {
+    const replacement = lookupOwn(CHANGED_IN_V3, input.widgetType);
+    if (replacement !== null) {
+      throw new Error(
+        `Widget type \`${input.widgetType}\` was removed in GolemUI 3.0. ${replacement}`,
+      );
+    }
     const known = Object.keys(COMPONENT_SCHEMAS).sort().join(', ');
     throw new Error(`Unknown widget type \`${input.widgetType}\`. Known: ${known}.`);
   }

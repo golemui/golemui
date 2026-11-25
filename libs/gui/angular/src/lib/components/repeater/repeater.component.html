@@ -53,10 +53,7 @@
       tabindex="0"
       class="gui-button gui-repeater__add-btn"
       (click)="addItem()"
-      [disabled]="
-        !!templateData.disabled ||
-        (templateData.limit ? templateData.limit === (templateData.value?.length ?? 0) : false)
-      "
+      [disabled]="!!templateData.disabled"
     >
       @if (templateData.addButtonIcon) {
         <span

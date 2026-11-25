@@ -7,9 +7,6 @@ import { actionWidgets, displayWidgets, inputWidgets, layoutWidgets } from './wi
 // widget type is, so a type that it does not list has no page for the agent.
 const skillIndexPath = join(__dirname, '../../../../../skills/golemui/references/widgets-index.md');
 
-// `flex` is deprecated.
-const typesWithoutIndexEntry = new Set<string>(['flex']);
-
 function listedTypes(): Set<string> {
   const listed = new Set<string>();
   for (const line of readFileSync(skillIndexPath, 'utf-8').split('\n')) {
@@ -29,9 +26,7 @@ describe('the widget index of the skill', () => {
 
   it('lists every widget type that a JSON form can hold', () => {
     const listed = listedTypes();
-    const missing = widgetTypes.filter(
-      (type) => !typesWithoutIndexEntry.has(type) && !listed.has(type),
-    );
+    const missing = widgetTypes.filter((type) => !listed.has(type));
 
     expect(missing).toEqual([]);
   });

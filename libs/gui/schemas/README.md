@@ -104,7 +104,7 @@ The preset picks these widgets:
 - `number` and `integer`: `number`. `boolean`: `checkbox`.
 - arrays: `repeater` for objects, `multiList` or `multiDropdown` for choices,
   `tags` for other values, and a row of inputs for a tuple.
-- objects: a `flex` column. `objectTitle: 'markdownText'` or `'alert'` shows the
+- objects: a `grid` stack. `objectTitle: 'markdownText'` or `'alert'` shows the
   object title above its properties.
 
 `title` is the label, `description` the hint, `examples[0]` the placeholder,

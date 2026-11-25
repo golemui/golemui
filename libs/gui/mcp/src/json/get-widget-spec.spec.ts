@@ -15,6 +15,12 @@ describe('json_get_widget_spec', () => {
     expect(() => getWidgetSpec({ widgetType: 'nope' })).toThrow(/textinput/);
   });
 
+  it('throws on a type removed in 3.0 with what to use instead', () => {
+    expect(() => getWidgetSpec({ widgetType: 'flex' })).toThrow(
+      /`flex` was removed in GolemUI 3\.0\. Use `type: 'grid'`/,
+    );
+  });
+
   it.each(['dropdown', 'multiDropdown'])(
     'notes of %s teach loading and filtering items at runtime',
     (widgetType) => {
