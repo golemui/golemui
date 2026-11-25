@@ -1,0 +1,27 @@
+@let templateData = adapter.templateData();
+@let classes = typographyClasses(templateData.variant);
+
+<!-- Angular binds no tag name: one case per tag that typographyTag returns. -->
+@switch (typographyTag(templateData.variant)) {
+  @case ('h1') {
+    <h1 [id]="adapter.domId" [class]="classes">{{ templateData.text }}</h1>
+  }
+  @case ('h2') {
+    <h2 [id]="adapter.domId" [class]="classes">{{ templateData.text }}</h2>
+  }
+  @case ('h3') {
+    <h3 [id]="adapter.domId" [class]="classes">{{ templateData.text }}</h3>
+  }
+  @case ('h4') {
+    <h4 [id]="adapter.domId" [class]="classes">{{ templateData.text }}</h4>
+  }
+  @case ('h5') {
+    <h5 [id]="adapter.domId" [class]="classes">{{ templateData.text }}</h5>
+  }
+  @case ('h6') {
+    <h6 [id]="adapter.domId" [class]="classes">{{ templateData.text }}</h6>
+  }
+  @default {
+    <p [id]="adapter.domId" [class]="classes">{{ templateData.text }}</p>
+  }
+}

@@ -110,6 +110,7 @@
       "@golemui/gui-components/rating": ["libs/gui/components/src/lib/components/rating.ts"],
       "@golemui/gui-components/slider": ["libs/gui/components/src/lib/components/slider.ts"],
       "@golemui/gui-components/spinner": ["libs/gui/components/src/lib/components/spinner.ts"],
+      "@golemui/gui-components/table": ["libs/gui/components/src/lib/components/table.ts"],
       "@golemui/gui-components/multi-range-calendar": [
         "libs/gui/components/src/lib/components/multi-range-calendar.ts"
       ],

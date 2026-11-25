@@ -767,6 +767,103 @@ export type AlertProps = {
   level?: 'default' | 'info' | 'success' | 'warning' | 'error';
 };
 
+export type BadgeProps = {
+  /**
+   * The badge's text, such as "Paid". Its color is not read out, so the text carries the meaning:
+   * "3 new messages", not "3".
+   */
+  text: Localizable;
+  /** The intent the badge shows, as an alert's. Defaults to `default`, which is neutral. */
+  level?: 'default' | 'info' | 'success' | 'warning' | 'error';
+};
+
+export type ProgressProps = {
+  /** The bar's name, shown above it. Screen readers read it with the value. */
+  label: Localizable;
+  /** How far the task has got, from 0 to `max`. Without it the bar is indeterminate. */
+  value?: number;
+  /** The value of a finished task. Defaults to 100. */
+  max?: number;
+  /** Shows the percentage at the end of the label's line, in the form's language. */
+  showValue?: boolean;
+};
+
+export type SpinnerProps = {
+  /**
+   * What the wait is for, such as "Loading results". Screen readers announce it when it changes.
+   * Without it the spinner is decorative.
+   */
+  label?: Localizable;
+};
+
+/** The look of a typography widget, which also picks its tag. */
+export type TypographyVariant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'small';
+
+export type TypographyProps = {
+  /** The text, plain: a line break in it is a line break on screen. */
+  text: Localizable;
+  /**
+   * The look, and the tag: `h1` to `h6` render that heading, `body` (the default) and `small`
+   * a paragraph. Headings are the page's outline for screen readers: don't skip levels.
+   */
+  variant?: TypographyVariant;
+};
+
+/** The proportions an image widget can take, width to height. */
+export type ImageRatio = '1/1' | '4/3' | '3/2' | '16/9' | '21/9';
+
+/** How an image fills the box its ratio gives it, as CSS `object-fit`. */
+export type ImageFit = 'cover' | 'contain' | 'fill' | 'none';
+
+export type ImageProps = {
+  /** The image's URL. */
+  src: string;
+  /**
+   * What the image shows, for screen readers and when it fails to load. `""` marks a decorative
+   * image, which screen readers skip.
+   */
+  alt: Localizable;
+  /** The proportions of the image's box. Without it the image keeps its own. */
+  ratio?: ImageRatio;
+  /** How the image fills a box of another shape. Defaults to `cover`. */
+  fit?: ImageFit;
+  /** A caption shown below the image. */
+  caption?: Localizable;
+  /** When the browser loads it: `lazy` (the default) waits until it is near the screen. */
+  loading?: 'lazy' | 'eager';
+};
+
+/** A table's cell: what a row holds under a column's `key`. */
+export type TableCell = string | number | boolean | null;
+
+/** A table's row: its cells by column `key`. Keys no column names are ignored. */
+export type TableRow = Record<string, TableCell>;
+
+export type TableColumn = {
+  /** The key of each row whose value the column shows. */
+  key: string;
+  /** The column's header. */
+  label: Localizable;
+  /** Where the column's cells sit. Defaults to `end` for a number column, `start` otherwise. */
+  align?: 'start' | 'center' | 'end';
+  /**
+   * How the cells are shown: `text` (the default) as they are, `number` and `date` (an ISO date)
+   * formatted in the form's language. A value that doesn't parse is shown as it is.
+   */
+  type?: 'text' | 'number' | 'date';
+};
+
+export type TableProps = {
+  /** The table's name, shown above it. Screen readers announce it with the table. */
+  caption: Localizable;
+  /** The columns, in order. */
+  columns: TableColumn[];
+  /** The rows, in order. */
+  rows: TableRow[];
+  /** The text of the one row shown when `rows` is empty. */
+  emptyMessage?: Localizable;
+};
+
 export type MarkdownTextProps = {
   md: string;
 };

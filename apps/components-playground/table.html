@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Table · GolemUI Components playground</title>
+    <link rel="stylesheet" href="/src/styles.scss" />
+  </head>
+  <body>
+    <main class="pg-main">
+      <section class="pg-section">
+        <h1>gui-table</h1>
+        <p>
+          The scroll region of the app's own <code>&lt;table&gt;</code>. A table that fits adds no
+          tab stop. A wider one scrolls inside the element, with a shadow at each edge that has more
+          to show, and becomes a focusable region named after its caption: Tab to it and scroll with
+          the arrow keys. The direction switch above mirrors it.
+        </p>
+      </section>
+
+      <section class="pg-section">
+        <h2>A table that fits</h2>
+        <gui-table>
+          <table>
+            <caption>
+              Open orders
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">Order</th>
+                <th scope="col">Date</th>
+                <th scope="col" class="gui-table__cell--end">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>A-1042</td>
+                <td>Nov 20, 2026</td>
+                <td class="gui-table__cell--end">1,280.50</td>
+              </tr>
+              <tr>
+                <td>A-1043</td>
+                <td>Nov 22, 2026</td>
+                <td class="gui-table__cell--end">310.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </gui-table>
+      </section>
+
+      <section class="pg-section">
+        <h2>A wide table, in a narrow column</h2>
+        <div class="pg-stack">
+          <gui-table>
+            <table>
+              <caption id="shipments-caption">
+                Shipments this week
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Shipment</th>
+                  <th scope="col">Carrier</th>
+                  <th scope="col">From</th>
+                  <th scope="col">To</th>
+                  <th scope="col">Departure</th>
+                  <th scope="col">Arrival</th>
+                  <th scope="col" class="gui-table__cell--center">Parcels</th>
+                  <th scope="col" class="gui-table__cell--end">Weight (kg)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>SH-20481</td>
+                  <td>Northwind Freight</td>
+                  <td>Rotterdam</td>
+                  <td>Barcelona</td>
+                  <td>Nov 23, 2026</td>
+                  <td>Nov 26, 2026</td>
+                  <td class="gui-table__cell--center">12</td>
+                  <td class="gui-table__cell--end">418.20</td>
+                </tr>
+                <tr>
+                  <td>SH-20482</td>
+                  <td>Blue Harbor Lines</td>
+                  <td>Hamburg</td>
+                  <td>Valencia</td>
+                  <td>Nov 24, 2026</td>
+                  <td>Nov 28, 2026</td>
+                  <td class="gui-table__cell--center">3</td>
+                  <td class="gui-table__cell--end">72.90</td>
+                </tr>
+              </tbody>
+            </table>
+          </gui-table>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>No rows</h2>
+        <gui-table>
+          <table>
+            <caption>
+              Refunds
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">Refund</th>
+                <th scope="col" class="gui-table__cell--end">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="gui-table__empty" colspan="2">No refunds yet</td>
+              </tr>
+            </tbody>
+          </table>
+        </gui-table>
+      </section>
+    </main>
+    <script type="module" src="/src/pages/table.ts"></script>
+  </body>
+</html>

@@ -319,6 +319,55 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
     type: 'alert',
     props: { level: 'info', text: 'Heads up!' },
   },
+  badge: {
+    kind: 'display',
+    type: 'badge',
+    props: { text: 'Paid', level: 'success' },
+  },
+  progress: {
+    kind: 'display',
+    type: 'progress',
+    props: { label: 'Profile', value: 40, showValue: true },
+  },
+  spinner: {
+    kind: 'display',
+    type: 'spinner',
+    include: { in: ['loading'] },
+    props: { label: 'Loading results' },
+  },
+  typography: {
+    kind: 'display',
+    type: 'typography',
+    props: { text: 'Your booking', variant: 'h2' },
+  },
+  image: {
+    kind: 'display',
+    type: 'image',
+    props: {
+      src: 'https://example.com/room.jpg',
+      alt: 'Double room with a sea view',
+      ratio: '16/9',
+      fit: 'cover',
+      caption: 'Room 204',
+    },
+  },
+  table: {
+    kind: 'display',
+    type: 'table',
+    props: {
+      caption: 'Open orders',
+      columns: [
+        { key: 'id', label: 'Order' },
+        { key: 'date', label: 'Date', type: 'date' },
+        { key: 'total', label: 'Total', type: 'number' },
+      ],
+      rows: [
+        { id: 'A-1042', date: '2026-11-20', total: 1280.5 },
+        { id: 'A-1043', date: '2026-11-22', total: 310 },
+      ],
+      emptyMessage: 'No open orders',
+    },
+  },
   markdownText: {
     kind: 'display',
     type: 'markdownText',
@@ -469,6 +518,7 @@ const NOTES: Record<string, string[]> = {
   markdownText: [
     'Display-only widget for rendering markdown. Can be used as a top-level form widget (inside any layout) or inside templates like `dropdown.props.items[].template`.',
     'The required prop is `md` (the markdown string), not `text`.',
+    'For a heading or a line of plain text with no links, lists or emphasis, use `typography` instead: it needs no parser and looks the same.',
     'REQUIRES a `dependencies.markdown` parser in the form init config, or it renders blank. The widget inserts the parser output as HTML without sanitizing it, so for markdown from users or stored data the parser must remove raw HTML and `javascript:` links. Call `get_concept({ concept: "host-services" })`.',
   ],
   tags: [
@@ -579,6 +629,37 @@ const NOTES: Record<string, string[]> = {
   checkbox: [
     'MANDATORY CHECKBOX (e.g. terms acceptance): `required: true` alone is a silent trap — it only rejects a MISSING value; an unchecked box holding `false` is a valid boolean and passes. `const: true` is what rejects `false` — but alone it lets the pristine `undefined` pass (non-required validators are optional). Use BOTH: `validator: { type: "boolean", required: true, const: true }`.',
     'Set BOTH `messages.invalid` and `messages.const` to the same user-facing text: a never-touched box fails the type check (`invalid` message), a checked-then-unchecked box fails the `const` rule. Call `get_concept({ concept: "validation" })` for the full explanation.',
+  ],
+  badge: [
+    "A short label for a status or a count, inline with the content around it. `props.text` is required and localizable; `props.level` (`default`, `info`, `success`, `warning`, `error`, as an alert's) sets its color. The intent prop is `level`, never `variant`.",
+    'Screen readers do not read the color, so the text must carry the meaning on its own: "3 new messages", not "3"; "Payment overdue", not a red "!".',
+    'A status that changes with the data uses state suffixes: `"text.overdue": "Overdue"`, `"level.overdue": "error"`. `text` is a top-level string, so it can also interpolate (`"{{ $form.unread }} new messages"`).',
+  ],
+  progress: [
+    "A progress bar for how far a task has got. `props.label` is required: it names the bar for screen readers. `props.value` goes from 0 to `props.max` (default 100); without a `value` the bar is indeterminate. `props.showValue: true` shows the percentage, formatted in the form's language.",
+    '`value` is a NUMBER, so it cannot interpolate `{{ }}` (that always yields a string). Move it with state suffixes (`"value": 25, "value.step2": 50, "value.step3": 75`) or from the host. It is a display widget: it has no `path` and submits nothing.',
+  ],
+  typography: [
+    'A heading or a line of PLAIN text. `props.text` is required and localizable, and interpolates `{{ }}` like any top-level string. A line break in the text is a line break on screen. For links, lists, emphasis or several paragraphs use `markdownText`.',
+    '`props.variant` sets the look AND the tag: `h1` to `h6` render that heading, `body` (the default) and `small` (secondary text such as a note or a timestamp) a paragraph. There is no `lead`, `caption` or `title` variant.',
+    "Headings are the page's outline for screen readers: don't skip levels (an `h2` before any `h3`), and when the form sits in a page that has its own `h1`, start the form's headings at `h2`.",
+    'It has no outer margins: the gap of its layout spaces it. Put it in a `grid` with the fields it introduces.',
+  ],
+  image: [
+    'An image that fills the width of its cell (set the width with the grid\'s `size`). `props.src` and `props.alt` are required. `alt` says what the image shows; set it to `""` only for a decorative image, which screen readers skip.',
+    '`props.ratio` is one of `"1/1"`, `"4/3"`, `"3/2"`, `"16/9"`, `"21/9"` (no other values, no CSS); without it the image keeps its own proportions. `props.fit` (`cover` by default, `contain`, `fill`, `none`) says how it fills that box. `props.caption` (localizable) shows below it. `props.loading` is `lazy` by default; use `eager` for an image at the top of the page.',
+    '`src` interpolates `{{ }}` like any top-level string, so a definition can put form data in an image URL that the browser then requests. The host controls where images may load from with its Content Security Policy (`img-src`). Prefer fixed URLs, and never interpolate personal data into `src`.',
+    'A broken image shows its `alt` text, as the browser does; there is no fallback image.',
+  ],
+  table: [
+    "A data table written in the definition. `props.caption` (localizable) is REQUIRED: it names the table for screen readers. `props.columns` is an array of `{ key, label, type?, align? }`; `props.rows` an array of objects keyed by the columns' `key`, each cell a string, a number, a boolean or null. Keys no column names are ignored, so a record can be passed as it is. `props.emptyMessage` is the one row shown when `rows` is empty.",
+    'Column `type`: `text` (default) shows the value as it is; `number` formats it in the form\'s language (and aligns it at the end unless `align` says otherwise); `date` formats an ISO date such as `"2026-11-20"`. Pass numbers and ISO dates, not formatted strings: the widget formats them. A value that doesn\'t parse is shown as it is.',
+    'The rows travel in the definition, so keep a table to a few dozen rows. Strings inside `rows` do NOT interpolate `{{ }}`, and rows cannot read `$form`: a table shows what the definition (or a state override such as `"rows.<stateName>"`) gives it. There is no sorting, paging, row selection or row actions.',
+    'A table wider than its cell scrolls sideways inside its own region, never the page, and the region is keyboard-focusable while it does. Labels and the caption are localizable; cell text is not translated.',
+  ],
+  spinner: [
+    'An indeterminate spinner for a wait of unknown length. Show it only while a named state holds: `include: { in: ["loading"] }` with a state such as `"loading": "$form.status === \'loading\'"`. Call `get_concept({ concept: "states" })` for the pattern.',
+    '`props.label` says what the wait is for ("Loading results") and is announced by screen readers when it changes; without it the spinner is decorative. Use `progress` instead when how far the task has got is known.',
   ],
   alert: [
     'Use `include: { in: ["stateName"] }` to show this alert only when a named state is active, or `exclude: { from: ["stateName"] }` to hide it when a state is active. This is cleaner than `include: { when: "..." }` when the same condition is reused across multiple widgets. Call `get_concept({ concept: "states" })` for the full states pattern.',

@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/gui/components/table.schema.json",
+  "title": "Table Widget",
+  "description": "A data table: a caption, columns and rows written in the definition, in a scroll region. For a few dozen rows at most.",
+  "type": "object",
+  "$defs": {
+    "captionProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable",
+      "description": "The table's name, shown above it and announced with it by screen readers. Required, so every table has a name."
+    },
+    "columnsProp": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The columns, in order.",
+      "items": {
+        "$ref": "#/$defs/column"
+      }
+    },
+    "rowsProp": {
+      "type": "array",
+      "description": "The rows, in order: each an object of cells by column `key`. Keys no column names are ignored. Nested strings don't interpolate `{{ }}`.",
+      "items": {
+        "type": "object",
+        "additionalProperties": {
+          "type": ["string", "number", "boolean", "null"]
+        }
+      }
+    },
+    "emptyMessageProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable",
+      "description": "The text of the one row shown when `rows` is empty."
+    },
+    "column": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The key of each row whose value the column shows."
+        },
+        "label": {
+          "$ref": "../core/common.schema.json#/$defs/localizable",
+          "description": "The column's header."
+        },
+        "align": {
+          "enum": ["start", "center", "end"],
+          "description": "Where the cells sit. Defaults to `end` for a number column, `start` otherwise."
+        },
+        "type": {
+          "enum": ["text", "number", "date"],
+          "description": "How the cells are shown: `text` (the default) as they are, `number` and `date` (an ISO date such as `2026-11-20`) formatted in the form's language. A value that doesn't parse is shown as it is."
+        }
+      },
+      "required": ["key", "label"],
+      "additionalProperties": false
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "display"
+    },
+    "type": {
+      "const": "table"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "caption": {
+          "$ref": "#/$defs/captionProp"
+        },
+        "columns": {
+          "$ref": "#/$defs/columnsProp"
+        },
+        "rows": {
+          "$ref": "#/$defs/rowsProp"
+        },
+        "emptyMessage": {
+          "$ref": "#/$defs/emptyMessageProp"
+        }
+      },
+      "patternProperties": {
+        "^caption\\.[^.]+$": {
+          "$ref": "#/$defs/captionProp"
+        },
+        "^columns\\.[^.]+$": {
+          "$ref": "#/$defs/columnsProp"
+        },
+        "^rows\\.[^.]+$": {
+          "$ref": "#/$defs/rowsProp"
+        },
+        "^emptyMessage\\.[^.]+$": {
+          "$ref": "#/$defs/emptyMessageProp"
+        }
+      },
+      "required": ["caption", "columns", "rows"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["kind", "type", "props"],
+  "unevaluatedProperties": false
+}

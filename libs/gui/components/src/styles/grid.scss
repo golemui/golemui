@@ -122,6 +122,13 @@ $nested-fields: '#{$cell} > .gui-field > .gui-field, #{$cell} > :not(.gui-field)
   align-self: center;
 }
 
+// A badge and a spinner keep their own width on the control track, next to the inputs of the row.
+:is(#{$fields}, #{$nested-fields}) > :is(gui-badge, gui-spinner) {
+  grid-row: 2;
+  align-self: center;
+  justify-self: start;
+}
+
 // Narrow containers stack every grid. The cells keep their tracks, one below the other.
 @container gui-container (max-width: 480px) {
   #{$aligned} {

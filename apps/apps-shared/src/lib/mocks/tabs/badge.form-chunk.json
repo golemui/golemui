@@ -1,0 +1,109 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabBadge",
+  "kind": "layout",
+  "type": "grid",
+  "children": [
+    {
+      "kind": "layout",
+      "type": "grid",
+      "props": {
+        "direction": "row"
+      },
+      "children": [
+        {
+          "kind": "display",
+          "type": "badge",
+          "props": {
+            "text": "Default",
+            "level": "default"
+          }
+        },
+        {
+          "kind": "display",
+          "type": "badge",
+          "props": {
+            "text": "Info",
+            "level": "info"
+          }
+        },
+        {
+          "kind": "display",
+          "type": "badge",
+          "props": {
+            "text": "Success",
+            "level": "success"
+          }
+        },
+        {
+          "kind": "display",
+          "type": "badge",
+          "props": {
+            "text": "Warning",
+            "level": "warning"
+          }
+        },
+        {
+          "kind": "display",
+          "type": "badge",
+          "props": {
+            "text": "Error",
+            "level": "error"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "input",
+      "type": "toggle",
+      "path": "badges.overdue",
+      "label": "Overdue"
+    },
+    {
+      "uid": "invoiceStatus",
+      "kind": "display",
+      "type": "badge",
+      "props": {
+        "text": "Paid",
+        "level": "success",
+        "text.badgeOverdue": "Payment overdue",
+        "level.badgeOverdue": "error"
+      }
+    },
+    {
+      "uid": "customerBadge",
+      "include": {
+        "when": "!!$form.badges?.customer"
+      },
+      "kind": "display",
+      "type": "badge",
+      "props": {
+        "text": "{{ $form.badges?.customer }} is active",
+        "level": "info"
+      }
+    },
+    {
+      "kind": "layout",
+      "type": "grid",
+      "props": {
+        "direction": "row"
+      },
+      "children": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "badges.customer",
+          "label": "Customer"
+        },
+        {
+          "kind": "display",
+          "type": "badge",
+          "props": {
+            "text": "Active",
+            "level": "success"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -3,7 +3,11 @@
   "states": {
     "limitReached": "$form.repeaters.users?.length === 5",
     "hasSubregionSelect": "!!$form.selects.subregion",
-    "hasSubregionRadiogroup": "!!$form.radiogroups.subregion"
+    "hasSubregionRadiogroup": "!!$form.radiogroups.subregion",
+    "badgeOverdue": "$form.badges?.overdue === true",
+    "progressHalfway": "$form.progresses?.halfway === true",
+    "spinnerLoading": "$form.spinners?.loading === true",
+    "tableShowClosed": "$form.tables?.closed === true"
   },
   "form": [
     {
@@ -22,6 +26,7 @@
         "tabs": [
           { "label": "Accordion Layout", "uid": "tabAccordion" },
           { "label": "Alert Component", "uid": "tabAlert" },
+          { "label": "Badge Component", "uid": "tabBadge" },
           { "label": "Button Component", "uid": "tabButton" },
           { "label": "Menu Button Component", "uid": "tabMenuButton" },
           { "label": "Calendar Component", "uid": "tabCalendar" },
@@ -36,6 +41,7 @@
           { "label": "Dropdown Component", "uid": "tabDropdown" },
           { "label": "File Upload Component", "uid": "tabFileUpload" },
           { "label": "Grid Layout", "uid": "tabGrid" },
+          { "label": "Image Component", "uid": "tabImage" },
           { "label": "List Component", "uid": "tabList" },
           { "label": "Markdown Component", "uid": "tabMarkdown" },
           { "label": "Markdown Text Component", "uid": "tabMarkdownText" },
@@ -43,9 +49,12 @@
           { "label": "Multi List Component", "uid": "tabMultiList" },
           { "label": "Number Component", "uid": "tabNumber" },
           { "label": "Password Component", "uid": "tabPassword" },
+          { "label": "Progress Component", "uid": "tabProgress" },
           { "label": "Radiogroup Component", "uid": "tabRadiogroup" },
           { "label": "Checkbox Group Component", "uid": "tabCheckboxGroup" },
           { "label": "Rating Component", "uid": "tabRating" },
+          { "label": "Spinner Component", "uid": "tabSpinner" },
+          { "label": "Table Component", "uid": "tabTable" },
           { "label": "Range Calendar Component", "uid": "tabRangeCalendar" },
           { "label": "Range Date Input Component", "uid": "tabRangeDateInput" },
           { "label": "Range Date Picker Component", "uid": "tabRangeDatePicker" },
@@ -78,12 +87,19 @@
           { "label": "Textinput Component", "uid": "tabTextinput" },
           { "label": "Time Picker Component", "uid": "tabTimePicker" },
           { "label": "Time Input Component", "uid": "tabTimeInput" },
-          { "label": "Toggle Component", "uid": "tabToggle" }
+          { "label": "Toggle Component", "uid": "tabToggle" },
+          { "label": "Typography Component", "uid": "tabTypography" }
         ]
       },
       "on": { "change": "onTabEvent" },
       "children": [
         { "$ref": "./tabs/alert.form-chunk.json" },
+        { "$ref": "./tabs/badge.form-chunk.json" },
+        { "$ref": "./tabs/progress.form-chunk.json" },
+        { "$ref": "./tabs/spinner.form-chunk.json" },
+        { "$ref": "./tabs/typography.form-chunk.json" },
+        { "$ref": "./tabs/image.form-chunk.json" },
+        { "$ref": "./tabs/table.form-chunk.json" },
         { "$ref": "./tabs/button.form-chunk.json" },
         { "$ref": "./tabs/menubutton.form-chunk.json" },
         { "$ref": "./tabs/markdown-text.form-chunk.json" },

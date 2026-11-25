@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/gui/components/badge.schema.json",
+  "title": "Badge Widget",
+  "description": "A short label for a status or a count, such as \"Paid\" or \"3 new messages\", in the intent colors of an alert.",
+  "type": "object",
+  "$defs": {
+    "textProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable",
+      "description": "The badge's text. Its color is not read out, so the text carries the meaning: \"3 new messages\", not \"3\"."
+    },
+    "levelProp": {
+      "enum": ["default", "info", "success", "warning", "error"],
+      "description": "The intent the badge shows, as an alert's. Defaults to `default`, which is neutral."
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "display"
+    },
+    "type": {
+      "const": "badge"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "$ref": "#/$defs/textProp"
+        },
+        "level": {
+          "$ref": "#/$defs/levelProp"
+        }
+      },
+      "patternProperties": {
+        "^text\\.[^.]+$": {
+          "$ref": "#/$defs/textProp"
+        },
+        "^level\\.[^.]+$": {
+          "$ref": "#/$defs/levelProp"
+        }
+      },
+      "required": ["text"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["kind", "type", "props"],
+  "unevaluatedProperties": false
+}

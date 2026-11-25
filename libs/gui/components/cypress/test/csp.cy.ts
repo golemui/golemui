@@ -112,6 +112,31 @@ describe('a strict style-src-attr policy', () => {
     expectNoViolations();
   });
 
+  it('allows a gui-table to render, overflow into a region and scroll', () => {
+    cy.mount(
+      html`<div id="box">
+        <gui-table>
+          <table>
+            <caption>
+              Open orders
+            </caption>
+            <tbody>
+              <tr>
+                <td>A-1042</td>
+                <td class="gui-table__cell--end">1,280.50</td>
+              </tr>
+            </tbody>
+          </table>
+        </gui-table>
+      </div>`,
+    );
+    // The CSSOM, not a style attribute: the policy allows it.
+    cy.get('#box').then(([box]) => box.style.setProperty('inline-size', '80px'));
+    cy.get('gui-table td').first().invoke('text', 'A-1042 '.repeat(20));
+    cy.get('gui-table').should('have.attr', 'role', 'region').invoke('scrollLeft', 40);
+    expectNoViolations();
+  });
+
   for (const fallback of [false, true]) {
     it(`allows a gui-popover to open, follow its anchor and close${fallback ? ', measuring' : ''}`, () => {
       GUIAnchorController.forceFallback = fallback;

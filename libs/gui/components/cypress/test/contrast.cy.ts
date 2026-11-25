@@ -182,6 +182,46 @@ describe('control boundaries (WCAG 1.4.11)', () => {
         });
       });
 
+      // The header row's text is the column's name: it needs 4.5:1 against the row's tint. The cell
+      // borders only decorate: the header cells and the alignment show the table's structure, so
+      // WCAG 1.4.11 asks nothing of them. The focus ring of a scrollable table shows where focus is.
+      it('gui-table: the header text reaches 4.5:1, and the focus ring 3:1 against the page', () => {
+        cy.mount(
+          html`<div style="inline-size: 120px">
+            <gui-table>
+              <table>
+                <caption>
+                  Open orders
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Order</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="white-space: nowrap">A-1042 with a long note</td>
+                  </tr>
+                </tbody>
+              </table>
+            </gui-table>
+          </div>`,
+        );
+
+        cy.get('gui-table th').should(([header]) => {
+          const page = toRgb(getComputedStyle(document.body).backgroundColor, [255, 255, 255]);
+          const tint = toRgb(getComputedStyle(header).backgroundColor, page);
+          const text = toRgb(getComputedStyle(header).color, tint);
+          expect(contrast(text, tint), 'header text against its row').to.be.gte(4.5);
+        });
+        cy.get('gui-table').should('have.attr', 'tabindex', '0').focus();
+        cy.get('gui-table').should(([table]) => {
+          const page = toRgb(getComputedStyle(document.body).backgroundColor, [255, 255, 255]);
+          const ring = toRgb(getComputedStyle(table).outlineColor, page);
+          expect(contrast(ring, page), 'focus ring against the page').to.be.gte(3);
+        });
+      });
+
       // A pill's text is 12px, so it needs 4.5:1 against the pill's fill (WCAG 1.4.3), and its
       // remove icon, its only control, takes the same color.
       it('gui-tags: the pill text reaches 4.5:1 against its fill, and the icon matches it', () => {

@@ -3,7 +3,11 @@
     "states": {
       "limitReached": "$form.repeaters.users?.length === 5",
       "hasSubregionSelect": "!!$form.selects.subregion",
-      "hasSubregionRadiogroup": "!!$form.radiogroups.subregion"
+      "hasSubregionRadiogroup": "!!$form.radiogroups.subregion",
+      "badgeOverdue": "$form.badges?.overdue === true",
+      "progressHalfway": "$form.progresses?.halfway === true",
+      "spinnerLoading": "$form.spinners?.loading === true",
+      "tableShowClosed": "$form.tables?.closed === true"
     },
     "form": [
       {
@@ -27,6 +31,10 @@
             {
               "label": "Alert Component",
               "uid": "tabAlert"
+            },
+            {
+              "label": "Badge Component",
+              "uid": "tabBadge"
             },
             {
               "label": "Button Component",
@@ -85,6 +93,10 @@
               "uid": "tabGrid"
             },
             {
+              "label": "Image Component",
+              "uid": "tabImage"
+            },
+            {
               "label": "List Component",
               "uid": "tabList"
             },
@@ -113,6 +125,10 @@
               "uid": "tabPassword"
             },
             {
+              "label": "Progress Component",
+              "uid": "tabProgress"
+            },
+            {
               "label": "Radiogroup Component",
               "uid": "tabRadiogroup"
             },
@@ -123,6 +139,14 @@
             {
               "label": "Rating Component",
               "uid": "tabRating"
+            },
+            {
+              "label": "Spinner Component",
+              "uid": "tabSpinner"
+            },
+            {
+              "label": "Table Component",
+              "uid": "tabTable"
             },
             {
               "label": "Range Calendar Component",
@@ -231,6 +255,10 @@
             {
               "label": "Toggle Component",
               "uid": "tabToggle"
+            },
+            {
+              "label": "Typography Component",
+              "uid": "tabTypography"
             }
           ]
         },
@@ -281,6 +309,670 @@
                 "props": {
                   "text": "Some fields need your attention"
                 }
+              }
+            ]
+          },
+          {
+            "uid": "tabBadge",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "display",
+                    "type": "badge",
+                    "props": {
+                      "text": "Default",
+                      "level": "default"
+                    }
+                  },
+                  {
+                    "kind": "display",
+                    "type": "badge",
+                    "props": {
+                      "text": "Info",
+                      "level": "info"
+                    }
+                  },
+                  {
+                    "kind": "display",
+                    "type": "badge",
+                    "props": {
+                      "text": "Success",
+                      "level": "success"
+                    }
+                  },
+                  {
+                    "kind": "display",
+                    "type": "badge",
+                    "props": {
+                      "text": "Warning",
+                      "level": "warning"
+                    }
+                  },
+                  {
+                    "kind": "display",
+                    "type": "badge",
+                    "props": {
+                      "text": "Error",
+                      "level": "error"
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "input",
+                "type": "toggle",
+                "path": "badges.overdue",
+                "label": "Overdue"
+              },
+              {
+                "uid": "invoiceStatus",
+                "kind": "display",
+                "type": "badge",
+                "props": {
+                  "text": "Paid",
+                  "level": "success",
+                  "text.badgeOverdue": "Payment overdue",
+                  "level.badgeOverdue": "error"
+                }
+              },
+              {
+                "uid": "customerBadge",
+                "include": {
+                  "when": "!!$form.badges?.customer"
+                },
+                "kind": "display",
+                "type": "badge",
+                "props": {
+                  "text": "{{ $form.badges?.customer }} is active",
+                  "level": "info"
+                }
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "badges.customer",
+                    "label": "Customer"
+                  },
+                  {
+                    "kind": "display",
+                    "type": "badge",
+                    "props": {
+                      "text": "Active",
+                      "level": "success"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uid": "tabProgress",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "display",
+                "type": "progress",
+                "props": {
+                  "label": "Profile",
+                  "value": 40,
+                  "showValue": true
+                }
+              },
+              {
+                "kind": "display",
+                "type": "progress",
+                "props": {
+                  "label": "Uploading"
+                }
+              },
+              {
+                "kind": "display",
+                "type": "progress",
+                "props": {
+                  "label": "Steps done",
+                  "value": 3,
+                  "max": 5,
+                  "showValue": true
+                }
+              },
+              {
+                "kind": "input",
+                "type": "toggle",
+                "path": "progresses.halfway",
+                "label": "Halfway through checkout"
+              },
+              {
+                "uid": "checkoutProgress",
+                "kind": "display",
+                "type": "progress",
+                "props": {
+                  "label": "Checkout",
+                  "value": 25,
+                  "value.progressHalfway": 50,
+                  "showValue": true
+                }
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "progresses.name",
+                    "label": "Name"
+                  },
+                  {
+                    "kind": "display",
+                    "type": "progress",
+                    "props": {
+                      "label": "Saved",
+                      "value": 80,
+                      "showValue": true
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uid": "tabSpinner",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "toggle",
+                "path": "spinners.loading",
+                "label": "Load the results"
+              },
+              {
+                "uid": "resultsSpinner",
+                "include": {
+                  "in": [
+                    "spinnerLoading"
+                  ]
+                },
+                "kind": "display",
+                "type": "spinner",
+                "props": {
+                  "label": "Loading results"
+                }
+              },
+              {
+                "kind": "display",
+                "type": "spinner"
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "spinners.query",
+                    "label": "Search"
+                  },
+                  {
+                    "kind": "display",
+                    "type": "spinner",
+                    "props": {
+                      "label": "Searching"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uid": "tabTypography",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "display",
+                "type": "typography",
+                "props": {
+                  "text": "Heading 1",
+                  "variant": "h1"
+                }
+              },
+              {
+                "kind": "display",
+                "type": "typography",
+                "props": {
+                  "text": "Heading 2",
+                  "variant": "h2"
+                }
+              },
+              {
+                "kind": "display",
+                "type": "typography",
+                "props": {
+                  "text": "Heading 3",
+                  "variant": "h3"
+                }
+              },
+              {
+                "kind": "display",
+                "type": "typography",
+                "props": {
+                  "text": "Heading 4",
+                  "variant": "h4"
+                }
+              },
+              {
+                "kind": "display",
+                "type": "typography",
+                "props": {
+                  "text": "Heading 5",
+                  "variant": "h5"
+                }
+              },
+              {
+                "kind": "display",
+                "type": "typography",
+                "props": {
+                  "text": "Heading 6",
+                  "variant": "h6"
+                }
+              },
+              {
+                "kind": "display",
+                "type": "typography",
+                "props": {
+                  "text": "Body text. A line break in the text\nis a line break on screen."
+                }
+              },
+              {
+                "kind": "display",
+                "type": "typography",
+                "props": {
+                  "text": "Prices include taxes. Last updated today.",
+                  "variant": "small"
+                }
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "typography.name",
+                    "label": "Name"
+                  },
+                  {
+                    "uid": "greeting",
+                    "kind": "display",
+                    "type": "typography",
+                    "props": {
+                      "text": "Hello, {{ $form.typography?.name || \"guest\" }}",
+                      "variant": "h3"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uid": "tabImage",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "uid": "ownImage",
+                "kind": "display",
+                "type": "image",
+                "props": {
+                  "src": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22200%22%20viewBox%3D%220%200%20300%20200%22%20preserveAspectRatio%3D%22none%22%3E%3Crect%20width%3D%22300%22%20height%3D%22200%22%20fill%3D%22%239fd3f5%22%2F%3E%3Ccircle%20cx%3D%22150%22%20cy%3D%2280%22%20r%3D%2228%22%20fill%3D%22%23ffd54a%22%2F%3E%3Cpath%20d%3D%22M0%20140%20L65%2090%20L118%20135%20L175%2075%20L250%20140%20L300%20105%20L300%20200%20L0%20200%20Z%22%20fill%3D%22%234f7d5c%22%2F%3E%3C%2Fsvg%3E",
+                  "alt": "Green hills under a sun",
+                  "caption": "Its own proportions, 3:2"
+                }
+              },
+              {
+                "kind": "display",
+                "type": "image",
+                "props": {
+                  "src": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22200%22%20viewBox%3D%220%200%20300%20200%22%20preserveAspectRatio%3D%22none%22%3E%3Crect%20width%3D%22300%22%20height%3D%22200%22%20fill%3D%22%239fd3f5%22%2F%3E%3Ccircle%20cx%3D%22150%22%20cy%3D%2280%22%20r%3D%2228%22%20fill%3D%22%23ffd54a%22%2F%3E%3Cpath%20d%3D%22M0%20140%20L65%2090%20L118%20135%20L175%2075%20L250%20140%20L300%20105%20L300%20200%20L0%20200%20Z%22%20fill%3D%22%234f7d5c%22%2F%3E%3C%2Fsvg%3E",
+                  "alt": "Green hills under a sun",
+                  "ratio": "16/9",
+                  "caption": "16:9, cover"
+                }
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "display",
+                    "type": "image",
+                    "props": {
+                      "src": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22200%22%20viewBox%3D%220%200%20300%20200%22%20preserveAspectRatio%3D%22none%22%3E%3Crect%20width%3D%22300%22%20height%3D%22200%22%20fill%3D%22%239fd3f5%22%2F%3E%3Ccircle%20cx%3D%22150%22%20cy%3D%2280%22%20r%3D%2228%22%20fill%3D%22%23ffd54a%22%2F%3E%3Cpath%20d%3D%22M0%20140%20L65%2090%20L118%20135%20L175%2075%20L250%20140%20L300%20105%20L300%20200%20L0%20200%20Z%22%20fill%3D%22%234f7d5c%22%2F%3E%3C%2Fsvg%3E",
+                      "alt": "Green hills under a sun",
+                      "ratio": "1/1",
+                      "fit": "contain",
+                      "caption": "1:1, contain"
+                    }
+                  },
+                  {
+                    "kind": "display",
+                    "type": "image",
+                    "props": {
+                      "src": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22200%22%20viewBox%3D%220%200%20300%20200%22%20preserveAspectRatio%3D%22none%22%3E%3Crect%20width%3D%22300%22%20height%3D%22200%22%20fill%3D%22%239fd3f5%22%2F%3E%3Ccircle%20cx%3D%22150%22%20cy%3D%2280%22%20r%3D%2228%22%20fill%3D%22%23ffd54a%22%2F%3E%3Cpath%20d%3D%22M0%20140%20L65%2090%20L118%20135%20L175%2075%20L250%20140%20L300%20105%20L300%20200%20L0%20200%20Z%22%20fill%3D%22%234f7d5c%22%2F%3E%3C%2Fsvg%3E",
+                      "alt": "Green hills under a sun",
+                      "ratio": "1/1",
+                      "fit": "fill",
+                      "caption": "1:1, fill"
+                    }
+                  },
+                  {
+                    "kind": "display",
+                    "type": "image",
+                    "props": {
+                      "src": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22200%22%20viewBox%3D%220%200%20300%20200%22%20preserveAspectRatio%3D%22none%22%3E%3Crect%20width%3D%22300%22%20height%3D%22200%22%20fill%3D%22%239fd3f5%22%2F%3E%3Ccircle%20cx%3D%22150%22%20cy%3D%2280%22%20r%3D%2228%22%20fill%3D%22%23ffd54a%22%2F%3E%3Cpath%20d%3D%22M0%20140%20L65%2090%20L118%20135%20L175%2075%20L250%20140%20L300%20105%20L300%20200%20L0%20200%20Z%22%20fill%3D%22%234f7d5c%22%2F%3E%3C%2Fsvg%3E",
+                      "alt": "",
+                      "ratio": "1/1",
+                      "caption": "Decorative, 1:1"
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "images.caption",
+                    "label": "Caption"
+                  },
+                  {
+                    "kind": "display",
+                    "type": "image",
+                    "props": {
+                      "src": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%22200%22%20viewBox%3D%220%200%20300%20200%22%20preserveAspectRatio%3D%22none%22%3E%3Crect%20width%3D%22300%22%20height%3D%22200%22%20fill%3D%22%239fd3f5%22%2F%3E%3Ccircle%20cx%3D%22150%22%20cy%3D%2280%22%20r%3D%2228%22%20fill%3D%22%23ffd54a%22%2F%3E%3Cpath%20d%3D%22M0%20140%20L65%2090%20L118%20135%20L175%2075%20L250%20140%20L300%20105%20L300%20200%20L0%20200%20Z%22%20fill%3D%22%234f7d5c%22%2F%3E%3C%2Fsvg%3E",
+                      "alt": "Green hills under a sun",
+                      "ratio": "4/3",
+                      "caption": "{{ $form.images?.caption || \"Type a caption\" }}"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uid": "tabTable",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "uid": "ordersTable",
+                "kind": "display",
+                "type": "table",
+                "props": {
+                  "caption": "Open orders",
+                  "columns": [
+                    {
+                      "key": "id",
+                      "label": "Order"
+                    },
+                    {
+                      "key": "customer",
+                      "label": "Customer"
+                    },
+                    {
+                      "key": "date",
+                      "label": "Date",
+                      "type": "date"
+                    },
+                    {
+                      "key": "items",
+                      "label": "Items",
+                      "type": "number",
+                      "align": "center"
+                    },
+                    {
+                      "key": "total",
+                      "label": "Total",
+                      "type": "number"
+                    }
+                  ],
+                  "rows": [
+                    {
+                      "id": "A-1042",
+                      "customer": "Ada Lovelace",
+                      "date": "2026-11-20",
+                      "items": 3,
+                      "total": 1280.5
+                    },
+                    {
+                      "id": "A-1043",
+                      "customer": "Grace Hopper",
+                      "date": "2026-11-22",
+                      "items": 1,
+                      "total": 310
+                    },
+                    {
+                      "id": "A-1044",
+                      "customer": "Katherine Johnson",
+                      "date": "2026-11-23",
+                      "items": 12,
+                      "total": 4096.75
+                    }
+                  ],
+                  "emptyMessage": "No open orders"
+                }
+              },
+              {
+                "kind": "input",
+                "type": "toggle",
+                "path": "tables.closed",
+                "label": "Show closed orders"
+              },
+              {
+                "uid": "closedTable",
+                "kind": "display",
+                "type": "table",
+                "props": {
+                  "caption": "Orders",
+                  "columns": [
+                    {
+                      "key": "id",
+                      "label": "Order"
+                    },
+                    {
+                      "key": "customer",
+                      "label": "Customer"
+                    },
+                    {
+                      "key": "date",
+                      "label": "Date",
+                      "type": "date"
+                    },
+                    {
+                      "key": "items",
+                      "label": "Items",
+                      "type": "number",
+                      "align": "center"
+                    },
+                    {
+                      "key": "total",
+                      "label": "Total",
+                      "type": "number"
+                    }
+                  ],
+                  "rows": [],
+                  "rows.tableShowClosed": [
+                    {
+                      "id": "A-1043",
+                      "customer": "Grace Hopper",
+                      "date": "2026-11-22",
+                      "items": 1,
+                      "total": 310
+                    }
+                  ],
+                  "emptyMessage": "Turn on \"Show closed orders\" to list them"
+                }
+              },
+              {
+                "kind": "display",
+                "type": "table",
+                "props": {
+                  "caption": "Shipments this week",
+                  "columns": [
+                    {
+                      "key": "id",
+                      "label": "Order"
+                    },
+                    {
+                      "key": "customer",
+                      "label": "Customer"
+                    },
+                    {
+                      "key": "date",
+                      "label": "Date",
+                      "type": "date"
+                    },
+                    {
+                      "key": "items",
+                      "label": "Items",
+                      "type": "number",
+                      "align": "center"
+                    },
+                    {
+                      "key": "total",
+                      "label": "Total",
+                      "type": "number"
+                    },
+                    {
+                      "key": "carrier",
+                      "label": "Carrier"
+                    },
+                    {
+                      "key": "from",
+                      "label": "From"
+                    },
+                    {
+                      "key": "to",
+                      "label": "To"
+                    },
+                    {
+                      "key": "status",
+                      "label": "Status"
+                    }
+                  ],
+                  "rows": [
+                    {
+                      "id": "A-1042",
+                      "customer": "Ada Lovelace",
+                      "date": "2026-11-20",
+                      "items": 3,
+                      "total": 1280.5,
+                      "carrier": "Northwind Freight",
+                      "from": "Rotterdam",
+                      "to": "Barcelona",
+                      "status": "In transit"
+                    },
+                    {
+                      "id": "A-1043",
+                      "customer": "Grace Hopper",
+                      "date": "2026-11-22",
+                      "items": 1,
+                      "total": 310,
+                      "carrier": "Blue Harbor Lines",
+                      "from": "Hamburg",
+                      "to": "Valencia",
+                      "status": "Delivered"
+                    },
+                    {
+                      "id": "A-1044",
+                      "customer": "Katherine Johnson",
+                      "date": "2026-11-23",
+                      "items": 12,
+                      "total": 4096.75,
+                      "carrier": "Contoso Cargo",
+                      "from": "Antwerp",
+                      "to": "Bilbao",
+                      "status": "Held at customs"
+                    }
+                  ]
+                }
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "tables.note",
+                    "label": "Note"
+                  },
+                  {
+                    "kind": "display",
+                    "type": "table",
+                    "props": {
+                      "caption": "Totals",
+                      "columns": [
+                        {
+                          "key": "label",
+                          "label": "Item"
+                        },
+                        {
+                          "key": "value",
+                          "label": "Amount",
+                          "type": "number"
+                        }
+                      ],
+                      "rows": [
+                        {
+                          "label": "Subtotal",
+                          "value": 5687.25
+                        },
+                        {
+                          "label": "Tax",
+                          "value": 1194.32
+                        }
+                      ]
+                    }
+                  }
+                ]
               }
             ]
           },

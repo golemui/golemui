@@ -75,5 +75,11 @@ export const widgetLoaders: WidgetLoaders<React.ComponentType<WithWidget>, Golem
 
   // DISPLAY
   alert: async () => (await import('./components/Alert')).Alert,
+  badge: async () => (await import('./components/Badge')).Badge,
+  image: async () => (await import('./components/Image')).Image,
+  progress: async () => (await import('./components/Progress')).Progress,
+  spinner: async () => (await import('./components/Spinner')).Spinner,
+  table: async () => (await import('./components/Table')).Table,
+  typography: async () => (await import('./components/Typography')).Typography,
   markdownText: async () => (await import('./components/MarkdownText')).MarkdownText,
 };

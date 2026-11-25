@@ -97,6 +97,51 @@
       "interpolationWarnings": []
     }
   },
+  "badge": {
+    "input": {
+      "form": [
+        {
+          "kind": "display",
+          "type": "badge",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `path` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "path"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `label` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "label"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
   "button": {
     "input": {
       "form": [
@@ -764,6 +809,51 @@
             "missingProperty": "children"
           }
         },
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `path` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "path"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `label` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "label"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "image": {
+    "input": {
+      "form": [
+        {
+          "kind": "display",
+          "type": "image",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
         {
           "path": "/form/0/props",
           "message": "Expected type object at `/form/0/props`, got \"not an object\"",
@@ -1748,6 +1838,51 @@
       "interpolationWarnings": []
     }
   },
+  "progress": {
+    "input": {
+      "form": [
+        {
+          "kind": "display",
+          "type": "progress",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `path` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "path"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `label` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "label"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
   "radiogroup": {
     "input": {
       "form": [
@@ -2490,6 +2625,96 @@
       "interpolationWarnings": []
     }
   },
+  "spinner": {
+    "input": {
+      "form": [
+        {
+          "kind": "display",
+          "type": "spinner",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `path` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "path"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `label` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "label"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "table": {
+    "input": {
+      "form": [
+        {
+          "kind": "display",
+          "type": "table",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `path` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "path"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `label` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "label"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
   "tabs": {
     "input": {
       "form": [
@@ -2853,6 +3078,51 @@
           "keyword": "type",
           "params": {
             "type": "object"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "typography": {
+    "input": {
+      "form": [
+        {
+          "kind": "display",
+          "type": "typography",
+          "path": "field",
+          "label": 5,
+          "props": "not an object"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0/props",
+          "message": "Expected type object at `/form/0/props`, got \"not an object\"",
+          "keyword": "type",
+          "params": {
+            "type": "object"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `path` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "path"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `label` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "label"
           }
         }
       ],

@@ -263,6 +263,11 @@
       "import": "./lib/components/spinner.js",
       "require": "./lib/components/spinner.umd.cjs"
     },
+    "./table": {
+      "types": "./lib/components/table.d.ts",
+      "import": "./lib/components/table.js",
+      "require": "./lib/components/table.umd.cjs"
+    },
     "./multi-range-calendar": {
       "types": "./lib/components/multi-range-calendar.d.ts",
       "import": "./lib/components/multi-range-calendar.js",
