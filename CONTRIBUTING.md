@@ -165,6 +165,17 @@ npm run test:ssr-parity-components # Components: the components-ssr-* apps
 
 Both build the apps first. Pass `--skip-build` to check the last build again.
 
+### React 18 checks
+
+The React packages accept React 18 and 19. The workspace installs React 19, and the packages
+`react18` and `react18-dom` hold React 18. With `REACT18=1` the tests run on React 18. CI runs
+both commands.
+
+```bash
+REACT18=1 npx nx run react:vite:test
+REACT18=1 npx nx run gui-react:component-test
+```
+
 ### Running Cypress Tests
 
 Run Cypress tests when you have finished your work. To run them:
