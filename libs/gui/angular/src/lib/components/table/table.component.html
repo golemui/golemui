@@ -1,5 +1,5 @@
 @let templateData = adapter.templateData();
-@let columns = templateData.columns ?? [];
+@let columns = templateData.columns;
 
 <gui-table [attr.defer-hydration]="deferHydration" [id]="adapter.domId">
   <table>
@@ -16,7 +16,7 @@
       </tr>
     </thead>
     <tbody>
-      @for (row of templateData.rows ?? []; track $index) {
+      @for (row of templateData.rows; track $index) {
         <tr>
           @for (column of columns; track column.key) {
             <td [class]="tableCellClass(column) ?? ''">
