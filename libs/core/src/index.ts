@@ -71,9 +71,4 @@ export {
 } from './lib/store/view-model';
 export type { WidgetViewModel } from './lib/store/view-model';
 
-export { filterTap } from './lib/utils/array';
-export { assertNoPropCollisions } from './lib/utils/assert-no-prop-collisions';
 export { enableDevMode } from './lib/utils/dev-mode';
-export { cloneObject } from './lib/utils/object';
-export { shortUUID } from './lib/utils/random';
-export { makeRepeaterItemConfig } from './lib/utils/repeater';
