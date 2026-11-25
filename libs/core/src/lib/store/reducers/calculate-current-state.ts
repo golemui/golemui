@@ -1,73 +1,73 @@
+import { type CompiledExpression, type ExpressionScope } from '../../compile/compiled-form';
 import { errorCodes } from '../../errors';
 import { type ExpressionFunctions } from '../../shared';
-import { calculateValidationVariables, type ValidationVariables } from '../../utils/form';
-import { type ExpressionPolicy } from '../../utils/check-expression';
-import { ExpressionRejectedError, expressionIsTrue } from '../../utils/justin';
-import { type FormHealth, type State } from '../model';
+import { Debug } from '../../utils/debug';
+import { type ValidationVariables } from '../../utils/form';
+import { ExpressionRejectedError } from '../../utils/justin';
+import { type State } from '../model';
 
 /**
- * Evaluates the declared state expressions and writes the active state names to `currentStates`.
+ * Evaluates the expressions of the declared states and writes the names of the active states to
+ * `currentStates`, in the order of the declaration.
  *
- * @param validationVariables - Pass them when already computed for this pass, otherwise they are computed here.
+ * A state is active only when its expression gives exactly `true`. An expression that throws
+ * gives an inactive state. An expression that the expression check rejects gives an errored
+ * form health, with the code of the rejection.
+ *
+ * @param functions - The functions of the host, which an expression calls as `$fn.<name>(...)`.
+ * @returns A function from a state and the validation variables of this pass to the state with
+ *   the active states. A form without states gets the same state object back.
  */
 export const calculateCurrentState =
-  (functions: ExpressionFunctions, expressionPolicy: ExpressionPolicy = 'warn') =>
-  (state: State, validationVariables?: ValidationVariables): State => {
-    let stateExpressions = state.formDef.states;
-    if (!stateExpressions || Object.keys(stateExpressions).length === 0) {
+  (functions: ExpressionFunctions) =>
+  (state: State, { $formIsInvalid, $errors }: ValidationVariables): State => {
+    const compiledStates = state.compiled.states;
+    if (compiledStates.length === 0) {
       return state;
     }
 
-    if (state.formHealth.status === 'errored') {
-      return state;
-    }
-
-    const { $formIsInvalid, $errors } = validationVariables ?? calculateValidationVariables(state);
-
-    stateExpressions = expandStateExpressions(stateExpressions);
-
-    let currentStates: string[] = [];
-    let formHealth: FormHealth = { status: 'ok' };
+    const scope: ExpressionScope = {
+      $form: state.data,
+      $meta: state.meta,
+      $errors,
+      $formIsInvalid,
+      $log: Debug.log,
+      $fn: functions,
+    };
     try {
-      currentStates = Object.keys(stateExpressions)
-        .map((stateName) => {
-          const expression = stateExpressions[stateName];
-          let result: boolean;
-          try {
-            result = expressionIsTrue(
-              expression,
-              state.data,
-              state.meta,
-              $errors,
-              $formIsInvalid,
-              { $fn: functions },
-              expressionPolicy,
-            );
-          } catch (err) {
-            // A rejected expression is an error in the form definition, not a state that is false.
-            if (err instanceof ExpressionRejectedError) {
-              throw err;
-            }
-            result = false;
-          }
-          return result === true ? stateName : undefined;
-        })
-        .filter((stateName) => stateName !== undefined);
+      const currentStates = compiledStates
+        .filter((compiledState) => isTrue(compiledState.condition, scope))
+        .map((compiledState) => compiledState.name);
+      return { ...state, currentStates };
     } catch (err) {
       const error = err as Error;
       const code =
         error instanceof ExpressionRejectedError
           ? error.code
           : errorCodes.calculateCurrentStateError;
-      formHealth = {
-        status: 'errored',
-        message: `[${code}] ${error.message}`,
-        code,
+      return {
+        ...state,
+        currentStates: [],
+        formHealth: {
+          status: 'errored',
+          message: `[${code}] ${error.message}`,
+          code,
+        },
       };
     }
-
-    return { ...state, currentStates, formHealth };
   };
+
+function isTrue(condition: CompiledExpression, scope: ExpressionScope): boolean {
+  try {
+    return condition.evaluate(scope) === true;
+  } catch (error) {
+    // A rejected expression is an error in the form definition, not a state that is false.
+    if (error instanceof ExpressionRejectedError) {
+      throw error;
+    }
+    return false;
+  }
+}
 
 /**
  * Expands state expressions by combining inherited conditions with logical AND operators.

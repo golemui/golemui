@@ -81,10 +81,12 @@ export interface FormInitConfig<ComponentType = unknown> {
   /**
    * How the form treats an expression that the expression check rejects. Defaults to `'warn'`.
    *
-   * An expression that can run code or write into the form data or `$meta` always fails, with
-   * an errored `formHealth`. With `'warn'`, any other issue (a method outside the allowed list, an
-   * expression over the size limits) prints one warning in dev mode and the expression runs.
-   * With `'strict'`, those issues fail too.
+   * An expression that can run code or write into the form data or `$meta` always fails when the
+   * form evaluates it, with an errored `formHealth`. The form does not evaluate the texts of a
+   * hidden widget, or the conditions of a widget below a hidden widget, until that widget is
+   * shown. With `'warn'`, any other issue (a method outside the allowed list, an expression over
+   * the size limits) prints one warning in dev mode and the expression runs. With `'strict'`,
+   * those issues fail too.
    */
   expressionPolicy?: ExpressionPolicy;
   middlewares?: Middleware<State, Action>[];

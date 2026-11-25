@@ -1,12 +1,18 @@
 import { formatIssuePath } from 'ts.data.json';
 import { compileForm } from '../../compile/compile-form';
-import { type CompiledForm } from '../../compile/compiled-form';
+import {
+  type CompiledExpression,
+  type CompiledForm,
+  type CompiledWidget,
+  forEachCompiledWidget,
+} from '../../compile/compiled-form';
 import { errorCodes, errorMessage } from '../../errors';
 import { type Form, formDefDecoder } from '../../form';
 import { type FormWidget, isInputWidget, isLayoutWidget } from '../../form-widget';
 import { buildWidgetInstances } from '../../instances/build-instances';
 import { recordsOfInstances } from '../../instances/instance-records';
 import { type ExpressionPolicy } from '../../utils/check-expression';
+import { isDevMode } from '../../utils/dev-mode';
 import { flattenForm } from '../../utils/form';
 import type { INITIALIZE } from '../actions';
 import { createInitialState, type FormHealth, type State } from '../model';
@@ -83,8 +89,6 @@ export const initialize = (
       flatForm = {};
     }
 
-    warnUndeclaredStateReferences(flatForm, result.value.states);
-
     const decodedFormDef = result.value as Form;
     let compiled: CompiledForm;
     try {
@@ -105,6 +109,8 @@ export const initialize = (
       // when the host clears the error.
       compiled = { ...compiled, root: undefined };
     }
+    warnUndeclaredStateReferences(compiled.root, decodedFormDef.states);
+    warnAboutExpressions(compiled);
 
     // No data yet, so no repeater has a row. The first derive builds the rows.
     const instances = buildWidgetInstances(compiled.root, {}, initialState.instances);
@@ -223,26 +229,29 @@ function uidCollisionError(
 
 /** console.error when an `include.in` / `exclude.from` names an undeclared state. */
 function warnUndeclaredStateReferences(
-  flatForm: State['flatForm'],
+  root: CompiledWidget | undefined,
   declaredStates: Form['states'],
 ): void {
   const declared = new Set(Object.keys(declaredStates ?? {}));
   const offenders = new Map<string, string[]>(); // state name -> widget uids that reference it
-  for (const widget of Object.values(flatForm)) {
+  forEachCompiledWidget(root, (widget) => {
+    const { include, exclude } = widget.conditions;
     const refs: string[] = [];
-    const include = (widget as { include?: { in?: unknown } }).include;
-    if (include && Array.isArray(include.in)) refs.push(...(include.in as string[]));
-    const exclude = (widget as { exclude?: { from?: unknown } }).exclude;
-    if (exclude && Array.isArray(exclude.from)) refs.push(...(exclude.from as string[]));
+    if (include !== undefined && 'in' in include) {
+      refs.push(...include.in);
+    }
+    if (exclude !== undefined && 'from' in exclude) {
+      refs.push(...exclude.from);
+    }
     for (const name of refs) {
       if (declared.has(name)) {
         continue;
       }
       const uids = offenders.get(name) ?? [];
-      uids.push((widget.uid as string) || '(unknown)');
+      uids.push(widget.source.uid || '(unknown)');
       offenders.set(name, uids);
     }
-  }
+  });
   if (offenders.size === 0) {
     return;
   }
@@ -253,5 +262,41 @@ function warnUndeclaredStateReferences(
         `these widgets will stay hidden. Declared states: ${available}. ` +
         `Fix: declare "${name}" in the "states" of the form definition, or correct the name.`,
     );
+  }
+}
+
+/**
+ * In dev mode, prints the warning of each state expression and of each condition that has one.
+ * A text that the form uses in several places gives one warning.
+ */
+function warnAboutExpressions(compiled: CompiledForm): void {
+  if (!isDevMode()) {
+    return;
+  }
+  const warnings = new Set<string>();
+  const collect = (expression: CompiledExpression | undefined): void => {
+    if (expression?.warning !== undefined) {
+      warnings.add(expression.warning);
+    }
+  };
+  for (const state of compiled.states) {
+    collect(state.condition);
+  }
+  forEachCompiledWidget(compiled.root, ({ conditions }) => {
+    collect(
+      conditions.include !== undefined && 'when' in conditions.include
+        ? conditions.include.when
+        : undefined,
+    );
+    collect(
+      conditions.exclude !== undefined && 'when' in conditions.exclude
+        ? conditions.exclude.when
+        : undefined,
+    );
+    collect(conditions.disabled);
+    collect(conditions.readonly);
+  });
+  for (const warning of warnings) {
+    console.warn(warning);
   }
 }
