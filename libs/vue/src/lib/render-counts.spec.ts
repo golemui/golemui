@@ -174,7 +174,7 @@ describe('render counts', () => {
     expect(rendersSinceStart()).toEqual({ c: 1 });
   });
 
-  it('renders the repeater, every row layout and only the changed input when one row changes', async () => {
+  it('renders only the repeater and the changed input when one row changes', async () => {
     await mountForm({
       formDef: rootLayout([usersRepeater]),
       widgetLoaders: stubWidgetLoaders,
@@ -186,15 +186,8 @@ describe('render counts', () => {
 
     await typeInto('name[1]', 'Grace Ho');
 
-    // The repeater gives every row layout a new widget object, but the inputs of the other rows
-    // keep theirs.
-    expect(rendersSinceStart()).toEqual({
-      users: 1,
-      'userRow[0]': 1,
-      'userRow[1]': 1,
-      'name[1]': 1,
-      'userRow[2]': 1,
-    });
+    // The repeater gives every row layout the same widget object, so Vue skips the layouts.
+    expect(rendersSinceStart()).toEqual({ users: 1, 'name[1]': 1 });
   });
 
   it('renders every widget once when the language changes', async () => {

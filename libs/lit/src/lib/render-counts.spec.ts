@@ -176,7 +176,7 @@ describe('render counts', () => {
 
     await typeInto('name[1]', 'Grace Ho');
 
-    // A row layout keeps its templateData, and a new widget object alone does not render it.
+    // A row layout keeps its widget object and its templateData, so it does not render again.
     expect(rendersSinceStart()).toEqual({ users: 1, 'name[1]': 1 });
   });
 

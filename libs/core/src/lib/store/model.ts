@@ -1,6 +1,7 @@
 import { type CompiledForm, emptyCompiledForm } from '../compile/compiled-form';
 import { type Form, formDefDecoder } from '../form';
 import type { FormWidget } from '../form-widget';
+import { emptyWidgetInstanceTree, type WidgetInstanceTree } from '../instances/widget-instance';
 import { type DotPath, type Uid, type ValidationStatus } from '../shared';
 
 // ------------------------------
@@ -28,6 +29,15 @@ export type State = {
   compiled: CompiledForm;
 
   /**
+   * One instance for each widget that exists for the current data: the widgets outside a
+   * repeater, and the widgets of each repeater row. `INITIALIZE` builds it with no row, and each
+   * derive that succeeds builds it again for its data. One exception: when an input with no
+   * default value has a path into an array, such as `users.0.name`, the `undefined` written there
+   * can add an entry to the array. The row of that entry gets its instances in the next derive.
+   */
+  instances: WidgetInstanceTree;
+
+  /**
    * Flattened representation of `formDef` as a map from UID to widget definition.
    * Enables more efficient lookup and processing in downstream operations.
    */
@@ -37,7 +47,7 @@ export type State = {
    * `flatForm` plus one entry per repeater row widget, keyed by concrete uid.
    * Row entries carry the row indexes in `uid` and (for inputs) `path`, and include the row layout node
    * and nested repeater containers. `when` expressions are not rewritten.
-   * Pure function of `(flatForm, data)`, built by `expandSources` on every reducer pipeline run.
+   * Written from `instances` when a derive changes them.
    * Read by the derive passes, the view model, `dropRemovedWidgetEntries`, `overrideWidgetProp`
    * and `pruneHiddenData`.
    *
@@ -100,7 +110,7 @@ export type State = {
    * Maps every widget produced by a repeater item (by its concrete uid) to the repeater item that owns it.
    * Used to bind the `$item` and `$index` expression scope variables.
    * For nested repeaters the entry points to the innermost enclosing item.
-   * Built by `expandSources` together with `resolvedSources`.
+   * Written from `instances` together with `resolvedSources`.
    *
    * @example { 'quantity-number[0]': { itemPath: 'lineItems.0', index: 0 } }
    * @example Nested repeater, keyed by the innermost item: { 'dev-name[2][0]': { itemPath: 'teams.2.devs.0', index: 0 } }
@@ -110,7 +120,7 @@ export type State = {
   /**
    * Maps every widget produced by a repeater item (by its concrete uid) to the rows that own it,
    * outermost first. The flags stage uses it to rewrite `items` tokens in `when` expressions.
-   * Built by `expandSources` together with `resolvedSources`.
+   * Written from `instances` together with `resolvedSources`.
    *
    * @example Nested repeater: { 'dev-name[2][0]': [
    *   { declaredItemPath: 'teams.items', itemPath: 'teams.2', index: 2 },
@@ -172,6 +182,7 @@ export const createInitialState = (lang: string): State => ({
     },
   }) as Form,
   compiled: emptyCompiledForm(),
+  instances: emptyWidgetInstanceTree(),
   flatForm: {},
   resolvedSources: {},
   currentStates: [],

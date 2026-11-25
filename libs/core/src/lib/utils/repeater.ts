@@ -5,9 +5,7 @@ import {
   type LayoutWidget,
 } from '../form-widget';
 import { type DotPath, type FormEventRow, type Uid } from '../shared';
-import { type RepeaterItemScope, type RepeaterRow, type State } from '../store/model';
-import { flattenForm } from './form';
-import { get } from './object';
+import { type RepeaterRow, type State } from '../store/model';
 
 /**
  * A repeater input widget as the core reads it: an input with a layout template under `props.template`.
@@ -52,112 +50,12 @@ export function getFormEventRow(state: State, uid: Uid): FormEventRow | undefine
 export const ITEMS_TOKEN = 'items';
 
 /**
- * The three maps `expandSources` builds from the form and the data.
- */
-export type ExpandedSources = {
-  resolvedSources: Record<Uid, FormWidget<string>>;
-  repeaterItemScopes: Record<Uid, RepeaterItemScope>;
-  repeaterRows: Record<Uid, RepeaterRow[]>;
-};
-
-/**
- * Walks the flat form and the current data and returns every widget that exists for that data.
- *
- * `resolvedSources` holds the `flatForm` widgets by reference plus, for every repeater row, one entry
- * per template widget (the row layout node included) with the row indexes written into `uid` and `path`.
- * Nested repeater containers are entries too and are recursed with their concrete path. `when`
- * expressions are not rewritten here.
- *
- * `repeaterItemScopes` maps every row widget uid to the innermost item that owns it, and
- * `repeaterRows` to every row that owns it, outermost first.
- *
- * @param flatForm - The flattened form definition keyed by uid.
- * @param data - The current form data the repeater arrays are read from.
- * @returns The maps, rebuilt from scratch.
- *
- * @example
- * const { resolvedSources, repeaterItemScopes } = expandSources(flatForm, { users: [{}, {}] });
- * resolvedSources['name[1]'].path;      // 'users.1.name'
- * repeaterItemScopes['name[1]'];        // { itemPath: 'users.1', index: 1 }
- */
-export function expandSources(
-  flatForm: State['flatForm'],
-  data: Record<string, any>,
-): ExpandedSources {
-  const expanded: ExpandedSources = {
-    resolvedSources: {},
-    repeaterItemScopes: {},
-    repeaterRows: {},
-  };
-  for (const widget of Object.values(flatForm)) {
-    expanded.resolvedSources[widget.uid as Uid] = widget;
-    if (isRepeaterWidget(widget)) {
-      expandRepeaterRows(widget, widget.path, [], data, expanded);
-    }
-  }
-  return expanded;
-}
-
-/**
- * @param repeater - The repeater with a concrete `path`.
- * @param declaredPath - The same repeater's `path` as the template declares it.
- * @param outerRows - The rows of the enclosing repeaters, outermost first.
- */
-function expandRepeaterRows(
-  repeater: RepeaterTemplateWidget,
-  declaredPath: DotPath,
-  outerRows: RepeaterRow[],
-  data: Record<string, any>,
-  expanded: ExpandedSources,
-): void {
-  const rowValues = get(data, repeater.path);
-  if (!Array.isArray(rowValues)) {
-    return;
-  }
-  const templateWidgets = flattenForm([repeater.props.template as FormWidget<never>]);
-
-  rowValues.forEach((_rowValue, rowIndex) => {
-    const itemPath = `${repeater.path}.${rowIndex}`;
-    const rows: RepeaterRow[] = [
-      ...outerRows,
-      { declaredItemPath: `${declaredPath}.${ITEMS_TOKEN}`, itemPath, index: rowIndex },
-    ];
-    const itemScope: RepeaterItemScope = { itemPath, index: rowIndex };
-
-    for (const templateWidget of templateWidgets) {
-      const item = materializeRowWidget(templateWidget, rows);
-      expanded.resolvedSources[item.uid as Uid] = item;
-      expanded.repeaterItemScopes[item.uid as Uid] = itemScope;
-      expanded.repeaterRows[item.uid as Uid] = rows;
-
-      // A nested repeater: the item has the concrete path, the template widget the declared one.
-      if (isRepeaterWidget(templateWidget) && isRepeaterWidget(item)) {
-        expandRepeaterRows(item, templateWidget.path, rows, data, expanded);
-      }
-    }
-  });
-}
-
-/**
- * Like {@link makeRepeaterItemConfig}, but places the row by position, see {@link toRowItemPath}.
- * @param rows - The rows that own the widget, outermost first.
- */
-function materializeRowWidget(widget: FormWidget<string>, rows: RepeaterRow[]): FormWidget<string> {
-  const innermostRow = rows[rows.length - 1];
-  return materializeWidget(
-    widget,
-    rows.map((row) => row.index),
-    (path) => toRowItemPath(path, innermostRow),
-  );
-}
-
-/**
  * Derives a concrete widget config for a specific repeater item by materializing the provided indexes into the
  * widget's `uid` (and `path` for input widgets).
  *
  * Every path segment named `items`, except the first, is a row token, filled in order. With indexes
  * alone a property named `items` cannot be told apart from a token, so such a path throws.
- * `expandSources` places rows by position and has no such limit.
+ * The form itself places each row by the path of its repeater and has no such limit.
  *
  * @param widget - The base widget config defined on the repeater template.
  * @param repeaterIndexes - Ordered list of indexes for each nesting level
@@ -230,22 +128,6 @@ function toRepeaterItemPath(path: DotPath, repeaterIndexes: number[]): string {
     segments[position] = String(repeaterIndexes[level]);
   });
   return segments.join('.');
-}
-
-/**
- * Places a template path in its row by position: the prefix `row.declaredItemPath` becomes
- * `row.itemPath`. Any other `items` segment is a property name and stays.
- *
- * @example
- * // row: { declaredItemPath: 'invoice.items.items', itemPath: 'invoice.items.3', index: 3 }
- * toRowItemPath('invoice.items.items.name', row); // 'invoice.items.3.name'
- */
-function toRowItemPath(path: DotPath, row: RepeaterRow): string {
-  const rowPrefix = row.declaredItemPath;
-  if (path !== rowPrefix && !path.startsWith(`${rowPrefix}.`)) {
-    throw new Error(`Path "${path}" is not inside the repeater row "${rowPrefix}".`);
-  }
-  return `${row.itemPath}${path.slice(rowPrefix.length)}`;
 }
 
 /**
