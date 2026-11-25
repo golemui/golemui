@@ -29,6 +29,12 @@
     },
     "component-test": {
       "executor": "@nx/cypress:cypress",
+      "inputs": [
+        "default",
+        "^production",
+        { "input": "default", "projects": ["ui-testing"] },
+        { "env": "REACT18" }
+      ],
       "options": {
         "cypressConfig": "libs/gui/react/cypress.config.ts",
         "testingType": "component",

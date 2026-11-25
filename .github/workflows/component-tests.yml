@@ -98,3 +98,36 @@ jobs:
 
       - name: Run component tests
         run: npx nx run ${{ matrix.project }}:component-test --browser ${{ matrix.browser }}
+
+  # -----------------------------------------------------------------------------
+  # Job 3: Run the gui-react component tests on React 18, in Chrome.
+  #
+  # gui-react accepts React 18, and the workspace installs React 19. REACT18=1
+  # builds the specs with React 18 (libs/gui/react/vite.config.ts).
+  # -----------------------------------------------------------------------------
+  component-test-react18:
+    name: 'gui-react on React 18 (chrome)'
+    needs: determine-matrix
+    if: contains(fromJSON(needs.determine-matrix.outputs.matrix).project, 'gui-react')
+    runs-on: ubuntu-latest
+    env:
+      NX_DAEMON: false
+      NODE_OPTIONS: '--max-old-space-size=4096'
+      TZ: 'America/New_York'
+      REACT18: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          filter: tree:0
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run component tests
+        run: npx nx run gui-react:component-test --browser chrome
