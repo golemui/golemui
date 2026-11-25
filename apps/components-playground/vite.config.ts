@@ -17,6 +17,7 @@ const pages = [
   'rating',
   'slider',
   'spinner',
+  'table',
   'toast',
   'tooltip',
 ];

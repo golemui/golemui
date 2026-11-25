@@ -80,6 +80,7 @@ export { GuiRating, GuiRatingEvents } from './lib/components/rating';
 export { GuiSlider, GuiSliderEvents } from './lib/components/slider';
 export type { GuiSliderMark, GuiSliderRange, GuiSliderValuePlacement } from './lib/utils/slider';
 export { GuiSpinner } from './lib/components/spinner';
+export { GuiTable } from './lib/components/table';
 export {
   GuiMultiRangeCalendar,
   GuiMultiRangeCalendarEvents,

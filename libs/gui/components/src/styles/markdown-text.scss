@@ -173,8 +173,7 @@ gui-markdown-text {
 
   /* Tables */
   table {
-    width: 100%;
-    border-collapse: collapse;
+    @include gui-content-table;
     margin-bottom: var(--gui-space-4);
     font-size: var(--gui-font-sm);
 
@@ -185,13 +184,10 @@ gui-markdown-text {
 
   th,
   td {
-    padding: var(--gui-space-2) var(--gui-space-3);
-    border: 1px solid var(--gui-border-default);
-    text-align: start;
+    @include gui-content-table-cell;
   }
 
   th {
-    background-color: var(--gui-bg-surface-hover);
-    font-weight: 600;
+    @include gui-content-table-header;
   }
 }

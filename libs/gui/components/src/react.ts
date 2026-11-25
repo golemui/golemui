@@ -97,6 +97,7 @@ import {
 } from './lib/components/range-slider';
 import { GuiSlider as GuiSliderElement, GuiSliderEvents } from './lib/components/slider';
 import { GuiSpinner as GuiSpinnerElement } from './lib/components/spinner';
+import { GuiTable as GuiTableElement } from './lib/components/table';
 import { GuiRating as GuiRatingElement, GuiRatingEvents } from './lib/components/rating';
 import {
   GuiRangeCalendar as GuiRangeCalendarElement,
@@ -373,6 +374,7 @@ export const GuiRangeSlider = wrap('gui-range-slider', GuiRangeSliderElement, Gu
 export const GuiRating = wrap('gui-rating', GuiRatingElement, GuiRatingEvents);
 export const GuiSlider = wrap('gui-slider', GuiSliderElement, GuiSliderEvents);
 export const GuiSpinner = wrap('gui-spinner', GuiSpinnerElement);
+export const GuiTable = wrap('gui-table', GuiTableElement);
 export const GuiRangeCalendar = wrap(
   'gui-range-calendar',
   GuiRangeCalendarElement,

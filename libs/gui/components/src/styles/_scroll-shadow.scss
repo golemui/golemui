@@ -52,3 +52,23 @@
     opacity: 1;
   }
 }
+
+// The shadows as backgrounds of the scroll container itself, for one whose content the app
+// renders, where no element can hold the layers above. The shadows stay at the container's edges
+// (`scroll`), and covers in `$bg` move with the content (`local`) and hide each shadow when its
+// edge is reached. The covers and shadows are symmetric, so it works right to left too. The
+// content paints above them: a cell with its own background hides the shadow behind it.
+@mixin gui-scroll-shadow-backgrounds($bg, $size: 1rem) {
+  --_shadow: color-mix(in srgb, var(--gui-text-default) 18%, transparent);
+
+  background:
+    linear-gradient(to right, #{$bg} 30%, transparent) left center / calc(#{$size} * 2) 100%
+      no-repeat local,
+    linear-gradient(to left, #{$bg} 30%, transparent) right center / calc(#{$size} * 2) 100%
+      no-repeat local,
+    linear-gradient(to right, var(--_shadow), transparent) left center / #{$size} 100% no-repeat
+      scroll,
+    linear-gradient(to left, var(--_shadow), transparent) right center / #{$size} 100% no-repeat
+      scroll,
+    #{$bg};
+}

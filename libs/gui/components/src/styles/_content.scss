@@ -31,3 +31,22 @@ $gui-heading-sizes: (
   height: auto;
   border-radius: $radius;
 }
+
+// A data table that fills its width, with collapsed borders. Spacing and size are each user's.
+@mixin gui-content-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+// A header or body cell: padded, bordered, aligned to the start.
+@mixin gui-content-table-cell {
+  padding: var(--gui-space-2) var(--gui-space-3);
+  border: 1px solid var(--gui-border-default);
+  text-align: start;
+}
+
+// A header cell, on a tinted row.
+@mixin gui-content-table-header {
+  background-color: var(--gui-bg-surface-hover);
+  font-weight: 600;
+}

@@ -2,7 +2,7 @@
 
 [GolemUI Components](https://golemui.com/components/) are web components built with Lit: text
 fields, one-time codes, sliders, checkbox groups, ratings, pickers, lists, buttons, tabs, accordions, alerts, badges, progress
-bars, spinners, dialogs, menus, popovers, tooltips and toasts. They work in plain HTML and in any framework, with or without GolemUI Forms. Two classes, `.gui-typography` and
+bars, spinners, dialogs, menus, popovers, tooltips, toasts and the scroll region of a data table. They work in plain HTML and in any framework, with or without GolemUI Forms. Two classes, `.gui-typography` and
 `.gui-image`, style the app's own headings, text and figures to match.
 
 - **Accessible:** labels, hints and errors linked to every control, full keyboard support, and
