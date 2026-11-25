@@ -104,6 +104,14 @@ const config: FormInitConfig<Type<WithWidget>> = {
           label: 'Price',
           props: { maximum: 500, step: 10 },
         },
+        { kind: 'input', type: 'rangeDatePicker', path: 'trip', label: 'Trip' },
+        {
+          kind: 'input',
+          type: 'rangeTimePicker',
+          path: 'hours',
+          label: 'Hours',
+          props: { hourFormat: '24' },
+        },
         {
           kind: 'input',
           type: 'otp',
@@ -143,6 +151,8 @@ const config: FormInitConfig<Type<WithWidget>> = {
     budget: 1234.5,
     volume: 7,
     price: { start: 100, end: 300 },
+    trip: { start: '2026-03-02', end: '2026-03-06' },
+    hours: { start: '09:00:00', end: '17:30:00' },
     extras: ['parking'],
     stay: 8,
   },
@@ -224,6 +234,21 @@ describe('server rendering the gui widget set in plain node', () => {
       /class="gui-slider__value"[^>]*>(<!--[^>]*-->)*7(<!--[^>]*-->)*<\/output>/,
     );
     expect(markup).toMatch(/class="gui-slider__value"[^>]*>(<!--[^>]*-->)*100 – 300/);
+  });
+
+  it('renders the range date picker with both dates in its parts', () => {
+    expect(markup).toMatch(
+      /<gui-range-date-picker-input[^>]*class="[^"]*gui-range-date-picker[^"]*gui-field/,
+    );
+    expect(markup).toMatch(/data-type="day"\s+data-group="start"[^>]*value="02"/);
+    expect(markup).toMatch(/data-type="day"\s+data-group="end"[^>]*value="06"/);
+  });
+
+  it('renders the range time picker with both times in its parts', () => {
+    expect(markup).toMatch(
+      /<gui-range-time-picker-input[^>]*class="[^"]*gui-range-time-picker[^"]*gui-field/,
+    );
+    expect(markup).toMatch(/data-type="hour"\s+data-group="end"[^>]*value="17"/);
   });
 
   it('renders the checkbox group with its values checked, and the rating with its stars', () => {

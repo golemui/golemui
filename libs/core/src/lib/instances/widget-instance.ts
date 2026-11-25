@@ -2,12 +2,19 @@ import { type FormWidget } from '../form-widget';
 import { type DotPath, type Uid } from '../shared';
 
 /**
+ * What the conditions of a widget give. A flag has a key only when the widget has that
+ * condition, so a widget with only `disabled: { when }` has `{ disabled: true }` or
+ * `{ disabled: false }`. A widget below a hidden widget has `{ hidden: true }` and no other key.
+ */
+export type WidgetFlags = { hidden?: boolean; disabled?: boolean; readonly?: boolean };
+
+/**
  * One widget that exists for the current form data. A widget outside a repeater has one
  * instance. A widget of a repeater row has one instance for each row.
  *
- * An instance is never changed after it is built. When the data changes, only a repeater whose
- * rows changed gets a new instance, together with the widgets above it. Every other instance
- * stays the same object.
+ * An instance is never changed after it is built. A derive gives a new instance only to a
+ * repeater whose rows changed and to a widget whose flags changed, together with the widgets
+ * above them. Every other instance stays the same object.
  */
 export type WidgetInstance = {
   /** The uid of the widget, with the index of each row around it, for example `name[2][1]`. */
@@ -31,6 +38,11 @@ export type WidgetInstance = {
    * `rowIndexes`, and it can differ from the position of the row in this list.
    */
   rows: WidgetInstance[];
+  /**
+   * The flags of the last derive that succeeded. `undefined` for a widget with no condition
+   * that is not below a hidden widget, and for an instance that no derive has computed yet.
+   */
+  flags: WidgetFlags | undefined;
 };
 
 /** The widget instances of a form, as a tree below the root layout. */
@@ -45,6 +57,34 @@ export type WidgetInstanceTree = {
  */
 export function emptyWidgetInstanceTree(): WidgetInstanceTree {
   return { root: undefined };
+}
+
+/**
+ * @param first - A list of instances.
+ * @param second - Another list of instances.
+ * @returns True when the two lists hold the same instances, in the same order.
+ */
+export function hasSameInstances(first: WidgetInstance[], second: WidgetInstance[]): boolean {
+  return (
+    first.length === second.length &&
+    second.every((instance, position) => instance === first[position])
+  );
+}
+
+/**
+ * Gives the previous list when a new list holds the same instances. So an instance whose
+ * children or rows did not change keeps the same array.
+ *
+ * @param previous - The previous list.
+ * @param built - The new list.
+ * @returns `previous` when it holds exactly the instances of `built`, in the same order.
+ *   Otherwise `built`.
+ */
+export function previousIfSameInstances(
+  previous: WidgetInstance[],
+  built: WidgetInstance[],
+): WidgetInstance[] {
+  return hasSameInstances(previous, built) ? previous : built;
 }
 
 /**

@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { InputWidgetAdapter } from '@golemui/angular';
 import type { InputWidget, WithWidget } from '@golemui/core';
-import type { MultiRangeCalendarProps } from '@golemui/gui-shared/internals';
+import type { DateRange, MultiRangeCalendarProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/multi-range-calendar';
 import { deferHydrationAttr } from '../../utils/defer-hydration';
 
@@ -24,8 +24,8 @@ import { deferHydrationAttr } from '../../utils/defer-hydration';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class MultiRangeCalendarComponent implements OnInit, OnDestroy, WithWidget {
-  widget!: InputWidget<string>;
-  protected adapter: InputWidgetAdapter<string, MultiRangeCalendarProps> =
+  widget!: InputWidget<DateRange[]>;
+  protected adapter: InputWidgetAdapter<DateRange[], MultiRangeCalendarProps> =
     inject(InputWidgetAdapter);
   protected readonly deferHydration = deferHydrationAttr();
 

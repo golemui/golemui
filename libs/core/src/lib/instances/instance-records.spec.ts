@@ -3,12 +3,17 @@ import { compileForm } from '../compile/compile-form';
 import { type CompiledWidget } from '../compile/compiled-form';
 import { formDefDecoder } from '../form';
 import { buildWidgetInstances } from './build-instances';
-import { type InstanceRecords, recordsOfInstances } from './instance-records';
+import { computeWidgetFlags } from './compute-flags';
+import {
+  flagsRecordOfInstances,
+  type InstanceRecords,
+  recordsOfInstances,
+} from './instance-records';
 import { emptyWidgetInstanceTree } from './widget-instance';
 
 /**
- * The three records of the state that are written from the widget instances: the source of
- * every widget, and for a row widget its row and the rows around it.
+ * The four records of the state that are written from the widget instances: the source of
+ * every widget, for a row widget its row and the rows around it, and the flags.
  *
  * Run: npx vitest run --config libs/core/vite.config.ts src/lib/instances/instance-records.spec.ts
  */
@@ -66,6 +71,7 @@ describe('recordsOfInstances', () => {
       resolvedSources: {},
       repeaterItemScopes: {},
       repeaterRows: {},
+      widgetFlags: {},
     });
   });
 
@@ -170,5 +176,87 @@ describe('recordsOfInstances', () => {
     expect(second.resolvedSources).not.toBe(first.resolvedSources);
     expect(second.repeaterItemScopes).not.toBe(first.repeaterItemScopes);
     expect(second.repeaterRows).not.toBe(first.repeaterRows);
+  });
+});
+
+describe('the flags in the records', () => {
+  const scope = { $form: {}, $meta: {}, $errors: {}, $formIsInvalid: false, $fn: {} };
+
+  /** The instances of a form with their flags, for a form whose conditions read no data. */
+  const treeWithFlags = (compiledRoot: CompiledWidget, data: Record<string, unknown>) =>
+    computeWidgetFlags(
+      buildWidgetInstances(compiledRoot, data, emptyWidgetInstanceTree()),
+      compiledRoot,
+      data,
+      scope,
+      new Set<string>(),
+    );
+
+  const cardForm = () =>
+    compile([
+      { uid: 'title', kind: 'display', type: 'heading' },
+      {
+        uid: 'card',
+        kind: 'layout',
+        type: 'flex',
+        include: { when: 'false' },
+        children: [{ ...textInput('note', 'note'), disabled: { when: 'true' } }],
+      },
+      { ...textInput('name', 'name'), disabled: { when: 'true' } },
+    ]);
+
+  it('lists the flags of every instance that has flags, in the order of the document', () => {
+    const compiledRoot = cardForm();
+    const tree = treeWithFlags(compiledRoot, {});
+
+    const widgetFlags = flagsRecordOfInstances(tree);
+
+    expect(widgetFlags).toEqual({
+      card: { hidden: true },
+      note: { hidden: true },
+      name: { disabled: true },
+    });
+    expect(Object.keys(widgetFlags)).toEqual(['card', 'note', 'name']);
+    expect(widgetFlags).not.toHaveProperty('title');
+    expect(widgetFlags['name']).toBe(tree.root?.children[2].flags);
+  });
+
+  it('writes the same flags record together with the other records', () => {
+    const compiledRoot = cardForm();
+    const tree = treeWithFlags(compiledRoot, {});
+
+    const records = recordsOfInstances(tree, compiledRoot);
+
+    expect(records.widgetFlags).toEqual(flagsRecordOfInstances(tree));
+    expect(Object.keys(records.widgetFlags)).toEqual(['card', 'note', 'name']);
+  });
+
+  it('gives a uid that two widgets have the flags of the last widget', () => {
+    // The first input is hidden by its own condition, and the second input has no condition.
+    const compiledRoot = compile([
+      repeater('contacts', 'contacts', 'row', [
+        { ...textInput('phone', 'contacts.items.home'), include: { when: 'false' } },
+        textInput('phone', 'contacts.items.mobile'),
+      ]),
+    ]);
+    const tree = treeWithFlags(compiledRoot, { contacts: [{}] });
+
+    expect(flagsRecordOfInstances(tree)).toEqual({});
+    expect(recordsOfInstances(tree, compiledRoot).widgetFlags).toEqual({});
+    expect(recordsOfInstances(tree, compiledRoot).resolvedSources['phone[0]']).toMatchObject({
+      path: 'contacts.0.mobile',
+    });
+  });
+
+  it('gives a uid that two widgets have the flags of the last widget when both have flags', () => {
+    const compiledRoot = compile([
+      repeater('contacts', 'contacts', 'row', [
+        { ...textInput('phone', 'contacts.items.home'), include: { when: 'false' } },
+        { ...textInput('phone', 'contacts.items.mobile'), include: { when: 'true' } },
+      ]),
+    ]);
+    const tree = treeWithFlags(compiledRoot, { contacts: [{}] });
+
+    expect(flagsRecordOfInstances(tree)).toEqual({ 'phone[0]': { hidden: false } });
   });
 });

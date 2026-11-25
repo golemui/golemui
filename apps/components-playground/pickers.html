@@ -23,14 +23,23 @@
           <gui-date-picker label="Start date" uid="all-date"></gui-date-picker>
           <gui-time-picker label="Start time" uid="all-time"></gui-time-picker>
           <gui-date-time-picker label="Delivery" uid="all-datetime"></gui-date-time-picker>
+          <gui-range-date-picker
+            label="Check-in and check-out"
+            uid="all-singlerangedate"
+          ></gui-range-date-picker>
           <gui-multi-range-date-picker
             label="Stay"
             uid="all-rangedate"
           ></gui-multi-range-date-picker>
+          <gui-range-time-picker label="Shift" uid="all-singlerangetime"></gui-range-time-picker>
           <gui-multi-range-time-picker
             label="Opening hours"
             uid="all-rangetime"
           ></gui-multi-range-time-picker>
+          <gui-range-date-time-picker
+            label="Rental pick-up"
+            uid="all-singlerangedatetime"
+          ></gui-range-date-time-picker>
           <gui-multi-range-date-time-picker
             label="Rental"
             uid="all-rangedatetime"
@@ -46,6 +55,62 @@
             items='[{"label":"Starter","value":"starter"},{"label":"Team","value":"team"},{"label":"Business","value":"business"},{"label":"Enterprise","value":"enterprise"}]'
           ></gui-multi-dropdown>
         </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>One range or several</h2>
+        <p>
+          The single range elements hold one <code>{ start, end }</code>: the first click starts a
+          new range and the second sets it, and the picker closes. The multi-range elements add each
+          range as a pill. The days from March 9 to 11 and the hour from 1 PM are disabled.
+        </p>
+        <div class="pg-fields">
+          <gui-range-date-picker
+            label="Trip"
+            uid="one-picker"
+            min-date="2026-01-01"
+            disabled-ranges='[{"start":"2026-03-09","end":"2026-03-11"}]'
+            value='{"start":"2026-03-02","end":"2026-03-06"}'
+          ></gui-range-date-picker>
+          <gui-multi-range-date-picker
+            label="Trips"
+            uid="many-picker"
+            disabled-ranges='[{"start":"2026-03-09","end":"2026-03-11"}]'
+            value='[{"start":"2026-03-02","end":"2026-03-06"}]'
+          ></gui-multi-range-date-picker>
+          <gui-range-date label="Typed trip" uid="one-typed"></gui-range-date>
+          <gui-range-time-picker
+            label="Shift"
+            uid="one-time-picker"
+            minute-step="30"
+            min-time="08:00:00"
+            max-time="20:00:00"
+            disabled-ranges='[{"start":"13:00:00","end":"14:00:00"}]'
+            value='{"start":"09:00:00","end":"12:00:00"}'
+          ></gui-range-time-picker>
+          <gui-range-time label="Typed shift" uid="one-typed-time"></gui-range-time>
+          <gui-range-date-time-picker
+            label="Car rental"
+            uid="one-date-time-picker"
+            minute-step="30"
+            disabled-ranges='[{"start":"2026-03-10T12:00:00","end":"2026-03-10T14:00:00"}]'
+            value='{"start":"2026-03-02T09:00:00","end":"2026-03-06T17:00:00"}'
+          ></gui-range-date-time-picker>
+          <gui-range-date-time label="Typed rental" uid="one-typed-date-time"></gui-range-date-time>
+        </div>
+        <gui-range-date-time-calendar
+          label="Rental calendar"
+          uid="one-date-time-calendar"
+          minute-step="30"
+          disabled-ranges='[{"start":"2026-03-10T12:00:00","end":"2026-03-10T14:00:00"}]'
+          value='{"start":"2026-03-02T09:00:00","end":"2026-03-06T17:00:00"}'
+        ></gui-range-date-time-calendar>
+        <gui-range-calendar
+          label="Trip calendar"
+          uid="one-calendar"
+          disabled-ranges='[{"start":"2026-03-09","end":"2026-03-11"}]'
+          value='{"start":"2026-03-02","end":"2026-03-06"}'
+        ></gui-range-calendar>
       </section>
 
       <section class="pg-section">

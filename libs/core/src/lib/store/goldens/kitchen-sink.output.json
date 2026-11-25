@@ -328,6 +328,141 @@
         }
       ],
       "multiRangeTimePickerValidation": "[undefined]",
+      "rangeCalendarEmpty": "[undefined]",
+      "rangeCalendarDefault": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeCalendarDisabled": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeCalendarReadonly": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeCalendarValidation": "[undefined]",
+      "rangeCalendarDisabledRanges": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDateInputEmpty": "[undefined]",
+      "rangeDateInputDefault": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDateInputDisabled": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDateInputReadonly": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDateInputValidation": "[undefined]",
+      "rangeDatePickerEmpty": "[undefined]",
+      "rangeDatePickerMinMax": {
+        "start": "2026-02-20",
+        "end": "2026-02-22"
+      },
+      "rangeDatePickerDefault": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDatePickerDisabled": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDatePickerReadonly": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDatePickerValidation": "[undefined]",
+      "rangeDatePickerDisabledRanges": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDatePickerDestination": "[undefined]",
+      "rangeDatePickerTrip": "[undefined]",
+      "rangeTimeInputEmpty": "[undefined]",
+      "rangeTimeInputDefault": {
+        "start": "09:00:00",
+        "end": "11:00:00"
+      },
+      "rangeTimeInputConstraints": "[undefined]",
+      "rangeTimeInputDisabled": {
+        "start": "09:00:00",
+        "end": "11:00:00"
+      },
+      "rangeTimeInputReadonly": {
+        "start": "09:00:00",
+        "end": "11:00:00"
+      },
+      "rangeTimeInputValidation": "[undefined]",
+      "rangeTimePickerEmpty": "[undefined]",
+      "rangeTimePickerDefault": {
+        "start": "09:00:00",
+        "end": "12:00:00"
+      },
+      "rangeTimePickerConstraints": "[undefined]",
+      "rangeTimePickerDisabled": {
+        "start": "09:00:00",
+        "end": "12:00:00"
+      },
+      "rangeTimePickerReadonly": {
+        "start": "09:00:00",
+        "end": "12:00:00"
+      },
+      "rangeTimePickerValidation": "[undefined]",
+      "rangeTimePickerShiftNote": "[undefined]",
+      "rangeTimePickerShift": "[undefined]",
+      "rangeDateTimeCalendarEmpty": "[undefined]",
+      "rangeDateTimeCalendarDefault": {
+        "start": "2026-02-13T09:00:00",
+        "end": "2026-02-13T11:00:00"
+      },
+      "rangeDateTimeCalendarDisabled": {
+        "start": "2026-02-13T09:00:00",
+        "end": "2026-02-13T11:00:00"
+      },
+      "rangeDateTimeCalendarReadonly": {
+        "start": "2026-02-13T09:00:00",
+        "end": "2026-02-13T11:00:00"
+      },
+      "rangeDateTimeCalendarValidation": "[undefined]",
+      "rangeDateTimeCalendarConstraints": "[undefined]",
+      "rangeDateTimeInputEmpty": "[undefined]",
+      "rangeDateTimeInputDefault": {
+        "start": "2026-11-22T09:00:00",
+        "end": "2026-11-22T11:00:00"
+      },
+      "rangeDateTimeInputConstraints": "[undefined]",
+      "rangeDateTimeInputDisabled": {
+        "start": "2026-11-22T09:00:00",
+        "end": "2026-11-22T11:00:00"
+      },
+      "rangeDateTimeInputReadonly": {
+        "start": "2026-11-22T09:00:00",
+        "end": "2026-11-22T11:00:00"
+      },
+      "rangeDateTimeInputValidation": "[undefined]",
+      "rangeDateTimePickerEmpty": "[undefined]",
+      "rangeDateTimePickerDefault": {
+        "start": "2026-02-13T09:00:00",
+        "end": "2026-02-13T11:00:00"
+      },
+      "rangeDateTimePickerDisabled": {
+        "start": "2026-02-13T09:00:00",
+        "end": "2026-02-13T11:00:00"
+      },
+      "rangeDateTimePickerReadonly": {
+        "start": "2026-02-13T09:00:00",
+        "end": "2026-02-13T11:00:00"
+      },
+      "rangeDateTimePickerValidation": "[undefined]",
+      "rangeDateTimePickerConstraints": "[undefined]",
+      "rangeDateTimePickerRentalNote": "[undefined]",
+      "rangeDateTimePickerRental": "[undefined]",
       "multiRangeCalendarEmpty": "[undefined]",
       "multiRangeCalendarDefault": [
         {
@@ -824,6 +959,71 @@
       "multiRangeTimePickerDisabled-multiRangeTimePicker": "input multiRangeTimePicker multiRangeTimePickerDisabled",
       "multiRangeTimePickerReadonly-multiRangeTimePicker": "input multiRangeTimePicker multiRangeTimePickerReadonly",
       "multiRangeTimePickerValidation-multiRangeTimePicker": "input multiRangeTimePicker multiRangeTimePickerValidation",
+      "tabRangeCalendar": "layout grid",
+      "rangeCalendarEmpty-rangeCalendar": "input rangeCalendar rangeCalendarEmpty",
+      "rangeCalendarDefault-rangeCalendar": "input rangeCalendar rangeCalendarDefault",
+      "rangeCalendarDisabled-rangeCalendar": "input rangeCalendar rangeCalendarDisabled",
+      "rangeCalendarReadonly-rangeCalendar": "input rangeCalendar rangeCalendarReadonly",
+      "rangeCalendarValidation-rangeCalendar": "input rangeCalendar rangeCalendarValidation",
+      "rangeCalendarDisabledRanges-rangeCalendar": "input rangeCalendar rangeCalendarDisabledRanges",
+      "tabRangeDateInput": "layout grid",
+      "rangeDateInputEmpty-rangeDateInput": "input rangeDateInput rangeDateInputEmpty",
+      "rangeDateInputDefault-rangeDateInput": "input rangeDateInput rangeDateInputDefault",
+      "rangeDateInputDisabled-rangeDateInput": "input rangeDateInput rangeDateInputDisabled",
+      "rangeDateInputReadonly-rangeDateInput": "input rangeDateInput rangeDateInputReadonly",
+      "rangeDateInputValidation-rangeDateInput": "input rangeDateInput rangeDateInputValidation",
+      "tabRangeDatePicker": "layout grid",
+      "rangeDatePickerEmpty-rangeDatePicker": "input rangeDatePicker rangeDatePickerEmpty",
+      "rangeDatePickerMinMax-rangeDatePicker": "input rangeDatePicker rangeDatePickerMinMax",
+      "rangeDatePickerDefault-rangeDatePicker": "input rangeDatePicker rangeDatePickerDefault",
+      "rangeDatePickerDisabled-rangeDatePicker": "input rangeDatePicker rangeDatePickerDisabled",
+      "rangeDatePickerReadonly-rangeDatePicker": "input rangeDatePicker rangeDatePickerReadonly",
+      "rangeDatePickerValidation-rangeDatePicker": "input rangeDatePicker rangeDatePickerValidation",
+      "rangeDatePickerDisabledRanges-rangeDatePicker": "input rangeDatePicker rangeDatePickerDisabledRanges",
+      "#0.1.24.7": "layout grid",
+      "rangeDatePickerDestination-textinput": "input textinput rangeDatePickerDestination",
+      "rangeDatePickerTrip-rangeDatePicker": "input rangeDatePicker rangeDatePickerTrip",
+      "tabRangeTimeInput": "layout grid",
+      "rangeTimeInputEmpty-rangeTimeInput": "input rangeTimeInput rangeTimeInputEmpty",
+      "rangeTimeInputDefault-rangeTimeInput": "input rangeTimeInput rangeTimeInputDefault",
+      "rangeTimeInputConstraints-rangeTimeInput": "input rangeTimeInput rangeTimeInputConstraints",
+      "rangeTimeInputDisabled-rangeTimeInput": "input rangeTimeInput rangeTimeInputDisabled",
+      "rangeTimeInputReadonly-rangeTimeInput": "input rangeTimeInput rangeTimeInputReadonly",
+      "rangeTimeInputValidation-rangeTimeInput": "input rangeTimeInput rangeTimeInputValidation",
+      "tabRangeTimePicker": "layout grid",
+      "rangeTimePickerEmpty-rangeTimePicker": "input rangeTimePicker rangeTimePickerEmpty",
+      "rangeTimePickerDefault-rangeTimePicker": "input rangeTimePicker rangeTimePickerDefault",
+      "rangeTimePickerConstraints-rangeTimePicker": "input rangeTimePicker rangeTimePickerConstraints",
+      "rangeTimePickerDisabled-rangeTimePicker": "input rangeTimePicker rangeTimePickerDisabled",
+      "rangeTimePickerReadonly-rangeTimePicker": "input rangeTimePicker rangeTimePickerReadonly",
+      "rangeTimePickerValidation-rangeTimePicker": "input rangeTimePicker rangeTimePickerValidation",
+      "#0.1.26.6": "layout grid",
+      "rangeTimePickerShiftNote-textinput": "input textinput rangeTimePickerShiftNote",
+      "rangeTimePickerShift-rangeTimePicker": "input rangeTimePicker rangeTimePickerShift",
+      "tabRangeDateTimeCalendar": "layout grid",
+      "rangeDateTimeCalendarEmpty-rangeDateTimeCalendar": "input rangeDateTimeCalendar rangeDateTimeCalendarEmpty",
+      "rangeDateTimeCalendarDefault-rangeDateTimeCalendar": "input rangeDateTimeCalendar rangeDateTimeCalendarDefault",
+      "rangeDateTimeCalendarDisabled-rangeDateTimeCalendar": "input rangeDateTimeCalendar rangeDateTimeCalendarDisabled",
+      "rangeDateTimeCalendarReadonly-rangeDateTimeCalendar": "input rangeDateTimeCalendar rangeDateTimeCalendarReadonly",
+      "rangeDateTimeCalendarValidation-rangeDateTimeCalendar": "input rangeDateTimeCalendar rangeDateTimeCalendarValidation",
+      "rangeDateTimeCalendarConstraints-rangeDateTimeCalendar": "input rangeDateTimeCalendar rangeDateTimeCalendarConstraints",
+      "tabRangeDateTimeInput": "layout grid",
+      "rangeDateTimeInputEmpty-rangeDateTimeInput": "input rangeDateTimeInput rangeDateTimeInputEmpty",
+      "rangeDateTimeInputDefault-rangeDateTimeInput": "input rangeDateTimeInput rangeDateTimeInputDefault",
+      "rangeDateTimeInputConstraints-rangeDateTimeInput": "input rangeDateTimeInput rangeDateTimeInputConstraints",
+      "rangeDateTimeInputDisabled-rangeDateTimeInput": "input rangeDateTimeInput rangeDateTimeInputDisabled",
+      "rangeDateTimeInputReadonly-rangeDateTimeInput": "input rangeDateTimeInput rangeDateTimeInputReadonly",
+      "rangeDateTimeInputValidation-rangeDateTimeInput": "input rangeDateTimeInput rangeDateTimeInputValidation",
+      "tabRangeDateTimePicker": "layout grid",
+      "rangeDateTimePickerEmpty-rangeDateTimePicker": "input rangeDateTimePicker rangeDateTimePickerEmpty",
+      "rangeDateTimePickerDefault-rangeDateTimePicker": "input rangeDateTimePicker rangeDateTimePickerDefault",
+      "rangeDateTimePickerDisabled-rangeDateTimePicker": "input rangeDateTimePicker rangeDateTimePickerDisabled",
+      "rangeDateTimePickerReadonly-rangeDateTimePicker": "input rangeDateTimePicker rangeDateTimePickerReadonly",
+      "rangeDateTimePickerValidation-rangeDateTimePicker": "input rangeDateTimePicker rangeDateTimePickerValidation",
+      "rangeDateTimePickerConstraints-rangeDateTimePicker": "input rangeDateTimePicker rangeDateTimePickerConstraints",
+      "#0.1.29.6": "layout grid",
+      "rangeDateTimePickerRentalNote-textinput": "input textinput rangeDateTimePickerRentalNote",
+      "rangeDateTimePickerRental-rangeDateTimePicker": "input rangeDateTimePicker rangeDateTimePickerRental",
       "tabMultiRangeCalendar": "layout grid",
       "multiRangeCalendarEmpty-multiRangeCalendar": "input multiRangeCalendar multiRangeCalendarEmpty",
       "multiRangeCalendarDefault-multiRangeCalendar": "input multiRangeCalendar multiRangeCalendarDefault",
@@ -913,7 +1113,7 @@
       "checkboxGroups.days-checkboxGroup": "input checkboxGroup checkboxGroups.days",
       "checkboxGroups.disabled-checkboxGroup": "input checkboxGroup checkboxGroups.disabled",
       "checkboxGroups.readonly-checkboxGroup": "input checkboxGroup checkboxGroups.readonly",
-      "#0.1.34.6": "layout grid",
+      "#0.1.42.6": "layout grid",
       "checkboxGroups.name-textinput": "input textinput checkboxGroups.name",
       "checkboxGroups.contact-checkboxGroup": "input checkboxGroup checkboxGroups.contact",
       "tabRating": "layout grid",
@@ -922,7 +1122,7 @@
       "ratings.stay-rating": "input rating ratings.stay",
       "ratings.disabled-rating": "input rating ratings.disabled",
       "ratings.readonly-rating": "input rating ratings.readonly",
-      "#0.1.35.5": "layout grid",
+      "#0.1.43.5": "layout grid",
       "ratings.reviewer-textinput": "input textinput ratings.reviewer",
       "ratings.overall-rating": "input rating ratings.overall",
       "tabSelect": "layout grid",
@@ -939,7 +1139,7 @@
       "sliders.rating-slider": "input slider sliders.rating",
       "sliders.disabled-slider": "input slider sliders.disabled",
       "sliders.readonly-slider": "input slider sliders.readonly",
-      "#0.1.37.6": "layout grid",
+      "#0.1.45.6": "layout grid",
       "sliders.speaker-textinput": "input textinput sliders.speaker",
       "sliders.bass-slider": "input slider sliders.bass",
       "tabRangeSlider": "layout grid",
@@ -947,7 +1147,7 @@
       "rangeSliders.age-rangeSlider": "input rangeSlider rangeSliders.age",
       "rangeSliders.hours-rangeSlider": "input rangeSlider rangeSliders.hours",
       "rangeSliders.disabled-rangeSlider": "input rangeSlider rangeSliders.disabled",
-      "#0.1.38.4": "layout grid",
+      "#0.1.46.4": "layout grid",
       "rangeSliders.city-textinput": "input textinput rangeSliders.city",
       "rangeSliders.budget-rangeSlider": "input rangeSlider rangeSliders.budget",
       "tabOtp": "layout grid",
@@ -956,7 +1156,7 @@
       "otp.short-otp": "input otp otp.short",
       "otp.disabled-otp": "input otp otp.disabled",
       "otp.readonly-otp": "input otp otp.readonly",
-      "#0.1.39.5": "layout grid",
+      "#0.1.47.5": "layout grid",
       "otp.email-textinput": "input textinput otp.email",
       "otp.emailCode-otp": "input otp otp.emailCode",
       "tabDropdown": "layout grid",
@@ -970,7 +1170,7 @@
       "dropdowns.invalidValueList-dropdown": "input dropdown dropdowns.invalidValueList",
       "dropdowns.customItemRenderer-dropdown": "input dropdown dropdowns.customItemRenderer",
       "tabFileUpload": "layout grid",
-      "#0.1.41.0": "layout grid",
+      "#0.1.49.0": "layout grid",
       "fileUploads.title-textinput": "input textinput fileUploads.title",
       "fileUploads.basic-fileUpload": "input fileUpload fileUploads.basic",
       "fileUploads.pdfOnly-fileUpload": "input fileUpload fileUploads.pdfOnly",
@@ -1012,7 +1212,7 @@
       "tags.disabled-tags": "input tags tags.disabled",
       "tags.readonly-tags": "input tags tags.readonly",
       "tabCustomWidget": "layout grid",
-      "#0.1.47.0": "display heading",
+      "#0.1.55.0": "display heading",
       "clientName-textinput": "input textinput clientName",
       "registerMode-toggle": "input toggle registerMode",
       "submit-button": "action button"
@@ -1165,6 +1365,38 @@
               "uid": "tabSpinner"
             },
             {
+              "label": "Range Calendar Component",
+              "uid": "tabRangeCalendar"
+            },
+            {
+              "label": "Range Date Input Component",
+              "uid": "tabRangeDateInput"
+            },
+            {
+              "label": "Range Date Picker Component",
+              "uid": "tabRangeDatePicker"
+            },
+            {
+              "label": "Range Time Input Component",
+              "uid": "tabRangeTimeInput"
+            },
+            {
+              "label": "Range Time Picker Component",
+              "uid": "tabRangeTimePicker"
+            },
+            {
+              "label": "Range Date Time Calendar Component",
+              "uid": "tabRangeDateTimeCalendar"
+            },
+            {
+              "label": "Range Date Time Input Component",
+              "uid": "tabRangeDateTimeInput"
+            },
+            {
+              "label": "Range Date Time Picker Component",
+              "uid": "tabRangeDateTimePicker"
+            },
+            {
               "label": "Multi Range Calendar Component",
               "uid": "tabMultiRangeCalendar"
             },
@@ -1265,6 +1497,14 @@
           "tabMultiRangeDateTimeCalendar",
           "tabMultiRangeDateTimePicker",
           "tabMultiRangeTimePicker",
+          "tabRangeCalendar",
+          "tabRangeDateInput",
+          "tabRangeDatePicker",
+          "tabRangeTimeInput",
+          "tabRangeTimePicker",
+          "tabRangeDateTimeCalendar",
+          "tabRangeDateTimeInput",
+          "tabRangeDateTimePicker",
           "tabMultiRangeCalendar",
           "tabMultiRangeDatePicker",
           "tabTimeInput",
@@ -4073,6 +4313,1056 @@
         },
         "keysWithUndefined": "size include exclude disabled readonly defaultValue"
       },
+      "tabRangeCalendar": {
+        "uid": "tabRangeCalendar",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "rangeCalendarEmpty-rangeCalendar",
+          "rangeCalendarDefault-rangeCalendar",
+          "rangeCalendarDisabled-rangeCalendar",
+          "rangeCalendarReadonly-rangeCalendar",
+          "rangeCalendarValidation-rangeCalendar",
+          "rangeCalendarDisabledRanges-rangeCalendar"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "rangeCalendarEmpty-rangeCalendar": {
+        "uid": "rangeCalendarEmpty-rangeCalendar",
+        "type": "rangeCalendar",
+        "kind": "input",
+        "label": "Empty",
+        "path": "rangeCalendarEmpty",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "rangeCalendarDefault-rangeCalendar": {
+        "uid": "rangeCalendarDefault-rangeCalendar",
+        "type": "rangeCalendar",
+        "kind": "input",
+        "label": "With default value",
+        "path": "rangeCalendarDefault",
+        "defaultValue": {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator"
+      },
+      "rangeCalendarDisabled-rangeCalendar": {
+        "uid": "rangeCalendarDisabled-rangeCalendar",
+        "type": "rangeCalendar",
+        "kind": "input",
+        "label": "Disabled",
+        "disabled": true,
+        "path": "rangeCalendarDisabled",
+        "defaultValue": {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        "keysWithUndefined": "size include exclude readonly validator"
+      },
+      "rangeCalendarReadonly-rangeCalendar": {
+        "uid": "rangeCalendarReadonly-rangeCalendar",
+        "type": "rangeCalendar",
+        "kind": "input",
+        "label": "Read only",
+        "readonly": true,
+        "path": "rangeCalendarReadonly",
+        "defaultValue": {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        "keysWithUndefined": "size include exclude disabled validator"
+      },
+      "rangeCalendarValidation-rangeCalendar": {
+        "uid": "rangeCalendarValidation-rangeCalendar",
+        "type": "rangeCalendar",
+        "kind": "input",
+        "label": "Required (validation)",
+        "validator": {
+          "type": "range",
+          "required": true,
+          "messages": {
+            "required": "Pick a start and an end date",
+            "invalid": "Pick a start and an end date"
+          }
+        },
+        "path": "rangeCalendarValidation",
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "rangeCalendarDisabledRanges-rangeCalendar": {
+        "uid": "rangeCalendarDisabledRanges-rangeCalendar",
+        "type": "rangeCalendar",
+        "kind": "input",
+        "label": "Disabled date ranges",
+        "path": "rangeCalendarDisabledRanges",
+        "defaultValue": {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        "props": {
+          "disabledRanges": [
+            {
+              "start": "2026-02-09",
+              "end": "2026-02-10"
+            },
+            {
+              "start": "2026-02-17"
+            }
+          ]
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator"
+      },
+      "tabRangeDateInput": {
+        "uid": "tabRangeDateInput",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "rangeDateInputEmpty-rangeDateInput",
+          "rangeDateInputDefault-rangeDateInput",
+          "rangeDateInputDisabled-rangeDateInput",
+          "rangeDateInputReadonly-rangeDateInput",
+          "rangeDateInputValidation-rangeDateInput"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "rangeDateInputEmpty-rangeDateInput": {
+        "uid": "rangeDateInputEmpty-rangeDateInput",
+        "type": "rangeDateInput",
+        "kind": "input",
+        "label": "Empty",
+        "path": "rangeDateInputEmpty",
+        "props": {
+          "icon": "calendar_month",
+          "separator": "to"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "rangeDateInputDefault-rangeDateInput": {
+        "uid": "rangeDateInputDefault-rangeDateInput",
+        "type": "rangeDateInput",
+        "kind": "input",
+        "label": "With default value",
+        "path": "rangeDateInputDefault",
+        "defaultValue": {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        "props": {
+          "icon": "calendar_month",
+          "separator": "to"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator"
+      },
+      "rangeDateInputDisabled-rangeDateInput": {
+        "uid": "rangeDateInputDisabled-rangeDateInput",
+        "type": "rangeDateInput",
+        "kind": "input",
+        "label": "Disabled",
+        "disabled": true,
+        "path": "rangeDateInputDisabled",
+        "defaultValue": {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        "props": {
+          "icon": "calendar_month",
+          "separator": "to"
+        },
+        "keysWithUndefined": "size include exclude readonly validator"
+      },
+      "rangeDateInputReadonly-rangeDateInput": {
+        "uid": "rangeDateInputReadonly-rangeDateInput",
+        "type": "rangeDateInput",
+        "kind": "input",
+        "label": "Read only",
+        "readonly": true,
+        "path": "rangeDateInputReadonly",
+        "defaultValue": {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        "props": {
+          "icon": "calendar_month",
+          "separator": "to"
+        },
+        "keysWithUndefined": "size include exclude disabled validator"
+      },
+      "rangeDateInputValidation-rangeDateInput": {
+        "uid": "rangeDateInputValidation-rangeDateInput",
+        "type": "rangeDateInput",
+        "kind": "input",
+        "label": "Required (validation)",
+        "validator": {
+          "type": "range",
+          "required": true,
+          "messages": {
+            "required": "Pick a start and an end date",
+            "invalid": "Pick a start and an end date"
+          }
+        },
+        "path": "rangeDateInputValidation",
+        "props": {
+          "icon": "calendar_month",
+          "separator": "to"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "tabRangeDatePicker": {
+        "uid": "tabRangeDatePicker",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "rangeDatePickerEmpty-rangeDatePicker",
+          "rangeDatePickerMinMax-rangeDatePicker",
+          "rangeDatePickerDefault-rangeDatePicker",
+          "rangeDatePickerDisabled-rangeDatePicker",
+          "rangeDatePickerReadonly-rangeDatePicker",
+          "rangeDatePickerValidation-rangeDatePicker",
+          "rangeDatePickerDisabledRanges-rangeDatePicker",
+          "#0.1.24.7"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "rangeDatePickerEmpty-rangeDatePicker": {
+        "uid": "rangeDatePickerEmpty-rangeDatePicker",
+        "type": "rangeDatePicker",
+        "kind": "input",
+        "label": "Empty",
+        "path": "rangeDatePickerEmpty",
+        "props": {
+          "icon": "calendar_month",
+          "separator": "to"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "rangeDatePickerMinMax-rangeDatePicker": {
+        "uid": "rangeDatePickerMinMax-rangeDatePicker",
+        "type": "rangeDatePicker",
+        "kind": "input",
+        "label": "Min/Max",
+        "path": "rangeDatePickerMinMax",
+        "defaultValue": {
+          "start": "2026-02-20",
+          "end": "2026-02-22"
+        },
+        "props": {
+          "icon": "calendar_month",
+          "separator": "to",
+          "minDate": "2026-02-01",
+          "maxDate": "2026-02-28",
+          "minDateMessage": "Min date is 01.02.2026",
+          "maxDateMessage": "Max date is 28.02.2026"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator"
+      },
+      "rangeDatePickerDefault-rangeDatePicker": {
+        "uid": "rangeDatePickerDefault-rangeDatePicker",
+        "type": "rangeDatePicker",
+        "kind": "input",
+        "label": "With default value",
+        "path": "rangeDatePickerDefault",
+        "defaultValue": {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        "props": {
+          "icon": "calendar_month",
+          "separator": "to"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator"
+      },
+      "rangeDatePickerDisabled-rangeDatePicker": {
+        "uid": "rangeDatePickerDisabled-rangeDatePicker",
+        "type": "rangeDatePicker",
+        "kind": "input",
+        "label": "Disabled",
+        "disabled": true,
+        "path": "rangeDatePickerDisabled",
+        "defaultValue": {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        "props": {
+          "icon": "calendar_month",
+          "separator": "to"
+        },
+        "keysWithUndefined": "size include exclude readonly validator"
+      },
+      "rangeDatePickerReadonly-rangeDatePicker": {
+        "uid": "rangeDatePickerReadonly-rangeDatePicker",
+        "type": "rangeDatePicker",
+        "kind": "input",
+        "label": "Read only",
+        "readonly": true,
+        "path": "rangeDatePickerReadonly",
+        "defaultValue": {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        "props": {
+          "icon": "calendar_month",
+          "separator": "to"
+        },
+        "keysWithUndefined": "size include exclude disabled validator"
+      },
+      "rangeDatePickerValidation-rangeDatePicker": {
+        "uid": "rangeDatePickerValidation-rangeDatePicker",
+        "type": "rangeDatePicker",
+        "kind": "input",
+        "label": "Required (validation)",
+        "validator": {
+          "type": "range",
+          "required": true,
+          "messages": {
+            "required": "Pick a start and an end date",
+            "invalid": "Pick a start and an end date"
+          }
+        },
+        "path": "rangeDatePickerValidation",
+        "props": {
+          "icon": "calendar_month",
+          "separator": "to"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "rangeDatePickerDisabledRanges-rangeDatePicker": {
+        "uid": "rangeDatePickerDisabledRanges-rangeDatePicker",
+        "type": "rangeDatePicker",
+        "kind": "input",
+        "label": "Disabled date ranges",
+        "path": "rangeDatePickerDisabledRanges",
+        "defaultValue": {
+          "start": "2026-02-13",
+          "end": "2026-02-16"
+        },
+        "props": {
+          "icon": "calendar_month",
+          "separator": "to",
+          "disabledRanges": [
+            {
+              "start": "2026-02-09",
+              "end": "2026-02-10"
+            },
+            {
+              "start": "2026-02-17"
+            }
+          ]
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator"
+      },
+      "#0.1.24.7": {
+        "uid": "#0.1.24.7",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "row"
+        },
+        "children": [
+          "rangeDatePickerDestination-textinput",
+          "rangeDatePickerTrip-rangeDatePicker"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "rangeDatePickerDestination-textinput": {
+        "uid": "rangeDatePickerDestination-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Destination",
+        "path": "rangeDatePickerDestination",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "rangeDatePickerTrip-rangeDatePicker": {
+        "uid": "rangeDatePickerTrip-rangeDatePicker",
+        "type": "rangeDatePicker",
+        "kind": "input",
+        "label": "Dates",
+        "path": "rangeDatePickerTrip",
+        "props": {
+          "icon": "calendar_month",
+          "separator": "to",
+          "startDateAriaLabel": "Check-in",
+          "endDateAriaLabel": "Check-out"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "tabRangeTimeInput": {
+        "uid": "tabRangeTimeInput",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "rangeTimeInputEmpty-rangeTimeInput",
+          "rangeTimeInputDefault-rangeTimeInput",
+          "rangeTimeInputConstraints-rangeTimeInput",
+          "rangeTimeInputDisabled-rangeTimeInput",
+          "rangeTimeInputReadonly-rangeTimeInput",
+          "rangeTimeInputValidation-rangeTimeInput"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "rangeTimeInputEmpty-rangeTimeInput": {
+        "uid": "rangeTimeInputEmpty-rangeTimeInput",
+        "type": "rangeTimeInput",
+        "kind": "input",
+        "label": "Empty",
+        "path": "rangeTimeInputEmpty",
+        "props": {
+          "icon": "schedule",
+          "separator": "to"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "rangeTimeInputDefault-rangeTimeInput": {
+        "uid": "rangeTimeInputDefault-rangeTimeInput",
+        "type": "rangeTimeInput",
+        "kind": "input",
+        "label": "With default value",
+        "path": "rangeTimeInputDefault",
+        "defaultValue": {
+          "start": "09:00:00",
+          "end": "11:00:00"
+        },
+        "props": {
+          "icon": "schedule",
+          "separator": "to"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator"
+      },
+      "rangeTimeInputConstraints-rangeTimeInput": {
+        "uid": "rangeTimeInputConstraints-rangeTimeInput",
+        "type": "rangeTimeInput",
+        "kind": "input",
+        "label": "With min/max time",
+        "path": "rangeTimeInputConstraints",
+        "props": {
+          "icon": "schedule",
+          "separator": "to",
+          "minTime": "09:00:00",
+          "maxTime": "18:00:00",
+          "minuteStep": 15
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "rangeTimeInputDisabled-rangeTimeInput": {
+        "uid": "rangeTimeInputDisabled-rangeTimeInput",
+        "type": "rangeTimeInput",
+        "kind": "input",
+        "label": "Disabled",
+        "disabled": true,
+        "path": "rangeTimeInputDisabled",
+        "defaultValue": {
+          "start": "09:00:00",
+          "end": "11:00:00"
+        },
+        "props": {
+          "icon": "schedule",
+          "separator": "to"
+        },
+        "keysWithUndefined": "size include exclude readonly validator"
+      },
+      "rangeTimeInputReadonly-rangeTimeInput": {
+        "uid": "rangeTimeInputReadonly-rangeTimeInput",
+        "type": "rangeTimeInput",
+        "kind": "input",
+        "label": "Read only",
+        "readonly": true,
+        "path": "rangeTimeInputReadonly",
+        "defaultValue": {
+          "start": "09:00:00",
+          "end": "11:00:00"
+        },
+        "props": {
+          "icon": "schedule",
+          "separator": "to"
+        },
+        "keysWithUndefined": "size include exclude disabled validator"
+      },
+      "rangeTimeInputValidation-rangeTimeInput": {
+        "uid": "rangeTimeInputValidation-rangeTimeInput",
+        "type": "rangeTimeInput",
+        "kind": "input",
+        "label": "Required (validation)",
+        "validator": {
+          "type": "range",
+          "required": true,
+          "messages": {
+            "required": "Pick a start and an end",
+            "invalid": "Pick a start and an end"
+          }
+        },
+        "path": "rangeTimeInputValidation",
+        "props": {
+          "icon": "schedule",
+          "separator": "to"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "tabRangeTimePicker": {
+        "uid": "tabRangeTimePicker",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "rangeTimePickerEmpty-rangeTimePicker",
+          "rangeTimePickerDefault-rangeTimePicker",
+          "rangeTimePickerConstraints-rangeTimePicker",
+          "rangeTimePickerDisabled-rangeTimePicker",
+          "rangeTimePickerReadonly-rangeTimePicker",
+          "rangeTimePickerValidation-rangeTimePicker",
+          "#0.1.26.6"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "rangeTimePickerEmpty-rangeTimePicker": {
+        "uid": "rangeTimePickerEmpty-rangeTimePicker",
+        "type": "rangeTimePicker",
+        "kind": "input",
+        "label": "Empty",
+        "path": "rangeTimePickerEmpty",
+        "props": {
+          "icon": "schedule",
+          "separator": "to",
+          "hourFormat": "24",
+          "minTime": "06:00:00",
+          "maxTime": "22:00:00",
+          "minuteStep": 30,
+          "allowCustomTime": true,
+          "startTimeLabel": "Time In",
+          "endTimeLabel": "Time Out",
+          "disabledRanges": [
+            {
+              "start": "13:00:00",
+              "end": "14:00:00"
+            }
+          ],
+          "disabledRangeMessage": "Time is withing a disabled range."
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "rangeTimePickerDefault-rangeTimePicker": {
+        "uid": "rangeTimePickerDefault-rangeTimePicker",
+        "type": "rangeTimePicker",
+        "kind": "input",
+        "label": "Shift schedule",
+        "path": "rangeTimePickerDefault",
+        "defaultValue": {
+          "start": "09:00:00",
+          "end": "12:00:00"
+        },
+        "props": {
+          "icon": "schedule",
+          "separator": "to",
+          "hourFormat": "24",
+          "minTime": "06:00:00",
+          "maxTime": "22:00:00",
+          "minuteStep": 30
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator"
+      },
+      "rangeTimePickerConstraints-rangeTimePicker": {
+        "uid": "rangeTimePickerConstraints-rangeTimePicker",
+        "type": "rangeTimePicker",
+        "kind": "input",
+        "label": "Booking with lunch break",
+        "path": "rangeTimePickerConstraints",
+        "props": {
+          "icon": "schedule",
+          "separator": "to",
+          "hourFormat": "24",
+          "minTime": "09:00:00",
+          "maxTime": "18:00:00",
+          "minuteStep": 15,
+          "allowCustomTime": true,
+          "disabledRanges": [
+            {
+              "start": "13:00:00",
+              "end": "14:00:00"
+            }
+          ]
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "rangeTimePickerDisabled-rangeTimePicker": {
+        "uid": "rangeTimePickerDisabled-rangeTimePicker",
+        "type": "rangeTimePicker",
+        "kind": "input",
+        "label": "Disabled",
+        "disabled": true,
+        "path": "rangeTimePickerDisabled",
+        "defaultValue": {
+          "start": "09:00:00",
+          "end": "12:00:00"
+        },
+        "props": {
+          "icon": "schedule",
+          "separator": "to",
+          "hourFormat": "24",
+          "minTime": "06:00:00",
+          "maxTime": "22:00:00",
+          "minuteStep": 30
+        },
+        "keysWithUndefined": "size include exclude readonly validator"
+      },
+      "rangeTimePickerReadonly-rangeTimePicker": {
+        "uid": "rangeTimePickerReadonly-rangeTimePicker",
+        "type": "rangeTimePicker",
+        "kind": "input",
+        "label": "Read only",
+        "readonly": true,
+        "path": "rangeTimePickerReadonly",
+        "defaultValue": {
+          "start": "09:00:00",
+          "end": "12:00:00"
+        },
+        "props": {
+          "icon": "schedule",
+          "separator": "to",
+          "hourFormat": "24",
+          "minTime": "06:00:00",
+          "maxTime": "22:00:00",
+          "minuteStep": 30
+        },
+        "keysWithUndefined": "size include exclude disabled validator"
+      },
+      "rangeTimePickerValidation-rangeTimePicker": {
+        "uid": "rangeTimePickerValidation-rangeTimePicker",
+        "type": "rangeTimePicker",
+        "kind": "input",
+        "label": "Required (validation)",
+        "validator": {
+          "type": "range",
+          "required": true,
+          "messages": {
+            "required": "Pick a start and an end",
+            "invalid": "Pick a start and an end"
+          }
+        },
+        "path": "rangeTimePickerValidation",
+        "props": {
+          "icon": "schedule",
+          "separator": "to",
+          "hourFormat": "24",
+          "minTime": "06:00:00",
+          "maxTime": "22:00:00",
+          "minuteStep": 30
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "#0.1.26.6": {
+        "uid": "#0.1.26.6",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "row"
+        },
+        "children": [
+          "rangeTimePickerShiftNote-textinput",
+          "rangeTimePickerShift-rangeTimePicker"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "rangeTimePickerShiftNote-textinput": {
+        "uid": "rangeTimePickerShiftNote-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Note",
+        "path": "rangeTimePickerShiftNote",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "rangeTimePickerShift-rangeTimePicker": {
+        "uid": "rangeTimePickerShift-rangeTimePicker",
+        "type": "rangeTimePicker",
+        "kind": "input",
+        "label": "Shift",
+        "path": "rangeTimePickerShift",
+        "props": {
+          "icon": "schedule",
+          "separator": "to",
+          "hourFormat": "24",
+          "minuteStep": 30
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "tabRangeDateTimeCalendar": {
+        "uid": "tabRangeDateTimeCalendar",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "rangeDateTimeCalendarEmpty-rangeDateTimeCalendar",
+          "rangeDateTimeCalendarDefault-rangeDateTimeCalendar",
+          "rangeDateTimeCalendarDisabled-rangeDateTimeCalendar",
+          "rangeDateTimeCalendarReadonly-rangeDateTimeCalendar",
+          "rangeDateTimeCalendarValidation-rangeDateTimeCalendar",
+          "rangeDateTimeCalendarConstraints-rangeDateTimeCalendar"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "rangeDateTimeCalendarEmpty-rangeDateTimeCalendar": {
+        "uid": "rangeDateTimeCalendarEmpty-rangeDateTimeCalendar",
+        "type": "rangeDateTimeCalendar",
+        "kind": "input",
+        "label": "Empty",
+        "path": "rangeDateTimeCalendarEmpty",
+        "props": {
+          "minuteStep": 30,
+          "startTimeLabel": "Check-in",
+          "endTimeLabel": "Check-out"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "rangeDateTimeCalendarDefault-rangeDateTimeCalendar": {
+        "uid": "rangeDateTimeCalendarDefault-rangeDateTimeCalendar",
+        "type": "rangeDateTimeCalendar",
+        "kind": "input",
+        "label": "With default value",
+        "path": "rangeDateTimeCalendarDefault",
+        "defaultValue": {
+          "start": "2026-02-13T09:00:00",
+          "end": "2026-02-13T11:00:00"
+        },
+        "props": {
+          "minuteStep": 30
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator"
+      },
+      "rangeDateTimeCalendarDisabled-rangeDateTimeCalendar": {
+        "uid": "rangeDateTimeCalendarDisabled-rangeDateTimeCalendar",
+        "type": "rangeDateTimeCalendar",
+        "kind": "input",
+        "label": "Disabled",
+        "disabled": true,
+        "path": "rangeDateTimeCalendarDisabled",
+        "defaultValue": {
+          "start": "2026-02-13T09:00:00",
+          "end": "2026-02-13T11:00:00"
+        },
+        "props": {
+          "minuteStep": 30
+        },
+        "keysWithUndefined": "size include exclude readonly validator"
+      },
+      "rangeDateTimeCalendarReadonly-rangeDateTimeCalendar": {
+        "uid": "rangeDateTimeCalendarReadonly-rangeDateTimeCalendar",
+        "type": "rangeDateTimeCalendar",
+        "kind": "input",
+        "label": "Read only",
+        "readonly": true,
+        "path": "rangeDateTimeCalendarReadonly",
+        "defaultValue": {
+          "start": "2026-02-13T09:00:00",
+          "end": "2026-02-13T11:00:00"
+        },
+        "props": {
+          "minuteStep": 30
+        },
+        "keysWithUndefined": "size include exclude disabled validator"
+      },
+      "rangeDateTimeCalendarValidation-rangeDateTimeCalendar": {
+        "uid": "rangeDateTimeCalendarValidation-rangeDateTimeCalendar",
+        "type": "rangeDateTimeCalendar",
+        "kind": "input",
+        "label": "Required (validation)",
+        "validator": {
+          "type": "range",
+          "required": true,
+          "messages": {
+            "required": "Pick a start and an end",
+            "invalid": "Pick a start and an end"
+          }
+        },
+        "path": "rangeDateTimeCalendarValidation",
+        "props": {
+          "minuteStep": 30
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "rangeDateTimeCalendarConstraints-rangeDateTimeCalendar": {
+        "uid": "rangeDateTimeCalendarConstraints-rangeDateTimeCalendar",
+        "type": "rangeDateTimeCalendar",
+        "kind": "input",
+        "label": "With min/max date-time and disabled spans",
+        "path": "rangeDateTimeCalendarConstraints",
+        "props": {
+          "minuteStep": 30,
+          "minDateTime": "2026-02-01T09:00:00",
+          "maxDateTime": "2026-07-31T18:00:00",
+          "allowCustomTime": true,
+          "disabledRanges": [
+            {
+              "start": "2026-02-09T00:00:00",
+              "end": "2026-02-10T23:59:59"
+            },
+            {
+              "start": "2026-02-17T13:00:00",
+              "end": "2026-02-17T14:00:00"
+            }
+          ]
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "tabRangeDateTimeInput": {
+        "uid": "tabRangeDateTimeInput",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "rangeDateTimeInputEmpty-rangeDateTimeInput",
+          "rangeDateTimeInputDefault-rangeDateTimeInput",
+          "rangeDateTimeInputConstraints-rangeDateTimeInput",
+          "rangeDateTimeInputDisabled-rangeDateTimeInput",
+          "rangeDateTimeInputReadonly-rangeDateTimeInput",
+          "rangeDateTimeInputValidation-rangeDateTimeInput"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "rangeDateTimeInputEmpty-rangeDateTimeInput": {
+        "uid": "rangeDateTimeInputEmpty-rangeDateTimeInput",
+        "type": "rangeDateTimeInput",
+        "kind": "input",
+        "label": "Empty",
+        "path": "rangeDateTimeInputEmpty",
+        "props": {
+          "separator": "to"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "rangeDateTimeInputDefault-rangeDateTimeInput": {
+        "uid": "rangeDateTimeInputDefault-rangeDateTimeInput",
+        "type": "rangeDateTimeInput",
+        "kind": "input",
+        "label": "With default value",
+        "path": "rangeDateTimeInputDefault",
+        "defaultValue": {
+          "start": "2026-11-22T09:00:00",
+          "end": "2026-11-22T11:00:00"
+        },
+        "props": {
+          "icon": "schedule",
+          "separator": "to"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator"
+      },
+      "rangeDateTimeInputConstraints-rangeDateTimeInput": {
+        "uid": "rangeDateTimeInputConstraints-rangeDateTimeInput",
+        "type": "rangeDateTimeInput",
+        "kind": "input",
+        "label": "With min/max date-time",
+        "path": "rangeDateTimeInputConstraints",
+        "props": {
+          "icon": "schedule",
+          "separator": "to",
+          "minDateTime": "2026-01-01T09:00:00",
+          "maxDateTime": "2026-12-31T18:00:00",
+          "minDateTimeMessage": "No slots available before Jan 1st, 2026 at 9:00.",
+          "maxDateTimeMessage": "No slots available after Dec 31st, 2026 at 18:00.",
+          "minuteStep": 15
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "rangeDateTimeInputDisabled-rangeDateTimeInput": {
+        "uid": "rangeDateTimeInputDisabled-rangeDateTimeInput",
+        "type": "rangeDateTimeInput",
+        "kind": "input",
+        "label": "Disabled",
+        "disabled": true,
+        "path": "rangeDateTimeInputDisabled",
+        "defaultValue": {
+          "start": "2026-11-22T09:00:00",
+          "end": "2026-11-22T11:00:00"
+        },
+        "props": {
+          "icon": "schedule",
+          "separator": "to"
+        },
+        "keysWithUndefined": "size include exclude readonly validator"
+      },
+      "rangeDateTimeInputReadonly-rangeDateTimeInput": {
+        "uid": "rangeDateTimeInputReadonly-rangeDateTimeInput",
+        "type": "rangeDateTimeInput",
+        "kind": "input",
+        "label": "Read only",
+        "readonly": true,
+        "path": "rangeDateTimeInputReadonly",
+        "defaultValue": {
+          "start": "2026-11-22T09:00:00",
+          "end": "2026-11-22T11:00:00"
+        },
+        "props": {
+          "icon": "schedule",
+          "separator": "to"
+        },
+        "keysWithUndefined": "size include exclude disabled validator"
+      },
+      "rangeDateTimeInputValidation-rangeDateTimeInput": {
+        "uid": "rangeDateTimeInputValidation-rangeDateTimeInput",
+        "type": "rangeDateTimeInput",
+        "kind": "input",
+        "label": "Required (validation)",
+        "validator": {
+          "type": "range",
+          "required": true,
+          "messages": {
+            "required": "Pick a start and an end",
+            "invalid": "Pick a start and an end"
+          }
+        },
+        "path": "rangeDateTimeInputValidation",
+        "props": {
+          "icon": "schedule",
+          "separator": "to"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "tabRangeDateTimePicker": {
+        "uid": "tabRangeDateTimePicker",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "rangeDateTimePickerEmpty-rangeDateTimePicker",
+          "rangeDateTimePickerDefault-rangeDateTimePicker",
+          "rangeDateTimePickerDisabled-rangeDateTimePicker",
+          "rangeDateTimePickerReadonly-rangeDateTimePicker",
+          "rangeDateTimePickerValidation-rangeDateTimePicker",
+          "rangeDateTimePickerConstraints-rangeDateTimePicker",
+          "#0.1.29.6"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "rangeDateTimePickerEmpty-rangeDateTimePicker": {
+        "uid": "rangeDateTimePickerEmpty-rangeDateTimePicker",
+        "type": "rangeDateTimePicker",
+        "kind": "input",
+        "label": "Empty",
+        "path": "rangeDateTimePickerEmpty",
+        "props": {
+          "minuteStep": 30,
+          "startTimeLabel": "Check-in",
+          "endTimeLabel": "Check-out"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "rangeDateTimePickerDefault-rangeDateTimePicker": {
+        "uid": "rangeDateTimePickerDefault-rangeDateTimePicker",
+        "type": "rangeDateTimePicker",
+        "kind": "input",
+        "label": "With default value",
+        "path": "rangeDateTimePickerDefault",
+        "defaultValue": {
+          "start": "2026-02-13T09:00:00",
+          "end": "2026-02-13T11:00:00"
+        },
+        "props": {
+          "minuteStep": 30
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator"
+      },
+      "rangeDateTimePickerDisabled-rangeDateTimePicker": {
+        "uid": "rangeDateTimePickerDisabled-rangeDateTimePicker",
+        "type": "rangeDateTimePicker",
+        "kind": "input",
+        "label": "Disabled",
+        "disabled": true,
+        "path": "rangeDateTimePickerDisabled",
+        "defaultValue": {
+          "start": "2026-02-13T09:00:00",
+          "end": "2026-02-13T11:00:00"
+        },
+        "props": {
+          "minuteStep": 30
+        },
+        "keysWithUndefined": "size include exclude readonly validator"
+      },
+      "rangeDateTimePickerReadonly-rangeDateTimePicker": {
+        "uid": "rangeDateTimePickerReadonly-rangeDateTimePicker",
+        "type": "rangeDateTimePicker",
+        "kind": "input",
+        "label": "Read only",
+        "readonly": true,
+        "path": "rangeDateTimePickerReadonly",
+        "defaultValue": {
+          "start": "2026-02-13T09:00:00",
+          "end": "2026-02-13T11:00:00"
+        },
+        "props": {
+          "minuteStep": 30
+        },
+        "keysWithUndefined": "size include exclude disabled validator"
+      },
+      "rangeDateTimePickerValidation-rangeDateTimePicker": {
+        "uid": "rangeDateTimePickerValidation-rangeDateTimePicker",
+        "type": "rangeDateTimePicker",
+        "kind": "input",
+        "label": "Required (validation)",
+        "validator": {
+          "type": "range",
+          "required": true,
+          "messages": {
+            "required": "Pick a start and an end",
+            "invalid": "Pick a start and an end"
+          }
+        },
+        "path": "rangeDateTimePickerValidation",
+        "props": {
+          "minuteStep": 30
+        },
+        "keysWithUndefined": "size include exclude disabled readonly defaultValue"
+      },
+      "rangeDateTimePickerConstraints-rangeDateTimePicker": {
+        "uid": "rangeDateTimePickerConstraints-rangeDateTimePicker",
+        "type": "rangeDateTimePicker",
+        "kind": "input",
+        "label": "With min/max date-time and disabled spans",
+        "path": "rangeDateTimePickerConstraints",
+        "props": {
+          "minuteStep": 30,
+          "minDateTime": "2026-02-01T09:00:00",
+          "maxDateTime": "2026-07-31T18:00:00",
+          "allowCustomTime": true,
+          "disabledDayCountAriaLabel": "Disabled slots: {count}",
+          "disabledRanges": [
+            {
+              "start": "2026-02-09T00:00:00",
+              "end": "2026-02-10T23:59:59"
+            },
+            {
+              "start": "2026-02-17T13:00:00",
+              "end": "2026-02-17T14:00:00"
+            }
+          ]
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "#0.1.29.6": {
+        "uid": "#0.1.29.6",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "row"
+        },
+        "children": [
+          "rangeDateTimePickerRentalNote-textinput",
+          "rangeDateTimePickerRental-rangeDateTimePicker"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "rangeDateTimePickerRentalNote-textinput": {
+        "uid": "rangeDateTimePickerRentalNote-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Note",
+        "path": "rangeDateTimePickerRentalNote",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "rangeDateTimePickerRental-rangeDateTimePicker": {
+        "uid": "rangeDateTimePickerRental-rangeDateTimePicker",
+        "type": "rangeDateTimePicker",
+        "kind": "input",
+        "label": "Rental",
+        "path": "rangeDateTimePickerRental",
+        "props": {
+          "minuteStep": 30,
+          "startTimeLabel": "Pick-up",
+          "endTimeLabel": "Return"
+        },
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
       "tabMultiRangeCalendar": {
         "uid": "tabMultiRangeCalendar",
         "type": "grid",
@@ -5407,7 +6697,7 @@
           "checkboxGroups.days-checkboxGroup",
           "checkboxGroups.disabled-checkboxGroup",
           "checkboxGroups.readonly-checkboxGroup",
-          "#0.1.34.6"
+          "#0.1.42.6"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -5590,8 +6880,8 @@
         },
         "keysWithUndefined": "size include exclude disabled validator"
       },
-      "#0.1.34.6": {
-        "uid": "#0.1.34.6",
+      "#0.1.42.6": {
+        "uid": "#0.1.42.6",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -5636,7 +6926,7 @@
           "ratings.stay-rating",
           "ratings.disabled-rating",
           "ratings.readonly-rating",
-          "#0.1.35.5"
+          "#0.1.43.5"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -5705,8 +6995,8 @@
         "defaultValue": 4,
         "keysWithUndefined": "size include exclude disabled validator"
       },
-      "#0.1.35.5": {
-        "uid": "#0.1.35.5",
+      "#0.1.43.5": {
+        "uid": "#0.1.43.5",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -5855,7 +7145,7 @@
           "sliders.rating-slider",
           "sliders.disabled-slider",
           "sliders.readonly-slider",
-          "#0.1.37.6"
+          "#0.1.45.6"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -5954,8 +7244,8 @@
         "defaultValue": 70,
         "keysWithUndefined": "size include exclude disabled validator"
       },
-      "#0.1.37.6": {
-        "uid": "#0.1.37.6",
+      "#0.1.45.6": {
+        "uid": "#0.1.45.6",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -6013,7 +7303,7 @@
           "rangeSliders.age-rangeSlider",
           "rangeSliders.hours-rangeSlider",
           "rangeSliders.disabled-rangeSlider",
-          "#0.1.38.4"
+          "#0.1.46.4"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -6113,8 +7403,8 @@
         },
         "keysWithUndefined": "size include exclude readonly validator"
       },
-      "#0.1.38.4": {
-        "uid": "#0.1.38.4",
+      "#0.1.46.4": {
+        "uid": "#0.1.46.4",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -6174,7 +7464,7 @@
           "otp.short-otp",
           "otp.disabled-otp",
           "otp.readonly-otp",
-          "#0.1.39.5"
+          "#0.1.47.5"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -6256,8 +7546,8 @@
         "defaultValue": "482913",
         "keysWithUndefined": "size include exclude disabled validator"
       },
-      "#0.1.39.5": {
-        "uid": "#0.1.39.5",
+      "#0.1.47.5": {
+        "uid": "#0.1.47.5",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -6701,7 +7991,7 @@
         "type": "grid",
         "kind": "layout",
         "children": [
-          "#0.1.41.0",
+          "#0.1.49.0",
           "fileUploads.pdfOnly-fileUpload",
           "fileUploads.preloaded-fileUpload",
           "fileUploads.images-multiFileUpload",
@@ -6711,8 +8001,8 @@
         ],
         "keysWithUndefined": "size include exclude"
       },
-      "#0.1.41.0": {
-        "uid": "#0.1.41.0",
+      "#0.1.49.0": {
+        "uid": "#0.1.49.0",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -7476,7 +8766,7 @@
           "addLabel": "Add new developer",
           "removeLabel": "Delete",
           "template": {
-            "rowTemplateUid": "#0.1.45.0.t"
+            "rowTemplateUid": "#0.1.53.0.t"
           }
         },
         "keysWithUndefined": "size include exclude disabled readonly defaultValue"
@@ -7620,14 +8910,14 @@
         "type": "grid",
         "kind": "layout",
         "children": [
-          "#0.1.47.0",
+          "#0.1.55.0",
           "clientName-textinput",
           "registerMode-toggle"
         ],
         "keysWithUndefined": "size include exclude"
       },
-      "#0.1.47.0": {
-        "uid": "#0.1.47.0",
+      "#0.1.55.0": {
+        "uid": "#0.1.55.0",
         "type": "heading",
         "kind": "display",
         "props": {
@@ -7949,6 +9239,58 @@
         "radiogroups.wrongGreeting": [
           "required"
         ],
+        "rangeCalendarDefault": null,
+        "rangeCalendarDisabled": null,
+        "rangeCalendarDisabledRanges": null,
+        "rangeCalendarEmpty": null,
+        "rangeCalendarReadonly": null,
+        "rangeCalendarValidation": [
+          "required"
+        ],
+        "rangeDateInputDefault": null,
+        "rangeDateInputDisabled": null,
+        "rangeDateInputEmpty": null,
+        "rangeDateInputReadonly": null,
+        "rangeDateInputValidation": [
+          "required"
+        ],
+        "rangeDatePickerDefault": null,
+        "rangeDatePickerDestination": null,
+        "rangeDatePickerDisabled": null,
+        "rangeDatePickerDisabledRanges": null,
+        "rangeDatePickerEmpty": null,
+        "rangeDatePickerMinMax": null,
+        "rangeDatePickerReadonly": null,
+        "rangeDatePickerTrip": null,
+        "rangeDatePickerValidation": [
+          "required"
+        ],
+        "rangeDateTimeCalendarConstraints": null,
+        "rangeDateTimeCalendarDefault": null,
+        "rangeDateTimeCalendarDisabled": null,
+        "rangeDateTimeCalendarEmpty": null,
+        "rangeDateTimeCalendarReadonly": null,
+        "rangeDateTimeCalendarValidation": [
+          "required"
+        ],
+        "rangeDateTimeInputConstraints": null,
+        "rangeDateTimeInputDefault": null,
+        "rangeDateTimeInputDisabled": null,
+        "rangeDateTimeInputEmpty": null,
+        "rangeDateTimeInputReadonly": null,
+        "rangeDateTimeInputValidation": [
+          "required"
+        ],
+        "rangeDateTimePickerConstraints": null,
+        "rangeDateTimePickerDefault": null,
+        "rangeDateTimePickerDisabled": null,
+        "rangeDateTimePickerEmpty": null,
+        "rangeDateTimePickerReadonly": null,
+        "rangeDateTimePickerRental": null,
+        "rangeDateTimePickerRentalNote": null,
+        "rangeDateTimePickerValidation": [
+          "required"
+        ],
         "rangeSliders.age": [
           "required"
         ],
@@ -7957,6 +9299,24 @@
         "rangeSliders.disabled": null,
         "rangeSliders.hours": null,
         "rangeSliders.price": null,
+        "rangeTimeInputConstraints": null,
+        "rangeTimeInputDefault": null,
+        "rangeTimeInputDisabled": null,
+        "rangeTimeInputEmpty": null,
+        "rangeTimeInputReadonly": null,
+        "rangeTimeInputValidation": [
+          "required"
+        ],
+        "rangeTimePickerConstraints": null,
+        "rangeTimePickerDefault": null,
+        "rangeTimePickerDisabled": null,
+        "rangeTimePickerEmpty": null,
+        "rangeTimePickerReadonly": null,
+        "rangeTimePickerShift": null,
+        "rangeTimePickerShiftNote": null,
+        "rangeTimePickerValidation": [
+          "required"
+        ],
         "ratings.disabled": null,
         "ratings.food": [
           "required"
@@ -8250,12 +9610,66 @@
         "radiogroups.subregion": true,
         "radiogroups.view": true,
         "radiogroups.wrongGreeting": true,
+        "rangeCalendarDefault": true,
+        "rangeCalendarDisabled": true,
+        "rangeCalendarDisabledRanges": true,
+        "rangeCalendarEmpty": true,
+        "rangeCalendarReadonly": true,
+        "rangeCalendarValidation": true,
+        "rangeDateInputDefault": true,
+        "rangeDateInputDisabled": true,
+        "rangeDateInputEmpty": true,
+        "rangeDateInputReadonly": true,
+        "rangeDateInputValidation": true,
+        "rangeDatePickerDefault": true,
+        "rangeDatePickerDestination": true,
+        "rangeDatePickerDisabled": true,
+        "rangeDatePickerDisabledRanges": true,
+        "rangeDatePickerEmpty": true,
+        "rangeDatePickerMinMax": true,
+        "rangeDatePickerReadonly": true,
+        "rangeDatePickerTrip": true,
+        "rangeDatePickerValidation": true,
+        "rangeDateTimeCalendarConstraints": true,
+        "rangeDateTimeCalendarDefault": true,
+        "rangeDateTimeCalendarDisabled": true,
+        "rangeDateTimeCalendarEmpty": true,
+        "rangeDateTimeCalendarReadonly": true,
+        "rangeDateTimeCalendarValidation": true,
+        "rangeDateTimeInputConstraints": true,
+        "rangeDateTimeInputDefault": true,
+        "rangeDateTimeInputDisabled": true,
+        "rangeDateTimeInputEmpty": true,
+        "rangeDateTimeInputReadonly": true,
+        "rangeDateTimeInputValidation": true,
+        "rangeDateTimePickerConstraints": true,
+        "rangeDateTimePickerDefault": true,
+        "rangeDateTimePickerDisabled": true,
+        "rangeDateTimePickerEmpty": true,
+        "rangeDateTimePickerReadonly": true,
+        "rangeDateTimePickerRental": true,
+        "rangeDateTimePickerRentalNote": true,
+        "rangeDateTimePickerValidation": true,
         "rangeSliders.age": true,
         "rangeSliders.budget": true,
         "rangeSliders.city": true,
         "rangeSliders.disabled": true,
         "rangeSliders.hours": true,
         "rangeSliders.price": true,
+        "rangeTimeInputConstraints": true,
+        "rangeTimeInputDefault": true,
+        "rangeTimeInputDisabled": true,
+        "rangeTimeInputEmpty": true,
+        "rangeTimeInputReadonly": true,
+        "rangeTimeInputValidation": true,
+        "rangeTimePickerConstraints": true,
+        "rangeTimePickerDefault": true,
+        "rangeTimePickerDisabled": true,
+        "rangeTimePickerEmpty": true,
+        "rangeTimePickerReadonly": true,
+        "rangeTimePickerShift": true,
+        "rangeTimePickerShiftNote": true,
+        "rangeTimePickerValidation": true,
         "ratings.disabled": true,
         "ratings.food": true,
         "ratings.overall": true,
@@ -8839,6 +10253,141 @@
         }
       ],
       "multiRangeTimePickerValidation": "[undefined]",
+      "rangeCalendarEmpty": "[undefined]",
+      "rangeCalendarDefault": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeCalendarDisabled": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeCalendarReadonly": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeCalendarValidation": "[undefined]",
+      "rangeCalendarDisabledRanges": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDateInputEmpty": "[undefined]",
+      "rangeDateInputDefault": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDateInputDisabled": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDateInputReadonly": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDateInputValidation": "[undefined]",
+      "rangeDatePickerEmpty": "[undefined]",
+      "rangeDatePickerMinMax": {
+        "start": "2026-02-20",
+        "end": "2026-02-22"
+      },
+      "rangeDatePickerDefault": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDatePickerDisabled": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDatePickerReadonly": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDatePickerValidation": "[undefined]",
+      "rangeDatePickerDisabledRanges": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDatePickerDestination": "[undefined]",
+      "rangeDatePickerTrip": "[undefined]",
+      "rangeTimeInputEmpty": "[undefined]",
+      "rangeTimeInputDefault": {
+        "start": "09:00:00",
+        "end": "11:00:00"
+      },
+      "rangeTimeInputConstraints": "[undefined]",
+      "rangeTimeInputDisabled": {
+        "start": "09:00:00",
+        "end": "11:00:00"
+      },
+      "rangeTimeInputReadonly": {
+        "start": "09:00:00",
+        "end": "11:00:00"
+      },
+      "rangeTimeInputValidation": "[undefined]",
+      "rangeTimePickerEmpty": "[undefined]",
+      "rangeTimePickerDefault": {
+        "start": "09:00:00",
+        "end": "12:00:00"
+      },
+      "rangeTimePickerConstraints": "[undefined]",
+      "rangeTimePickerDisabled": {
+        "start": "09:00:00",
+        "end": "12:00:00"
+      },
+      "rangeTimePickerReadonly": {
+        "start": "09:00:00",
+        "end": "12:00:00"
+      },
+      "rangeTimePickerValidation": "[undefined]",
+      "rangeTimePickerShiftNote": "[undefined]",
+      "rangeTimePickerShift": "[undefined]",
+      "rangeDateTimeCalendarEmpty": "[undefined]",
+      "rangeDateTimeCalendarDefault": {
+        "start": "2026-02-13T09:00:00",
+        "end": "2026-02-13T11:00:00"
+      },
+      "rangeDateTimeCalendarDisabled": {
+        "start": "2026-02-13T09:00:00",
+        "end": "2026-02-13T11:00:00"
+      },
+      "rangeDateTimeCalendarReadonly": {
+        "start": "2026-02-13T09:00:00",
+        "end": "2026-02-13T11:00:00"
+      },
+      "rangeDateTimeCalendarValidation": "[undefined]",
+      "rangeDateTimeCalendarConstraints": "[undefined]",
+      "rangeDateTimeInputEmpty": "[undefined]",
+      "rangeDateTimeInputDefault": {
+        "start": "2026-11-22T09:00:00",
+        "end": "2026-11-22T11:00:00"
+      },
+      "rangeDateTimeInputConstraints": "[undefined]",
+      "rangeDateTimeInputDisabled": {
+        "start": "2026-11-22T09:00:00",
+        "end": "2026-11-22T11:00:00"
+      },
+      "rangeDateTimeInputReadonly": {
+        "start": "2026-11-22T09:00:00",
+        "end": "2026-11-22T11:00:00"
+      },
+      "rangeDateTimeInputValidation": "[undefined]",
+      "rangeDateTimePickerEmpty": "[undefined]",
+      "rangeDateTimePickerDefault": {
+        "start": "2026-02-13T09:00:00",
+        "end": "2026-02-13T11:00:00"
+      },
+      "rangeDateTimePickerDisabled": {
+        "start": "2026-02-13T09:00:00",
+        "end": "2026-02-13T11:00:00"
+      },
+      "rangeDateTimePickerReadonly": {
+        "start": "2026-02-13T09:00:00",
+        "end": "2026-02-13T11:00:00"
+      },
+      "rangeDateTimePickerValidation": "[undefined]",
+      "rangeDateTimePickerConstraints": "[undefined]",
+      "rangeDateTimePickerRentalNote": "[undefined]",
+      "rangeDateTimePickerRental": "[undefined]",
       "multiRangeCalendarEmpty": "[undefined]",
       "multiRangeCalendarDefault": [
         {
@@ -9273,6 +10822,71 @@
         "multiRangeTimePickerDisabled-multiRangeTimePicker",
         "multiRangeTimePickerReadonly-multiRangeTimePicker",
         "multiRangeTimePickerValidation-multiRangeTimePicker",
+        "tabRangeCalendar",
+        "rangeCalendarEmpty-rangeCalendar",
+        "rangeCalendarDefault-rangeCalendar",
+        "rangeCalendarDisabled-rangeCalendar",
+        "rangeCalendarReadonly-rangeCalendar",
+        "rangeCalendarValidation-rangeCalendar",
+        "rangeCalendarDisabledRanges-rangeCalendar",
+        "tabRangeDateInput",
+        "rangeDateInputEmpty-rangeDateInput",
+        "rangeDateInputDefault-rangeDateInput",
+        "rangeDateInputDisabled-rangeDateInput",
+        "rangeDateInputReadonly-rangeDateInput",
+        "rangeDateInputValidation-rangeDateInput",
+        "tabRangeDatePicker",
+        "rangeDatePickerEmpty-rangeDatePicker",
+        "rangeDatePickerMinMax-rangeDatePicker",
+        "rangeDatePickerDefault-rangeDatePicker",
+        "rangeDatePickerDisabled-rangeDatePicker",
+        "rangeDatePickerReadonly-rangeDatePicker",
+        "rangeDatePickerValidation-rangeDatePicker",
+        "rangeDatePickerDisabledRanges-rangeDatePicker",
+        "#0.1.24.7",
+        "rangeDatePickerDestination-textinput",
+        "rangeDatePickerTrip-rangeDatePicker",
+        "tabRangeTimeInput",
+        "rangeTimeInputEmpty-rangeTimeInput",
+        "rangeTimeInputDefault-rangeTimeInput",
+        "rangeTimeInputConstraints-rangeTimeInput",
+        "rangeTimeInputDisabled-rangeTimeInput",
+        "rangeTimeInputReadonly-rangeTimeInput",
+        "rangeTimeInputValidation-rangeTimeInput",
+        "tabRangeTimePicker",
+        "rangeTimePickerEmpty-rangeTimePicker",
+        "rangeTimePickerDefault-rangeTimePicker",
+        "rangeTimePickerConstraints-rangeTimePicker",
+        "rangeTimePickerDisabled-rangeTimePicker",
+        "rangeTimePickerReadonly-rangeTimePicker",
+        "rangeTimePickerValidation-rangeTimePicker",
+        "#0.1.26.6",
+        "rangeTimePickerShiftNote-textinput",
+        "rangeTimePickerShift-rangeTimePicker",
+        "tabRangeDateTimeCalendar",
+        "rangeDateTimeCalendarEmpty-rangeDateTimeCalendar",
+        "rangeDateTimeCalendarDefault-rangeDateTimeCalendar",
+        "rangeDateTimeCalendarDisabled-rangeDateTimeCalendar",
+        "rangeDateTimeCalendarReadonly-rangeDateTimeCalendar",
+        "rangeDateTimeCalendarValidation-rangeDateTimeCalendar",
+        "rangeDateTimeCalendarConstraints-rangeDateTimeCalendar",
+        "tabRangeDateTimeInput",
+        "rangeDateTimeInputEmpty-rangeDateTimeInput",
+        "rangeDateTimeInputDefault-rangeDateTimeInput",
+        "rangeDateTimeInputConstraints-rangeDateTimeInput",
+        "rangeDateTimeInputDisabled-rangeDateTimeInput",
+        "rangeDateTimeInputReadonly-rangeDateTimeInput",
+        "rangeDateTimeInputValidation-rangeDateTimeInput",
+        "tabRangeDateTimePicker",
+        "rangeDateTimePickerEmpty-rangeDateTimePicker",
+        "rangeDateTimePickerDefault-rangeDateTimePicker",
+        "rangeDateTimePickerDisabled-rangeDateTimePicker",
+        "rangeDateTimePickerReadonly-rangeDateTimePicker",
+        "rangeDateTimePickerValidation-rangeDateTimePicker",
+        "rangeDateTimePickerConstraints-rangeDateTimePicker",
+        "#0.1.29.6",
+        "rangeDateTimePickerRentalNote-textinput",
+        "rangeDateTimePickerRental-rangeDateTimePicker",
         "tabMultiRangeCalendar",
         "multiRangeCalendarEmpty-multiRangeCalendar",
         "multiRangeCalendarDefault-multiRangeCalendar",
@@ -9362,7 +10976,7 @@
         "checkboxGroups.days-checkboxGroup",
         "checkboxGroups.disabled-checkboxGroup",
         "checkboxGroups.readonly-checkboxGroup",
-        "#0.1.34.6",
+        "#0.1.42.6",
         "checkboxGroups.name-textinput",
         "checkboxGroups.contact-checkboxGroup",
         "tabRating",
@@ -9371,7 +10985,7 @@
         "ratings.stay-rating",
         "ratings.disabled-rating",
         "ratings.readonly-rating",
-        "#0.1.35.5",
+        "#0.1.43.5",
         "ratings.reviewer-textinput",
         "ratings.overall-rating",
         "tabSelect",
@@ -9388,7 +11002,7 @@
         "sliders.rating-slider",
         "sliders.disabled-slider",
         "sliders.readonly-slider",
-        "#0.1.37.6",
+        "#0.1.45.6",
         "sliders.speaker-textinput",
         "sliders.bass-slider",
         "tabRangeSlider",
@@ -9396,7 +11010,7 @@
         "rangeSliders.age-rangeSlider",
         "rangeSliders.hours-rangeSlider",
         "rangeSliders.disabled-rangeSlider",
-        "#0.1.38.4",
+        "#0.1.46.4",
         "rangeSliders.city-textinput",
         "rangeSliders.budget-rangeSlider",
         "tabOtp",
@@ -9405,7 +11019,7 @@
         "otp.short-otp",
         "otp.disabled-otp",
         "otp.readonly-otp",
-        "#0.1.39.5",
+        "#0.1.47.5",
         "otp.email-textinput",
         "otp.emailCode-otp",
         "tabDropdown",
@@ -9419,7 +11033,7 @@
         "dropdowns.invalidValueList-dropdown",
         "dropdowns.customItemRenderer-dropdown",
         "tabFileUpload",
-        "#0.1.41.0",
+        "#0.1.49.0",
         "fileUploads.title-textinput",
         "fileUploads.basic-fileUpload",
         "fileUploads.pdfOnly-fileUpload",
@@ -9450,19 +11064,19 @@
         "multiLists.disabled-multiList",
         "tabRepeater",
         "repeaters.users-repeater",
-        "#0.1.45.0.t[0]",
+        "#0.1.53.0.t[0]",
         "repeaters.users.items.firstName-textinput[0]",
         "repeaters.users.items.lastName-textinput[0]",
         "userRowMenu[0]",
-        "#0.1.45.0.t[1]",
+        "#0.1.53.0.t[1]",
         "repeaters.users.items.firstName-textinput[1]",
         "repeaters.users.items.lastName-textinput[1]",
         "userRowMenu[1]",
-        "#0.1.45.0.t[2]",
+        "#0.1.53.0.t[2]",
         "repeaters.users.items.firstName-textinput[2]",
         "repeaters.users.items.lastName-textinput[2]",
         "userRowMenu[2]",
-        "#0.1.45.0.t[3]",
+        "#0.1.53.0.t[3]",
         "repeaters.users.items.firstName-textinput[3]",
         "repeaters.users.items.lastName-textinput[3]",
         "userRowMenu[3]",
@@ -9477,25 +11091,25 @@
         "tags.disabled-tags",
         "tags.readonly-tags",
         "tabCustomWidget",
-        "#0.1.47.0",
+        "#0.1.55.0",
         "clientName-textinput",
         "registerMode-toggle",
         "submit-button"
       ],
       "changedEntries": {
-        "#0.1.45.0.t[0]": "layout grid",
+        "#0.1.53.0.t[0]": "layout grid",
         "repeaters.users.items.firstName-textinput[0]": "input textinput repeaters.users.0.firstName",
         "repeaters.users.items.lastName-textinput[0]": "input textinput repeaters.users.0.lastName",
         "userRowMenu[0]": "action menu",
-        "#0.1.45.0.t[1]": "layout grid",
+        "#0.1.53.0.t[1]": "layout grid",
         "repeaters.users.items.firstName-textinput[1]": "input textinput repeaters.users.1.firstName",
         "repeaters.users.items.lastName-textinput[1]": "input textinput repeaters.users.1.lastName",
         "userRowMenu[1]": "action menu",
-        "#0.1.45.0.t[2]": "layout grid",
+        "#0.1.53.0.t[2]": "layout grid",
         "repeaters.users.items.firstName-textinput[2]": "input textinput repeaters.users.2.firstName",
         "repeaters.users.items.lastName-textinput[2]": "input textinput repeaters.users.2.lastName",
         "userRowMenu[2]": "action menu",
-        "#0.1.45.0.t[3]": "layout grid",
+        "#0.1.53.0.t[3]": "layout grid",
         "repeaters.users.items.firstName-textinput[3]": "input textinput repeaters.users.3.firstName",
         "repeaters.users.items.lastName-textinput[3]": "input textinput repeaters.users.3.lastName",
         "userRowMenu[3]": "action menu"
@@ -9503,19 +11117,19 @@
     },
     "repeaterItemScopes": {
       "allEntries": {
-        "#0.1.45.0.t[0]": {
+        "#0.1.53.0.t[0]": {
           "itemPath": "repeaters.users.0",
           "index": 0
         },
-        "#0.1.45.0.t[1]": {
+        "#0.1.53.0.t[1]": {
           "itemPath": "repeaters.users.1",
           "index": 1
         },
-        "#0.1.45.0.t[2]": {
+        "#0.1.53.0.t[2]": {
           "itemPath": "repeaters.users.2",
           "index": 2
         },
-        "#0.1.45.0.t[3]": {
+        "#0.1.53.0.t[3]": {
           "itemPath": "repeaters.users.3",
           "index": 3
         },
@@ -9571,28 +11185,28 @@
     },
     "repeaterRows": {
       "allEntries": {
-        "#0.1.45.0.t[0]": [
+        "#0.1.53.0.t[0]": [
           {
             "declaredItemPath": "repeaters.users.items",
             "itemPath": "repeaters.users.0",
             "index": 0
           }
         ],
-        "#0.1.45.0.t[1]": [
+        "#0.1.53.0.t[1]": [
           {
             "declaredItemPath": "repeaters.users.items",
             "itemPath": "repeaters.users.1",
             "index": 1
           }
         ],
-        "#0.1.45.0.t[2]": [
+        "#0.1.53.0.t[2]": [
           {
             "declaredItemPath": "repeaters.users.items",
             "itemPath": "repeaters.users.2",
             "index": 2
           }
         ],
-        "#0.1.45.0.t[3]": [
+        "#0.1.53.0.t[3]": [
           {
             "declaredItemPath": "repeaters.users.items",
             "itemPath": "repeaters.users.3",
@@ -9687,8 +11301,8 @@
     },
     "calculatedWidgets": {
       "changedEntries": {
-        "#0.1.45.0.t[0]": {
-          "uid": "#0.1.45.0.t[0]",
+        "#0.1.53.0.t[0]": {
+          "uid": "#0.1.53.0.t[0]",
           "type": "grid",
           "kind": "layout",
           "props": {
@@ -9752,8 +11366,8 @@
           },
           "keysWithUndefined": "size include exclude label disabled actionType"
         },
-        "#0.1.45.0.t[1]": {
-          "uid": "#0.1.45.0.t[1]",
+        "#0.1.53.0.t[1]": {
+          "uid": "#0.1.53.0.t[1]",
           "type": "grid",
           "kind": "layout",
           "props": {
@@ -9817,8 +11431,8 @@
           },
           "keysWithUndefined": "size include exclude label disabled actionType"
         },
-        "#0.1.45.0.t[2]": {
-          "uid": "#0.1.45.0.t[2]",
+        "#0.1.53.0.t[2]": {
+          "uid": "#0.1.53.0.t[2]",
           "type": "grid",
           "kind": "layout",
           "props": {
@@ -9882,8 +11496,8 @@
           },
           "keysWithUndefined": "size include exclude label disabled actionType"
         },
-        "#0.1.45.0.t[3]": {
-          "uid": "#0.1.45.0.t[3]",
+        "#0.1.53.0.t[3]": {
+          "uid": "#0.1.53.0.t[3]",
           "type": "grid",
           "kind": "layout",
           "props": {
@@ -10272,6 +11886,141 @@
         }
       ],
       "multiRangeTimePickerValidation": "[undefined]",
+      "rangeCalendarEmpty": "[undefined]",
+      "rangeCalendarDefault": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeCalendarDisabled": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeCalendarReadonly": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeCalendarValidation": "[undefined]",
+      "rangeCalendarDisabledRanges": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDateInputEmpty": "[undefined]",
+      "rangeDateInputDefault": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDateInputDisabled": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDateInputReadonly": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDateInputValidation": "[undefined]",
+      "rangeDatePickerEmpty": "[undefined]",
+      "rangeDatePickerMinMax": {
+        "start": "2026-02-20",
+        "end": "2026-02-22"
+      },
+      "rangeDatePickerDefault": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDatePickerDisabled": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDatePickerReadonly": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDatePickerValidation": "[undefined]",
+      "rangeDatePickerDisabledRanges": {
+        "start": "2026-02-13",
+        "end": "2026-02-16"
+      },
+      "rangeDatePickerDestination": "[undefined]",
+      "rangeDatePickerTrip": "[undefined]",
+      "rangeTimeInputEmpty": "[undefined]",
+      "rangeTimeInputDefault": {
+        "start": "09:00:00",
+        "end": "11:00:00"
+      },
+      "rangeTimeInputConstraints": "[undefined]",
+      "rangeTimeInputDisabled": {
+        "start": "09:00:00",
+        "end": "11:00:00"
+      },
+      "rangeTimeInputReadonly": {
+        "start": "09:00:00",
+        "end": "11:00:00"
+      },
+      "rangeTimeInputValidation": "[undefined]",
+      "rangeTimePickerEmpty": "[undefined]",
+      "rangeTimePickerDefault": {
+        "start": "09:00:00",
+        "end": "12:00:00"
+      },
+      "rangeTimePickerConstraints": "[undefined]",
+      "rangeTimePickerDisabled": {
+        "start": "09:00:00",
+        "end": "12:00:00"
+      },
+      "rangeTimePickerReadonly": {
+        "start": "09:00:00",
+        "end": "12:00:00"
+      },
+      "rangeTimePickerValidation": "[undefined]",
+      "rangeTimePickerShiftNote": "[undefined]",
+      "rangeTimePickerShift": "[undefined]",
+      "rangeDateTimeCalendarEmpty": "[undefined]",
+      "rangeDateTimeCalendarDefault": {
+        "start": "2026-02-13T09:00:00",
+        "end": "2026-02-13T11:00:00"
+      },
+      "rangeDateTimeCalendarDisabled": {
+        "start": "2026-02-13T09:00:00",
+        "end": "2026-02-13T11:00:00"
+      },
+      "rangeDateTimeCalendarReadonly": {
+        "start": "2026-02-13T09:00:00",
+        "end": "2026-02-13T11:00:00"
+      },
+      "rangeDateTimeCalendarValidation": "[undefined]",
+      "rangeDateTimeCalendarConstraints": "[undefined]",
+      "rangeDateTimeInputEmpty": "[undefined]",
+      "rangeDateTimeInputDefault": {
+        "start": "2026-11-22T09:00:00",
+        "end": "2026-11-22T11:00:00"
+      },
+      "rangeDateTimeInputConstraints": "[undefined]",
+      "rangeDateTimeInputDisabled": {
+        "start": "2026-11-22T09:00:00",
+        "end": "2026-11-22T11:00:00"
+      },
+      "rangeDateTimeInputReadonly": {
+        "start": "2026-11-22T09:00:00",
+        "end": "2026-11-22T11:00:00"
+      },
+      "rangeDateTimeInputValidation": "[undefined]",
+      "rangeDateTimePickerEmpty": "[undefined]",
+      "rangeDateTimePickerDefault": {
+        "start": "2026-02-13T09:00:00",
+        "end": "2026-02-13T11:00:00"
+      },
+      "rangeDateTimePickerDisabled": {
+        "start": "2026-02-13T09:00:00",
+        "end": "2026-02-13T11:00:00"
+      },
+      "rangeDateTimePickerReadonly": {
+        "start": "2026-02-13T09:00:00",
+        "end": "2026-02-13T11:00:00"
+      },
+      "rangeDateTimePickerValidation": "[undefined]",
+      "rangeDateTimePickerConstraints": "[undefined]",
+      "rangeDateTimePickerRentalNote": "[undefined]",
+      "rangeDateTimePickerRental": "[undefined]",
       "multiRangeCalendarEmpty": "[undefined]",
       "multiRangeCalendarDefault": [
         {
@@ -10581,19 +12330,19 @@
     },
     "resolvedSources": {
       "removedKeys": [
-        "#0.1.45.0.t[0]",
+        "#0.1.53.0.t[0]",
         "repeaters.users.items.firstName-textinput[0]",
         "repeaters.users.items.lastName-textinput[0]",
         "userRowMenu[0]",
-        "#0.1.45.0.t[1]",
+        "#0.1.53.0.t[1]",
         "repeaters.users.items.firstName-textinput[1]",
         "repeaters.users.items.lastName-textinput[1]",
         "userRowMenu[1]",
-        "#0.1.45.0.t[2]",
+        "#0.1.53.0.t[2]",
         "repeaters.users.items.firstName-textinput[2]",
         "repeaters.users.items.lastName-textinput[2]",
         "userRowMenu[2]",
-        "#0.1.45.0.t[3]",
+        "#0.1.53.0.t[3]",
         "repeaters.users.items.firstName-textinput[3]",
         "repeaters.users.items.lastName-textinput[3]",
         "userRowMenu[3]"
@@ -10607,19 +12356,19 @@
     },
     "calculatedWidgets": {
       "removedKeys": [
-        "#0.1.45.0.t[0]",
+        "#0.1.53.0.t[0]",
         "repeaters.users.items.firstName-textinput[0]",
         "repeaters.users.items.lastName-textinput[0]",
         "userRowMenu[0]",
-        "#0.1.45.0.t[1]",
+        "#0.1.53.0.t[1]",
         "repeaters.users.items.firstName-textinput[1]",
         "repeaters.users.items.lastName-textinput[1]",
         "userRowMenu[1]",
-        "#0.1.45.0.t[2]",
+        "#0.1.53.0.t[2]",
         "repeaters.users.items.firstName-textinput[2]",
         "repeaters.users.items.lastName-textinput[2]",
         "userRowMenu[2]",
-        "#0.1.45.0.t[3]",
+        "#0.1.53.0.t[3]",
         "repeaters.users.items.firstName-textinput[3]",
         "repeaters.users.items.lastName-textinput[3]",
         "userRowMenu[3]"

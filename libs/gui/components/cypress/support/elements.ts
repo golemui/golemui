@@ -34,9 +34,12 @@ export const file: FileItem = {
   status: 'uploaded',
 };
 
-const dateRange = [{ start: '2026-03-01', end: '2026-03-05' }];
-const dateTimeRange = [{ start: '2026-03-01T09:00:00', end: '2026-03-05T17:00:00' }];
-const timeRange = [{ start: '09:00:00', end: '17:00:00' }];
+const singleDateRange = { start: '2026-03-01', end: '2026-03-05' };
+const dateRange = [singleDateRange];
+const singleDateTimeRange = { start: '2026-03-01T09:00:00', end: '2026-03-05T17:00:00' };
+const dateTimeRange = [singleDateTimeRange];
+const singleTimeRange = { start: '09:00:00', end: '17:00:00' };
+const timeRange = [singleTimeRange];
 
 // A listbox's options are its host's children: render them from the items the list reports, as
 // an app does, so axe checks the listbox with its options.
@@ -189,6 +192,21 @@ export const elements: ElementCase[] = [
     form: { property: 'value', sample: { start: 20, end: 60 } },
   },
   {
+    tag: 'gui-range-calendar',
+    props: { label: 'Trip' },
+    form: { property: 'value', sample: singleDateRange },
+  },
+  {
+    tag: 'gui-range-date',
+    props: { label: 'Trip' },
+    form: { property: 'value', sample: singleDateRange },
+  },
+  {
+    tag: 'gui-range-date-picker',
+    props: { label: 'Trip' },
+    form: { property: 'value', sample: singleDateRange },
+  },
+  {
     tag: 'gui-multi-range-calendar',
     props: { label: 'Stay' },
     form: { property: 'value', sample: dateRange },
@@ -217,6 +235,31 @@ export const elements: ElementCase[] = [
     tag: 'gui-multi-range-date-time-picker',
     props: { label: 'Stay' },
     form: { property: 'value', sample: dateTimeRange },
+  },
+  {
+    tag: 'gui-range-date-time',
+    props: { label: 'Rental' },
+    form: { property: 'value', sample: singleDateTimeRange },
+  },
+  {
+    tag: 'gui-range-date-time-calendar',
+    props: { label: 'Rental' },
+    form: { property: 'value', sample: singleDateTimeRange },
+  },
+  {
+    tag: 'gui-range-date-time-picker',
+    props: { label: 'Rental' },
+    form: { property: 'value', sample: singleDateTimeRange },
+  },
+  {
+    tag: 'gui-range-time',
+    props: { label: 'Shift' },
+    form: { property: 'value', sample: singleTimeRange },
+  },
+  {
+    tag: 'gui-range-time-picker',
+    props: { label: 'Shift' },
+    form: { property: 'value', sample: singleTimeRange },
   },
   {
     tag: 'gui-multi-range-time',

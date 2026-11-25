@@ -1,0 +1,7 @@
+@use 'range-time-panel' as *;
+
+// The range time picker reuses the shared picker chrome (arrow, `.gui-picker__panel` card) from
+// `picker.scss`; this file only lays out the two-list popover.
+:is(.gui-range-time-picker.gui-field, gui-range-time-picker) {
+  @include gui-range-time-panel('gui-range-time-picker');
+}

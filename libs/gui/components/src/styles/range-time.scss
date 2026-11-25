@@ -1,0 +1,7 @@
+@use 'range-input' as *;
+
+// Field and focus-ring styles come from `date-time-parts.scss` via the shared
+// `gui-parts` / `gui-parts-ring` classes
+gui-range-time {
+  @include gui-range-input('gui-range-time-input', '.gui-range-time-input__inputs');
+}

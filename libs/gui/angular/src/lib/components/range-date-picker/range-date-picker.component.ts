@@ -1,0 +1,49 @@
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  inject,
+  type OnDestroy,
+  type OnInit,
+} from '@angular/core';
+import { InputWidgetAdapter } from '@golemui/angular';
+import type { InputWidget, WithWidget } from '@golemui/core';
+import type { CompleteDateRange, RangeDatePickerProps } from '@golemui/gui-shared/internals';
+import '@golemui/gui-components/range-date-picker';
+import { deferHydrationAttr } from '../../utils/defer-hydration';
+
+@Component({
+  standalone: true,
+  selector: 'gui-range-date-picker-control',
+  imports: [CommonModule],
+  providers: [InputWidgetAdapter],
+  templateUrl: './range-date-picker.component.html',
+  host: {
+    class: 'gui-range-date-picker gui-field',
+  },
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+})
+export class RangeDatePickerComponent implements OnInit, OnDestroy, WithWidget {
+  widget!: InputWidget<CompleteDateRange>;
+  protected adapter: InputWidgetAdapter<CompleteDateRange, RangeDatePickerProps> =
+    inject(InputWidgetAdapter);
+  protected readonly deferHydration = deferHydrationAttr();
+
+  ngOnInit(): void {
+    this.adapter.init(this.widget);
+  }
+
+  protected onChangeDate(event: Event) {
+    this.adapter.injectValidationIssues(null);
+    this.adapter.valueChanged((event as CustomEvent).detail.value);
+  }
+
+  protected onInputError(event: Event) {
+    this.adapter.injectValidationIssues([(event as CustomEvent).detail.message]);
+    this.adapter.onBlur();
+  }
+
+  ngOnDestroy(): void {
+    this.adapter.destroy();
+  }
+}

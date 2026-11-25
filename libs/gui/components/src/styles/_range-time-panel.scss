@@ -1,0 +1,29 @@
+// The popup of a range time picker: a start and an end time list side by side, each with its
+// label. `gui-range-time-picker` and `gui-multi-range-time-picker` include it with their block
+// class; the panel card and the toggle arrow come from `picker.scss`.
+
+@mixin gui-range-time-panel($block) {
+  .#{$block}__columns {
+    display: flex;
+    gap: var(--gui-space-2);
+  }
+
+  .#{$block}__column {
+    display: flex;
+    flex-direction: column;
+    min-width: 120px;
+  }
+
+  .#{$block}__column-label {
+    font-size: var(--gui-font-sm);
+    font-weight: 600;
+    color: var(--gui-text-muted, var(--gui-text-default));
+    padding: var(--gui-space-1) var(--gui-space-2);
+  }
+
+  .#{$block}__list gui-time-list,
+  gui-time-list.#{$block}__list {
+    position: static;
+    width: 100%;
+  }
+}

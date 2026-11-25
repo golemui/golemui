@@ -201,6 +201,34 @@ export function emptyCompiledForm(): CompiledForm {
 }
 
 /**
+ * Calls a function for a compiled widget and for every compiled widget below it: the children
+ * of a layout, and the widgets of the row layout of a repeater.
+ *
+ * @param widget - The first widget. `undefined` calls nothing.
+ * @param visit - The function to call with each widget.
+ *
+ * @example
+ * ```ts
+ * const uids: string[] = [];
+ * forEachCompiledWidget(compiled.root, (widget) => uids.push(widget.source.uid));
+ * // ['#0', 'users', 'row', 'name', 'save'], with the widgets of the row layout one time
+ * ```
+ */
+export function forEachCompiledWidget(
+  widget: CompiledWidget | undefined,
+  visit: (widget: CompiledWidget) => void,
+): void {
+  if (widget === undefined) {
+    return;
+  }
+  visit(widget);
+  for (const child of widget.children) {
+    forEachCompiledWidget(child, visit);
+  }
+  forEachCompiledWidget(widget.repeater?.rowLayout, visit);
+}
+
+/**
  * Writes the indexes of a row between the parts of a path.
  *
  * @param parts - The texts between the row indexes, see {@link CompiledPath}.

@@ -1,21 +1,27 @@
 import { type CompiledWidget } from '../compile/compiled-form';
 import { type DotPath } from '../shared';
 import { type RepeaterItemScope, type RepeaterRow, type State } from '../store/model';
-import { innermostRowIndex, type WidgetInstance, type WidgetInstanceTree } from './widget-instance';
+import {
+  forEachInstance,
+  innermostRowIndex,
+  type WidgetInstance,
+  type WidgetInstanceTree,
+} from './widget-instance';
 
-/** The records of the state that list every widget, and the rows around it, by uid. */
+/** The records of the state that list every widget, the rows around it and its flags, by uid. */
 export type InstanceRecords = Pick<
   State,
-  'resolvedSources' | 'repeaterItemScopes' | 'repeaterRows'
+  'resolvedSources' | 'repeaterItemScopes' | 'repeaterRows' | 'widgetFlags'
 >;
 
 /**
- * Writes the widget instances of a form as the three records that the rest of the store reads.
+ * Writes the widget instances of a form as the four records that the rest of the store reads.
  * The keys are written in the order of the document.
  *
  * @param tree - The widget instances.
  * @param compiledRoot - The compiled root layout that the tree was built from.
- * @returns New records. A widget outside a repeater has an entry only in `resolvedSources`.
+ * @returns New records. A widget outside a repeater has no entry in the two repeater records,
+ *   and a widget without flags has no entry in `widgetFlags`.
  *
  * @example
  * ```ts
@@ -32,11 +38,42 @@ export function recordsOfInstances(
     resolvedSources: {},
     repeaterItemScopes: {},
     repeaterRows: {},
+    widgetFlags: {},
   };
   if (tree.root !== undefined && compiledRoot !== undefined) {
     addInstance(records, tree.root, compiledRoot, [], undefined);
   }
   return records;
+}
+
+/**
+ * Writes the flags of the widget instances as the record `widgetFlags`.
+ *
+ * @param tree - The widget instances, after their flags were computed.
+ * @returns A new record. A widget without flags has no entry.
+ *
+ * @example
+ * ```ts
+ * const widgetFlags = flagsRecordOfInstances(tree);
+ * // widgetFlags['vat'] is { hidden: true }, and a widget with no condition has no key
+ * ```
+ */
+export function flagsRecordOfInstances(tree: WidgetInstanceTree): State['widgetFlags'] {
+  const widgetFlags: State['widgetFlags'] = {};
+  forEachInstance(tree.root, (instance) => {
+    writeFlags(widgetFlags, instance);
+  });
+  return widgetFlags;
+}
+
+function writeFlags(widgetFlags: State['widgetFlags'], instance: WidgetInstance): void {
+  if (instance.flags === undefined) {
+    // Two widgets can have one uid. The entry is then the one of the last widget, as in the
+    // other records, so the flags of the widget before must not stay.
+    delete widgetFlags[instance.uid];
+  } else {
+    widgetFlags[instance.uid] = instance.flags;
+  }
 }
 
 /**
@@ -52,6 +89,7 @@ function addInstance(
   itemScope: RepeaterItemScope | undefined,
 ): void {
   records.resolvedSources[instance.uid] = instance.source;
+  writeFlags(records.widgetFlags, instance);
   if (itemScope !== undefined) {
     records.repeaterItemScopes[instance.uid] = itemScope;
     records.repeaterRows[instance.uid] = rowsAround;

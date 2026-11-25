@@ -1,6 +1,7 @@
 import { weekInfoData } from './week-info';
-import type { DateRange } from '../types';
+import type { CompleteDateRange, DateRange } from '../types';
 import { message } from './messages';
+import { completeRange } from './range-commit';
 
 /**
  * Converts a Date object to a string formatted as an ISO 8601 date (YYYY-MM-DD).
@@ -372,6 +373,17 @@ export function getDayLabel(
   const dayPart = parts.find((part) => part.type === 'day');
 
   return dayPart ? dayPart.value : date.getDate().toString();
+}
+
+/**
+ * The value as a complete date range, or undefined. The single range elements hold one range with
+ * both ends or nothing, so a partial or malformed value set from outside reads as empty.
+ *
+ * @param {unknown} value - A value set on the element.
+ * @return {CompleteDateRange | undefined} The range when both ends are set.
+ */
+export function completeDateRange(value: unknown): CompleteDateRange | undefined {
+  return completeRange(value);
 }
 
 /**

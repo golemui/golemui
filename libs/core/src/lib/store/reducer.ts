@@ -161,8 +161,8 @@ function makeDerive(
   functions: ExpressionFunctions,
   expressionPolicy: ExpressionPolicy,
 ) {
-  const applyCurrentState = calculateCurrentState(functions, expressionPolicy);
-  const applyWidgetFlags = calculateWidgetFlags(functions, expressionPolicy);
+  const applyCurrentState = calculateCurrentState(functions);
+  const applyWidgetFlags = calculateWidgetFlags(functions);
   const applyWidgetProps = calculateWidgetProps(localization, functions, expressionPolicy);
 
   return function derive(state: State): State {
