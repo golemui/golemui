@@ -50,7 +50,10 @@
         "grid",
         "tabs",
         "alert",
+        "badge",
         "markdownText",
+        "progress",
+        "spinner",
         "button",
         "menu"
       ]
@@ -101,7 +104,10 @@
         { "$ref": "./components/grid.schema.json" },
         { "$ref": "./components/tabs.schema.json" },
         { "$ref": "./components/alert.schema.json" },
+        { "$ref": "./components/badge.schema.json" },
         { "$ref": "./components/markdowntext.schema.json" },
+        { "$ref": "./components/progress.schema.json" },
+        { "$ref": "./components/spinner.schema.json" },
         { "$ref": "./components/button.schema.json" },
         { "$ref": "./components/menu.schema.json" },
         { "$ref": "./components/custom.schema.json" },

@@ -1,0 +1,75 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabProgress",
+  "kind": "layout",
+  "type": "grid",
+  "children": [
+    {
+      "kind": "display",
+      "type": "progress",
+      "props": {
+        "label": "Profile",
+        "value": 40,
+        "showValue": true
+      }
+    },
+    {
+      "kind": "display",
+      "type": "progress",
+      "props": {
+        "label": "Uploading"
+      }
+    },
+    {
+      "kind": "display",
+      "type": "progress",
+      "props": {
+        "label": "Steps done",
+        "value": 3,
+        "max": 5,
+        "showValue": true
+      }
+    },
+    {
+      "kind": "input",
+      "type": "toggle",
+      "path": "progresses.halfway",
+      "label": "Halfway through checkout"
+    },
+    {
+      "uid": "checkoutProgress",
+      "kind": "display",
+      "type": "progress",
+      "props": {
+        "label": "Checkout",
+        "value": 25,
+        "value.progressHalfway": 50,
+        "showValue": true
+      }
+    },
+    {
+      "kind": "layout",
+      "type": "grid",
+      "props": {
+        "direction": "row"
+      },
+      "children": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "progresses.name",
+          "label": "Name"
+        },
+        {
+          "kind": "display",
+          "type": "progress",
+          "props": {
+            "label": "Saved",
+            "value": 80,
+            "showValue": true
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -3,7 +3,10 @@
     "states": {
       "limitReached": "$form.repeaters.users?.length === 5",
       "hasSubregionSelect": "!!$form.selects.subregion",
-      "hasSubregionRadiogroup": "!!$form.radiogroups.subregion"
+      "hasSubregionRadiogroup": "!!$form.radiogroups.subregion",
+      "badgeOverdue": "$form.badges?.overdue === true",
+      "progressHalfway": "$form.progresses?.halfway === true",
+      "spinnerLoading": "$form.spinners?.loading === true"
     },
     "form": [
       {
@@ -27,6 +30,10 @@
             {
               "label": "Alert Component",
               "uid": "tabAlert"
+            },
+            {
+              "label": "Badge Component",
+              "uid": "tabBadge"
             },
             {
               "label": "Button Component",
@@ -113,6 +120,10 @@
               "uid": "tabPassword"
             },
             {
+              "label": "Progress Component",
+              "uid": "tabProgress"
+            },
+            {
               "label": "Radiogroup Component",
               "uid": "tabRadiogroup"
             },
@@ -123,6 +134,10 @@
             {
               "label": "Rating Component",
               "uid": "tabRating"
+            },
+            {
+              "label": "Spinner Component",
+              "uid": "tabSpinner"
             },
             {
               "label": "Multi Range Calendar Component",
@@ -249,6 +264,240 @@
                 "props": {
                   "text": "Some fields need your attention"
                 }
+              }
+            ]
+          },
+          {
+            "uid": "tabBadge",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "display",
+                    "type": "badge",
+                    "props": {
+                      "text": "Default",
+                      "level": "default"
+                    }
+                  },
+                  {
+                    "kind": "display",
+                    "type": "badge",
+                    "props": {
+                      "text": "Info",
+                      "level": "info"
+                    }
+                  },
+                  {
+                    "kind": "display",
+                    "type": "badge",
+                    "props": {
+                      "text": "Success",
+                      "level": "success"
+                    }
+                  },
+                  {
+                    "kind": "display",
+                    "type": "badge",
+                    "props": {
+                      "text": "Warning",
+                      "level": "warning"
+                    }
+                  },
+                  {
+                    "kind": "display",
+                    "type": "badge",
+                    "props": {
+                      "text": "Error",
+                      "level": "error"
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "input",
+                "type": "toggle",
+                "path": "badges.overdue",
+                "label": "Overdue"
+              },
+              {
+                "uid": "invoiceStatus",
+                "kind": "display",
+                "type": "badge",
+                "props": {
+                  "text": "Paid",
+                  "level": "success",
+                  "text.badgeOverdue": "Payment overdue",
+                  "level.badgeOverdue": "error"
+                }
+              },
+              {
+                "uid": "customerBadge",
+                "include": {
+                  "when": "!!$form.badges?.customer"
+                },
+                "kind": "display",
+                "type": "badge",
+                "props": {
+                  "text": "{{ $form.badges?.customer }} is active",
+                  "level": "info"
+                }
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "badges.customer",
+                    "label": "Customer"
+                  },
+                  {
+                    "kind": "display",
+                    "type": "badge",
+                    "props": {
+                      "text": "Active",
+                      "level": "success"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uid": "tabProgress",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "display",
+                "type": "progress",
+                "props": {
+                  "label": "Profile",
+                  "value": 40,
+                  "showValue": true
+                }
+              },
+              {
+                "kind": "display",
+                "type": "progress",
+                "props": {
+                  "label": "Uploading"
+                }
+              },
+              {
+                "kind": "display",
+                "type": "progress",
+                "props": {
+                  "label": "Steps done",
+                  "value": 3,
+                  "max": 5,
+                  "showValue": true
+                }
+              },
+              {
+                "kind": "input",
+                "type": "toggle",
+                "path": "progresses.halfway",
+                "label": "Halfway through checkout"
+              },
+              {
+                "uid": "checkoutProgress",
+                "kind": "display",
+                "type": "progress",
+                "props": {
+                  "label": "Checkout",
+                  "value": 25,
+                  "value.progressHalfway": 50,
+                  "showValue": true
+                }
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "progresses.name",
+                    "label": "Name"
+                  },
+                  {
+                    "kind": "display",
+                    "type": "progress",
+                    "props": {
+                      "label": "Saved",
+                      "value": 80,
+                      "showValue": true
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uid": "tabSpinner",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "kind": "input",
+                "type": "toggle",
+                "path": "spinners.loading",
+                "label": "Load the results"
+              },
+              {
+                "uid": "resultsSpinner",
+                "include": {
+                  "in": [
+                    "spinnerLoading"
+                  ]
+                },
+                "kind": "display",
+                "type": "spinner",
+                "props": {
+                  "label": "Loading results"
+                }
+              },
+              {
+                "kind": "display",
+                "type": "spinner"
+              },
+              {
+                "kind": "layout",
+                "type": "grid",
+                "props": {
+                  "direction": "row"
+                },
+                "children": [
+                  {
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "spinners.query",
+                    "label": "Search"
+                  },
+                  {
+                    "kind": "display",
+                    "type": "spinner",
+                    "props": {
+                      "label": "Searching"
+                    }
+                  }
+                ]
               }
             ]
           },

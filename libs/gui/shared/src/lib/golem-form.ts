@@ -11,6 +11,7 @@ import { type Validator } from '@golemui/gui-validators';
 import type {
   AccordionProps,
   AlertProps,
+  BadgeProps,
   ButtonProps,
   CalendarProps,
   CheckboxProps,
@@ -30,6 +31,7 @@ import type {
   MarkdownProps,
   MarkdownTextProps,
   MenuProps,
+  ProgressProps,
   NumberinputProps,
   OptionValue,
   OtpProps,
@@ -50,6 +52,7 @@ import type {
   RepeaterProps,
   SelectProps,
   SliderProps,
+  SpinnerProps,
   SliderRange,
   RangeSliderProps,
   TabsProps,
@@ -209,6 +212,9 @@ type GolemWidget<
 > =
   | GuiAccordion<FormType, States, V, CustomWidget>
   | GuiAlert<FormType, States>
+  | GuiBadge<FormType, States>
+  | GuiProgress<FormType, States>
+  | GuiSpinner<FormType, States>
   | GuiButton<FormType, States>
   | GuiMenu<FormType, States>
   | GuiCalendar<FormType, States, V>
@@ -271,6 +277,24 @@ type GuiAlert<FormType extends Record<string, any>, States extends string> = Dis
   FormType,
   AlertProps
 > & { type: 'alert' };
+
+type GuiBadge<FormType extends Record<string, any>, States extends string> = DisplayWidget<
+  States,
+  FormType,
+  BadgeProps
+> & { type: 'badge' };
+
+type GuiProgress<FormType extends Record<string, any>, States extends string> = DisplayWidget<
+  States,
+  FormType,
+  ProgressProps
+> & { type: 'progress' };
+
+type GuiSpinner<FormType extends Record<string, any>, States extends string> = DisplayWidget<
+  States,
+  FormType,
+  SpinnerProps
+> & { type: 'spinner' };
 
 type GuiButton<FormType extends Record<string, any>, States extends string> = ActionWidget<
   States,

@@ -3,6 +3,9 @@ import { resolveChunkRefsSync } from '../utils/resolve-chunk-refs-sync';
 import { type Example } from './types';
 import kitchenSinkJson from './kitchen-sink.form.json';
 import alertChunk from './tabs/alert.form-chunk.json';
+import badgeChunk from './tabs/badge.form-chunk.json';
+import progressChunk from './tabs/progress.form-chunk.json';
+import spinnerChunk from './tabs/spinner.form-chunk.json';
 import buttonChunk from './tabs/button.form-chunk.json';
 import menuChunk from './tabs/menu.form-chunk.json';
 import markdownTextChunk from './tabs/markdown-text.form-chunk.json';
@@ -53,6 +56,9 @@ import customWidgetChunk from './tabs/custom-widget.form-chunk.json';
 // imports this file, so a new tab chunk without a map entry fails that spec.
 const chunks: Record<string, unknown> = {
   './tabs/alert.form-chunk.json': alertChunk,
+  './tabs/badge.form-chunk.json': badgeChunk,
+  './tabs/progress.form-chunk.json': progressChunk,
+  './tabs/spinner.form-chunk.json': spinnerChunk,
   './tabs/button.form-chunk.json': buttonChunk,
   './tabs/menu.form-chunk.json': menuChunk,
   './tabs/markdown-text.form-chunk.json': markdownTextChunk,

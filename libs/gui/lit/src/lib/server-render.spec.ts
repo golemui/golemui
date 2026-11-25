@@ -119,6 +119,14 @@ const config: FormInitConfig<Type<WithWidget>> = {
           label: 'More',
           props: { items: [{ label: 'Save as draft', value: 'draft' }] },
         },
+        { uid: 'planBadge', kind: 'display', type: 'badge', props: { text: 'Pro', level: 'info' } },
+        {
+          uid: 'setup',
+          kind: 'display',
+          type: 'progress',
+          props: { label: 'Setup', value: 60, showValue: true },
+        },
+        { uid: 'saving', kind: 'display', type: 'spinner', props: { label: 'Saving' } },
       ],
     },
   },
@@ -159,6 +167,19 @@ describe('server rendering the gui widget set in plain node', () => {
     expect(markup).toMatch(/<gui-textinput-input[^>]*class="[^"]*gui-textinput[^"]*gui-field/);
     expect(markup).toMatch(/<gui-button-interactive[^>]*class="[^"]*gui-button[^"]*gui-field/);
     expect(markup).toMatch(/<gui-menu-interactive[^>]*class="[^"]*gui-menu-button[^"]*gui-field/);
+  });
+
+  it('renders the badge, the progress bar and the spinner with their content', () => {
+    expect(markup).toMatch(/<gui-badge-display[^>]*class="[^"]*gui-badge[^"]*gui-field/);
+    expect(markup).toMatch(
+      /<gui-badge[^>]*id="gui-lit-ssr-form-planBadge"[^>]*variant="info"[^>]*>\s*(<!--[^>]*-->)*Pro/,
+    );
+    expect(markup).toMatch(
+      /<progress[^>]*id="gui-lit-ssr-form-setup"[^>]*max="100"[^>]*value="60"/,
+    );
+    expect(markup).toContain('Setup');
+    expect(markup).toMatch(/<gui-spinner[^>]*id="gui-lit-ssr-form-saving"/);
+    expect(markup).toMatch(/role="status"[^>]*>(<!--[^>]*-->)*Saving/);
   });
 
   it('renders labels, values and the layout structure', () => {

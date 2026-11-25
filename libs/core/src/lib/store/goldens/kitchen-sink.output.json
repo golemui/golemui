@@ -8,6 +8,18 @@
     "allControlsValidated": false,
     "currentStates": [],
     "data": {
+      "badges": {
+        "overdue": "[undefined]",
+        "customer": "[undefined]"
+      },
+      "progresses": {
+        "halfway": "[undefined]",
+        "name": "[undefined]"
+      },
+      "spinners": {
+        "loading": "[undefined]",
+        "query": "[undefined]"
+      },
       "shoppingCart": {
         "firstName": "[undefined]",
         "lastName": "[undefined]",
@@ -608,6 +620,12 @@
       "countrySelect": {
         "hidden": true
       },
+      "customerBadge": {
+        "hidden": true
+      },
+      "resultsSpinner": {
+        "hidden": true
+      },
       "submit-button": {
         "disabled": false
       }
@@ -622,14 +640,43 @@
       "#0.1.0.2": "display alert",
       "#0.1.0.3": "display alert",
       "#0.1.0.4": "display alert",
+      "tabBadge": "layout grid",
+      "#0.1.1.0": "layout grid",
+      "#0.1.1.0.0": "display badge",
+      "#0.1.1.0.1": "display badge",
+      "#0.1.1.0.2": "display badge",
+      "#0.1.1.0.3": "display badge",
+      "#0.1.1.0.4": "display badge",
+      "badges.overdue-toggle": "input toggle badges.overdue",
+      "invoiceStatus": "display badge",
+      "customerBadge": "display badge",
+      "#0.1.1.4": "layout grid",
+      "badges.customer-textinput": "input textinput badges.customer",
+      "#0.1.1.4.1": "display badge",
+      "tabProgress": "layout grid",
+      "#0.1.2.0": "display progress",
+      "#0.1.2.1": "display progress",
+      "#0.1.2.2": "display progress",
+      "progresses.halfway-toggle": "input toggle progresses.halfway",
+      "checkoutProgress": "display progress",
+      "#0.1.2.5": "layout grid",
+      "progresses.name-textinput": "input textinput progresses.name",
+      "#0.1.2.5.1": "display progress",
+      "tabSpinner": "layout grid",
+      "spinners.loading-toggle": "input toggle spinners.loading",
+      "resultsSpinner": "display spinner",
+      "#0.1.3.2": "display spinner",
+      "#0.1.3.3": "layout grid",
+      "spinners.query-textinput": "input textinput spinners.query",
+      "#0.1.3.3.1": "display spinner",
       "tabButton": "layout grid",
-      "#0.1.1.0": "action button",
-      "#0.1.1.1": "action button",
-      "#0.1.1.2": "action button",
-      "#0.1.1.3": "action button",
-      "#0.1.1.4": "action button",
-      "#0.1.1.5": "action button",
-      "#0.1.1.6": "action button",
+      "#0.1.4.0": "action button",
+      "#0.1.4.1": "action button",
+      "#0.1.4.2": "action button",
+      "#0.1.4.3": "action button",
+      "#0.1.4.4": "action button",
+      "#0.1.4.5": "action button",
+      "#0.1.4.6": "action button",
       "tabMenu": "layout grid",
       "menuActions": "action menu",
       "menuOutlined": "action menu",
@@ -639,7 +686,7 @@
       "menuTop": "action menu",
       "menuDisabled": "action menu",
       "tabMarkdownText": "layout grid",
-      "#0.1.3.0": "display markdownText",
+      "#0.1.6.0": "display markdownText",
       "tabAccordion": "layout accordion",
       "section1": "layout grid",
       "shoppingCart.firstName-textinput": "input textinput shoppingCart.firstName",
@@ -651,35 +698,35 @@
       "shoppingCart.billingAddress-textinput": "input textinput shoppingCart.billingAddress",
       "shoppingCart.billingState-textinput": "input textinput shoppingCart.billingState",
       "tabGrid": "layout grid",
-      "#0.1.5.0": "display markdownText",
-      "#0.1.5.1": "layout grid",
+      "#0.1.8.0": "display markdownText",
+      "#0.1.8.1": "layout grid",
       "listName-textinput": "input textinput listName",
       "listOwner-textinput": "input textinput listOwner",
       "cb1-checkbox": "input checkbox cb1",
       "tg1-toggle": "input toggle tg1",
-      "#0.1.5.2": "layout grid",
+      "#0.1.8.2": "layout grid",
       "gridSearch-textinput": "input textinput gridSearch",
-      "#0.1.5.2.1": "action button",
-      "#0.1.5.3": "layout grid",
+      "#0.1.8.2.1": "action button",
+      "#0.1.8.3": "layout grid",
       "gridReport-textinput": "input textinput gridReport",
       "gridPeriod-radiogroup": "input radiogroup gridPeriod",
-      "#0.1.5.4": "display markdownText",
-      "#0.1.5.5": "layout grid",
+      "#0.1.8.4": "display markdownText",
+      "#0.1.8.5": "layout grid",
       "address.street-textinput": "input textinput address.street",
       "address.number-textinput": "input textinput address.number",
       "address.city-textinput": "input textinput address.city",
       "address.state-textinput": "input textinput address.state",
       "address.postcode-textinput": "input textinput address.postcode",
-      "#0.1.5.6": "display markdownText",
-      "#0.1.5.7": "layout grid",
+      "#0.1.8.6": "display markdownText",
+      "#0.1.8.7": "layout grid",
       "quarters.q1-number": "input number quarters.q1",
       "quarters.q2-number": "input number quarters.q2",
       "quarters.q3-number": "input number quarters.q3",
       "quarters.q4-number": "input number quarters.q4",
-      "#0.1.5.8": "display markdownText",
-      "#0.1.5.9": "layout grid",
-      "#0.1.5.9.0": "action button",
-      "#0.1.5.9.1": "action button",
+      "#0.1.8.8": "display markdownText",
+      "#0.1.8.9": "layout grid",
+      "#0.1.8.9.0": "action button",
+      "#0.1.8.9.1": "action button",
       "tabTextinput": "layout grid",
       "textinput-textinput": "input textinput textinput",
       "textinputDisabled-textinput": "input textinput textinputDisabled",
@@ -866,7 +913,7 @@
       "checkboxGroups.days-checkboxGroup": "input checkboxGroup checkboxGroups.days",
       "checkboxGroups.disabled-checkboxGroup": "input checkboxGroup checkboxGroups.disabled",
       "checkboxGroups.readonly-checkboxGroup": "input checkboxGroup checkboxGroups.readonly",
-      "#0.1.31.6": "layout grid",
+      "#0.1.34.6": "layout grid",
       "checkboxGroups.name-textinput": "input textinput checkboxGroups.name",
       "checkboxGroups.contact-checkboxGroup": "input checkboxGroup checkboxGroups.contact",
       "tabRating": "layout grid",
@@ -875,7 +922,7 @@
       "ratings.stay-rating": "input rating ratings.stay",
       "ratings.disabled-rating": "input rating ratings.disabled",
       "ratings.readonly-rating": "input rating ratings.readonly",
-      "#0.1.32.5": "layout grid",
+      "#0.1.35.5": "layout grid",
       "ratings.reviewer-textinput": "input textinput ratings.reviewer",
       "ratings.overall-rating": "input rating ratings.overall",
       "tabSelect": "layout grid",
@@ -892,7 +939,7 @@
       "sliders.rating-slider": "input slider sliders.rating",
       "sliders.disabled-slider": "input slider sliders.disabled",
       "sliders.readonly-slider": "input slider sliders.readonly",
-      "#0.1.34.6": "layout grid",
+      "#0.1.37.6": "layout grid",
       "sliders.speaker-textinput": "input textinput sliders.speaker",
       "sliders.bass-slider": "input slider sliders.bass",
       "tabRangeSlider": "layout grid",
@@ -900,7 +947,7 @@
       "rangeSliders.age-rangeSlider": "input rangeSlider rangeSliders.age",
       "rangeSliders.hours-rangeSlider": "input rangeSlider rangeSliders.hours",
       "rangeSliders.disabled-rangeSlider": "input rangeSlider rangeSliders.disabled",
-      "#0.1.35.4": "layout grid",
+      "#0.1.38.4": "layout grid",
       "rangeSliders.city-textinput": "input textinput rangeSliders.city",
       "rangeSliders.budget-rangeSlider": "input rangeSlider rangeSliders.budget",
       "tabOtp": "layout grid",
@@ -909,7 +956,7 @@
       "otp.short-otp": "input otp otp.short",
       "otp.disabled-otp": "input otp otp.disabled",
       "otp.readonly-otp": "input otp otp.readonly",
-      "#0.1.36.5": "layout grid",
+      "#0.1.39.5": "layout grid",
       "otp.email-textinput": "input textinput otp.email",
       "otp.emailCode-otp": "input otp otp.emailCode",
       "tabDropdown": "layout grid",
@@ -923,7 +970,7 @@
       "dropdowns.invalidValueList-dropdown": "input dropdown dropdowns.invalidValueList",
       "dropdowns.customItemRenderer-dropdown": "input dropdown dropdowns.customItemRenderer",
       "tabFileUpload": "layout grid",
-      "#0.1.38.0": "layout grid",
+      "#0.1.41.0": "layout grid",
       "fileUploads.title-textinput": "input textinput fileUploads.title",
       "fileUploads.basic-fileUpload": "input fileUpload fileUploads.basic",
       "fileUploads.pdfOnly-fileUpload": "input fileUpload fileUploads.pdfOnly",
@@ -965,7 +1012,7 @@
       "tags.disabled-tags": "input tags tags.disabled",
       "tags.readonly-tags": "input tags tags.readonly",
       "tabCustomWidget": "layout grid",
-      "#0.1.44.0": "display heading",
+      "#0.1.47.0": "display heading",
       "clientName-textinput": "input textinput clientName",
       "registerMode-toggle": "input toggle registerMode",
       "submit-button": "action button"
@@ -1008,6 +1055,10 @@
             {
               "label": "Alert Component",
               "uid": "tabAlert"
+            },
+            {
+              "label": "Badge Component",
+              "uid": "tabBadge"
             },
             {
               "label": "Button Component",
@@ -1094,6 +1145,10 @@
               "uid": "tabPassword"
             },
             {
+              "label": "Progress Component",
+              "uid": "tabProgress"
+            },
+            {
               "label": "Radiogroup Component",
               "uid": "tabRadiogroup"
             },
@@ -1104,6 +1159,10 @@
             {
               "label": "Rating Component",
               "uid": "tabRating"
+            },
+            {
+              "label": "Spinner Component",
+              "uid": "tabSpinner"
             },
             {
               "label": "Multi Range Calendar Component",
@@ -1185,6 +1244,9 @@
         },
         "children": [
           "tabAlert",
+          "tabBadge",
+          "tabProgress",
+          "tabSpinner",
           "tabButton",
           "tabMenu",
           "tabMarkdownText",
@@ -1294,30 +1356,309 @@
         },
         "keysWithUndefined": "size include exclude"
       },
-      "tabButton": {
-        "uid": "tabButton",
+      "tabBadge": {
+        "uid": "tabBadge",
         "type": "grid",
         "kind": "layout",
         "children": [
           "#0.1.1.0",
-          "#0.1.1.1",
-          "#0.1.1.2",
-          "#0.1.1.3",
-          "#0.1.1.4",
-          "#0.1.1.5",
-          "#0.1.1.6"
+          "badges.overdue-toggle",
+          "invoiceStatus",
+          "#0.1.1.4"
         ],
         "keysWithUndefined": "size include exclude"
       },
       "#0.1.1.0": {
         "uid": "#0.1.1.0",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "row"
+        },
+        "children": [
+          "#0.1.1.0.0",
+          "#0.1.1.0.1",
+          "#0.1.1.0.2",
+          "#0.1.1.0.3",
+          "#0.1.1.0.4"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.1.1.0.0": {
+        "uid": "#0.1.1.0.0",
+        "type": "badge",
+        "kind": "display",
+        "props": {
+          "text": "Default",
+          "level": "default"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.1.1.0.1": {
+        "uid": "#0.1.1.0.1",
+        "type": "badge",
+        "kind": "display",
+        "props": {
+          "text": "Info",
+          "level": "info"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.1.1.0.2": {
+        "uid": "#0.1.1.0.2",
+        "type": "badge",
+        "kind": "display",
+        "props": {
+          "text": "Success",
+          "level": "success"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.1.1.0.3": {
+        "uid": "#0.1.1.0.3",
+        "type": "badge",
+        "kind": "display",
+        "props": {
+          "text": "Warning",
+          "level": "warning"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.1.1.0.4": {
+        "uid": "#0.1.1.0.4",
+        "type": "badge",
+        "kind": "display",
+        "props": {
+          "text": "Error",
+          "level": "error"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "badges.overdue-toggle": {
+        "uid": "badges.overdue-toggle",
+        "type": "toggle",
+        "kind": "input",
+        "label": "Overdue",
+        "path": "badges.overdue",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "invoiceStatus": {
+        "uid": "invoiceStatus",
+        "type": "badge",
+        "kind": "display",
+        "props": {
+          "text": "Paid",
+          "level": "success"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.1.1.4": {
+        "uid": "#0.1.1.4",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "row"
+        },
+        "children": [
+          "badges.customer-textinput",
+          "#0.1.1.4.1"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "badges.customer-textinput": {
+        "uid": "badges.customer-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Customer",
+        "path": "badges.customer",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "#0.1.1.4.1": {
+        "uid": "#0.1.1.4.1",
+        "type": "badge",
+        "kind": "display",
+        "props": {
+          "text": "Active",
+          "level": "success"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "tabProgress": {
+        "uid": "tabProgress",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "#0.1.2.0",
+          "#0.1.2.1",
+          "#0.1.2.2",
+          "progresses.halfway-toggle",
+          "checkoutProgress",
+          "#0.1.2.5"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.1.2.0": {
+        "uid": "#0.1.2.0",
+        "type": "progress",
+        "kind": "display",
+        "props": {
+          "label": "Profile",
+          "value": 40,
+          "showValue": true
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.1.2.1": {
+        "uid": "#0.1.2.1",
+        "type": "progress",
+        "kind": "display",
+        "props": {
+          "label": "Uploading"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.1.2.2": {
+        "uid": "#0.1.2.2",
+        "type": "progress",
+        "kind": "display",
+        "props": {
+          "label": "Steps done",
+          "value": 3,
+          "max": 5,
+          "showValue": true
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "progresses.halfway-toggle": {
+        "uid": "progresses.halfway-toggle",
+        "type": "toggle",
+        "kind": "input",
+        "label": "Halfway through checkout",
+        "path": "progresses.halfway",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "checkoutProgress": {
+        "uid": "checkoutProgress",
+        "type": "progress",
+        "kind": "display",
+        "props": {
+          "label": "Checkout",
+          "value": 25,
+          "showValue": true
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.1.2.5": {
+        "uid": "#0.1.2.5",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "row"
+        },
+        "children": [
+          "progresses.name-textinput",
+          "#0.1.2.5.1"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "progresses.name-textinput": {
+        "uid": "progresses.name-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Name",
+        "path": "progresses.name",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "#0.1.2.5.1": {
+        "uid": "#0.1.2.5.1",
+        "type": "progress",
+        "kind": "display",
+        "props": {
+          "label": "Saved",
+          "value": 80,
+          "showValue": true
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "tabSpinner": {
+        "uid": "tabSpinner",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "spinners.loading-toggle",
+          "#0.1.3.2",
+          "#0.1.3.3"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "spinners.loading-toggle": {
+        "uid": "spinners.loading-toggle",
+        "type": "toggle",
+        "kind": "input",
+        "label": "Load the results",
+        "path": "spinners.loading",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "#0.1.3.2": {
+        "uid": "#0.1.3.2",
+        "type": "spinner",
+        "kind": "display",
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.1.3.3": {
+        "uid": "#0.1.3.3",
+        "type": "grid",
+        "kind": "layout",
+        "props": {
+          "direction": "row"
+        },
+        "children": [
+          "spinners.query-textinput",
+          "#0.1.3.3.1"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "spinners.query-textinput": {
+        "uid": "spinners.query-textinput",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Search",
+        "path": "spinners.query",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "#0.1.3.3.1": {
+        "uid": "#0.1.3.3.1",
+        "type": "spinner",
+        "kind": "display",
+        "props": {
+          "label": "Searching"
+        },
+        "keysWithUndefined": "size include exclude"
+      },
+      "tabButton": {
+        "uid": "tabButton",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "#0.1.4.0",
+          "#0.1.4.1",
+          "#0.1.4.2",
+          "#0.1.4.3",
+          "#0.1.4.4",
+          "#0.1.4.5",
+          "#0.1.4.6"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "#0.1.4.0": {
+        "uid": "#0.1.4.0",
         "type": "button",
         "kind": "action",
         "label": "Save",
         "keysWithUndefined": "size include exclude disabled actionType"
       },
-      "#0.1.1.1": {
-        "uid": "#0.1.1.1",
+      "#0.1.4.1": {
+        "uid": "#0.1.4.1",
         "type": "button",
         "kind": "action",
         "label": "Save",
@@ -1326,8 +1667,8 @@
         },
         "keysWithUndefined": "size include exclude disabled actionType"
       },
-      "#0.1.1.2": {
-        "uid": "#0.1.1.2",
+      "#0.1.4.2": {
+        "uid": "#0.1.4.2",
         "type": "button",
         "kind": "action",
         "label": "Save",
@@ -1336,8 +1677,8 @@
         },
         "keysWithUndefined": "size include exclude disabled actionType"
       },
-      "#0.1.1.3": {
-        "uid": "#0.1.1.3",
+      "#0.1.4.3": {
+        "uid": "#0.1.4.3",
         "type": "button",
         "kind": "action",
         "label": "Save",
@@ -1346,8 +1687,8 @@
         },
         "keysWithUndefined": "size include exclude disabled actionType"
       },
-      "#0.1.1.4": {
-        "uid": "#0.1.1.4",
+      "#0.1.4.4": {
+        "uid": "#0.1.4.4",
         "type": "button",
         "kind": "action",
         "label": "Save",
@@ -1357,16 +1698,16 @@
         },
         "keysWithUndefined": "size include exclude disabled actionType"
       },
-      "#0.1.1.5": {
-        "uid": "#0.1.1.5",
+      "#0.1.4.5": {
+        "uid": "#0.1.4.5",
         "type": "button",
         "kind": "action",
         "label": "Save",
         "disabled": true,
         "keysWithUndefined": "size include exclude actionType"
       },
-      "#0.1.1.6": {
-        "uid": "#0.1.1.6",
+      "#0.1.4.6": {
+        "uid": "#0.1.4.6",
         "type": "button",
         "kind": "action",
         "props": {
@@ -1665,12 +2006,12 @@
         "type": "grid",
         "kind": "layout",
         "children": [
-          "#0.1.3.0"
+          "#0.1.6.0"
         ],
         "keysWithUndefined": "size include exclude"
       },
-      "#0.1.3.0": {
-        "uid": "#0.1.3.0",
+      "#0.1.6.0": {
+        "uid": "#0.1.6.0",
         "type": "markdownText",
         "kind": "display",
         "props": {
@@ -1822,21 +2163,21 @@
         "type": "grid",
         "kind": "layout",
         "children": [
-          "#0.1.5.0",
-          "#0.1.5.1",
-          "#0.1.5.2",
-          "#0.1.5.3",
-          "#0.1.5.4",
-          "#0.1.5.5",
-          "#0.1.5.6",
-          "#0.1.5.7",
-          "#0.1.5.8",
-          "#0.1.5.9"
+          "#0.1.8.0",
+          "#0.1.8.1",
+          "#0.1.8.2",
+          "#0.1.8.3",
+          "#0.1.8.4",
+          "#0.1.8.5",
+          "#0.1.8.6",
+          "#0.1.8.7",
+          "#0.1.8.8",
+          "#0.1.8.9"
         ],
         "keysWithUndefined": "size include exclude"
       },
-      "#0.1.5.0": {
-        "uid": "#0.1.5.0",
+      "#0.1.8.0": {
+        "uid": "#0.1.8.0",
         "type": "markdownText",
         "kind": "display",
         "props": {
@@ -1844,8 +2185,8 @@
         },
         "keysWithUndefined": "size include exclude"
       },
-      "#0.1.5.1": {
-        "uid": "#0.1.5.1",
+      "#0.1.8.1": {
+        "uid": "#0.1.8.1",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -1906,8 +2247,8 @@
         "path": "tg1",
         "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
       },
-      "#0.1.5.2": {
-        "uid": "#0.1.5.2",
+      "#0.1.8.2": {
+        "uid": "#0.1.8.2",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -1915,7 +2256,7 @@
         },
         "children": [
           "gridSearch-textinput",
-          "#0.1.5.2.1"
+          "#0.1.8.2.1"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -1928,15 +2269,15 @@
         "path": "gridSearch",
         "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
       },
-      "#0.1.5.2.1": {
-        "uid": "#0.1.5.2.1",
+      "#0.1.8.2.1": {
+        "uid": "#0.1.8.2.1",
         "type": "button",
         "kind": "action",
         "label": "Search",
         "keysWithUndefined": "size include exclude disabled actionType"
       },
-      "#0.1.5.3": {
-        "uid": "#0.1.5.3",
+      "#0.1.8.3": {
+        "uid": "#0.1.8.3",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -1983,8 +2324,8 @@
         },
         "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
       },
-      "#0.1.5.4": {
-        "uid": "#0.1.5.4",
+      "#0.1.8.4": {
+        "uid": "#0.1.8.4",
         "type": "markdownText",
         "kind": "display",
         "props": {
@@ -1992,8 +2333,8 @@
         },
         "keysWithUndefined": "size include exclude"
       },
-      "#0.1.5.5": {
-        "uid": "#0.1.5.5",
+      "#0.1.8.5": {
+        "uid": "#0.1.8.5",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -2054,8 +2395,8 @@
         "path": "address.postcode",
         "keysWithUndefined": "size include exclude disabled readonly defaultValue"
       },
-      "#0.1.5.6": {
-        "uid": "#0.1.5.6",
+      "#0.1.8.6": {
+        "uid": "#0.1.8.6",
         "type": "markdownText",
         "kind": "display",
         "props": {
@@ -2063,8 +2404,8 @@
         },
         "keysWithUndefined": "size include exclude"
       },
-      "#0.1.5.7": {
-        "uid": "#0.1.5.7",
+      "#0.1.8.7": {
+        "uid": "#0.1.8.7",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -2110,8 +2451,8 @@
         "path": "quarters.q4",
         "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
       },
-      "#0.1.5.8": {
-        "uid": "#0.1.5.8",
+      "#0.1.8.8": {
+        "uid": "#0.1.8.8",
         "type": "markdownText",
         "kind": "display",
         "props": {
@@ -2119,8 +2460,8 @@
         },
         "keysWithUndefined": "size include exclude"
       },
-      "#0.1.5.9": {
-        "uid": "#0.1.5.9",
+      "#0.1.8.9": {
+        "uid": "#0.1.8.9",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -2129,13 +2470,13 @@
           "gap": "sm"
         },
         "children": [
-          "#0.1.5.9.0",
-          "#0.1.5.9.1"
+          "#0.1.8.9.0",
+          "#0.1.8.9.1"
         ],
         "keysWithUndefined": "size include exclude"
       },
-      "#0.1.5.9.0": {
-        "uid": "#0.1.5.9.0",
+      "#0.1.8.9.0": {
+        "uid": "#0.1.8.9.0",
         "type": "button",
         "kind": "action",
         "label": "Cancel",
@@ -2144,8 +2485,8 @@
         },
         "keysWithUndefined": "size include exclude disabled actionType"
       },
-      "#0.1.5.9.1": {
-        "uid": "#0.1.5.9.1",
+      "#0.1.8.9.1": {
+        "uid": "#0.1.8.9.1",
         "type": "button",
         "kind": "action",
         "label": "Save",
@@ -5066,7 +5407,7 @@
           "checkboxGroups.days-checkboxGroup",
           "checkboxGroups.disabled-checkboxGroup",
           "checkboxGroups.readonly-checkboxGroup",
-          "#0.1.31.6"
+          "#0.1.34.6"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -5249,8 +5590,8 @@
         },
         "keysWithUndefined": "size include exclude disabled validator"
       },
-      "#0.1.31.6": {
-        "uid": "#0.1.31.6",
+      "#0.1.34.6": {
+        "uid": "#0.1.34.6",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -5295,7 +5636,7 @@
           "ratings.stay-rating",
           "ratings.disabled-rating",
           "ratings.readonly-rating",
-          "#0.1.32.5"
+          "#0.1.35.5"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -5364,8 +5705,8 @@
         "defaultValue": 4,
         "keysWithUndefined": "size include exclude disabled validator"
       },
-      "#0.1.32.5": {
-        "uid": "#0.1.32.5",
+      "#0.1.35.5": {
+        "uid": "#0.1.35.5",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -5514,7 +5855,7 @@
           "sliders.rating-slider",
           "sliders.disabled-slider",
           "sliders.readonly-slider",
-          "#0.1.34.6"
+          "#0.1.37.6"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -5613,8 +5954,8 @@
         "defaultValue": 70,
         "keysWithUndefined": "size include exclude disabled validator"
       },
-      "#0.1.34.6": {
-        "uid": "#0.1.34.6",
+      "#0.1.37.6": {
+        "uid": "#0.1.37.6",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -5672,7 +6013,7 @@
           "rangeSliders.age-rangeSlider",
           "rangeSliders.hours-rangeSlider",
           "rangeSliders.disabled-rangeSlider",
-          "#0.1.35.4"
+          "#0.1.38.4"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -5772,8 +6113,8 @@
         },
         "keysWithUndefined": "size include exclude readonly validator"
       },
-      "#0.1.35.4": {
-        "uid": "#0.1.35.4",
+      "#0.1.38.4": {
+        "uid": "#0.1.38.4",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -5833,7 +6174,7 @@
           "otp.short-otp",
           "otp.disabled-otp",
           "otp.readonly-otp",
-          "#0.1.36.5"
+          "#0.1.39.5"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -5915,8 +6256,8 @@
         "defaultValue": "482913",
         "keysWithUndefined": "size include exclude disabled validator"
       },
-      "#0.1.36.5": {
-        "uid": "#0.1.36.5",
+      "#0.1.39.5": {
+        "uid": "#0.1.39.5",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -6360,7 +6701,7 @@
         "type": "grid",
         "kind": "layout",
         "children": [
-          "#0.1.38.0",
+          "#0.1.41.0",
           "fileUploads.pdfOnly-fileUpload",
           "fileUploads.preloaded-fileUpload",
           "fileUploads.images-multiFileUpload",
@@ -6370,8 +6711,8 @@
         ],
         "keysWithUndefined": "size include exclude"
       },
-      "#0.1.38.0": {
-        "uid": "#0.1.38.0",
+      "#0.1.41.0": {
+        "uid": "#0.1.41.0",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -7135,7 +7476,7 @@
           "addLabel": "Add new developer",
           "removeLabel": "Delete",
           "template": {
-            "rowTemplateUid": "#0.1.42.0.t"
+            "rowTemplateUid": "#0.1.45.0.t"
           }
         },
         "keysWithUndefined": "size include exclude disabled readonly defaultValue"
@@ -7279,14 +7620,14 @@
         "type": "grid",
         "kind": "layout",
         "children": [
-          "#0.1.44.0",
+          "#0.1.47.0",
           "clientName-textinput",
           "registerMode-toggle"
         ],
         "keysWithUndefined": "size include exclude"
       },
-      "#0.1.44.0": {
-        "uid": "#0.1.44.0",
+      "#0.1.47.0": {
+        "uid": "#0.1.47.0",
         "type": "heading",
         "kind": "display",
         "props": {
@@ -7346,6 +7687,8 @@
         ],
         "address.state": null,
         "address.street": null,
+        "badges.customer": null,
+        "badges.overdue": null,
         "calendarDefault": null,
         "calendarDisabled": null,
         "calendarDisabledRanges": null,
@@ -7587,6 +7930,8 @@
         "passwordWithIcon": null,
         "percentage": null,
         "percentageWithHint": null,
+        "progresses.halfway": null,
+        "progresses.name": null,
         "quarters.q1": null,
         "quarters.q2": null,
         "quarters.q3": null,
@@ -7662,6 +8007,8 @@
         "sliders.volume": [
           "required"
         ],
+        "spinners.loading": null,
+        "spinners.query": null,
         "tags.basic": null,
         "tags.disabled": null,
         "tags.duplicates": null,
@@ -7713,6 +8060,8 @@
         "address.postcode": true,
         "address.state": true,
         "address.street": true,
+        "badges.customer": true,
+        "badges.overdue": true,
         "calendarDefault": true,
         "calendarDisabled": true,
         "calendarDisabledRanges": true,
@@ -7888,6 +8237,8 @@
         "passwordWithIcon": true,
         "percentage": true,
         "percentageWithHint": true,
+        "progresses.halfway": true,
+        "progresses.name": true,
         "quarters.q1": true,
         "quarters.q2": true,
         "quarters.q3": true,
@@ -7933,6 +8284,8 @@
         "sliders.readonly": true,
         "sliders.speaker": true,
         "sliders.volume": true,
+        "spinners.loading": true,
+        "spinners.query": true,
         "tags.basic": true,
         "tags.disabled": true,
         "tags.duplicates": true,
@@ -8167,6 +8520,18 @@
         "readonly": [
           "frozen"
         ]
+      },
+      "badges": {
+        "overdue": "[undefined]",
+        "customer": "[undefined]"
+      },
+      "progresses": {
+        "halfway": "[undefined]",
+        "name": "[undefined]"
+      },
+      "spinners": {
+        "loading": "[undefined]",
+        "query": "[undefined]"
       },
       "shoppingCart": {
         "firstName": "[undefined]",
@@ -8724,14 +9089,43 @@
         "#0.1.0.2",
         "#0.1.0.3",
         "#0.1.0.4",
-        "tabButton",
+        "tabBadge",
         "#0.1.1.0",
-        "#0.1.1.1",
-        "#0.1.1.2",
-        "#0.1.1.3",
+        "#0.1.1.0.0",
+        "#0.1.1.0.1",
+        "#0.1.1.0.2",
+        "#0.1.1.0.3",
+        "#0.1.1.0.4",
+        "badges.overdue-toggle",
+        "invoiceStatus",
+        "customerBadge",
         "#0.1.1.4",
-        "#0.1.1.5",
-        "#0.1.1.6",
+        "badges.customer-textinput",
+        "#0.1.1.4.1",
+        "tabProgress",
+        "#0.1.2.0",
+        "#0.1.2.1",
+        "#0.1.2.2",
+        "progresses.halfway-toggle",
+        "checkoutProgress",
+        "#0.1.2.5",
+        "progresses.name-textinput",
+        "#0.1.2.5.1",
+        "tabSpinner",
+        "spinners.loading-toggle",
+        "resultsSpinner",
+        "#0.1.3.2",
+        "#0.1.3.3",
+        "spinners.query-textinput",
+        "#0.1.3.3.1",
+        "tabButton",
+        "#0.1.4.0",
+        "#0.1.4.1",
+        "#0.1.4.2",
+        "#0.1.4.3",
+        "#0.1.4.4",
+        "#0.1.4.5",
+        "#0.1.4.6",
         "tabMenu",
         "menuActions",
         "menuOutlined",
@@ -8741,7 +9135,7 @@
         "menuTop",
         "menuDisabled",
         "tabMarkdownText",
-        "#0.1.3.0",
+        "#0.1.6.0",
         "tabAccordion",
         "section1",
         "shoppingCart.firstName-textinput",
@@ -8753,35 +9147,35 @@
         "shoppingCart.billingAddress-textinput",
         "shoppingCart.billingState-textinput",
         "tabGrid",
-        "#0.1.5.0",
-        "#0.1.5.1",
+        "#0.1.8.0",
+        "#0.1.8.1",
         "listName-textinput",
         "listOwner-textinput",
         "cb1-checkbox",
         "tg1-toggle",
-        "#0.1.5.2",
+        "#0.1.8.2",
         "gridSearch-textinput",
-        "#0.1.5.2.1",
-        "#0.1.5.3",
+        "#0.1.8.2.1",
+        "#0.1.8.3",
         "gridReport-textinput",
         "gridPeriod-radiogroup",
-        "#0.1.5.4",
-        "#0.1.5.5",
+        "#0.1.8.4",
+        "#0.1.8.5",
         "address.street-textinput",
         "address.number-textinput",
         "address.city-textinput",
         "address.state-textinput",
         "address.postcode-textinput",
-        "#0.1.5.6",
-        "#0.1.5.7",
+        "#0.1.8.6",
+        "#0.1.8.7",
         "quarters.q1-number",
         "quarters.q2-number",
         "quarters.q3-number",
         "quarters.q4-number",
-        "#0.1.5.8",
-        "#0.1.5.9",
-        "#0.1.5.9.0",
-        "#0.1.5.9.1",
+        "#0.1.8.8",
+        "#0.1.8.9",
+        "#0.1.8.9.0",
+        "#0.1.8.9.1",
         "tabTextinput",
         "textinput-textinput",
         "textinputDisabled-textinput",
@@ -8968,7 +9362,7 @@
         "checkboxGroups.days-checkboxGroup",
         "checkboxGroups.disabled-checkboxGroup",
         "checkboxGroups.readonly-checkboxGroup",
-        "#0.1.31.6",
+        "#0.1.34.6",
         "checkboxGroups.name-textinput",
         "checkboxGroups.contact-checkboxGroup",
         "tabRating",
@@ -8977,7 +9371,7 @@
         "ratings.stay-rating",
         "ratings.disabled-rating",
         "ratings.readonly-rating",
-        "#0.1.32.5",
+        "#0.1.35.5",
         "ratings.reviewer-textinput",
         "ratings.overall-rating",
         "tabSelect",
@@ -8994,7 +9388,7 @@
         "sliders.rating-slider",
         "sliders.disabled-slider",
         "sliders.readonly-slider",
-        "#0.1.34.6",
+        "#0.1.37.6",
         "sliders.speaker-textinput",
         "sliders.bass-slider",
         "tabRangeSlider",
@@ -9002,7 +9396,7 @@
         "rangeSliders.age-rangeSlider",
         "rangeSliders.hours-rangeSlider",
         "rangeSliders.disabled-rangeSlider",
-        "#0.1.35.4",
+        "#0.1.38.4",
         "rangeSliders.city-textinput",
         "rangeSliders.budget-rangeSlider",
         "tabOtp",
@@ -9011,7 +9405,7 @@
         "otp.short-otp",
         "otp.disabled-otp",
         "otp.readonly-otp",
-        "#0.1.36.5",
+        "#0.1.39.5",
         "otp.email-textinput",
         "otp.emailCode-otp",
         "tabDropdown",
@@ -9025,7 +9419,7 @@
         "dropdowns.invalidValueList-dropdown",
         "dropdowns.customItemRenderer-dropdown",
         "tabFileUpload",
-        "#0.1.38.0",
+        "#0.1.41.0",
         "fileUploads.title-textinput",
         "fileUploads.basic-fileUpload",
         "fileUploads.pdfOnly-fileUpload",
@@ -9056,19 +9450,19 @@
         "multiLists.disabled-multiList",
         "tabRepeater",
         "repeaters.users-repeater",
-        "#0.1.42.0.t[0]",
+        "#0.1.45.0.t[0]",
         "repeaters.users.items.firstName-textinput[0]",
         "repeaters.users.items.lastName-textinput[0]",
         "userRowMenu[0]",
-        "#0.1.42.0.t[1]",
+        "#0.1.45.0.t[1]",
         "repeaters.users.items.firstName-textinput[1]",
         "repeaters.users.items.lastName-textinput[1]",
         "userRowMenu[1]",
-        "#0.1.42.0.t[2]",
+        "#0.1.45.0.t[2]",
         "repeaters.users.items.firstName-textinput[2]",
         "repeaters.users.items.lastName-textinput[2]",
         "userRowMenu[2]",
-        "#0.1.42.0.t[3]",
+        "#0.1.45.0.t[3]",
         "repeaters.users.items.firstName-textinput[3]",
         "repeaters.users.items.lastName-textinput[3]",
         "userRowMenu[3]",
@@ -9083,25 +9477,25 @@
         "tags.disabled-tags",
         "tags.readonly-tags",
         "tabCustomWidget",
-        "#0.1.44.0",
+        "#0.1.47.0",
         "clientName-textinput",
         "registerMode-toggle",
         "submit-button"
       ],
       "changedEntries": {
-        "#0.1.42.0.t[0]": "layout grid",
+        "#0.1.45.0.t[0]": "layout grid",
         "repeaters.users.items.firstName-textinput[0]": "input textinput repeaters.users.0.firstName",
         "repeaters.users.items.lastName-textinput[0]": "input textinput repeaters.users.0.lastName",
         "userRowMenu[0]": "action menu",
-        "#0.1.42.0.t[1]": "layout grid",
+        "#0.1.45.0.t[1]": "layout grid",
         "repeaters.users.items.firstName-textinput[1]": "input textinput repeaters.users.1.firstName",
         "repeaters.users.items.lastName-textinput[1]": "input textinput repeaters.users.1.lastName",
         "userRowMenu[1]": "action menu",
-        "#0.1.42.0.t[2]": "layout grid",
+        "#0.1.45.0.t[2]": "layout grid",
         "repeaters.users.items.firstName-textinput[2]": "input textinput repeaters.users.2.firstName",
         "repeaters.users.items.lastName-textinput[2]": "input textinput repeaters.users.2.lastName",
         "userRowMenu[2]": "action menu",
-        "#0.1.42.0.t[3]": "layout grid",
+        "#0.1.45.0.t[3]": "layout grid",
         "repeaters.users.items.firstName-textinput[3]": "input textinput repeaters.users.3.firstName",
         "repeaters.users.items.lastName-textinput[3]": "input textinput repeaters.users.3.lastName",
         "userRowMenu[3]": "action menu"
@@ -9109,19 +9503,19 @@
     },
     "repeaterItemScopes": {
       "allEntries": {
-        "#0.1.42.0.t[0]": {
+        "#0.1.45.0.t[0]": {
           "itemPath": "repeaters.users.0",
           "index": 0
         },
-        "#0.1.42.0.t[1]": {
+        "#0.1.45.0.t[1]": {
           "itemPath": "repeaters.users.1",
           "index": 1
         },
-        "#0.1.42.0.t[2]": {
+        "#0.1.45.0.t[2]": {
           "itemPath": "repeaters.users.2",
           "index": 2
         },
-        "#0.1.42.0.t[3]": {
+        "#0.1.45.0.t[3]": {
           "itemPath": "repeaters.users.3",
           "index": 3
         },
@@ -9177,28 +9571,28 @@
     },
     "repeaterRows": {
       "allEntries": {
-        "#0.1.42.0.t[0]": [
+        "#0.1.45.0.t[0]": [
           {
             "declaredItemPath": "repeaters.users.items",
             "itemPath": "repeaters.users.0",
             "index": 0
           }
         ],
-        "#0.1.42.0.t[1]": [
+        "#0.1.45.0.t[1]": [
           {
             "declaredItemPath": "repeaters.users.items",
             "itemPath": "repeaters.users.1",
             "index": 1
           }
         ],
-        "#0.1.42.0.t[2]": [
+        "#0.1.45.0.t[2]": [
           {
             "declaredItemPath": "repeaters.users.items",
             "itemPath": "repeaters.users.2",
             "index": 2
           }
         ],
-        "#0.1.42.0.t[3]": [
+        "#0.1.45.0.t[3]": [
           {
             "declaredItemPath": "repeaters.users.items",
             "itemPath": "repeaters.users.3",
@@ -9293,8 +9687,8 @@
     },
     "calculatedWidgets": {
       "changedEntries": {
-        "#0.1.42.0.t[0]": {
-          "uid": "#0.1.42.0.t[0]",
+        "#0.1.45.0.t[0]": {
+          "uid": "#0.1.45.0.t[0]",
           "type": "grid",
           "kind": "layout",
           "props": {
@@ -9358,8 +9752,8 @@
           },
           "keysWithUndefined": "size include exclude label disabled actionType"
         },
-        "#0.1.42.0.t[1]": {
-          "uid": "#0.1.42.0.t[1]",
+        "#0.1.45.0.t[1]": {
+          "uid": "#0.1.45.0.t[1]",
           "type": "grid",
           "kind": "layout",
           "props": {
@@ -9423,8 +9817,8 @@
           },
           "keysWithUndefined": "size include exclude label disabled actionType"
         },
-        "#0.1.42.0.t[2]": {
-          "uid": "#0.1.42.0.t[2]",
+        "#0.1.45.0.t[2]": {
+          "uid": "#0.1.45.0.t[2]",
           "type": "grid",
           "kind": "layout",
           "props": {
@@ -9488,8 +9882,8 @@
           },
           "keysWithUndefined": "size include exclude label disabled actionType"
         },
-        "#0.1.42.0.t[3]": {
-          "uid": "#0.1.42.0.t[3]",
+        "#0.1.45.0.t[3]": {
+          "uid": "#0.1.45.0.t[3]",
           "type": "grid",
           "kind": "layout",
           "props": {
@@ -9558,6 +9952,18 @@
   },
   "afterEmptyData": {
     "data": {
+      "badges": {
+        "overdue": "[undefined]",
+        "customer": "[undefined]"
+      },
+      "progresses": {
+        "halfway": "[undefined]",
+        "name": "[undefined]"
+      },
+      "spinners": {
+        "loading": "[undefined]",
+        "query": "[undefined]"
+      },
       "shoppingCart": {
         "firstName": "[undefined]",
         "lastName": "[undefined]",
@@ -10175,19 +10581,19 @@
     },
     "resolvedSources": {
       "removedKeys": [
-        "#0.1.42.0.t[0]",
+        "#0.1.45.0.t[0]",
         "repeaters.users.items.firstName-textinput[0]",
         "repeaters.users.items.lastName-textinput[0]",
         "userRowMenu[0]",
-        "#0.1.42.0.t[1]",
+        "#0.1.45.0.t[1]",
         "repeaters.users.items.firstName-textinput[1]",
         "repeaters.users.items.lastName-textinput[1]",
         "userRowMenu[1]",
-        "#0.1.42.0.t[2]",
+        "#0.1.45.0.t[2]",
         "repeaters.users.items.firstName-textinput[2]",
         "repeaters.users.items.lastName-textinput[2]",
         "userRowMenu[2]",
-        "#0.1.42.0.t[3]",
+        "#0.1.45.0.t[3]",
         "repeaters.users.items.firstName-textinput[3]",
         "repeaters.users.items.lastName-textinput[3]",
         "userRowMenu[3]"
@@ -10201,19 +10607,19 @@
     },
     "calculatedWidgets": {
       "removedKeys": [
-        "#0.1.42.0.t[0]",
+        "#0.1.45.0.t[0]",
         "repeaters.users.items.firstName-textinput[0]",
         "repeaters.users.items.lastName-textinput[0]",
         "userRowMenu[0]",
-        "#0.1.42.0.t[1]",
+        "#0.1.45.0.t[1]",
         "repeaters.users.items.firstName-textinput[1]",
         "repeaters.users.items.lastName-textinput[1]",
         "userRowMenu[1]",
-        "#0.1.42.0.t[2]",
+        "#0.1.45.0.t[2]",
         "repeaters.users.items.firstName-textinput[2]",
         "repeaters.users.items.lastName-textinput[2]",
         "userRowMenu[2]",
-        "#0.1.42.0.t[3]",
+        "#0.1.45.0.t[3]",
         "repeaters.users.items.firstName-textinput[3]",
         "repeaters.users.items.lastName-textinput[3]",
         "userRowMenu[3]"

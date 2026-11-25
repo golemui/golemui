@@ -1,0 +1,8 @@
+@let templateData = adapter.templateData();
+
+<gui-badge
+  [attr.defer-hydration]="deferHydration"
+  [id]="adapter.domId"
+  [attr.variant]="templateData.level || 'default'"
+  >{{ templateData.text }}</gui-badge
+>

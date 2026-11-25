@@ -12,6 +12,7 @@
 export type {
   AccordionProps,
   AlertProps,
+  BadgeProps,
   ButtonProps,
   CalendarProps,
   DateTimeCalendarProps,
@@ -35,6 +36,8 @@ export type {
   ListProps,
   MarkdownProps,
   MarkdownTextProps,
+  ProgressProps,
+  SpinnerProps,
   MenuAction,
   MenuItem,
   MenuProps,

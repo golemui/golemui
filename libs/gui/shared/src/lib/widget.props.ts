@@ -725,6 +725,35 @@ export type AlertProps = {
   level?: 'default' | 'info' | 'success' | 'warning' | 'error';
 };
 
+export type BadgeProps = {
+  /**
+   * The badge's text, such as "Paid". Its color is not read out, so the text carries the meaning:
+   * "3 new messages", not "3".
+   */
+  text: Localizable;
+  /** The intent the badge shows, as an alert's. Defaults to `default`, which is neutral. */
+  level?: 'default' | 'info' | 'success' | 'warning' | 'error';
+};
+
+export type ProgressProps = {
+  /** The bar's name, shown above it. Screen readers read it with the value. */
+  label: Localizable;
+  /** How far the task has got, from 0 to `max`. Without it the bar is indeterminate. */
+  value?: number;
+  /** The value of a finished task. Defaults to 100. */
+  max?: number;
+  /** Shows the percentage at the end of the label's line, in the form's language. */
+  showValue?: boolean;
+};
+
+export type SpinnerProps = {
+  /**
+   * What the wait is for, such as "Loading results". Screen readers announce it when it changes.
+   * Without it the spinner is decorative.
+   */
+  label?: Localizable;
+};
+
 export type MarkdownTextProps = {
   md: string;
 };

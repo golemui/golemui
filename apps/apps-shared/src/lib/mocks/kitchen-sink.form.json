@@ -3,7 +3,10 @@
   "states": {
     "limitReached": "$form.repeaters.users?.length === 5",
     "hasSubregionSelect": "!!$form.selects.subregion",
-    "hasSubregionRadiogroup": "!!$form.radiogroups.subregion"
+    "hasSubregionRadiogroup": "!!$form.radiogroups.subregion",
+    "badgeOverdue": "$form.badges?.overdue === true",
+    "progressHalfway": "$form.progresses?.halfway === true",
+    "spinnerLoading": "$form.spinners?.loading === true"
   },
   "form": [
     {
@@ -22,6 +25,7 @@
         "tabs": [
           { "label": "Accordion Layout", "uid": "tabAccordion" },
           { "label": "Alert Component", "uid": "tabAlert" },
+          { "label": "Badge Component", "uid": "tabBadge" },
           { "label": "Button Component", "uid": "tabButton" },
           { "label": "Menu Component", "uid": "tabMenu" },
           { "label": "Calendar Component", "uid": "tabCalendar" },
@@ -43,9 +47,11 @@
           { "label": "Multi List Component", "uid": "tabMultiList" },
           { "label": "Number Component", "uid": "tabNumber" },
           { "label": "Password Component", "uid": "tabPassword" },
+          { "label": "Progress Component", "uid": "tabProgress" },
           { "label": "Radiogroup Component", "uid": "tabRadiogroup" },
           { "label": "Checkbox Group Component", "uid": "tabCheckboxGroup" },
           { "label": "Rating Component", "uid": "tabRating" },
+          { "label": "Spinner Component", "uid": "tabSpinner" },
           { "label": "Multi Range Calendar Component", "uid": "tabMultiRangeCalendar" },
           { "label": "Multi Range Date Input Component", "uid": "tabMultiRangeDateInput" },
           { "label": "Multi Range Time Input Component", "uid": "tabMultiRangeTimeInput" },
@@ -76,6 +82,9 @@
       "on": { "change": "onTabEvent" },
       "children": [
         { "$ref": "./tabs/alert.form-chunk.json" },
+        { "$ref": "./tabs/badge.form-chunk.json" },
+        { "$ref": "./tabs/progress.form-chunk.json" },
+        { "$ref": "./tabs/spinner.form-chunk.json" },
         { "$ref": "./tabs/button.form-chunk.json" },
         { "$ref": "./tabs/menu.form-chunk.json" },
         { "$ref": "./tabs/markdown-text.form-chunk.json" },

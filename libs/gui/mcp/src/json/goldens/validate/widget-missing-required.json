@@ -73,6 +73,39 @@
       "interpolationWarnings": []
     }
   },
+  "badge": {
+    "input": {
+      "form": [
+        {
+          "type": "badge"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Missing required property `props` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "props"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
   "button": {
     "input": {
       "form": [
@@ -1104,6 +1137,39 @@
       "interpolationWarnings": []
     }
   },
+  "progress": {
+    "input": {
+      "form": [
+        {
+          "type": "progress"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Missing required property `props` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "props"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
   "radiogroup": {
     "input": {
       "form": [
@@ -1302,6 +1368,31 @@
           "keyword": "required",
           "params": {
             "missingProperty": "path"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
+  "spinner": {
+    "input": {
+      "form": [
+        {
+          "type": "spinner"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
           }
         }
       ],

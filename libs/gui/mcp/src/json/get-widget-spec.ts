@@ -319,6 +319,22 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
     type: 'alert',
     props: { level: 'info', text: 'Heads up!' },
   },
+  badge: {
+    kind: 'display',
+    type: 'badge',
+    props: { text: 'Paid', level: 'success' },
+  },
+  progress: {
+    kind: 'display',
+    type: 'progress',
+    props: { label: 'Profile', value: 40, showValue: true },
+  },
+  spinner: {
+    kind: 'display',
+    type: 'spinner',
+    include: { in: ['loading'] },
+    props: { label: 'Loading results' },
+  },
   markdownText: {
     kind: 'display',
     type: 'markdownText',
@@ -521,6 +537,19 @@ const NOTES: Record<string, string[]> = {
   checkbox: [
     'MANDATORY CHECKBOX (e.g. terms acceptance): `required: true` alone is a silent trap — it only rejects a MISSING value; an unchecked box holding `false` is a valid boolean and passes. `const: true` is what rejects `false` — but alone it lets the pristine `undefined` pass (non-required validators are optional). Use BOTH: `validator: { type: "boolean", required: true, const: true }`.',
     'Set BOTH `messages.invalid` and `messages.const` to the same user-facing text: a never-touched box fails the type check (`invalid` message), a checked-then-unchecked box fails the `const` rule. Call `get_concept({ concept: "validation" })` for the full explanation.',
+  ],
+  badge: [
+    "A short label for a status or a count, inline with the content around it. `props.text` is required and localizable; `props.level` (`default`, `info`, `success`, `warning`, `error`, as an alert's) sets its color. The intent prop is `level`, never `variant`.",
+    'Screen readers do not read the color, so the text must carry the meaning on its own: "3 new messages", not "3"; "Payment overdue", not a red "!".',
+    'A status that changes with the data uses state suffixes: `"text.overdue": "Overdue"`, `"level.overdue": "error"`. `text` is a top-level string, so it can also interpolate (`"{{ $form.unread }} new messages"`).',
+  ],
+  progress: [
+    "A progress bar for how far a task has got. `props.label` is required: it names the bar for screen readers. `props.value` goes from 0 to `props.max` (default 100); without a `value` the bar is indeterminate. `props.showValue: true` shows the percentage, formatted in the form's language.",
+    '`value` is a NUMBER, so it cannot interpolate `{{ }}` (that always yields a string). Move it with state suffixes (`"value": 25, "value.step2": 50, "value.step3": 75`) or from the host. It is a display widget: it has no `path` and submits nothing.',
+  ],
+  spinner: [
+    'An indeterminate spinner for a wait of unknown length. Show it only while a named state holds: `include: { in: ["loading"] }` with a state such as `"loading": "$form.status === \'loading\'"`. Call `get_concept({ concept: "states" })` for the pattern.',
+    '`props.label` says what the wait is for ("Loading results") and is announced by screen readers when it changes; without it the spinner is decorative. Use `progress` instead when how far the task has got is known.',
   ],
   alert: [
     'Use `include: { in: ["stateName"] }` to show this alert only when a named state is active, or `exclude: { from: ["stateName"] }` to hide it when a state is active. This is cleaner than `include: { when: "..." }` when the same condition is reused across multiple widgets. Call `get_concept({ concept: "states" })` for the full states pattern.',

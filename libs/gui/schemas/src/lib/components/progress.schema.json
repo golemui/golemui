@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/gui/components/progress.schema.json",
+  "title": "Progress Widget",
+  "description": "A progress bar with its label, for how far a task has got. Without a `value` it is indeterminate.",
+  "type": "object",
+  "$defs": {
+    "labelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable",
+      "description": "The bar's name, shown above it. Screen readers read it with the value."
+    },
+    "valueProp": {
+      "type": "number",
+      "description": "How far the task has got, from 0 to `max`. Without it the bar is indeterminate."
+    },
+    "maxProp": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "The value of a finished task. Defaults to 100."
+    },
+    "showValueProp": {
+      "type": "boolean",
+      "description": "Shows the percentage at the end of the label's line, in the form's language."
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "display"
+    },
+    "type": {
+      "const": "progress"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "$ref": "#/$defs/labelProp"
+        },
+        "value": {
+          "$ref": "#/$defs/valueProp"
+        },
+        "max": {
+          "$ref": "#/$defs/maxProp"
+        },
+        "showValue": {
+          "$ref": "#/$defs/showValueProp"
+        }
+      },
+      "patternProperties": {
+        "^label\\.[^.]+$": {
+          "$ref": "#/$defs/labelProp"
+        },
+        "^value\\.[^.]+$": {
+          "$ref": "#/$defs/valueProp"
+        },
+        "^max\\.[^.]+$": {
+          "$ref": "#/$defs/maxProp"
+        },
+        "^showValue\\.[^.]+$": {
+          "$ref": "#/$defs/showValueProp"
+        }
+      },
+      "required": ["label"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["kind", "type", "props"],
+  "unevaluatedProperties": false
+}

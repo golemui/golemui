@@ -1,0 +1,51 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabSpinner",
+  "kind": "layout",
+  "type": "grid",
+  "children": [
+    {
+      "kind": "input",
+      "type": "toggle",
+      "path": "spinners.loading",
+      "label": "Load the results"
+    },
+    {
+      "uid": "resultsSpinner",
+      "include": {
+        "in": ["spinnerLoading"]
+      },
+      "kind": "display",
+      "type": "spinner",
+      "props": {
+        "label": "Loading results"
+      }
+    },
+    {
+      "kind": "display",
+      "type": "spinner"
+    },
+    {
+      "kind": "layout",
+      "type": "grid",
+      "props": {
+        "direction": "row"
+      },
+      "children": [
+        {
+          "kind": "input",
+          "type": "textinput",
+          "path": "spinners.query",
+          "label": "Search"
+        },
+        {
+          "kind": "display",
+          "type": "spinner",
+          "props": {
+            "label": "Searching"
+          }
+        }
+      ]
+    }
+  ]
+}
