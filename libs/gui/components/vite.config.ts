@@ -45,6 +45,7 @@ export default defineConfig(() => ({
         'lib/components/accordion-item': 'src/lib/components/accordion-item.ts',
         'lib/components/alert': 'src/lib/components/alert.ts',
         'lib/components/badge': 'src/lib/components/badge.ts',
+        'lib/components/breadcrumb': 'src/lib/components/breadcrumb.ts',
         'lib/components/button': 'src/lib/components/button.ts',
         'lib/components/calendar': 'src/lib/components/calendar.ts',
         'lib/components/checkbox': 'src/lib/components/checkbox.ts',

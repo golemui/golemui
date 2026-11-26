@@ -135,6 +135,9 @@ export const DEFAULT_MESSAGES = {
   incompleteCode: 'Enter all {length} digits.',
   invalidCode: 'Enter a {length}-digit code.',
 
+  // ─── Navigation: the name of a breadcrumb trail's <nav> ───
+  breadcrumb: 'Breadcrumb',
+
   // ─── Toasts ───
   notifications: 'Notifications',
   dismissNotification: 'Dismiss notification',

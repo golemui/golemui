@@ -160,6 +160,22 @@ describe('resuming server-rendered standalone elements', () => {
     expect(badge().outerHTML).toBe(before.replace(' defer-hydration=""', ''));
   });
 
+  it('leaves a breadcrumb as the server sent it, and reports a pick after the resume', async () => {
+    const breadcrumb = () => document.querySelector('gui-breadcrumb') as HTMLElement;
+    const before = breadcrumb().outerHTML;
+    resumeServerRendered();
+    await settle();
+
+    // Only the hold goes: the element writes nothing on its trail.
+    expect(breadcrumb().outerHTML).toBe(before.replace(' defer-hydration=""', ''));
+    const picked: string[] = [];
+    breadcrumb().addEventListener('gui-action', (event) =>
+      picked.push((event as CustomEvent<{ value: string }>).detail.value),
+    );
+    breadcrumb().querySelector('button')?.click();
+    expect(picked).toEqual(['plans']);
+  });
+
   it('leaves a table that fits as the server sent it', async () => {
     const table = () => document.querySelector('gui-table') as HTMLElement;
     const before = table().outerHTML;

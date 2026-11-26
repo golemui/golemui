@@ -88,6 +88,11 @@
       "import": "./lib/components/badge.js",
       "require": "./lib/components/badge.umd.cjs"
     },
+    "./breadcrumb": {
+      "types": "./lib/components/breadcrumb.d.ts",
+      "import": "./lib/components/breadcrumb.js",
+      "require": "./lib/components/breadcrumb.umd.cjs"
+    },
     "./button": {
       "types": "./lib/components/button.d.ts",
       "import": "./lib/components/button.js",

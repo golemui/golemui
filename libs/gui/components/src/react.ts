@@ -25,6 +25,10 @@ import {
 } from './lib/components/accordion-item';
 import { GuiAlert as GuiAlertElement } from './lib/components/alert';
 import { GuiBadge as GuiBadgeElement } from './lib/components/badge';
+import {
+  GuiBreadcrumb as GuiBreadcrumbElement,
+  GuiBreadcrumbEvents,
+} from './lib/components/breadcrumb';
 import { GuiButton as GuiButtonElement } from './lib/components/button';
 import { GuiCalendar as GuiCalendarElement, GuiCalendarEvents } from './lib/components/calendar';
 import { GuiCheckbox as GuiCheckboxElement, GuiCheckboxEvents } from './lib/components/checkbox';
@@ -316,6 +320,7 @@ export const GuiAccordionItem = wrap(
 );
 export const GuiAlert = wrap('gui-alert', GuiAlertElement);
 export const GuiBadge = wrap('gui-badge', GuiBadgeElement);
+export const GuiBreadcrumb = wrap('gui-breadcrumb', GuiBreadcrumbElement, GuiBreadcrumbEvents);
 export const GuiButton = wrap('gui-button', GuiButtonElement, { click: fires<MouseEvent>() });
 export const GuiCalendar = wrap('gui-calendar', GuiCalendarElement, GuiCalendarEvents);
 export const GuiCheckbox = wrap('gui-checkbox', GuiCheckboxElement, GuiCheckboxEvents);

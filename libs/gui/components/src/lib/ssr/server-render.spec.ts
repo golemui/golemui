@@ -73,6 +73,10 @@ describe('server rendering standalone elements in plain node', () => {
 
   it("keeps the app's children of the elements that enhance them", () => {
     expect(markup).toMatch(/<gui-alert[^>]*>Yearly billing saves two months.<\/gui-alert>/);
+    // A breadcrumb, with its trail and nothing the element adds.
+    expect(markup).toMatch(
+      /<gui-breadcrumb defer-hydration>\s*<nav aria-label="Breadcrumb">\s*<ol>\s*<li><button/,
+    );
     expect(markup).toMatch(/<gui-badge[^>]*variant="success"[^>]*>Active<\/gui-badge>/);
     expect(markup).toMatch(/<gui-tab [^>]*>Billing<\/gui-tab>/);
     expect(markup).toMatch(/<gui-tab-panel[^>]*>\s*<gui-select/);
@@ -95,7 +99,7 @@ describe('server rendering standalone elements in plain node', () => {
 
   it('holds every GolemUI element inert through defer-hydration', () => {
     const tags = [...markup.matchAll(/<(gui-[a-z-]+)([^>]*)>/g)];
-    expect(tags.length).toBe(29);
+    expect(tags.length).toBe(30);
     for (const [, tag, attributes] of tags) {
       expect(attributes, tag).toContain('defer-hydration');
     }

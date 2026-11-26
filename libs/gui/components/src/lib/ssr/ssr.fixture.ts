@@ -1,6 +1,7 @@
 import { html } from 'lit';
 import '../components/alert';
 import '../components/badge';
+import '../components/breadcrumb';
 import '../components/checkbox';
 import '../components/checkbox-group';
 import '../components/dialog';
@@ -27,8 +28,8 @@ import '../components/tooltip';
 
 /**
  * A page of elements shared by the server render and the resume specs: elements that render
- * their own content (the inputs) and elements whose children are the app's (the alert, the tabs,
- * the popover, the tooltip, the dialog, the menu and the table), one nested in the other, and the toaster,
+ * their own content (the inputs) and elements whose children are the app's (the breadcrumb, the
+ * alert, the tabs, the popover, the tooltip, the dialog, the menu and the table), one nested in the other, and the toaster,
  * which renders nothing until a toast arrives.
  *
  * Every value is an attribute: the client upgrades the elements from the HTML, so a property
@@ -36,6 +37,14 @@ import '../components/tooltip';
  */
 export const serverTemplate = () =>
   html`<form id="checkout">
+    <gui-breadcrumb>
+      <nav aria-label="Breadcrumb">
+        <ol>
+          <li><button type="button" value="plans">Plans</button></li>
+          <li><span aria-current="page">Checkout</span></li>
+        </ol>
+      </nav>
+    </gui-breadcrumb>
     <gui-alert variant="info">Yearly billing saves two months.</gui-alert>
     <gui-textinput
       uid="email"

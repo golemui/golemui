@@ -65,6 +65,9 @@
   // Action Widgets
   @include meta.load-css('button');
 
+  // Navigation
+  @include meta.load-css('breadcrumb');
+
   // Display Widgets
   @include meta.load-css('alert');
   @include meta.load-css('badge');

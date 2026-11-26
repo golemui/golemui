@@ -112,6 +112,25 @@ describe('a strict style-src-attr policy', () => {
     expectNoViolations();
   });
 
+  it('allows a gui-breadcrumb to render its separators, wrap and fire', () => {
+    cy.mount(
+      html`<div id="box">
+        <gui-breadcrumb>
+          <nav aria-label="Breadcrumb">
+            <ol>
+              <li><button type="button" value="orders">Orders</button></li>
+              <li><button type="button" value="2026">2026</button></li>
+              <li><span aria-current="page">A-1042</span></li>
+            </ol>
+          </nav>
+        </gui-breadcrumb>
+      </div>`,
+    );
+    cy.get('#box').then(([box]) => box.style.setProperty('inline-size', '80px'));
+    cy.contains('gui-breadcrumb button', 'Orders').click();
+    expectNoViolations();
+  });
+
   it('allows a gui-table to render, overflow into a region and scroll', () => {
     cy.mount(
       html`<div id="box">

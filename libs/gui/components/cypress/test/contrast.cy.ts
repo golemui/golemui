@@ -182,6 +182,36 @@ describe('control boundaries (WCAG 1.4.11)', () => {
         });
       });
 
+      // The separators tell the items of the trail apart, and the focus ring shows where focus is:
+      // both need 3:1 against the page. axe checks the text.
+      it('gui-breadcrumb: the separator and the focus ring reach 3:1 against the page', () => {
+        cy.mount(
+          html`<gui-breadcrumb>
+            <nav aria-label="Breadcrumb">
+              <ol>
+                <li><button type="button">Orders</button></li>
+                <li><span aria-current="page">A-1042</span></li>
+              </ol>
+            </nav>
+          </gui-breadcrumb>`,
+        );
+
+        cy.get('gui-breadcrumb li')
+          .eq(1)
+          .should(([item]) => {
+            const page = toRgb(getComputedStyle(document.body).backgroundColor, [255, 255, 255]);
+            const mark = toRgb(getComputedStyle(item, '::before').backgroundColor, page);
+            expect(contrast(mark, page), 'separator against the page').to.be.gte(3);
+          });
+        cy.get('gui-breadcrumb button').focus();
+        cy.get('gui-breadcrumb button').should(([button]) => {
+          const page = toRgb(getComputedStyle(document.body).backgroundColor, [255, 255, 255]);
+          expect(getComputedStyle(button).outlineStyle, 'focus ring').to.equal('solid');
+          const ring = toRgb(getComputedStyle(button).outlineColor, page);
+          expect(contrast(ring, page), 'focus ring against the page').to.be.gte(3);
+        });
+      });
+
       // The header row's text is the column's name: it needs 4.5:1 against the row's tint. The cell
       // borders only decorate: the header cells and the alignment show the table's structure, so
       // WCAG 1.4.11 asks nothing of them. The focus ring of a scrollable table shows where focus is.

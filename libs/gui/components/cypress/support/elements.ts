@@ -73,6 +73,15 @@ export const elements: ElementCase[] = [
     setup: (badge) => (badge.textContent = 'Paid'),
     hostRendersChildren: true,
   },
+  // Its trail is the app's children: give it one, as breadcrumb.cy.ts does.
+  {
+    tag: 'gui-breadcrumb',
+    props: {},
+    setup: (breadcrumb) =>
+      (breadcrumb.innerHTML =
+        '<nav aria-label="Breadcrumb"><ol><li><button type="button" value="orders">Orders</button></li><li><a href="#2026">2026</a></li><li><span aria-current="page">A-1042</span></li></ol></nav>'),
+    hostRendersChildren: true,
+  },
   { tag: 'gui-button', props: { label: 'Save' } },
   // Icon-only: named by button-aria-label alone.
   { tag: 'gui-button', props: { icon: 'icon-close', buttonAriaLabel: 'Close' } },
