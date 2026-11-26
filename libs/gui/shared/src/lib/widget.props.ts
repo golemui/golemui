@@ -73,6 +73,56 @@ export type MenuButtonProps = {
   ariaLabel?: Localizable;
 };
 
+/** A step of a breadcrumb trail. */
+export type BreadcrumbItem = {
+  /** The text of the step. */
+  label: Localizable;
+  /** What the breadcrumb's `click` event carries in `detail.value` when the user picks the step. */
+  value: string;
+};
+
+export type BreadcrumbProps = {
+  /**
+   * The trail, from the top level down. The last item is the current page: it shows as plain
+   * text, and the user can't pick it.
+   */
+  items: BreadcrumbItem[];
+};
+
+/** An item of a navigation menu: a destination, or a group of items when it has `items`. */
+export type MenuItem = {
+  /** The text of the item. */
+  label: Localizable;
+  /**
+   * The item's value, unique in the menu. A destination sends it in the `click` event's
+   * `detail.value`; a group uses it for its ids, and `current` names it.
+   */
+  value: string;
+  /** An icon before the label: a Material Icons ligature name. */
+  icon?: string;
+  /** Shows the item but stops the user picking it, or opening it for a group. */
+  disabled?: boolean;
+  /** The items of a group. Its button only opens and closes them: it emits no event. */
+  items?: MenuItem[];
+};
+
+export type MenuOrientation = 'vertical' | 'horizontal';
+
+export type MenuProps = {
+  /** The menu's items, in order. */
+  items: MenuItem[];
+  /**
+   * `vertical` (the default) lays the items out in a column, and groups open in place.
+   * `horizontal` lays the first level out in a row, and its groups open dropdowns.
+   */
+  orientation?: MenuOrientation;
+  /**
+   * The value of the item of the current page. It is marked as the current page, and the groups
+   * that hold it start open. Interpolated, so it can follow the form's data or metadata.
+   */
+  current?: string;
+};
+
 export type Autocomplete = 'on' | 'off' | (string & {});
 
 export type TextinputProps = {

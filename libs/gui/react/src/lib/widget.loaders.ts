@@ -5,6 +5,8 @@ export const widgetLoaders: WidgetLoaders<React.ComponentType<WithWidget>, Golem
   // INTERACTIVE
   button: async () => (await import('./components/Button')).Button,
   menuButton: async () => (await import('./components/MenuButton')).MenuButton,
+  breadcrumb: async () => (await import('./components/Breadcrumb')).Breadcrumb,
+  menu: async () => (await import('./components/Menu')).Menu,
 
   // CONTROLS
   calendar: async () => (await import('./components/Calendar')).Calendar,

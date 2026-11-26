@@ -11,6 +11,8 @@ import imageChunk from './tabs/image.form-chunk.json';
 import tableChunk from './tabs/table.form-chunk.json';
 import buttonChunk from './tabs/button.form-chunk.json';
 import menuButtonChunk from './tabs/menubutton.form-chunk.json';
+import breadcrumbChunk from './tabs/breadcrumb.form-chunk.json';
+import menuChunk from './tabs/menu.form-chunk.json';
 import markdownTextChunk from './tabs/markdown-text.form-chunk.json';
 import accordionChunk from './tabs/accordion.form-chunk.json';
 import gridChunk from './tabs/grid.form-chunk.json';
@@ -75,6 +77,8 @@ const chunks: Record<string, unknown> = {
   './tabs/table.form-chunk.json': tableChunk,
   './tabs/button.form-chunk.json': buttonChunk,
   './tabs/menubutton.form-chunk.json': menuButtonChunk,
+  './tabs/breadcrumb.form-chunk.json': breadcrumbChunk,
+  './tabs/menu.form-chunk.json': menuChunk,
   './tabs/markdown-text.form-chunk.json': markdownTextChunk,
   './tabs/accordion.form-chunk.json': accordionChunk,
   './tabs/grid.form-chunk.json': gridChunk,

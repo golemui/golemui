@@ -1,0 +1,65 @@
+@let templateData = adapter.templateData();
+@let open = openGroups(templateData);
+@let horizontal = templateData.orientation === 'horizontal';
+@let disabled = templateData.disabled === true;
+
+<ng-template #level let-items let-dropdowns="dropdowns">
+  @for (item of items ?? []; track item.value) {
+    <li>
+      <button
+        type="button"
+        [value]="item.value"
+        [attr.data-cy]="menuItemCy(widget.uid, item.value)"
+        [attr.aria-current]="
+          !isMenuGroup(item) && item.value === templateData.current ? 'page' : null
+        "
+        [attr.aria-expanded]="isMenuGroup(item) && !dropdowns ? open.includes(item.value) : null"
+        [attr.aria-controls]="isMenuGroup(item) && !dropdowns ? groupId(item.value) : null"
+        [attr.popovertarget]="isMenuGroup(item) && dropdowns ? groupId(item.value) : null"
+        [disabled]="disabled || item.disabled === true"
+      >
+        @if (item.icon) {
+          <span
+            [class]="'gui-widget-icon ' + item.icon"
+            [attr.data-icon]="item.icon"
+            aria-hidden="true"
+          ></span>
+        }
+        <span>{{ item.label }}</span>
+      </button>
+      @if (isMenuGroup(item) && dropdowns) {
+        <gui-popover [attr.defer-hydration]="deferHydration">
+          <ul [id]="groupId(item.value)" popover>
+            <ng-container
+              [ngTemplateOutlet]="level"
+              [ngTemplateOutletContext]="{ $implicit: item.items, dropdowns: false }"
+            />
+          </ul>
+        </gui-popover>
+      } @else if (isMenuGroup(item)) {
+        <ul [id]="groupId(item.value)" [hidden]="!open.includes(item.value)">
+          <ng-container
+            [ngTemplateOutlet]="level"
+            [ngTemplateOutletContext]="{ $implicit: item.items, dropdowns: false }"
+          />
+        </ul>
+      }
+    </li>
+  }
+</ng-template>
+
+<gui-menu
+  [attr.defer-hydration]="deferHydration"
+  [attr.orientation]="horizontal ? 'horizontal' : null"
+  (gui-action)="onAction($event)"
+  (gui-toggle)="onToggle($event)"
+>
+  <nav [id]="adapter.domId" [attr.aria-label]="name(templateData.label)">
+    <ul>
+      <ng-container
+        [ngTemplateOutlet]="level"
+        [ngTemplateOutletContext]="{ $implicit: templateData.items, dropdowns: horizontal }"
+      />
+    </ul>
+  </nav>
+</gui-menu>

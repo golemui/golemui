@@ -78,6 +78,8 @@ export const guiWidgetManifest: readonly WidgetManifestEntry[] = [
   { type: 'typography', schemaFile: 'typography.schema.json', kind: 'display' },
   { type: 'button', schemaFile: 'button.schema.json', kind: 'action' },
   { type: 'menuButton', schemaFile: 'menubutton.schema.json', kind: 'action' },
+  { type: 'breadcrumb', schemaFile: 'breadcrumb.schema.json', kind: 'action' },
+  { type: 'menu', schemaFile: 'menu.schema.json', kind: 'action' },
 ];
 
 /**

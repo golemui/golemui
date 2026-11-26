@@ -66,7 +66,9 @@
         "table",
         "typography",
         "button",
-        "menuButton"
+        "menuButton",
+        "breadcrumb",
+        "menu"
       ]
     },
     "formWidget": {
@@ -132,6 +134,8 @@
         { "$ref": "./components/typography.schema.json" },
         { "$ref": "./components/button.schema.json" },
         { "$ref": "./components/menubutton.schema.json" },
+        { "$ref": "./components/breadcrumb.schema.json" },
+        { "$ref": "./components/menu.schema.json" },
         { "$ref": "./components/custom.schema.json" },
         { "$ref": "./core/common.schema.json#/$defs/chunkRef" }
       ]

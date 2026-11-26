@@ -1,0 +1,26 @@
+@let templateData = adapter.templateData();
+
+<gui-breadcrumb [attr.defer-hydration]="deferHydration" (gui-action)="onAction($event)">
+  <nav [id]="adapter.domId" [attr.aria-label]="breadcrumbLabel(templateData.label)">
+    <ol>
+      @for (step of breadcrumbTrail(templateData.items); track step.value) {
+        <li>
+          @if (step.current) {
+            <span aria-current="page" [attr.data-cy]="widget.uid + '_item_' + step.value">{{
+              step.label
+            }}</span>
+          } @else {
+            <button
+              type="button"
+              [value]="step.value"
+              [attr.data-cy]="widget.uid + '_item_' + step.value"
+              [disabled]="templateData.disabled === true"
+            >
+              {{ step.label }}
+            </button>
+          }
+        </li>
+      }
+    </ol>
+  </nav>
+</gui-breadcrumb>

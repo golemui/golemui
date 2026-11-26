@@ -127,6 +127,38 @@ const config: FormInitConfig<Type<WithWidget>> = {
           label: 'More',
           props: { items: [{ label: 'Save as draft', value: 'draft' }] },
         },
+        {
+          uid: 'trail',
+          kind: 'action',
+          type: 'breadcrumb',
+          props: {
+            items: [
+              { label: 'Plans', value: 'plans' },
+              { label: 'Checkout', value: 'checkout' },
+            ],
+          },
+        },
+        {
+          uid: 'account',
+          kind: 'action',
+          type: 'menu',
+          label: 'Account',
+          props: {
+            orientation: 'horizontal',
+            current: 'members',
+            items: [
+              { label: 'Billing', value: 'billing' },
+              {
+                label: 'Team',
+                value: 'team',
+                items: [
+                  { label: 'Members', value: 'members' },
+                  { label: 'Roles', value: 'roles', items: [{ label: 'Admins', value: 'admins' }] },
+                ],
+              },
+            ],
+          },
+        },
         { uid: 'planBadge', kind: 'display', type: 'badge', props: { text: 'Pro', level: 'info' } },
         {
           uid: 'setup',
@@ -204,6 +236,28 @@ describe('server rendering the gui widget set in plain node', () => {
     expect(markup).toMatch(
       /<gui-menu-button-interactive[^>]*class="[^"]*gui-menu-button[^"]*gui-field/,
     );
+  });
+
+  it('renders a breadcrumb trail and a menu, with their state and nothing the elements add', () => {
+    expect(markup).toMatch(
+      /<gui-breadcrumb-interactive[^>]*class="[^"]*gui-breadcrumb[^"]*gui-field/,
+    );
+    expect(markup).toMatch(
+      /<nav[^>]*id="gui-lit-ssr-form-trail"[^>]*aria-label="Breadcrumb"[^>]*>\s*<ol>/,
+    );
+    expect(markup).toMatch(/<span[^>]*aria-current="page"[^>]*>(<!--[^>]*-->)*Checkout/);
+
+    expect(markup).toMatch(/<gui-menu-interactive[^>]*class="[^"]*gui-menu[^"]*gui-field/);
+    expect(markup).toMatch(/<gui-menu[^>-]*orientation="horizontal"/);
+    expect(markup).toMatch(/<nav[^>]*id="gui-lit-ssr-form-account"[^>]*aria-label="Account"/);
+    // The first-level group is a closed dropdown; the group inside it, closed in place.
+    expect(markup).toMatch(/popovertarget="gui-lit-ssr-form-account_group_team"/);
+    expect(markup).toMatch(/<ul[^>]*id="gui-lit-ssr-form-account_group_team"[^>]*popover/);
+    expect(markup).toMatch(
+      /aria-expanded="false"[^>]*aria-controls="gui-lit-ssr-form-account_group_roles"/,
+    );
+    expect(markup).toMatch(/<ul[^>]*id="gui-lit-ssr-form-account_group_roles"[^>]*hidden/);
+    expect(markup).toMatch(/value="members"[^>]*aria-current="page"/);
   });
 
   it('renders the badge, the progress bar and the spinner with their content', () => {

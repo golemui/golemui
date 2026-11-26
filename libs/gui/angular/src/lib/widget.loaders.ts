@@ -7,6 +7,9 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
   button: async () => (await import('./components/button/button.component')).ButtonComponent,
   menuButton: async () =>
     (await import('./components/menu-button/menu-button.component')).MenuButtonComponent,
+  breadcrumb: async () =>
+    (await import('./components/breadcrumb/breadcrumb.component')).BreadcrumbComponent,
+  menu: async () => (await import('./components/menu/menu.component')).MenuComponent,
 
   // INPUT WIDGETS
   repeater: async () =>

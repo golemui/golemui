@@ -33,6 +33,8 @@ import type {
   MarkdownProps,
   MarkdownTextProps,
   MenuButtonProps,
+  BreadcrumbProps,
+  MenuProps,
   ProgressProps,
   NumberinputProps,
   OptionValue,
@@ -232,6 +234,8 @@ type GolemWidget<
   | GuiTable<FormType, States>
   | GuiButton<FormType, States>
   | GuiMenuButton<FormType, States>
+  | GuiBreadcrumb<FormType, States>
+  | GuiMenu<FormType, States>
   | GuiCalendar<FormType, States, V>
   | GuiCheckbox<FormType, States, V>
   | GuiDateTimeCalendar<FormType, States, V>
@@ -348,6 +352,18 @@ type GuiMenuButton<FormType extends Record<string, any>, States extends string> 
   FormType,
   MenuButtonProps
 > & { type: 'menuButton' };
+
+type GuiBreadcrumb<FormType extends Record<string, any>, States extends string> = ActionWidget<
+  States,
+  FormType,
+  BreadcrumbProps
+> & { type: 'breadcrumb' };
+
+type GuiMenu<FormType extends Record<string, any>, States extends string> = ActionWidget<
+  States,
+  FormType,
+  MenuProps
+> & { type: 'menu' };
 
 type GuiCalendar<FormType extends Record<string, any>, States extends string, V> = InputWidget<
   string,

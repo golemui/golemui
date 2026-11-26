@@ -66,6 +66,8 @@ import tableSchemaJson from './lib/components/table.schema.json';
 import typographySchemaJson from './lib/components/typography.schema.json';
 import buttonSchemaJson from './lib/components/button.schema.json';
 import menubuttonSchemaJson from './lib/components/menubutton.schema.json';
+import breadcrumbSchemaJson from './lib/components/breadcrumb.schema.json';
+import menuSchemaJson from './lib/components/menu.schema.json';
 import customSchemaJson from './lib/components/custom.schema.json';
 
 export const commonSchema: Record<string, unknown> = commonSchemaJson;
@@ -137,6 +139,8 @@ export const tableSchema: Record<string, unknown> = tableSchemaJson;
 export const typographySchema: Record<string, unknown> = typographySchemaJson;
 export const buttonSchema: Record<string, unknown> = buttonSchemaJson;
 export const menubuttonSchema: Record<string, unknown> = menubuttonSchemaJson;
+export const breadcrumbSchema: Record<string, unknown> = breadcrumbSchemaJson;
+export const menuSchema: Record<string, unknown> = menuSchemaJson;
 export const customSchema: Record<string, unknown> = customSchemaJson;
 
 /** Component schemas keyed by widget `type`. Excludes the custom fallback and schema-less types. */
@@ -201,4 +205,6 @@ export const COMPONENT_SCHEMAS_BY_TYPE = {
   typography: typographySchema,
   button: buttonSchema,
   menuButton: menubuttonSchema,
+  breadcrumb: breadcrumbSchema,
+  menu: menuSchema,
 } as const;

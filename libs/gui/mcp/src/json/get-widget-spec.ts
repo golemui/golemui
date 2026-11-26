@@ -314,6 +314,41 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
       ],
     },
   },
+  breadcrumb: {
+    uid: 'trail',
+    kind: 'action',
+    type: 'breadcrumb',
+    on: { click: 'navigate' },
+    props: {
+      items: [
+        { label: 'Orders', value: 'orders' },
+        { label: '2026', value: 'orders-2026' },
+        { label: 'A-1042', value: 'order' },
+      ],
+    },
+  },
+  menu: {
+    uid: 'mainMenu',
+    kind: 'action',
+    type: 'menu',
+    label: 'Main',
+    on: { click: 'navigate' },
+    props: {
+      current: '{{ $meta.view }}',
+      items: [
+        { label: 'Orders', value: 'orders', icon: 'receipt_long' },
+        {
+          label: 'Settings',
+          value: 'settings',
+          icon: 'settings',
+          items: [
+            { label: 'Profile', value: 'profile' },
+            { label: 'Billing', value: 'billing' },
+          ],
+        },
+      ],
+    },
+  },
   alert: {
     kind: 'display',
     type: 'alert',
@@ -623,8 +658,24 @@ const NOTES: Record<string, string[]> = {
     '`props.items` is an array of actions `{ label, value, disabled? }` and separators `{ separator: true }`. `label` is localizable. A menu is not an input: it has no `path` and stores nothing in the form data.',
     '`props.placement` sets where the menu opens next to its button (default `"bottom-start"`; `"bottom-end"` suits a menu at the end of a row). `props.variant`, `props.icon` and `props.iconPosition` style the button like a `button` widget.',
     '`label` is optional. An icon-only button (e.g. `props.icon: "more_vert"` for a "⋮" row menu) MUST set `props.ariaLabel`, the button\'s accessible name; the menu is named after the button too. `ariaLabel` is ignored while a `label` is shown.',
-    'In a repeater, every row gets its own menu. The event does not carry the row yet, so a per-row action must read the row some other way.',
+    'In a repeater, every row gets its own menu, and the event carries the row it was picked in, as every action does.',
     'Keyboard and screen reader support come from `gui-menu-button`: the button gets `aria-haspopup="menu"`, the arrows move through the items, typing jumps to an item, Escape closes it and returns focus to the button.',
+    'For navigation (the destinations of an app, groups that open, the current page marked) use `menu` instead: `menuButton` is a button with a list of actions.',
+  ],
+  breadcrumb: [
+    "A trail from the top level down to the current page. Picking a step dispatches ONE event, `on.click`, with the step's `value` in `detail.value`; the host navigates. There is no `href`: the widget emits, the host moves.",
+    '`props.items` is an array of `{ label, value }`, top level first. The LAST item is the current page: it shows as plain text with `aria-current="page"`, and can\'t be picked. `label` is localizable.',
+    '`label` (optional) names the trail\'s navigation landmark; without one it is "Breadcrumb". The labels inside `items` are not interpolated: build the items for the page the host shows, or switch them with a state suffix (`"items.<state>"`).',
+    'A long trail wraps onto more lines. The separators are drawn in CSS and point the other way right to left.',
+  ],
+  menu: [
+    "A navigation menu: destinations, and groups of them that open, to any depth. Picking a destination dispatches ONE event, `on.click`, with its `value` in `detail.value`; the host navigates. A group's button only opens and closes the group: it emits nothing. There is no `href`.",
+    '`props.items` is an array of `{ label, value, icon?, disabled?, items? }`. An item with `items` is a group, and its `items` take the same shape (recursive). Every `value` must be unique in the whole menu: groups use it for their ids and their open state.',
+    '`props.current` is the `value` of the current page\'s item. It is marked with `aria-current="page"`, and the groups that hold it start open. It is interpolated, so `"{{ $meta.view }}"` or `"{{ $form.section }}"` follows what the host shows; the user\'s own opening and closing stays until it changes.',
+    '`props.orientation`: `"vertical"` (default) is a column whose groups open in place, indented. `"horizontal"` is a row: its first-level groups open dropdowns, deeper groups open in place inside them, and a row that does not fit scrolls.',
+    'Set `label`, the name of the navigation landmark (e.g. "Main"): two unnamed navigations on a page sound the same to a screen reader.',
+    'Keyboard: every item stays in the Tab order, Enter or Space opens a group, Escape closes the group around the focus. It follows the disclosure navigation pattern, not `role="menu"`.',
+    'For a button that opens a list of actions (e.g. a "⋮" row menu with Edit and Delete), use `menuButton` instead.',
   ],
   checkbox: [
     'MANDATORY CHECKBOX (e.g. terms acceptance): `required: true` alone is a silent trap — it only rejects a MISSING value; an unchecked box holding `false` is a valid boolean and passes. `const: true` is what rejects `false` — but alone it lets the pristine `undefined` pass (non-required validators are optional). Use BOTH: `validator: { type: "boolean", required: true, const: true }`.',

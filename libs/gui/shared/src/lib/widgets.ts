@@ -58,7 +58,7 @@ export const displayWidgets = [
   'table',
   'typography',
 ] as const;
-export const actionWidgets = ['button', 'menuButton'] as const;
+export const actionWidgets = ['button', 'menuButton', 'breadcrumb', 'menu'] as const;
 
 export const golemWidgets = [
   ...inputWidgets,

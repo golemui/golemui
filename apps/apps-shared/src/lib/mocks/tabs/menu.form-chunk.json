@@ -1,0 +1,122 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabMenu",
+  "kind": "layout",
+  "type": "grid",
+  "children": [
+    {
+      "uid": "menuVertical",
+      "kind": "action",
+      "type": "menu",
+      "label": "Main",
+      "on": {
+        "click": "onNavigate"
+      },
+      "props": {
+        "current": "cards",
+        "items": [
+          {
+            "label": "Home",
+            "value": "home",
+            "icon": "home"
+          },
+          {
+            "label": "Orders",
+            "value": "orders",
+            "icon": "receipt_long"
+          },
+          {
+            "label": "Settings",
+            "value": "settings",
+            "icon": "settings",
+            "items": [
+              {
+                "label": "Profile",
+                "value": "profile"
+              },
+              {
+                "label": "Billing",
+                "value": "billing",
+                "items": [
+                  {
+                    "label": "Invoices",
+                    "value": "invoices"
+                  },
+                  {
+                    "label": "Cards",
+                    "value": "cards"
+                  }
+                ]
+              },
+              {
+                "label": "Archived",
+                "value": "archived",
+                "disabled": true
+              }
+            ]
+          },
+          {
+            "label": "Team",
+            "value": "team",
+            "icon": "group"
+          }
+        ]
+      }
+    },
+    {
+      "uid": "menuHorizontal",
+      "kind": "action",
+      "type": "menu",
+      "label": "Sections",
+      "on": {
+        "click": "onNavigate"
+      },
+      "props": {
+        "orientation": "horizontal",
+        "current": "dashboard",
+        "items": [
+          {
+            "label": "Dashboard",
+            "value": "dashboard"
+          },
+          {
+            "label": "Reports",
+            "value": "reports",
+            "items": [
+              {
+                "label": "Sales",
+                "value": "sales"
+              },
+              {
+                "label": "Stock",
+                "value": "stock"
+              },
+              {
+                "label": "Yearly",
+                "value": "yearly",
+                "items": [
+                  {
+                    "label": "2025",
+                    "value": "2025"
+                  },
+                  {
+                    "label": "2026",
+                    "value": "2026"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "label": "Customers",
+            "value": "customers"
+          },
+          {
+            "label": "Integrations",
+            "value": "integrations"
+          }
+        ]
+      }
+    }
+  ]
+}

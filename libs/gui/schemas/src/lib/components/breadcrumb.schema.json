@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/gui/components/breadcrumb.schema.json",
+  "title": "Breadcrumb Widget",
+  "description": "A breadcrumb trail: where the current page sits, from the top level down. Picking a step dispatches `on.click` with its value in `detail.value`. The last step is the current page and can't be picked.",
+  "type": "object",
+  "$defs": {
+    "labelDef": {
+      "$ref": "../core/common.schema.json#/$defs/localizable",
+      "description": "The name of the trail's navigation landmark. Defaults to \"Breadcrumb\"."
+    },
+    "disabledDef": {
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
+    },
+    "breadcrumbItem": {
+      "type": "object",
+      "description": "A step of the trail.",
+      "properties": {
+        "label": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "value": {
+          "type": "string",
+          "description": "Sent in the event's `detail.value` when the user picks the step."
+        }
+      },
+      "required": ["label", "value"],
+      "additionalProperties": false
+    },
+    "itemsProp": {
+      "type": "array",
+      "description": "The trail, from the top level down. The last item is the current page.",
+      "items": {
+        "$ref": "#/$defs/breadcrumbItem"
+      },
+      "minItems": 1
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "action"
+    },
+    "type": {
+      "const": "breadcrumb"
+    },
+    "label": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "on": {
+      "$ref": "../core/common.schema.json#/$defs/on"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "$ref": "#/$defs/itemsProp"
+        }
+      },
+      "patternProperties": {
+        "^items\\.[^.]+$": {
+          "$ref": "#/$defs/itemsProp"
+        }
+      },
+      "required": ["items"],
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    }
+  },
+  "required": ["kind", "type", "props"],
+  "unevaluatedProperties": false
+}

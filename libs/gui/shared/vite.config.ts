@@ -39,6 +39,7 @@ export default defineConfig(() => ({
         '@golemui/core',
         /^@golemui\/core\/.+/,
         '@golemui/gui-components',
+        /^@golemui\/gui-components\/.+/,
         '@golemui/gui-validators',
       ],
     },

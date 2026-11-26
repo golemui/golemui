@@ -37,12 +37,20 @@
               "uid": "tabBadge"
             },
             {
+              "label": "Breadcrumb Component",
+              "uid": "tabBreadcrumb"
+            },
+            {
               "label": "Button Component",
               "uid": "tabButton"
             },
             {
               "label": "Menu Button Component",
               "uid": "tabMenuButton"
+            },
+            {
+              "label": "Menu Component",
+              "uid": "tabMenu"
             },
             {
               "label": "Calendar Component",
@@ -1275,6 +1283,213 @@
                     {
                       "label": "Delete",
                       "value": "delete"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabBreadcrumb",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "uid": "breadcrumbOrder",
+                "kind": "action",
+                "type": "breadcrumb",
+                "on": {
+                  "click": "onNavigate"
+                },
+                "props": {
+                  "items": [
+                    {
+                      "label": "Orders",
+                      "value": "orders"
+                    },
+                    {
+                      "label": "2026",
+                      "value": "orders-2026"
+                    },
+                    {
+                      "label": "A-1042",
+                      "value": "order"
+                    }
+                  ]
+                }
+              },
+              {
+                "uid": "breadcrumbNamed",
+                "kind": "action",
+                "type": "breadcrumb",
+                "label": "Where you are in the settings",
+                "on": {
+                  "click": "onNavigate"
+                },
+                "props": {
+                  "items": [
+                    {
+                      "label": "Northwind workspace",
+                      "value": "workspace"
+                    },
+                    {
+                      "label": "Projects",
+                      "value": "projects"
+                    },
+                    {
+                      "label": "Shipping and logistics",
+                      "value": "shipping"
+                    },
+                    {
+                      "label": "Carriers",
+                      "value": "carriers"
+                    },
+                    {
+                      "label": "Blue Harbor Lines, Rotterdam terminal",
+                      "value": "carrier"
+                    }
+                  ]
+                }
+              },
+              {
+                "uid": "breadcrumbDisabled",
+                "kind": "action",
+                "type": "breadcrumb",
+                "label": "Disabled trail",
+                "disabled": true,
+                "on": {
+                  "click": "onNavigate"
+                },
+                "props": {
+                  "items": [
+                    {
+                      "label": "Orders",
+                      "value": "orders"
+                    },
+                    {
+                      "label": "A-1042",
+                      "value": "order"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "uid": "tabMenu",
+            "kind": "layout",
+            "type": "grid",
+            "children": [
+              {
+                "uid": "menuVertical",
+                "kind": "action",
+                "type": "menu",
+                "label": "Main",
+                "on": {
+                  "click": "onNavigate"
+                },
+                "props": {
+                  "current": "cards",
+                  "items": [
+                    {
+                      "label": "Home",
+                      "value": "home",
+                      "icon": "home"
+                    },
+                    {
+                      "label": "Orders",
+                      "value": "orders",
+                      "icon": "receipt_long"
+                    },
+                    {
+                      "label": "Settings",
+                      "value": "settings",
+                      "icon": "settings",
+                      "items": [
+                        {
+                          "label": "Profile",
+                          "value": "profile"
+                        },
+                        {
+                          "label": "Billing",
+                          "value": "billing",
+                          "items": [
+                            {
+                              "label": "Invoices",
+                              "value": "invoices"
+                            },
+                            {
+                              "label": "Cards",
+                              "value": "cards"
+                            }
+                          ]
+                        },
+                        {
+                          "label": "Archived",
+                          "value": "archived",
+                          "disabled": true
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Team",
+                      "value": "team",
+                      "icon": "group"
+                    }
+                  ]
+                }
+              },
+              {
+                "uid": "menuHorizontal",
+                "kind": "action",
+                "type": "menu",
+                "label": "Sections",
+                "on": {
+                  "click": "onNavigate"
+                },
+                "props": {
+                  "orientation": "horizontal",
+                  "current": "dashboard",
+                  "items": [
+                    {
+                      "label": "Dashboard",
+                      "value": "dashboard"
+                    },
+                    {
+                      "label": "Reports",
+                      "value": "reports",
+                      "items": [
+                        {
+                          "label": "Sales",
+                          "value": "sales"
+                        },
+                        {
+                          "label": "Stock",
+                          "value": "stock"
+                        },
+                        {
+                          "label": "Yearly",
+                          "value": "yearly",
+                          "items": [
+                            {
+                              "label": "2025",
+                              "value": "2025"
+                            },
+                            {
+                              "label": "2026",
+                              "value": "2026"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Customers",
+                      "value": "customers"
+                    },
+                    {
+                      "label": "Integrations",
+                      "value": "integrations"
                     }
                   ]
                 }

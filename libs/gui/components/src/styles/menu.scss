@@ -57,6 +57,15 @@ gui-menu {
     }
   }
 
+  // An item's icon sits in line before its label, not in a field's icon slot.
+  li > :is(button, a[href]) > .gui-widget-icon {
+    position: static;
+    flex: none;
+    inline-size: auto;
+    block-size: auto;
+    color: inherit;
+  }
+
   // A group's button: the caret at its end, turned while the group is open.
   li > button:is([aria-expanded], [popovertarget])::after {
     @include gui-caret;
