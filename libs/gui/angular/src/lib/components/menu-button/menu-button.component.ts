@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   CUSTOM_ELEMENTS_SCHEMA,
   inject,
   type OnDestroy,
@@ -14,9 +15,11 @@ import {
   menuButtonAriaLabel,
   menuButtonClasses,
   menuButtonPanelId,
+  widgetTooltip,
   type MenuButtonProps,
 } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/menu-button';
+import '@golemui/gui-components/tooltip';
 import { deferHydrationAttr } from '../../utils/defer-hydration';
 
 /**
@@ -49,6 +52,18 @@ export class MenuButtonComponent implements OnInit, OnDestroy, WithWidget {
   ngOnDestroy(): void {
     this.adapter.destroy();
   }
+
+  /** The button's tooltip, or undefined for none. */
+  protected readonly tooltip = computed(() => {
+    const { tooltip, label, ariaLabel } = this.adapter.templateData();
+    return widgetTooltip(this.adapter.domId, tooltip, label, ariaLabel);
+  });
+
+  /** The button's `ariaLabel`, or the tooltip's text when it names the button. */
+  protected readonly ariaLabel = computed(() => {
+    const tooltip = this.tooltip();
+    return tooltip?.type === 'label' ? tooltip.text : this.adapter.templateData().ariaLabel;
+  });
 
   get panelId() {
     return menuButtonPanelId(this.adapter.domId);

@@ -22,6 +22,10 @@
     "ariaLabelProp": {
       "$ref": "../core/common.schema.json#/$defs/localizable",
       "description": "The button's accessible name when it shows no label, such as an icon-only button. With a label, the label is the name and this is ignored."
+    },
+    "tooltipProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable",
+      "description": "A short text shown next to the button while the pointer rests on it or it has keyboard focus, with gui-tooltip. It describes the button; on a button with no label and no ariaLabel, such as an icon-only one, it is the button's name instead."
     }
   },
   "allOf": [
@@ -62,6 +66,9 @@
         },
         "ariaLabel": {
           "$ref": "#/$defs/ariaLabelProp"
+        },
+        "tooltip": {
+          "$ref": "#/$defs/tooltipProp"
         }
       },
       "patternProperties": {
@@ -76,6 +83,9 @@
         },
         "^ariaLabel\\.[^.]+$": {
           "$ref": "#/$defs/ariaLabelProp"
+        },
+        "^tooltip\\.[^.]+$": {
+          "$ref": "#/$defs/tooltipProp"
         }
       },
       "additionalProperties": false

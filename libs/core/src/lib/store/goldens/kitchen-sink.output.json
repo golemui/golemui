@@ -2540,7 +2540,8 @@
         "props": {
           "icon": "close",
           "variant": "outlined",
-          "ariaLabel": "Close"
+          "ariaLabel": "Close",
+          "tooltip": "Closes without saving"
         },
         "keysWithUndefined": "size include exclude label disabled actionType"
       },
@@ -2744,6 +2745,7 @@
             }
           ],
           "ariaLabel": "Row actions",
+          "tooltip": "Edit, duplicate or delete the row",
           "icon": "more_vert",
           "variant": "outlined",
           "placement": "bottom-end"

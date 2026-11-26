@@ -65,7 +65,16 @@ const config: GuiFormInitConfig = {
             { label: 'Edit', value: 'edit' },
             { label: 'Delete', value: 'delete' },
           ],
+          tooltip: 'Edit or delete the row',
         },
+      },
+      // gui-tooltip names itself and its target's description on connect: the adapter renders
+      // both, so the server markup already has them.
+      {
+        kind: 'action',
+        type: 'button',
+        uid: 'deleteRow',
+        props: { icon: 'delete', ariaLabel: 'Delete', tooltip: 'Deletes the row' },
       },
     ],
   },
@@ -120,6 +129,13 @@ describe('hydrating a server-rendered form', () => {
     expect(target.querySelector('#hydration-rowActions')?.getAttribute('aria-haspopup')).toBe(
       'menu',
     );
+    for (const uid of ['rowActions', 'deleteRow']) {
+      const tooltip = target.querySelector(`#hydration-${uid}_tooltip`);
+      expect(tooltip?.getAttribute('role'), uid).toBe('tooltip');
+      expect(target.querySelector(`#hydration-${uid}`)?.getAttribute('aria-describedby'), uid).toBe(
+        `hydration-${uid}_tooltip`,
+      );
+    }
   });
 
   it('server renders a sidebar with its side child once, and hydrates', async () => {

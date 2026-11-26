@@ -6,9 +6,10 @@ import {
   menuButtonAriaLabel,
   menuButtonClasses,
   menuButtonPanelId,
+  widgetTooltip,
   type MenuButtonProps,
 } from '@golemui/gui-shared/internals';
-import { GuiMenuButtonReact } from '../web-components';
+import { GuiMenuButtonReact, GuiTooltipReact } from '../web-components';
 import '../styles.scss';
 
 /**
@@ -20,6 +21,13 @@ export function MenuButton(widgetInstance: WithWidget) {
   const { uid, domId, templateData, emitClick } = useActionWidget<MenuButtonProps>(widget);
   const { variant, icon, iconPosition } = templateData;
   const panelId = menuButtonPanelId(domId);
+  const tooltip = widgetTooltip(
+    domId,
+    templateData.tooltip,
+    templateData.label,
+    templateData.ariaLabel,
+  );
+  const ariaLabel = tooltip?.type === 'label' ? tooltip.text : templateData.ariaLabel;
   const iconPart = icon ? (
     <span
       className={`gui-widget-icon gui-button-icon ${icon}`}
@@ -38,7 +46,8 @@ export function MenuButton(widgetInstance: WithWidget) {
           className={menuButtonClasses({ variant, icon, iconPosition })}
           data-cy={`${uid}_button`}
           popoverTarget={panelId}
-          aria-label={menuButtonAriaLabel(templateData.label, templateData.ariaLabel)}
+          aria-label={menuButtonAriaLabel(templateData.label, ariaLabel)}
+          aria-describedby={tooltip?.type === 'description' ? tooltip.id : undefined}
           disabled={templateData.disabled === true}
         >
           {iconOnRight ? null : iconPart}
@@ -46,6 +55,17 @@ export function MenuButton(widgetInstance: WithWidget) {
           {iconOnRight ? iconPart : null}
         </button>
       </div>
+      {tooltip ? (
+        <GuiTooltipReact
+          id={tooltip.id}
+          role="tooltip"
+          popover="manual"
+          htmlFor={domId}
+          type={tooltip.type}
+        >
+          {tooltip.text}
+        </GuiTooltipReact>
+      ) : null}
       <GuiMenuButtonReact
         placement={templateData.placement ?? DEFAULT_MENU_BUTTON_PLACEMENT}
         onGuiAction={(event) => emitClick({ value: event.detail.value })}

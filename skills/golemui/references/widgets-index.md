@@ -56,7 +56,7 @@ The reference pages for JSON form definitions, one per widget (props, per-prop e
 ## Action widgets
 
 - `button` - https://golemui.com/json/widgets-reference/interactive-fields/button.md
-- `menuButton` - https://golemui.com/json/widgets-reference/interactive-fields/menu.md
+- `menuButton` - https://golemui.com/json/widgets-reference/interactive-fields/menu-button.md
 - `breadcrumb` - https://golemui.com/json/widgets-reference/interactive-fields/breadcrumb.md
 - `menu` - https://golemui.com/json/widgets-reference/interactive-fields/menu.md
 - Category overview - https://golemui.com/json/widgets-reference/interactive-fields/overview.md

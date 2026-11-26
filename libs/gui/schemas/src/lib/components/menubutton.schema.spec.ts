@@ -74,6 +74,12 @@ describe('Menu schema validation', () => {
       expectValid(iconOnly);
     });
 
+    it('validates a tooltip, translated or by state', () => {
+      expectValid(
+        menu({}, { tooltip: 'More actions', 'tooltip.compact': { key: 'actions.more' } }),
+      );
+    });
+
     it('validates translation configs as the button and item labels', () => {
       expectValid(
         menu(
@@ -94,6 +100,7 @@ describe('Menu schema validation', () => {
       ['a separator with a label', {}, { items: [{ separator: true, label: 'Group' }] }],
       ['an unknown placement', {}, { placement: 'left' }],
       ['an unknown prop', {}, { size: 'sm' }],
+      ['a tooltip that is not a text', {}, { tooltip: 3 }],
     ])('rejects %s', (_name, overrides, props) => {
       const widget = menu(overrides, props) as Record<string, any>;
       // An undefined override stands for a missing field.

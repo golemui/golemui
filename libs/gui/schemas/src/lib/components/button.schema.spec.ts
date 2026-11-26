@@ -91,6 +91,30 @@ describe('Button schema validation', () => {
       expect(isValid).toBe(true);
     });
 
+    it('should validate a tooltip, translated or by state', () => {
+      const formDef = golemForm().create({
+        form: [
+          {
+            kind: 'action',
+            type: 'button',
+            props: {
+              icon: 'delete',
+              ariaLabel: 'Delete',
+              tooltip: 'Deletes the order',
+              'tooltip.archived': { key: 'orders.deleteArchived', default: 'Deletes it for good' },
+            },
+          },
+        ],
+      });
+
+      const button = formDef.form.children[0];
+      const isValid = validate(button);
+      if (!isValid) {
+        specValidationErrorsLogger(validate, button);
+      }
+      expect(isValid).toBe(true);
+    });
+
     it('should validate state-scoped properties', () => {
       const formDef = golemForm().create({
         form: [
@@ -115,6 +139,11 @@ describe('Button schema validation', () => {
   });
 
   describe('Invalid configurations', () => {
+    it('should fail on a tooltip that is not a text', () => {
+      const button = { kind: 'action', type: 'button', props: { tooltip: 3 } };
+      expect(validate(button)).toBe(false);
+    });
+
     it('should fail on invalid variant enum', () => {
       const formDef = golemForm().create({
         form: [

@@ -1,13 +1,15 @@
 import type { ActionWidget, WithWidget } from '@golemui/core';
 import { useActionWidget } from '@golemui/react';
-import { GuiButtonReact } from '../web-components';
+import { GuiButtonReact, GuiTooltipReact } from '../web-components';
 import '../styles.scss';
-import type { ButtonProps } from '@golemui/gui-shared/internals';
+import { widgetTooltip, type ButtonProps } from '@golemui/gui-shared/internals';
 
 export function Button(widgetInstance: WithWidget) {
   const widget = widgetInstance.widget as ActionWidget;
-  const { uid, formName, templateData, onClick } = useActionWidget<ButtonProps>(widget);
+  const { uid, domId, formName, templateData, onClick } = useActionWidget<ButtonProps>(widget);
   const invalid = templateData.invalid === true && templateData.actionType === 'submit';
+  const { label, ariaLabel } = templateData;
+  const tooltip = widgetTooltip(domId, templateData.tooltip, label, ariaLabel);
 
   return (
     <div className={invalid ? 'gui-button gui-field gui-button--invalid' : 'gui-button gui-field'}>
@@ -20,9 +22,21 @@ export function Button(widgetInstance: WithWidget) {
         variant={templateData.variant}
         icon={templateData.icon}
         iconPosition={templateData.iconPosition}
-        buttonAriaLabel={templateData.ariaLabel as string}
+        buttonAriaLabel={(tooltip?.type === 'label' ? tooltip.text : ariaLabel) as string}
+        aria-describedby={tooltip?.type === 'description' ? tooltip.id : undefined}
         onClick={onClick}
       />
+      {tooltip ? (
+        <GuiTooltipReact
+          id={tooltip.id}
+          role="tooltip"
+          popover="manual"
+          htmlFor={domId}
+          type={tooltip.type}
+        >
+          {tooltip.text}
+        </GuiTooltipReact>
+      ) : null}
     </div>
   );
 }

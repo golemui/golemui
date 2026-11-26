@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   CUSTOM_ELEMENTS_SCHEMA,
   inject,
   type OnDestroy,
@@ -7,8 +8,9 @@ import {
 } from '@angular/core';
 import { ActionWidgetAdapter } from '@golemui/angular';
 import type { ActionWidget, WithWidget } from '@golemui/core';
-import type { ButtonProps } from '@golemui/gui-shared/internals';
+import { widgetTooltip, type ButtonProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/button';
+import '@golemui/gui-components/tooltip';
 import { deferHydrationAttr } from '../../utils/defer-hydration';
 
 @Component({
@@ -35,6 +37,18 @@ export class ButtonComponent implements OnInit, OnDestroy, WithWidget {
   ngOnDestroy(): void {
     this.adapter.destroy();
   }
+
+  /** The button's tooltip, or undefined for none. */
+  protected readonly tooltip = computed(() => {
+    const { tooltip, label, ariaLabel } = this.adapter.templateData();
+    return widgetTooltip(this.adapter.domId, tooltip, label, ariaLabel);
+  });
+
+  /** The button's `ariaLabel`, or the tooltip's text when it names the button. */
+  protected readonly ariaLabel = computed(() => {
+    const tooltip = this.tooltip();
+    return tooltip?.type === 'label' ? tooltip.text : this.adapter.templateData().ariaLabel;
+  });
 
   onClick() {
     this.adapter.click();

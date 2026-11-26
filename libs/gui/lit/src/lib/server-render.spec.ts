@@ -125,7 +125,10 @@ const config: FormInitConfig<Type<WithWidget>> = {
           kind: 'action',
           type: 'menuButton',
           label: 'More',
-          props: { items: [{ label: 'Save as draft', value: 'draft' }] },
+          props: {
+            items: [{ label: 'Save as draft', value: 'draft' }],
+            tooltip: 'Other ways to save',
+          },
         },
         {
           uid: 'shell',
@@ -252,6 +255,18 @@ describe('server rendering the gui widget set in plain node', () => {
     expect(markup).toMatch(
       /<gui-menu-button-interactive[^>]*class="[^"]*gui-menu-button[^"]*gui-field/,
     );
+  });
+
+  it("renders a menu button's tooltip, which its button names as its description", () => {
+    expect(markup).toMatch(
+      /<button[^>]*id="gui-lit-ssr-form-moreActions"[^>]*aria-describedby="gui-lit-ssr-form-moreActions_tooltip"/,
+    );
+    const tooltip = markup.match(/<gui-tooltip[^>]*>[^<]*/)?.[0] ?? '';
+    expect(tooltip).toContain('id="gui-lit-ssr-form-moreActions_tooltip"');
+    expect(tooltip).toContain('role="tooltip"');
+    expect(tooltip).toContain('popover="manual"');
+    expect(tooltip).toContain('for="gui-lit-ssr-form-moreActions"');
+    expect(tooltip).toMatch(/>Other ways to save$/);
   });
 
   it('renders a sidebar with its side child once, as the side region the toggle opens', () => {

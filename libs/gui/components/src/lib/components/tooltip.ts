@@ -2,11 +2,14 @@ import { ReactiveElement, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { GUIFloatingPanel } from '../controllers/floating-panel';
-import { ensureId, setIfMissing } from '../utils/attributes';
+import { ensureId, setIfMissing, syncAttribute } from '../utils/attributes';
 import { booleanAttribute } from '../utils/converters';
 import { warnInDevelopment } from '../utils/dev';
 import { dispatchToggle, fires, type GuiToggleEventDetail } from '../utils/events';
 import { toPlacement, type GuiPlacement } from '../utils/placement';
+
+/** What a tooltip's text is to its target: its description, or its name. */
+export type GuiTooltipType = 'description' | 'label';
 
 /**
  * A short text that describes another element, shown next to it while the pointer rests on it or
@@ -23,7 +26,9 @@ import { toPlacement, type GuiPlacement } from '../utils/placement';
  *
  * It gives itself `role="tooltip"`, `popover="manual"` and an id when it has none, and adds the id
  * to the target's `aria-describedby`, so assistive technology reads the text as the target's
- * description. It never opens for touch: a tap activates the target instead. A disabled control
+ * description. With `type="label"` the text is the target's name instead, such as the name of an
+ * icon-only button: the app names the target with the same text (an `aria-label`), and the
+ * tooltip adds no description, which would repeat it. It never opens for touch: a tap activates the target instead. A disabled control
  * gets no pointer or focus events, so put the tooltip on an element around it, or use
  * `aria-disabled` instead of `disabled`.
  *
@@ -33,6 +38,12 @@ import { toPlacement, type GuiPlacement } from '../utils/placement';
 export class GuiTooltip extends ReactiveElement {
   /** The id of the element the tooltip describes. */
   @property({ attribute: 'for' }) htmlFor: string | undefined = undefined;
+
+  /**
+   * What the text is to the target: its `description` (the default), or its name, `label`, which
+   * the app gives the target too. A label tooltip adds nothing to the target's `aria-describedby`.
+   */
+  @property() type: GuiTooltipType = 'description';
 
   /** Where the tooltip sits next to its target. Start and end follow the reading direction. */
   @property() placement: GuiPlacement = 'top';
@@ -74,7 +85,11 @@ export class GuiTooltip extends ReactiveElement {
     ensureId(this, 'tooltip');
     this.addEventListener('pointerenter', this.onPointerEnterTooltip);
     this.addEventListener('pointerleave', this.onPointerLeave);
-    this.bind();
+    // After the pending update: the target may render in the same pass, such as the button a
+    // gui-button renders in its own first update.
+    void this.updateComplete.then(() => {
+      if (this.isConnected) this.bind();
+    });
   }
 
   override disconnectedCallback() {
@@ -90,6 +105,7 @@ export class GuiTooltip extends ReactiveElement {
   protected override updated(changedProperties: PropertyValues) {
     super.updated(changedProperties);
     if (changedProperties.has('htmlFor')) this.bind();
+    else if (changedProperties.has('type') && this.target) this.describe(this.target);
     if (changedProperties.has('open')) {
       this.floating.sync(!!this.open);
       this.listenForEscape(!!this.open);
@@ -98,21 +114,20 @@ export class GuiTooltip extends ReactiveElement {
     }
   }
 
-  /** Finds the target, listens to it, and adds the tooltip to its description. */
+  /** Finds the target, listens to it, and adds the tooltip to its description, unless a label. */
   private bind() {
     const root = this.getRootNode() as Document | ShadowRoot;
     const target = this.htmlFor ? (root.getElementById?.(this.htmlFor) ?? null) : null;
+    if (!target) {
+      this.unbind();
+      warnInDevelopment(this, 'found no element to describe: set its for attribute to an id.');
+      return;
+    }
     if (target === this.target) return;
 
     this.unbind();
     this.target = target;
-    if (!target) {
-      warnInDevelopment(this, 'found no element to describe: set its for attribute to an id.');
-      return;
-    }
-    const ids = (target.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(Boolean);
-    if (!ids.includes(this.id))
-      target.setAttribute('aria-describedby', [...ids, this.id].join(' '));
+    this.describe(target);
     target.addEventListener('pointerenter', this.onPointerEnterTarget);
     target.addEventListener('pointerleave', this.onPointerLeave);
     target.addEventListener('pointerdown', this.onPointerDown);
@@ -120,14 +135,20 @@ export class GuiTooltip extends ReactiveElement {
     target.addEventListener('focusout', this.onFocusOut);
   }
 
+  /** Adds the tooltip to the target's description, or takes it out for a label tooltip. */
+  private describe(target: HTMLElement, describes = this.type !== 'label') {
+    const ids = (target.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(Boolean);
+    const others = ids.filter((id) => id !== this.id);
+    const next = describes ? [...others, this.id] : others;
+    if (describes && ids.includes(this.id)) return;
+    if (next.length) syncAttribute(target, 'aria-describedby', next.join(' '));
+    else target.removeAttribute('aria-describedby');
+  }
+
   private unbind() {
     const target = this.target;
     if (!target) return;
-    const ids = (target.getAttribute('aria-describedby') ?? '')
-      .split(/\s+/)
-      .filter((id) => id && id !== this.id);
-    if (ids.length) target.setAttribute('aria-describedby', ids.join(' '));
-    else target.removeAttribute('aria-describedby');
+    this.describe(target, false);
     target.removeEventListener('pointerenter', this.onPointerEnterTarget);
     target.removeEventListener('pointerleave', this.onPointerLeave);
     target.removeEventListener('pointerdown', this.onPointerDown);

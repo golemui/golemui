@@ -1,12 +1,13 @@
 import type { ActionWidget, WithWidget } from '@golemui/core';
 import { ActionWidgetAdapter, type LitFormContext, actionContext, formContext } from '@golemui/lit';
 import { consume, provide } from '@lit/context';
-import { html, LitElement } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
-import type { ButtonProps } from '@golemui/gui-shared/internals';
+import { widgetTooltip, type ButtonProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/button';
+import '@golemui/gui-components/tooltip';
 
 export class ButtonElement extends LitElement implements WithWidget {
   widget!: ActionWidget;
@@ -43,6 +44,9 @@ export class ButtonElement extends LitElement implements WithWidget {
   }
 
   override render() {
+    const { domId } = this.adapter;
+    const { label, ariaLabel, tooltip: text } = this.adapter.templateData;
+    const tooltip = widgetTooltip(domId, text, label, ariaLabel);
     return html`
       <gui-button
         .uid=${this.widget.uid}
@@ -53,9 +57,20 @@ export class ButtonElement extends LitElement implements WithWidget {
         .variant=${this.adapter.templateData.variant}
         .icon=${this.adapter.templateData.icon}
         .iconPosition=${this.adapter.templateData.iconPosition}
-        .buttonAriaLabel=${this.adapter.templateData.ariaLabel as string}
+        .buttonAriaLabel=${(tooltip?.type === 'label' ? tooltip.text : ariaLabel) as string}
+        aria-describedby=${tooltip?.type === 'description' ? tooltip.id : nothing}
         @click=${() => this.adapter.click()}
       ></gui-button>
+      ${tooltip
+        ? html`<gui-tooltip
+            id=${tooltip.id}
+            role="tooltip"
+            popover="manual"
+            for=${domId}
+            type=${tooltip.type}
+            >${tooltip.text}</gui-tooltip
+          >`
+        : nothing}
     `;
   }
 

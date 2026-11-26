@@ -10,6 +10,18 @@
   [variant]="templateData.variant"
   [icon]="templateData.icon"
   [iconPosition]="templateData.iconPosition"
-  [buttonAriaLabel]="templateData.ariaLabel"
+  [buttonAriaLabel]="ariaLabel()"
+  [attr.aria-describedby]="tooltip()?.type === 'description' ? tooltip()?.id : null"
   (click)="onClick()"
 ></gui-button>
+@if (tooltip(); as tooltip) {
+  <gui-tooltip
+    [attr.defer-hydration]="deferHydration"
+    [id]="tooltip.id"
+    role="tooltip"
+    popover="manual"
+    [attr.for]="adapter.domId"
+    [type]="tooltip.type"
+    >{{ tooltip.text }}</gui-tooltip
+  >
+}

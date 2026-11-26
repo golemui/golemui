@@ -175,7 +175,7 @@ export {
   type GuiToastOptions,
   type GuiToastVariant,
 } from './lib/components/toast';
-export { GuiTooltip, GuiTooltipEvents } from './lib/components/tooltip';
+export { GuiTooltip, GuiTooltipEvents, type GuiTooltipType } from './lib/components/tooltip';
 export type { GuiToggleProps } from './lib/components/toggle';
 export { weekInfoData } from './lib/utils/week-info';
 export type { WeekInfo } from './lib/utils/week-info';
