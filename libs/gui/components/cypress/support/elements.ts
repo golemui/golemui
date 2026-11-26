@@ -299,7 +299,7 @@ export const elements: ElementCase[] = [
     props: {},
     setup: (sidebar) =>
       (sidebar.innerHTML =
-        '<button type="button" class="gui-sidebar__toggle" aria-label="Open menu"></button><aside class="gui-sidebar__side" aria-label="Main"><a href="#orders">Orders</a></aside><div class="gui-sidebar__main"><p>Orders this week</p></div>'),
+        '<button type="button" class="gui-sidebar__toggle" popovertarget="contract-nav" aria-label="Open menu"></button><aside class="gui-sidebar__side" id="contract-nav" popover aria-label="Main"><a href="#orders">Orders</a></aside><div class="gui-sidebar__main"><p>Orders this week</p></div>'),
     hostRendersChildren: true,
   },
   {

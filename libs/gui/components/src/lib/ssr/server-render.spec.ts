@@ -84,6 +84,8 @@ describe('server rendering standalone elements in plain node', () => {
       /<gui-sidebar\s+side-size="sm"\s+defer-hydration>\s*<button[^>]*class="gui-sidebar__toggle"/,
     );
     expect(markup).not.toMatch(/<gui-sidebar[^>]*collapsed/);
+    // The side region once, as a closed popover: the stylesheet shows it as the column.
+    expect(markup).toMatch(/<aside class="gui-sidebar__side" id="account-nav" popover/);
     // A breadcrumb, with its trail and nothing the element adds.
     expect(markup).toMatch(
       /<gui-breadcrumb defer-hydration>\s*<nav aria-label="Breadcrumb">\s*<ol>\s*<li><button/,
@@ -110,7 +112,7 @@ describe('server rendering standalone elements in plain node', () => {
 
   it('holds every GolemUI element inert through defer-hydration', () => {
     const tags = [...markup.matchAll(/<(gui-[a-z-]+)([^>]*)>/g)];
-    expect(tags.length).toBe(34);
+    expect(tags.length).toBe(33);
     for (const [, tag, attributes] of tags) {
       expect(attributes, tag).toContain('defer-hydration');
     }

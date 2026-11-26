@@ -66,6 +66,7 @@ export const widgetLoaders: WidgetLoaders<Component<WithWidget>, GolemWidget> = 
 
   // LAYOUTS
   grid: async () => (await import('./components/Grid.vue')).default,
+  sidebar: async () => (await import('./components/Sidebar.vue')).default,
   tabs: async () => (await import('./components/Tabs.vue')).default,
   accordion: async () => (await import('./components/Accordion.vue')).default,
 

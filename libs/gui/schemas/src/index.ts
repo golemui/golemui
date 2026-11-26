@@ -55,6 +55,7 @@ import timepickerSchemaJson from './lib/components/timepicker.schema.json';
 import toggleSchemaJson from './lib/components/toggle.schema.json';
 import accordionSchemaJson from './lib/components/accordion.schema.json';
 import gridSchemaJson from './lib/components/grid.schema.json';
+import sidebarSchemaJson from './lib/components/sidebar.schema.json';
 import tabsSchemaJson from './lib/components/tabs.schema.json';
 import alertSchemaJson from './lib/components/alert.schema.json';
 import badgeSchemaJson from './lib/components/badge.schema.json';
@@ -128,6 +129,7 @@ export const timepickerSchema: Record<string, unknown> = timepickerSchemaJson;
 export const toggleSchema: Record<string, unknown> = toggleSchemaJson;
 export const accordionSchema: Record<string, unknown> = accordionSchemaJson;
 export const gridSchema: Record<string, unknown> = gridSchemaJson;
+export const sidebarSchema: Record<string, unknown> = sidebarSchemaJson;
 export const tabsSchema: Record<string, unknown> = tabsSchemaJson;
 export const alertSchema: Record<string, unknown> = alertSchemaJson;
 export const badgeSchema: Record<string, unknown> = badgeSchemaJson;
@@ -194,6 +196,7 @@ export const COMPONENT_SCHEMAS_BY_TYPE = {
   toggle: toggleSchema,
   accordion: accordionSchema,
   grid: gridSchema,
+  sidebar: sidebarSchema,
   tabs: tabsSchema,
   alert: alertSchema,
   badge: badgeSchema,

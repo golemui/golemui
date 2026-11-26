@@ -101,6 +101,10 @@
               "uid": "tabGrid"
             },
             {
+              "label": "Sidebar Layout",
+              "uid": "tabSidebar"
+            },
+            {
               "label": "Image Component",
               "uid": "tabImage"
             },
@@ -1868,6 +1872,80 @@
                     "kind": "action",
                     "type": "button",
                     "label": "Save"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "uid": "tabSidebar",
+            "kind": "layout",
+            "type": "sidebar",
+            "props": {
+              "sideLabel": "Workspace",
+              "toggleLabel": "Open the workspace menu"
+            },
+            "on": {
+              "change": "onSidebarToggle"
+            },
+            "children": [
+              {
+                "uid": "sidebarMenu",
+                "kind": "action",
+                "type": "menu",
+                "label": "Workspace",
+                "on": {
+                  "click": "onNavigate"
+                },
+                "props": {
+                  "current": "orders",
+                  "items": [
+                    {
+                      "label": "Orders",
+                      "value": "orders",
+                      "icon": "receipt_long"
+                    },
+                    {
+                      "label": "Customers",
+                      "value": "customers",
+                      "icon": "group"
+                    },
+                    {
+                      "label": "Settings",
+                      "value": "settings",
+                      "icon": "settings",
+                      "items": [
+                        {
+                          "label": "Profile",
+                          "value": "profile"
+                        },
+                        {
+                          "label": "Billing",
+                          "value": "billing"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "uid": "sidebarMain",
+                "kind": "layout",
+                "type": "grid",
+                "children": [
+                  {
+                    "uid": "sidebarSearch",
+                    "kind": "input",
+                    "type": "textinput",
+                    "path": "sidebar.search",
+                    "label": "Search orders"
+                  },
+                  {
+                    "uid": "sidebarNotes",
+                    "kind": "input",
+                    "type": "textarea",
+                    "path": "sidebar.notes",
+                    "label": "Notes"
                   }
                 ]
               }

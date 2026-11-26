@@ -2,7 +2,7 @@ import { ReactiveElement } from 'lit';
 import { property } from 'lit/decorators.js';
 import { safeDefine } from '@golemui/lit-utils';
 import { warnInDevelopment } from '../utils/dev';
-import { dispatch, fires } from '../utils/events';
+import { dispatch, dispatchToggle, fires, type GuiToggleEventDetail } from '../utils/events';
 
 /** The side of the layout the side region sits on. Start and end follow the reading direction. */
 export type GuiSidebarSide = 'start' | 'end';
@@ -13,7 +13,7 @@ export type GuiSidebarSideSize = 'sm' | 'md' | 'lg';
 /** The detail of `gui-collapse`: whether the side region is now collapsed into the drawer. */
 export type GuiCollapseEventDetail = { collapsed: boolean };
 
-/** What can take focus in a copy of the side region, visible or not. */
+/** What can take focus in the side region. */
 const FOCUSABLE = 'a[href], button, input, select, textarea, [tabindex]';
 
 const canFocus = (element: Element): element is HTMLElement =>
@@ -24,43 +24,45 @@ const canFocus = (element: Element): element is HTMLElement =>
 
 /**
  * An app layout with a side region, such as a navigation menu, next to the main one. The app
- * writes the two regions, a toggle, and the drawer the toggle opens, which is a `gui-dialog`
- * holding a second copy of the side region.
+ * writes the side region once, as a popover, with the toggle that opens it.
  *
  * ```html
  * <gui-sidebar side="start" side-size="md">
- *   <button type="button" class="gui-sidebar__toggle" commandfor="nav-drawer"
- *     command="show-modal" aria-label="Open menu"></button>
- *   <aside class="gui-sidebar__side" aria-label="Main">…</aside>
+ *   <button type="button" class="gui-sidebar__toggle" popovertarget="nav"
+ *     aria-label="Open menu"></button>
+ *   <aside class="gui-sidebar__side" id="nav" popover aria-label="Main">…</aside>
  *   <div class="gui-sidebar__main">…</div>
  * </gui-sidebar>
- * <gui-dialog placement="start">
- *   <dialog id="nav-drawer" aria-label="Main">…the side region again…</dialog>
- * </gui-dialog>
  * ```
  *
  * The layout follows the element's own width, not the viewport's, so it fits wherever it is put:
  *
  * - From 768px wide, the side region is a column, sticky, that scrolls on its own when it is
  *   taller than the viewport. The toggle is hidden.
- * - Below 768px, the side region is hidden, and the toggle shows above the main region. The app's
- *   drawer holds the side region instead.
+ * - Below 768px, the side region is hidden, and the toggle shows above the main region. It opens
+ *   the side region itself as a drawer along the edge, in the top layer, over a backdrop.
  *
- * CSS switches between them, so the server render already has the right layout. The element
- * reflects `collapsed` and fires `gui-collapse` when the layout switches. It then closes the
- * drawer when the element grows past the threshold, and keeps focus visible: focus in the side
- * column goes to the toggle when the column hides, and focus in the drawer goes to the same
- * control in the column when the drawer closes. The two copies must render the same controls in
- * the same order for that.
+ * CSS switches between them, so the server render already has the right layout. There is one
+ * side region, so its controls keep their state, and their focus, when the layout switches.
  *
- * The element writes nothing else on itself or the app's markup. It warns in development when the
- * toggle, the side region's name or the drawer is missing. The `openSidebar` message ("Open menu")
- * is the English name for the toggle, for a framework binding to translate.
+ * The drawer is a popover, not a modal dialog: Escape, a click on the backdrop, Tab out of it and
+ * picking something in it (a `gui-action`, a link, a `gui-button`) close it, and focus returns to
+ * the toggle. Opening it moves focus to its first control. The page behind it doesn't scroll.
+ *
+ * The element reflects `collapsed`, and fires `gui-collapse` when the layout switches and
+ * `gui-toggle` when the drawer opens or closes. Growing past the threshold closes the drawer, and
+ * focus stays on the same control in the column; focus in the column goes to the toggle when the
+ * column hides. It writes nothing else on itself or the app's markup, and warns in development
+ * when the side region has no name, no `popover` or no id the toggle names. The `openSidebar`
+ * ("Open menu") and `sidebarSide` ("Menu") messages are the English names of the toggle and the
+ * side region, for a framework binding to translate.
  *
  * @cssprop --gui-sidebar-side-size - The width of the side column. `side-size` sets it to 12rem,
  *   16rem (the default) or 20rem.
+ * @cssprop --gui-drawer-size - The width of the drawer, within the viewport less 3rem.
  * @fires gui-collapse - The side region collapsed into the drawer, or came back as a column.
  *   `detail.collapsed` is the new state.
+ * @fires gui-toggle - The drawer opened or closed. `detail.open` is the new state.
  */
 export class GuiSidebar extends ReactiveElement {
   /** The side the side region sits on: `start` (the default) or `end`. */
@@ -95,6 +97,10 @@ export class GuiSidebar extends ReactiveElement {
     this.resizes.observe(this);
     this.addEventListener('focusin', this.onFocusIn);
     this.addEventListener('focusout', this.onFocusOut);
+    // Neither `toggle` event bubbles: a capturing listener sees the side region's.
+    this.addEventListener('toggle', this.onToggle, true);
+    this.addEventListener('gui-action', this.onPick);
+    this.addEventListener('click', this.onPick);
     // The app renders, or re-renders, the regions after the element connects.
     this.mutations = new MutationObserver(() => this.check());
     this.mutations.observe(this, { childList: true });
@@ -107,21 +113,12 @@ export class GuiSidebar extends ReactiveElement {
     this.mutations?.disconnect();
     this.removeEventListener('focusin', this.onFocusIn);
     this.removeEventListener('focusout', this.onFocusOut);
+    this.removeEventListener('toggle', this.onToggle, true);
+    this.removeEventListener('gui-action', this.onPick);
+    this.removeEventListener('click', this.onPick);
     this.focusedInColumn = null;
     this.measured = undefined;
   }
-
-  private onFocusIn = (event: FocusEvent) => {
-    const target = event.target as Element;
-    this.focusedInColumn = this.sideRegion?.contains(target) ? target : null;
-  };
-
-  // Focus that left for somewhere else is no longer the column's. Focus the browser drops has
-  // nowhere to go, and stays the column's until the resize is reported.
-  private onFocusOut = (event: FocusEvent) => {
-    const to = event.relatedTarget as Element | null;
-    if (to && !this.sideRegion?.contains(to)) this.focusedInColumn = null;
-  };
 
   /** Whether the side region is collapsed into the drawer: the element is under 768px wide. */
   get collapsed(): boolean {
@@ -136,13 +133,14 @@ export class GuiSidebar extends ReactiveElement {
     return this.querySelector(':scope > .gui-sidebar__side');
   }
 
-  /** The app's drawer: the `<dialog>` the toggle opens. */
-  private get drawer(): HTMLDialogElement | null {
-    const id =
-      this.toggle?.getAttribute('commandfor') ?? this.toggle?.getAttribute('aria-controls');
-    const root = this.getRootNode() as Document | ShadowRoot;
-    const drawer = id ? root.getElementById?.(id) : null;
-    return drawer instanceof HTMLDialogElement ? drawer : null;
+  /** Whether the side region is open as the drawer. */
+  private get drawerOpen(): boolean {
+    try {
+      return !!this.sideRegion?.matches(':popover-open');
+    } catch {
+      // A browser, or a DOM, without the Popover API never opens one.
+      return false;
+    }
   }
 
   /** Whether the stylesheet collapses the side region now. It sets the property on the children. */
@@ -160,72 +158,105 @@ export class GuiSidebar extends ReactiveElement {
     if (!side.hasAttribute('aria-label') && !side.hasAttribute('aria-labelledby')) {
       warnInDevelopment(this, 'has a .gui-sidebar__side with no aria-label, so it has no name.');
     }
+    if (!side.hasAttribute('popover')) {
+      warnInDevelopment(
+        this,
+        'has a .gui-sidebar__side with no popover attribute, so a narrow layout never shows it.',
+      );
+    }
     const toggle = this.toggle;
     if (!toggle) {
       warnInDevelopment(this, 'has no .gui-sidebar__toggle, so a narrow layout hides the side.');
-    } else if (!this.drawer) {
+    } else if (!side.id || toggle.getAttribute('popovertarget') !== side.id) {
       warnInDevelopment(
         this,
-        'has a toggle whose commandfor names no <dialog>: give it the id of the drawer.',
+        'has a toggle whose popovertarget is not the id of the .gui-sidebar__side.',
       );
     }
   }
 
-  /**
-   * Follows the layout the stylesheet chose, and keeps focus where the user can see it. What it
-   * does depends on the layout now, not on a change, so it holds whenever the report comes; only
-   * the event waits for a change from the first report.
-   */
+  /** Follows the layout the stylesheet chose: `collapsed`, and the event from the first report on. */
   private sync() {
     const collapsed = this.collapsedByStyle;
     this.toggleAttribute('collapsed', collapsed);
-
-    if (collapsed) {
-      const active = document.activeElement;
-      const lost = !active || active === document.body;
-      if (this.sideRegion?.contains(active) || (lost && this.focusedInColumn)) {
-        this.toggle?.focus();
-      }
-      this.focusedInColumn = null;
-    } else {
-      this.closeDrawer();
-    }
+    // In the next frame: closing the drawer changes this element's layout, which a resize
+    // report must not do while the browser is delivering it.
+    requestAnimationFrame(() => this.followLayout(collapsed));
 
     const changed = this.measured !== undefined && collapsed !== this.measured;
     this.measured = collapsed;
     if (changed) dispatch<GuiCollapseEventDetail>(this, 'gui-collapse', { collapsed });
   }
 
-  /** Closes the drawer, which only a narrow layout shows, moving focus into the side column. */
-  private closeDrawer() {
-    const drawer = this.drawer;
-    if (!drawer?.open) return;
-    const target = this.matchInColumn(drawer, document.activeElement);
-    drawer.close();
-    target?.focus();
+  /**
+   * Keeps the drawer and focus in line with the layout. It depends on the layout now, not on a
+   * change, so it holds whenever the report comes.
+   */
+  private followLayout(collapsed: boolean) {
+    if (!this.isConnected || collapsed !== this.collapsedByStyle) return;
+    if (collapsed) {
+      // Focus in the column, which just hid, goes to the toggle.
+      const active = document.activeElement;
+      const lost = !active || active === document.body;
+      if (
+        !this.drawerOpen &&
+        (this.sideRegion?.contains(active) || (lost && this.focusedInColumn))
+      ) {
+        this.toggle?.focus();
+      }
+      this.focusedInColumn = null;
+    } else if (this.drawerOpen) {
+      // The drawer becomes the column again: the same controls, so focus stays where it is.
+      const active = document.activeElement;
+      const keep = this.sideRegion?.contains(active) ? (active as HTMLElement) : null;
+      this.sideRegion?.hidePopover();
+      if (keep && document.activeElement !== keep) keep.focus();
+    }
   }
 
-  /**
-   * The control of the side column that matches the one focused in the drawer: the one at the same
-   * place, or the nearest focusable one before it (in a group the column has closed), or the
-   * column's first.
-   */
-  private matchInColumn(drawer: HTMLDialogElement, focused: Element | null): HTMLElement | null {
+  private onFocusIn = (event: FocusEvent) => {
+    const target = event.target as Element;
+    this.focusedInColumn = !this.drawerOpen && this.sideRegion?.contains(target) ? target : null;
+  };
+
+  // Focus that left for somewhere else is no longer the column's: focus the browser drops has
+  // nowhere to go, and stays the column's until the resize is reported. And Tab out of the open
+  // drawer closes it: the page behind it is not inert.
+  private onFocusOut = (event: FocusEvent) => {
     const side = this.sideRegion;
-    if (!side || !focused || !drawer.contains(focused)) return null;
-    const inDrawer = Array.from(drawer.querySelectorAll(FOCUSABLE));
-    const inColumn = Array.from(side.querySelectorAll(FOCUSABLE));
-    const index = inDrawer.indexOf(focused);
-    for (let i = Math.min(index, inColumn.length - 1); i >= 0; i--) {
-      if (canFocus(inColumn[i])) return inColumn[i] as HTMLElement;
+    const to = event.relatedTarget as Element | null;
+    if (!to || side?.contains(to)) return;
+    this.focusedInColumn = null;
+    if (this.drawerOpen) side?.hidePopover();
+  };
+
+  /** The drawer opened or closed. Opening moves focus to its first control, as a dialog does. */
+  private onToggle = (event: Event) => {
+    const side = this.sideRegion;
+    if (!side || event.target !== side) return;
+    const open = (event as ToggleEvent).newState === 'open';
+    if (open && !side.contains(document.activeElement)) {
+      Array.from(side.querySelectorAll(FOCUSABLE)).find(canFocus)?.focus();
     }
-    return inColumn.find(canFocus) ?? null;
-  }
+    dispatchToggle(this, open);
+  };
+
+  /** Picking something in the drawer closes it: a GolemUI action, a link or a `gui-button`. */
+  private onPick = (event: Event) => {
+    const side = this.sideRegion;
+    const target = event.target as Element;
+    if (!this.drawerOpen || !side?.contains(target)) return;
+    const picked =
+      event.type === 'gui-action' ||
+      (event.type === 'click' && !!target.closest?.('a[href], gui-button'));
+    if (picked) side.hidePopover();
+  };
 }
 
 /** The events `gui-sidebar` fires, with their types. */
 export const GuiSidebarEvents = {
   'gui-collapse': fires<CustomEvent<GuiCollapseEventDetail>>(),
+  'gui-toggle': fires<CustomEvent<GuiToggleEventDetail>>(),
 };
 
 declare global {

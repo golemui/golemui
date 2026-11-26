@@ -69,6 +69,7 @@ import type {
   TypographyProps,
   SliderRange,
   RangeSliderProps,
+  SidebarProps,
   TabsProps,
   DateTimeInputProps,
   TextareaProps,
@@ -279,6 +280,7 @@ type GolemWidget<
   | GuiSelect<FormType, States, V>
   | GuiSlider<FormType, States, V>
   | GuiGrid<FormType, States, V, CustomWidget>
+  | GuiSidebar<FormType, States, V, CustomWidget>
   | GuiTabs<FormType, States, V, CustomWidget>
   | GuiTextarea<FormType, States, V>
   | GuiTextInput<FormType, States, V>
@@ -695,6 +697,20 @@ type GuiGrid<
   CustomWidget extends FormWidget<any, FormType>,
 > = LayoutWidget<States, FormType, GridProps, GolemWidget<FormType, States, V, CustomWidget>[]> & {
   type: 'grid';
+};
+
+type GuiSidebar<
+  FormType extends Record<string, any>,
+  States extends string,
+  V,
+  CustomWidget extends FormWidget<any, FormType>,
+> = LayoutWidget<
+  States,
+  FormType,
+  SidebarProps,
+  GolemWidget<FormType, States, V, CustomWidget>[]
+> & {
+  type: 'sidebar';
 };
 
 type GuiTabs<

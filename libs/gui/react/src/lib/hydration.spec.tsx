@@ -121,4 +121,66 @@ describe('hydrating a server-rendered form', () => {
       'menu',
     );
   });
+
+  it('server renders a sidebar with its side child once, and hydrates', async () => {
+    const messages: string[] = [];
+    vi.spyOn(console, 'error').mockImplementation((...args) => messages.push(args.join(' ')));
+    const sidebarConfig: GuiFormInitConfig = {
+      formName: 'shell',
+      formDef: {
+        form: [
+          {
+            uid: 'layout',
+            kind: 'layout',
+            type: 'sidebar',
+            children: [
+              {
+                uid: 'nav',
+                kind: 'action',
+                type: 'menu',
+                label: 'Main',
+                props: {
+                  current: 'billing',
+                  items: [
+                    { label: 'Orders', value: 'orders' },
+                    {
+                      label: 'Settings',
+                      value: 'settings',
+                      items: [{ label: 'Billing', value: 'billing' }],
+                    },
+                  ],
+                },
+              },
+              { uid: 'notes', kind: 'input', type: 'textarea', path: 'notes', label: 'Notes' },
+            ],
+          },
+        ],
+      },
+    };
+
+    container = document.createElement('div');
+    container.innerHTML = renderToString(<GuiForm config={sidebarConfig} />);
+    document.body.append(container);
+    const ids = Array.from(container.querySelectorAll('[id]'), (element) => element.id);
+    expect(ids.filter((id, index) => ids.indexOf(id) !== index)).toEqual([]);
+    expect(ids).toContain('shell-nav_group_settings');
+    expect(ids.filter((id) => id.includes('drawer'))).toEqual([]);
+    const side = container.querySelector('aside.gui-sidebar__side') as HTMLElement;
+    expect(side.id).toBe('shell-layout_side');
+    expect(side.hasAttribute('popover')).toBe(true);
+    expect(container.querySelector('.gui-sidebar__toggle')?.getAttribute('popovertarget')).toBe(
+      'shell-layout_side',
+    );
+
+    const target = container;
+    await act(async () => {
+      root = hydrateRoot(target, <GuiForm config={sidebarConfig} />, {
+        onRecoverableError: (error) => messages.push(String(error)),
+      });
+    });
+
+    expect(messages).toEqual([]);
+    const after = Array.from(target.querySelectorAll('[id]'), (element) => element.id);
+    expect(after.filter((id, index) => after.indexOf(id) !== index)).toEqual([]);
+  });
 });

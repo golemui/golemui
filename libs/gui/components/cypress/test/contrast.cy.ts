@@ -257,8 +257,13 @@ describe('control boundaries (WCAG 1.4.11)', () => {
       it('gui-sidebar: the toggle and its focus ring reach 3:1 against the page', () => {
         cy.mount(
           html`<gui-sidebar style="inline-size: 400px">
-            <button type="button" class="gui-sidebar__toggle" aria-label="Open menu"></button>
-            <aside class="gui-sidebar__side" aria-label="Main"></aside>
+            <button
+              type="button"
+              class="gui-sidebar__toggle"
+              popovertarget="contrast-nav"
+              aria-label="Open menu"
+            ></button>
+            <aside class="gui-sidebar__side" id="contrast-nav" popover aria-label="Main"></aside>
             <div class="gui-sidebar__main"></div>
           </gui-sidebar>`,
         );

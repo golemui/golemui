@@ -1088,6 +1088,26 @@ export type GridProps = {
   justify?: GridJustify;
 };
 
+export type SidebarSide = 'start' | 'end';
+
+export type SidebarSideSize = 'sm' | 'md' | 'lg';
+
+/**
+ * An app layout: the first child is the side region, such as a navigation menu, and the second
+ * the main one. Below 768px of its own width the side region collapses into a drawer that a
+ * toggle opens.
+ */
+export type SidebarProps = {
+  /** The side the side region sits on: `start` (the default) or `end`. */
+  side?: SidebarSide;
+  /** The width of the side column: `sm`, `md` (the default) or `lg`. */
+  sideSize?: SidebarSideSize;
+  /** The name of the side region, and of the drawer. Defaults to "Menu". */
+  sideLabel?: Localizable;
+  /** The name of the button that opens the drawer. Defaults to "Open menu". */
+  toggleLabel?: Localizable;
+};
+
 export type TabsProps = {
   defaultOpen?: string;
   renderMode?: 'all' | 'activeOnly';

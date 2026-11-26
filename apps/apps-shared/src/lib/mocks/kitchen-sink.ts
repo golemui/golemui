@@ -16,6 +16,7 @@ import menuChunk from './tabs/menu.form-chunk.json';
 import markdownTextChunk from './tabs/markdown-text.form-chunk.json';
 import accordionChunk from './tabs/accordion.form-chunk.json';
 import gridChunk from './tabs/grid.form-chunk.json';
+import sidebarChunk from './tabs/sidebar.form-chunk.json';
 import textinputChunk from './tabs/textinput.form-chunk.json';
 import passwordChunk from './tabs/password.form-chunk.json';
 import numberChunk from './tabs/number.form-chunk.json';
@@ -82,6 +83,7 @@ const chunks: Record<string, unknown> = {
   './tabs/markdown-text.form-chunk.json': markdownTextChunk,
   './tabs/accordion.form-chunk.json': accordionChunk,
   './tabs/grid.form-chunk.json': gridChunk,
+  './tabs/sidebar.form-chunk.json': sidebarChunk,
   './tabs/textinput.form-chunk.json': textinputChunk,
   './tabs/password.form-chunk.json': passwordChunk,
   './tabs/number.form-chunk.json': numberChunk,

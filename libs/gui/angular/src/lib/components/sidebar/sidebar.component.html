@@ -1,0 +1,34 @@
+@let templateData = adapter.templateData();
+@let regions = this.regions(templateData.children);
+
+<gui-sidebar
+  [id]="adapter.domId"
+  [attr.defer-hydration]="deferHydration"
+  [attr.side]="templateData.side ?? null"
+  [attr.side-size]="templateData.sideSize ?? null"
+  (gui-toggle)="onToggle($event)"
+>
+  @if (regions.side) {
+    <button
+      type="button"
+      class="gui-sidebar__toggle"
+      [attr.popovertarget]="sideId"
+      [attr.aria-label]="sidebarToggleLabel(templateData.toggleLabel)"
+      [attr.data-cy]="widget.uid + '_toggle'"
+    ></button>
+    <aside
+      class="gui-sidebar__side"
+      [id]="sideId"
+      popover
+      [attr.aria-label]="sidebarSideLabel(templateData.sideLabel)"
+      [attr.data-cy]="widget.uid + '_side'"
+    >
+      <ng-container guiWidget [widget]="regions.side" />
+    </aside>
+  }
+  <div class="gui-sidebar__main" [attr.data-cy]="widget.uid + '_main'">
+    @if (regions.main) {
+      <ng-container guiWidget [widget]="regions.main" />
+    }
+  </div>
+</gui-sidebar>

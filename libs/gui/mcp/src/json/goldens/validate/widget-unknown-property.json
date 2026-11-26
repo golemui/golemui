@@ -1528,6 +1528,41 @@
       "interpolationWarnings": []
     }
   },
+  "sidebar": {
+    "input": {
+      "form": [
+        {
+          "kind": "layout",
+          "type": "sidebar",
+          "notAProperty": true
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `children` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "children"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Unknown property `notAProperty` at `/form/0`",
+          "keyword": "unevaluatedProperties",
+          "params": {
+            "unevaluatedProperty": "notAProperty"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
   "slider": {
     "input": {
       "form": [

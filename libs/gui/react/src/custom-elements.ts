@@ -5,6 +5,7 @@ import type { GuiBadge } from '@golemui/gui-components/badge';
 import type { GuiBreadcrumb } from '@golemui/gui-components/breadcrumb';
 import type { GuiMenu } from '@golemui/gui-components/menu';
 import type { GuiPopover } from '@golemui/gui-components/popover';
+import type { GuiSidebar } from '@golemui/gui-components/sidebar';
 import type { GuiButton } from '@golemui/gui-components/button';
 import type { GuiCalendar } from '@golemui/gui-components/calendar';
 import type { GuiDateTimeCalendar } from '@golemui/gui-components/date-time-calendar';
@@ -75,6 +76,8 @@ declare module 'react' {
         OwnProps<GuiBreadcrumb>;
       'gui-menu': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         OwnProps<GuiMenu>;
+      'gui-sidebar': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
+        OwnProps<GuiSidebar> & { 'side-size'?: string };
       'gui-popover': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &
         OwnProps<GuiPopover>;
       'gui-button': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> &

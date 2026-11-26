@@ -47,7 +47,7 @@ export const inputWidgets = [
   'timePicker',
   'toggle',
 ] as const;
-export const layoutWidgets = ['accordion', 'grid', 'tabs'] as const;
+export const layoutWidgets = ['accordion', 'grid', 'sidebar', 'tabs'] as const;
 export const displayWidgets = [
   'alert',
   'badge',

@@ -1,50 +1,42 @@
 import { html, nothing, type TemplateResult } from 'lit';
+import { realPress, takesRealInput } from '../support/real-input';
 
-/** The side region's controls, once per copy: the same controls, in the same order. */
-const controls = (copy: string, { hideBilling = false } = {}) =>
-  html`<nav>
-    <a href="#orders" id="${copy}-orders">Orders</a>
-    <div ?hidden=${hideBilling}><a href="#billing" id="${copy}-billing">Billing</a></div>
-    <button type="button" id="${copy}-more">More</button>
-  </nav>`;
-
-/** A sidebar layout and its drawer, as an app writes them. */
+/** A sidebar layout as an app writes it: the side region once, a popover the toggle opens. */
 const layout = ({
   side,
   size,
   toggle = true,
   sideName = 'Main',
-  drawerId = 'nav-drawer',
-  hideBillingInColumn = false,
+  popover = true,
+  target = 'nav',
 }: {
   side?: string;
   size?: string;
   toggle?: boolean;
   sideName?: string | null;
-  drawerId?: string;
-  hideBillingInColumn?: boolean;
+  popover?: boolean;
+  target?: string;
 } = {}) =>
   html`<gui-sidebar side=${side ?? nothing} side-size=${size ?? nothing}>
-      ${toggle
-        ? html`<button
-            type="button"
-            class="gui-sidebar__toggle"
-            commandfor=${drawerId}
-            command="show-modal"
-            aria-label="Open menu"
-          ></button>`
-        : nothing}
-      <aside class="gui-sidebar__side" aria-label=${sideName ?? nothing}>
-        ${controls('column', { hideBilling: hideBillingInColumn })}
-      </aside>
-      <div class="gui-sidebar__main">
-        <p>Orders this week</p>
-        <button type="button" id="save">Save</button>
-      </div>
-    </gui-sidebar>
-    <gui-dialog placement="start">
-      <dialog id="nav-drawer" aria-label="Main">${controls('drawer')}</dialog>
-    </gui-dialog>`;
+    ${toggle
+      ? html`<button
+          type="button"
+          class="gui-sidebar__toggle"
+          popovertarget=${target}
+          aria-label="Open menu"
+        ></button>`
+      : nothing}
+    <aside class="gui-sidebar__side" id="nav" ?popover=${popover} aria-label=${sideName ?? nothing}>
+      <a href="#orders" id="orders">Orders</a>
+      <button type="button" id="group" aria-expanded="false">Settings</button>
+      <input id="filter" aria-label="Filter" />
+      <gui-button id="export" label="Export"></gui-button>
+    </aside>
+    <div class="gui-sidebar__main">
+      <p>Orders this week</p>
+      <button type="button" id="save">Save</button>
+    </div>
+  </gui-sidebar>`;
 
 /** A box of a given width around the layout, so it switches by its own width, not the page's. */
 const inBox = (width: number, content: TemplateResult, dir = 'ltr') =>
@@ -54,10 +46,12 @@ const sidebar = () => cy.get('gui-sidebar');
 const side = () => cy.get('.gui-sidebar__side');
 const main = () => cy.get('.gui-sidebar__main');
 const toggle = () => cy.get('.gui-sidebar__toggle');
-const drawer = () => cy.get<HTMLDialogElement>('#nav-drawer');
 const resize = (width: number) =>
   cy.get('#box').then(([box]) => box.style.setProperty('inline-size', `${width}px`));
 const box = (element: Element) => element.getBoundingClientRect();
+const isOpen = (open: boolean) =>
+  side().should(([aside]) => expect(aside.matches(':popover-open'), 'drawer open').to.equal(open));
+const openDrawer = () => side().then(([aside]) => aside.showPopover());
 /** Waits two frames: the element has had its first resize report, which fires no event. */
 const laidOut = () =>
   cy
@@ -79,6 +73,7 @@ describe('gui-sidebar', () => {
       toggle().should('not.be.visible');
       side().should(([aside]) => {
         const mainBox = box(document.querySelector('.gui-sidebar__main') as Element);
+        expect(aside.matches(':popover-open'), 'an open popover').to.equal(false);
         expect(box(aside).width).to.equal(256);
         expect(box(aside).right).to.be.at.most(mainBox.left);
         expect(box(aside).top).to.equal(mainBox.top);
@@ -96,25 +91,24 @@ describe('gui-sidebar', () => {
     });
 
     it('puts the column at the end with side="end", and mirrors right to left', () => {
+      const sideAfterMain = () =>
+        side().should(([aside]) =>
+          expect(box(aside).left).to.be.at.least(
+            box(document.querySelector('.gui-sidebar__main') as Element).right,
+          ),
+        );
       cy.mount(inBox(900, layout({ side: 'end' })));
-      side().should(([aside]) =>
-        expect(box(aside).left).to.be.at.least(
-          box(document.querySelector('.gui-sidebar__main') as Element).right,
-        ),
-      );
+      sideAfterMain();
 
       cy.mount(inBox(900, layout(), 'rtl'));
-      side().should(([aside]) =>
-        expect(box(aside).left).to.be.at.least(
-          box(document.querySelector('.gui-sidebar__main') as Element).right,
-        ),
-      );
+      sideAfterMain();
     });
 
     it('writes no attribute on itself or on the regions', () => {
       cy.mount(inBox(900, layout()));
 
       main().should('exist');
+      laidOut();
       sidebar().should(([element]) => {
         expect(element.getAttributeNames()).to.deep.equal([]);
         for (const child of Array.from(element.children)) {
@@ -140,13 +134,88 @@ describe('gui-sidebar', () => {
       sidebar().should('have.attr', 'collapsed');
     });
 
-    it('opens the drawer from the toggle', function () {
-      if (!('command' in HTMLButtonElement.prototype)) this.skip();
-      cy.mount(inBox(500, layout()));
+    it('opens the side region from the toggle as a drawer along the edge, focused', () => {
+      const onToggle = cy.spy().as('toggle');
+      cy.mount(html`<div @gui-toggle=${onToggle}>${inBox(500, layout())}</div>`);
 
       toggle().click();
-      drawer().should('match', ':modal');
+      isOpen(true);
+      side().should(([aside]) => {
+        expect(box(aside).left).to.equal(0);
+        expect(box(aside).height).to.equal(window.innerHeight);
+      });
+      cy.focused().should('have.id', 'orders');
+      cy.document().its('documentElement').should('have.css', 'overflow', 'hidden');
+      cy.get('@toggle').its('lastCall.args.0.detail').should('deep.equal', { open: true });
     });
+
+    it('opens from the end edge with side="end", and from the right right to left', () => {
+      cy.mount(inBox(500, layout({ side: 'end' })));
+      openDrawer();
+      side().should(([aside]) => expect(box(aside).right).to.equal(window.innerWidth));
+
+      cy.mount(inBox(500, layout(), 'rtl'));
+      openDrawer();
+      side().should(([aside]) => expect(box(aside).right).to.equal(window.innerWidth));
+    });
+
+    it('leaves a strip of backdrop beside the drawer on a small screen', () => {
+      cy.viewport(320, 640);
+      cy.mount(inBox(300, layout()));
+      openDrawer();
+
+      side().should(([aside]) => expect(box(aside).width).to.equal(320 - 48));
+    });
+
+    it('closes when something in it is picked: an action, a link or a gui-button', () => {
+      cy.mount(inBox(500, layout()));
+
+      openDrawer();
+      cy.get('#group').then(([button]) =>
+        button.dispatchEvent(new CustomEvent('gui-action', { bubbles: true })),
+      );
+      isOpen(false);
+
+      openDrawer();
+      cy.get('#orders').click();
+      isOpen(false);
+
+      openDrawer();
+      cy.get('#export button').click();
+      isOpen(false);
+    });
+
+    it('stays open for a control that picks nothing, such as a group', () => {
+      cy.mount(inBox(500, layout()));
+      openDrawer();
+
+      cy.get('#group').click();
+      cy.get('#filter').click();
+      isOpen(true);
+    });
+
+    if (takesRealInput()) {
+      it('closes on Escape and returns focus to the toggle', () => {
+        cy.mount(inBox(500, layout()));
+        toggle().click();
+        isOpen(true);
+
+        realPress('Escape');
+        isOpen(false);
+        cy.focused().should('have.class', 'gui-sidebar__toggle');
+        cy.document().its('documentElement').should('not.have.css', 'overflow', 'hidden');
+      });
+
+      it('closes when Tab leaves it', () => {
+        cy.mount(inBox(500, layout()));
+        toggle().click();
+        cy.get('#export button').focus();
+
+        realPress('Tab');
+        isOpen(false);
+        cy.focused().should('have.id', 'save');
+      });
+    }
   });
 
   describe('switching', () => {
@@ -167,29 +236,35 @@ describe('gui-sidebar', () => {
       cy.get('@collapse').should('have.been.calledTwice');
     });
 
-    it('closes the drawer when it grows, and focuses the same control in the column', () => {
-      cy.mount(inBox(500, layout()));
-      drawer().then(([dialog]) => dialog.showModal());
-      cy.get('#drawer-billing').focus();
+    it('keeps the side region as it was across the switch: one copy', () => {
+      cy.mount(inBox(900, layout()));
+      cy.get('#filter').type('late');
+      cy.get('#group').invoke('attr', 'aria-expanded', 'true');
 
-      resize(900);
-      drawer().should('not.have.attr', 'open');
-      cy.focused().should('have.id', 'column-billing');
+      resize(500);
+      openDrawer();
+      cy.get('#filter').should('have.value', 'late');
+      cy.get('#group').should('have.attr', 'aria-expanded', 'true');
+      cy.get('gui-sidebar [id]').should(($elements) => {
+        const ids = Array.from($elements, (element) => element.id);
+        expect(new Set(ids).size, 'no id twice').to.equal(ids.length);
+      });
     });
 
-    it('focuses the nearest control before it when the column hides the same one', () => {
-      cy.mount(inBox(500, layout({ hideBillingInColumn: true })));
-      drawer().then(([dialog]) => dialog.showModal());
-      cy.get('#drawer-billing').focus();
+    it('closes the drawer when it grows, and keeps focus on the same control', () => {
+      cy.mount(inBox(500, layout()));
+      openDrawer();
+      cy.get('#filter').focus();
 
       resize(900);
-      drawer().should('not.have.attr', 'open');
-      cy.focused().should('have.id', 'column-orders');
+      isOpen(false);
+      side().should('be.visible');
+      cy.focused().should('have.id', 'filter');
     });
 
     it('moves focus from the column to the toggle when the column hides', () => {
       cy.mount(inBox(900, layout()));
-      cy.get('#column-more').focus();
+      cy.get('#filter').focus();
 
       resize(500);
       cy.focused().should('have.class', 'gui-sidebar__toggle');
@@ -216,6 +291,11 @@ describe('gui-sidebar', () => {
       );
     });
 
+    it('warns about a side region that is not a popover', () => {
+      cy.mount(inBox(900, layout({ popover: false })));
+      cy.get('@warn').should('have.been.calledWithMatch', /with no popover attribute/);
+    });
+
     it('warns about a missing toggle', () => {
       cy.mount(inBox(900, layout({ toggle: false })));
       cy.get('@warn').should(
@@ -224,9 +304,9 @@ describe('gui-sidebar', () => {
       );
     });
 
-    it('warns about a toggle that opens no dialog', () => {
-      cy.mount(inBox(900, layout({ drawerId: 'nowhere' })));
-      cy.get('@warn').should('have.been.calledWithMatch', /commandfor names no <dialog>/);
+    it('warns about a toggle that opens something else', () => {
+      cy.mount(inBox(900, layout({ target: 'nowhere' })));
+      cy.get('@warn').should('have.been.calledWithMatch', /popovertarget is not the id/);
     });
 
     it('does not warn about a complete layout', () => {

@@ -138,23 +138,22 @@ describe('a strict style-src-attr policy', () => {
           <button
             type="button"
             class="gui-sidebar__toggle"
-            commandfor="csp-drawer"
-            command="show-modal"
+            popovertarget="csp-nav"
             aria-label="Open menu"
           ></button>
-          <aside class="gui-sidebar__side" aria-label="Main"><a href="#orders">Orders</a></aside>
+          <aside class="gui-sidebar__side" id="csp-nav" popover aria-label="Main">
+            <a href="#orders">Orders</a>
+          </aside>
           <div class="gui-sidebar__main"><p>Orders this week</p></div>
         </gui-sidebar>
-        <gui-dialog placement="start">
-          <dialog id="csp-drawer" aria-label="Main"><a href="#orders">Orders</a></dialog>
-        </gui-dialog>
       </div>`,
     );
     cy.get('#box').then(([box]) => box.style.setProperty('inline-size', '500px'));
     cy.get('gui-sidebar').should('have.attr', 'collapsed');
-    cy.get<HTMLDialogElement>('#csp-drawer').then(([dialog]) => dialog.showModal());
+    cy.get('.gui-sidebar__toggle').click();
+    cy.get('#csp-nav').should('match', ':popover-open');
     cy.get('#box').then(([box]) => box.style.setProperty('inline-size', '900px'));
-    cy.get('#csp-drawer').should('not.have.attr', 'open');
+    cy.get('#csp-nav').should('not.match', ':popover-open');
     expectNoViolations();
   });
 

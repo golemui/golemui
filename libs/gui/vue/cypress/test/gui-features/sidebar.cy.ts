@@ -1,0 +1,4 @@
+import { runSidebarComponentTests } from '@golemui/ui-testing';
+import { mountFramework } from '../../support/mount';
+
+runSidebarComponentTests(mountFramework);

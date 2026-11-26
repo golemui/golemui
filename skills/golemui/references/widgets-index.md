@@ -77,5 +77,6 @@ The reference pages for JSON form definitions, one per widget (props, per-prop e
 
 - `accordion` - https://golemui.com/json/widgets-reference/layout-fields/accordion.md
 - `grid` - https://golemui.com/json/widgets-reference/layout-fields/grid.md
+- `sidebar` - https://golemui.com/json/widgets-reference/layout-fields/sidebar.md
 - `tabs` - https://golemui.com/json/widgets-reference/layout-fields/tabs.md
 - Category overview - https://golemui.com/json/widgets-reference/layout-fields/overview.md

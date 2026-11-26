@@ -58,6 +58,10 @@
         "q3": "[undefined]",
         "q4": "[undefined]"
       },
+      "sidebar": {
+        "search": "[undefined]",
+        "notes": "[undefined]"
+      },
       "textinput": "[undefined]",
       "textinputDisabled": "[undefined]",
       "textinputPhone": "[undefined]",
@@ -909,6 +913,11 @@
       "#0.1.13.9": "layout grid",
       "#0.1.13.9.0": "action button",
       "#0.1.13.9.1": "action button",
+      "tabSidebar": "layout sidebar",
+      "sidebarMenu": "action menu",
+      "sidebarMain": "layout grid",
+      "sidebarSearch": "input textinput sidebar.search",
+      "sidebarNotes": "input textarea sidebar.notes",
       "tabTextinput": "layout grid",
       "textinput-textinput": "input textinput textinput",
       "textinputDisabled-textinput": "input textinput textinputDisabled",
@@ -1027,7 +1036,7 @@
       "rangeDatePickerReadonly-rangeDatePicker": "input rangeDatePicker rangeDatePickerReadonly",
       "rangeDatePickerValidation-rangeDatePicker": "input rangeDatePicker rangeDatePickerValidation",
       "rangeDatePickerDisabledRanges-rangeDatePicker": "input rangeDatePicker rangeDatePickerDisabledRanges",
-      "#0.1.29.7": "layout grid",
+      "#0.1.30.7": "layout grid",
       "rangeDatePickerDestination-textinput": "input textinput rangeDatePickerDestination",
       "rangeDatePickerTrip-rangeDatePicker": "input rangeDatePicker rangeDatePickerTrip",
       "tabRangeTimeInput": "layout grid",
@@ -1044,7 +1053,7 @@
       "rangeTimePickerDisabled-rangeTimePicker": "input rangeTimePicker rangeTimePickerDisabled",
       "rangeTimePickerReadonly-rangeTimePicker": "input rangeTimePicker rangeTimePickerReadonly",
       "rangeTimePickerValidation-rangeTimePicker": "input rangeTimePicker rangeTimePickerValidation",
-      "#0.1.31.6": "layout grid",
+      "#0.1.32.6": "layout grid",
       "rangeTimePickerShiftNote-textinput": "input textinput rangeTimePickerShiftNote",
       "rangeTimePickerShift-rangeTimePicker": "input rangeTimePicker rangeTimePickerShift",
       "tabRangeDateTimeCalendar": "layout grid",
@@ -1068,7 +1077,7 @@
       "rangeDateTimePickerReadonly-rangeDateTimePicker": "input rangeDateTimePicker rangeDateTimePickerReadonly",
       "rangeDateTimePickerValidation-rangeDateTimePicker": "input rangeDateTimePicker rangeDateTimePickerValidation",
       "rangeDateTimePickerConstraints-rangeDateTimePicker": "input rangeDateTimePicker rangeDateTimePickerConstraints",
-      "#0.1.34.6": "layout grid",
+      "#0.1.35.6": "layout grid",
       "rangeDateTimePickerRentalNote-textinput": "input textinput rangeDateTimePickerRentalNote",
       "rangeDateTimePickerRental-rangeDateTimePicker": "input rangeDateTimePicker rangeDateTimePickerRental",
       "tabMultiRangeCalendar": "layout grid",
@@ -1160,7 +1169,7 @@
       "checkboxGroups.days-checkboxGroup": "input checkboxGroup checkboxGroups.days",
       "checkboxGroups.disabled-checkboxGroup": "input checkboxGroup checkboxGroups.disabled",
       "checkboxGroups.readonly-checkboxGroup": "input checkboxGroup checkboxGroups.readonly",
-      "#0.1.47.6": "layout grid",
+      "#0.1.48.6": "layout grid",
       "checkboxGroups.name-textinput": "input textinput checkboxGroups.name",
       "checkboxGroups.contact-checkboxGroup": "input checkboxGroup checkboxGroups.contact",
       "tabRating": "layout grid",
@@ -1169,7 +1178,7 @@
       "ratings.stay-rating": "input rating ratings.stay",
       "ratings.disabled-rating": "input rating ratings.disabled",
       "ratings.readonly-rating": "input rating ratings.readonly",
-      "#0.1.48.5": "layout grid",
+      "#0.1.49.5": "layout grid",
       "ratings.reviewer-textinput": "input textinput ratings.reviewer",
       "ratings.overall-rating": "input rating ratings.overall",
       "tabSelect": "layout grid",
@@ -1186,7 +1195,7 @@
       "sliders.rating-slider": "input slider sliders.rating",
       "sliders.disabled-slider": "input slider sliders.disabled",
       "sliders.readonly-slider": "input slider sliders.readonly",
-      "#0.1.50.6": "layout grid",
+      "#0.1.51.6": "layout grid",
       "sliders.speaker-textinput": "input textinput sliders.speaker",
       "sliders.bass-slider": "input slider sliders.bass",
       "tabRangeSlider": "layout grid",
@@ -1194,7 +1203,7 @@
       "rangeSliders.age-rangeSlider": "input rangeSlider rangeSliders.age",
       "rangeSliders.hours-rangeSlider": "input rangeSlider rangeSliders.hours",
       "rangeSliders.disabled-rangeSlider": "input rangeSlider rangeSliders.disabled",
-      "#0.1.51.4": "layout grid",
+      "#0.1.52.4": "layout grid",
       "rangeSliders.city-textinput": "input textinput rangeSliders.city",
       "rangeSliders.budget-rangeSlider": "input rangeSlider rangeSliders.budget",
       "tabOtp": "layout grid",
@@ -1203,7 +1212,7 @@
       "otp.short-otp": "input otp otp.short",
       "otp.disabled-otp": "input otp otp.disabled",
       "otp.readonly-otp": "input otp otp.readonly",
-      "#0.1.52.5": "layout grid",
+      "#0.1.53.5": "layout grid",
       "otp.email-textinput": "input textinput otp.email",
       "otp.emailCode-otp": "input otp otp.emailCode",
       "tabDropdown": "layout grid",
@@ -1217,7 +1226,7 @@
       "dropdowns.invalidValueList-dropdown": "input dropdown dropdowns.invalidValueList",
       "dropdowns.customItemRenderer-dropdown": "input dropdown dropdowns.customItemRenderer",
       "tabFileUpload": "layout grid",
-      "#0.1.54.0": "layout grid",
+      "#0.1.55.0": "layout grid",
       "fileUploads.title-textinput": "input textinput fileUploads.title",
       "fileUploads.basic-fileUpload": "input fileUpload fileUploads.basic",
       "fileUploads.pdfOnly-fileUpload": "input fileUpload fileUploads.pdfOnly",
@@ -1259,7 +1268,7 @@
       "tags.disabled-tags": "input tags tags.disabled",
       "tags.readonly-tags": "input tags tags.readonly",
       "tabCustomWidget": "layout grid",
-      "#0.1.60.0": "display heading",
+      "#0.1.61.0": "display heading",
       "clientName-textinput": "input textinput clientName",
       "registerMode-toggle": "input toggle registerMode",
       "submit-button": "action button"
@@ -1370,6 +1379,10 @@
             {
               "label": "Grid Layout",
               "uid": "tabGrid"
+            },
+            {
+              "label": "Sidebar Layout",
+              "uid": "tabSidebar"
             },
             {
               "label": "Image Component",
@@ -1556,6 +1569,7 @@
           "tabMarkdownText",
           "tabAccordion",
           "tabGrid",
+          "tabSidebar",
           "tabTextinput",
           "tabPassword",
           "tabNumber",
@@ -3544,6 +3558,90 @@
         "label": "Save",
         "keysWithUndefined": "size include exclude disabled actionType"
       },
+      "tabSidebar": {
+        "uid": "tabSidebar",
+        "type": "sidebar",
+        "kind": "layout",
+        "props": {
+          "sideLabel": "Workspace",
+          "toggleLabel": "Open the workspace menu"
+        },
+        "children": [
+          "sidebarMenu",
+          "sidebarMain"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "sidebarMenu": {
+        "uid": "sidebarMenu",
+        "type": "menu",
+        "kind": "action",
+        "label": "Workspace",
+        "props": {
+          "current": "orders",
+          "items": [
+            {
+              "label": "Orders",
+              "value": "orders",
+              "icon": "receipt_long"
+            },
+            {
+              "label": "Customers",
+              "value": "customers",
+              "icon": "group"
+            },
+            {
+              "label": "Settings",
+              "value": "settings",
+              "icon": "settings",
+              "items": [
+                {
+                  "label": "Profile",
+                  "value": "profile"
+                },
+                {
+                  "label": "Billing",
+                  "value": "billing"
+                }
+              ]
+            }
+          ]
+        },
+        "on": {
+          "load": "[undefined]",
+          "click": "onNavigate",
+          "change": "[undefined]",
+          "filter": "[undefined]",
+          "blur": "[undefined]"
+        },
+        "keysWithUndefined": "size include exclude disabled actionType"
+      },
+      "sidebarMain": {
+        "uid": "sidebarMain",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "sidebarSearch",
+          "sidebarNotes"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "sidebarSearch": {
+        "uid": "sidebarSearch",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Search orders",
+        "path": "sidebar.search",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "sidebarNotes": {
+        "uid": "sidebarNotes",
+        "type": "textarea",
+        "kind": "input",
+        "label": "Notes",
+        "path": "sidebar.notes",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
       "tabTextinput": {
         "uid": "tabTextinput",
         "type": "grid",
@@ -5331,7 +5429,7 @@
           "rangeDatePickerReadonly-rangeDatePicker",
           "rangeDatePickerValidation-rangeDatePicker",
           "rangeDatePickerDisabledRanges-rangeDatePicker",
-          "#0.1.29.7"
+          "#0.1.30.7"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -5462,8 +5560,8 @@
         },
         "keysWithUndefined": "size include exclude disabled readonly validator"
       },
-      "#0.1.29.7": {
-        "uid": "#0.1.29.7",
+      "#0.1.30.7": {
+        "uid": "#0.1.30.7",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -5619,7 +5717,7 @@
           "rangeTimePickerDisabled-rangeTimePicker",
           "rangeTimePickerReadonly-rangeTimePicker",
           "rangeTimePickerValidation-rangeTimePicker",
-          "#0.1.31.6"
+          "#0.1.32.6"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -5758,8 +5856,8 @@
         },
         "keysWithUndefined": "size include exclude disabled readonly defaultValue"
       },
-      "#0.1.31.6": {
-        "uid": "#0.1.31.6",
+      "#0.1.32.6": {
+        "uid": "#0.1.32.6",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -6033,7 +6131,7 @@
           "rangeDateTimePickerReadonly-rangeDateTimePicker",
           "rangeDateTimePickerValidation-rangeDateTimePicker",
           "rangeDateTimePickerConstraints-rangeDateTimePicker",
-          "#0.1.34.6"
+          "#0.1.35.6"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -6141,8 +6239,8 @@
         },
         "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
       },
-      "#0.1.34.6": {
-        "uid": "#0.1.34.6",
+      "#0.1.35.6": {
+        "uid": "#0.1.35.6",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -7509,7 +7607,7 @@
           "checkboxGroups.days-checkboxGroup",
           "checkboxGroups.disabled-checkboxGroup",
           "checkboxGroups.readonly-checkboxGroup",
-          "#0.1.47.6"
+          "#0.1.48.6"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -7692,8 +7790,8 @@
         },
         "keysWithUndefined": "size include exclude disabled validator"
       },
-      "#0.1.47.6": {
-        "uid": "#0.1.47.6",
+      "#0.1.48.6": {
+        "uid": "#0.1.48.6",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -7738,7 +7836,7 @@
           "ratings.stay-rating",
           "ratings.disabled-rating",
           "ratings.readonly-rating",
-          "#0.1.48.5"
+          "#0.1.49.5"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -7807,8 +7905,8 @@
         "defaultValue": 4,
         "keysWithUndefined": "size include exclude disabled validator"
       },
-      "#0.1.48.5": {
-        "uid": "#0.1.48.5",
+      "#0.1.49.5": {
+        "uid": "#0.1.49.5",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -7957,7 +8055,7 @@
           "sliders.rating-slider",
           "sliders.disabled-slider",
           "sliders.readonly-slider",
-          "#0.1.50.6"
+          "#0.1.51.6"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -8056,8 +8154,8 @@
         "defaultValue": 70,
         "keysWithUndefined": "size include exclude disabled validator"
       },
-      "#0.1.50.6": {
-        "uid": "#0.1.50.6",
+      "#0.1.51.6": {
+        "uid": "#0.1.51.6",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -8115,7 +8213,7 @@
           "rangeSliders.age-rangeSlider",
           "rangeSliders.hours-rangeSlider",
           "rangeSliders.disabled-rangeSlider",
-          "#0.1.51.4"
+          "#0.1.52.4"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -8215,8 +8313,8 @@
         },
         "keysWithUndefined": "size include exclude readonly validator"
       },
-      "#0.1.51.4": {
-        "uid": "#0.1.51.4",
+      "#0.1.52.4": {
+        "uid": "#0.1.52.4",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -8276,7 +8374,7 @@
           "otp.short-otp",
           "otp.disabled-otp",
           "otp.readonly-otp",
-          "#0.1.52.5"
+          "#0.1.53.5"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -8358,8 +8456,8 @@
         "defaultValue": "482913",
         "keysWithUndefined": "size include exclude disabled validator"
       },
-      "#0.1.52.5": {
-        "uid": "#0.1.52.5",
+      "#0.1.53.5": {
+        "uid": "#0.1.53.5",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -8803,7 +8901,7 @@
         "type": "grid",
         "kind": "layout",
         "children": [
-          "#0.1.54.0",
+          "#0.1.55.0",
           "fileUploads.pdfOnly-fileUpload",
           "fileUploads.preloaded-fileUpload",
           "fileUploads.images-multiFileUpload",
@@ -8813,8 +8911,8 @@
         ],
         "keysWithUndefined": "size include exclude"
       },
-      "#0.1.54.0": {
-        "uid": "#0.1.54.0",
+      "#0.1.55.0": {
+        "uid": "#0.1.55.0",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -9578,7 +9676,7 @@
           "addLabel": "Add new developer",
           "removeLabel": "Delete",
           "template": {
-            "rowTemplateUid": "#0.1.58.0.t"
+            "rowTemplateUid": "#0.1.59.0.t"
           }
         },
         "keysWithUndefined": "size include exclude disabled readonly defaultValue"
@@ -9722,14 +9820,14 @@
         "type": "grid",
         "kind": "layout",
         "children": [
-          "#0.1.60.0",
+          "#0.1.61.0",
           "clientName-textinput",
           "registerMode-toggle"
         ],
         "keysWithUndefined": "size include exclude"
       },
-      "#0.1.60.0": {
-        "uid": "#0.1.60.0",
+      "#0.1.61.0": {
+        "uid": "#0.1.61.0",
         "type": "heading",
         "kind": "display",
         "props": {
@@ -10170,6 +10268,8 @@
         "shoppingCart.shippingState": [
           "required"
         ],
+        "sidebar.notes": null,
+        "sidebar.search": null,
         "sliders.bass": null,
         "sliders.brightness": null,
         "sliders.disabled": null,
@@ -10507,6 +10607,8 @@
         "shoppingCart.lastName": true,
         "shoppingCart.shippingAddress": true,
         "shoppingCart.shippingState": true,
+        "sidebar.notes": true,
+        "sidebar.search": true,
         "sliders.bass": true,
         "sliders.brightness": true,
         "sliders.disabled": true,
@@ -10803,6 +10905,10 @@
         "q2": "[undefined]",
         "q3": "[undefined]",
         "q4": "[undefined]"
+      },
+      "sidebar": {
+        "search": "[undefined]",
+        "notes": "[undefined]"
       },
       "textinput": "[undefined]",
       "textinputDisabled": "[undefined]",
@@ -11592,6 +11698,11 @@
         "#0.1.13.9",
         "#0.1.13.9.0",
         "#0.1.13.9.1",
+        "tabSidebar",
+        "sidebarMenu",
+        "sidebarMain",
+        "sidebarSearch",
+        "sidebarNotes",
         "tabTextinput",
         "textinput-textinput",
         "textinputDisabled-textinput",
@@ -11710,7 +11821,7 @@
         "rangeDatePickerReadonly-rangeDatePicker",
         "rangeDatePickerValidation-rangeDatePicker",
         "rangeDatePickerDisabledRanges-rangeDatePicker",
-        "#0.1.29.7",
+        "#0.1.30.7",
         "rangeDatePickerDestination-textinput",
         "rangeDatePickerTrip-rangeDatePicker",
         "tabRangeTimeInput",
@@ -11727,7 +11838,7 @@
         "rangeTimePickerDisabled-rangeTimePicker",
         "rangeTimePickerReadonly-rangeTimePicker",
         "rangeTimePickerValidation-rangeTimePicker",
-        "#0.1.31.6",
+        "#0.1.32.6",
         "rangeTimePickerShiftNote-textinput",
         "rangeTimePickerShift-rangeTimePicker",
         "tabRangeDateTimeCalendar",
@@ -11751,7 +11862,7 @@
         "rangeDateTimePickerReadonly-rangeDateTimePicker",
         "rangeDateTimePickerValidation-rangeDateTimePicker",
         "rangeDateTimePickerConstraints-rangeDateTimePicker",
-        "#0.1.34.6",
+        "#0.1.35.6",
         "rangeDateTimePickerRentalNote-textinput",
         "rangeDateTimePickerRental-rangeDateTimePicker",
         "tabMultiRangeCalendar",
@@ -11843,7 +11954,7 @@
         "checkboxGroups.days-checkboxGroup",
         "checkboxGroups.disabled-checkboxGroup",
         "checkboxGroups.readonly-checkboxGroup",
-        "#0.1.47.6",
+        "#0.1.48.6",
         "checkboxGroups.name-textinput",
         "checkboxGroups.contact-checkboxGroup",
         "tabRating",
@@ -11852,7 +11963,7 @@
         "ratings.stay-rating",
         "ratings.disabled-rating",
         "ratings.readonly-rating",
-        "#0.1.48.5",
+        "#0.1.49.5",
         "ratings.reviewer-textinput",
         "ratings.overall-rating",
         "tabSelect",
@@ -11869,7 +11980,7 @@
         "sliders.rating-slider",
         "sliders.disabled-slider",
         "sliders.readonly-slider",
-        "#0.1.50.6",
+        "#0.1.51.6",
         "sliders.speaker-textinput",
         "sliders.bass-slider",
         "tabRangeSlider",
@@ -11877,7 +11988,7 @@
         "rangeSliders.age-rangeSlider",
         "rangeSliders.hours-rangeSlider",
         "rangeSliders.disabled-rangeSlider",
-        "#0.1.51.4",
+        "#0.1.52.4",
         "rangeSliders.city-textinput",
         "rangeSliders.budget-rangeSlider",
         "tabOtp",
@@ -11886,7 +11997,7 @@
         "otp.short-otp",
         "otp.disabled-otp",
         "otp.readonly-otp",
-        "#0.1.52.5",
+        "#0.1.53.5",
         "otp.email-textinput",
         "otp.emailCode-otp",
         "tabDropdown",
@@ -11900,7 +12011,7 @@
         "dropdowns.invalidValueList-dropdown",
         "dropdowns.customItemRenderer-dropdown",
         "tabFileUpload",
-        "#0.1.54.0",
+        "#0.1.55.0",
         "fileUploads.title-textinput",
         "fileUploads.basic-fileUpload",
         "fileUploads.pdfOnly-fileUpload",
@@ -11931,19 +12042,19 @@
         "multiLists.disabled-multiList",
         "tabRepeater",
         "repeaters.users-repeater",
-        "#0.1.58.0.t[0]",
+        "#0.1.59.0.t[0]",
         "repeaters.users.items.firstName-textinput[0]",
         "repeaters.users.items.lastName-textinput[0]",
         "userRowMenu[0]",
-        "#0.1.58.0.t[1]",
+        "#0.1.59.0.t[1]",
         "repeaters.users.items.firstName-textinput[1]",
         "repeaters.users.items.lastName-textinput[1]",
         "userRowMenu[1]",
-        "#0.1.58.0.t[2]",
+        "#0.1.59.0.t[2]",
         "repeaters.users.items.firstName-textinput[2]",
         "repeaters.users.items.lastName-textinput[2]",
         "userRowMenu[2]",
-        "#0.1.58.0.t[3]",
+        "#0.1.59.0.t[3]",
         "repeaters.users.items.firstName-textinput[3]",
         "repeaters.users.items.lastName-textinput[3]",
         "userRowMenu[3]",
@@ -11958,25 +12069,25 @@
         "tags.disabled-tags",
         "tags.readonly-tags",
         "tabCustomWidget",
-        "#0.1.60.0",
+        "#0.1.61.0",
         "clientName-textinput",
         "registerMode-toggle",
         "submit-button"
       ],
       "changedEntries": {
-        "#0.1.58.0.t[0]": "layout grid",
+        "#0.1.59.0.t[0]": "layout grid",
         "repeaters.users.items.firstName-textinput[0]": "input textinput repeaters.users.0.firstName",
         "repeaters.users.items.lastName-textinput[0]": "input textinput repeaters.users.0.lastName",
         "userRowMenu[0]": "action menuButton",
-        "#0.1.58.0.t[1]": "layout grid",
+        "#0.1.59.0.t[1]": "layout grid",
         "repeaters.users.items.firstName-textinput[1]": "input textinput repeaters.users.1.firstName",
         "repeaters.users.items.lastName-textinput[1]": "input textinput repeaters.users.1.lastName",
         "userRowMenu[1]": "action menuButton",
-        "#0.1.58.0.t[2]": "layout grid",
+        "#0.1.59.0.t[2]": "layout grid",
         "repeaters.users.items.firstName-textinput[2]": "input textinput repeaters.users.2.firstName",
         "repeaters.users.items.lastName-textinput[2]": "input textinput repeaters.users.2.lastName",
         "userRowMenu[2]": "action menuButton",
-        "#0.1.58.0.t[3]": "layout grid",
+        "#0.1.59.0.t[3]": "layout grid",
         "repeaters.users.items.firstName-textinput[3]": "input textinput repeaters.users.3.firstName",
         "repeaters.users.items.lastName-textinput[3]": "input textinput repeaters.users.3.lastName",
         "userRowMenu[3]": "action menuButton"
@@ -11984,19 +12095,19 @@
     },
     "repeaterItemScopes": {
       "allEntries": {
-        "#0.1.58.0.t[0]": {
+        "#0.1.59.0.t[0]": {
           "itemPath": "repeaters.users.0",
           "index": 0
         },
-        "#0.1.58.0.t[1]": {
+        "#0.1.59.0.t[1]": {
           "itemPath": "repeaters.users.1",
           "index": 1
         },
-        "#0.1.58.0.t[2]": {
+        "#0.1.59.0.t[2]": {
           "itemPath": "repeaters.users.2",
           "index": 2
         },
-        "#0.1.58.0.t[3]": {
+        "#0.1.59.0.t[3]": {
           "itemPath": "repeaters.users.3",
           "index": 3
         },
@@ -12052,28 +12163,28 @@
     },
     "repeaterRows": {
       "allEntries": {
-        "#0.1.58.0.t[0]": [
+        "#0.1.59.0.t[0]": [
           {
             "declaredItemPath": "repeaters.users.items",
             "itemPath": "repeaters.users.0",
             "index": 0
           }
         ],
-        "#0.1.58.0.t[1]": [
+        "#0.1.59.0.t[1]": [
           {
             "declaredItemPath": "repeaters.users.items",
             "itemPath": "repeaters.users.1",
             "index": 1
           }
         ],
-        "#0.1.58.0.t[2]": [
+        "#0.1.59.0.t[2]": [
           {
             "declaredItemPath": "repeaters.users.items",
             "itemPath": "repeaters.users.2",
             "index": 2
           }
         ],
-        "#0.1.58.0.t[3]": [
+        "#0.1.59.0.t[3]": [
           {
             "declaredItemPath": "repeaters.users.items",
             "itemPath": "repeaters.users.3",
@@ -12168,8 +12279,8 @@
     },
     "calculatedWidgets": {
       "changedEntries": {
-        "#0.1.58.0.t[0]": {
-          "uid": "#0.1.58.0.t[0]",
+        "#0.1.59.0.t[0]": {
+          "uid": "#0.1.59.0.t[0]",
           "type": "grid",
           "kind": "layout",
           "props": {
@@ -12233,8 +12344,8 @@
           },
           "keysWithUndefined": "size include exclude label disabled actionType"
         },
-        "#0.1.58.0.t[1]": {
-          "uid": "#0.1.58.0.t[1]",
+        "#0.1.59.0.t[1]": {
+          "uid": "#0.1.59.0.t[1]",
           "type": "grid",
           "kind": "layout",
           "props": {
@@ -12298,8 +12409,8 @@
           },
           "keysWithUndefined": "size include exclude label disabled actionType"
         },
-        "#0.1.58.0.t[2]": {
-          "uid": "#0.1.58.0.t[2]",
+        "#0.1.59.0.t[2]": {
+          "uid": "#0.1.59.0.t[2]",
           "type": "grid",
           "kind": "layout",
           "props": {
@@ -12363,8 +12474,8 @@
           },
           "keysWithUndefined": "size include exclude label disabled actionType"
         },
-        "#0.1.58.0.t[3]": {
-          "uid": "#0.1.58.0.t[3]",
+        "#0.1.59.0.t[3]": {
+          "uid": "#0.1.59.0.t[3]",
           "type": "grid",
           "kind": "layout",
           "props": {
@@ -12482,6 +12593,10 @@
         "q2": "[undefined]",
         "q3": "[undefined]",
         "q4": "[undefined]"
+      },
+      "sidebar": {
+        "search": "[undefined]",
+        "notes": "[undefined]"
       },
       "textinput": "[undefined]",
       "textinputDisabled": "[undefined]",
@@ -13207,19 +13322,19 @@
     },
     "resolvedSources": {
       "removedKeys": [
-        "#0.1.58.0.t[0]",
+        "#0.1.59.0.t[0]",
         "repeaters.users.items.firstName-textinput[0]",
         "repeaters.users.items.lastName-textinput[0]",
         "userRowMenu[0]",
-        "#0.1.58.0.t[1]",
+        "#0.1.59.0.t[1]",
         "repeaters.users.items.firstName-textinput[1]",
         "repeaters.users.items.lastName-textinput[1]",
         "userRowMenu[1]",
-        "#0.1.58.0.t[2]",
+        "#0.1.59.0.t[2]",
         "repeaters.users.items.firstName-textinput[2]",
         "repeaters.users.items.lastName-textinput[2]",
         "userRowMenu[2]",
-        "#0.1.58.0.t[3]",
+        "#0.1.59.0.t[3]",
         "repeaters.users.items.firstName-textinput[3]",
         "repeaters.users.items.lastName-textinput[3]",
         "userRowMenu[3]"
@@ -13233,19 +13348,19 @@
     },
     "calculatedWidgets": {
       "removedKeys": [
-        "#0.1.58.0.t[0]",
+        "#0.1.59.0.t[0]",
         "repeaters.users.items.firstName-textinput[0]",
         "repeaters.users.items.lastName-textinput[0]",
         "userRowMenu[0]",
-        "#0.1.58.0.t[1]",
+        "#0.1.59.0.t[1]",
         "repeaters.users.items.firstName-textinput[1]",
         "repeaters.users.items.lastName-textinput[1]",
         "userRowMenu[1]",
-        "#0.1.58.0.t[2]",
+        "#0.1.59.0.t[2]",
         "repeaters.users.items.firstName-textinput[2]",
         "repeaters.users.items.lastName-textinput[2]",
         "userRowMenu[2]",
-        "#0.1.58.0.t[3]",
+        "#0.1.59.0.t[3]",
         "repeaters.users.items.firstName-textinput[3]",
         "repeaters.users.items.lastName-textinput[3]",
         "userRowMenu[3]"

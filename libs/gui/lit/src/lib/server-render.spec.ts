@@ -128,6 +128,22 @@ const config: FormInitConfig<Type<WithWidget>> = {
           props: { items: [{ label: 'Save as draft', value: 'draft' }] },
         },
         {
+          uid: 'shell',
+          kind: 'layout',
+          type: 'sidebar',
+          props: { sideLabel: 'Account' },
+          children: [
+            {
+              uid: 'shellNav',
+              kind: 'action',
+              type: 'menu',
+              label: 'Account',
+              props: { items: [{ label: 'Plans', value: 'plans' }] },
+            },
+            { uid: 'shellNotes', kind: 'input', type: 'textarea', path: 'notes', label: 'Notes' },
+          ],
+        },
+        {
           uid: 'trail',
           kind: 'action',
           type: 'breadcrumb',
@@ -236,6 +252,17 @@ describe('server rendering the gui widget set in plain node', () => {
     expect(markup).toMatch(
       /<gui-menu-button-interactive[^>]*class="[^"]*gui-menu-button[^"]*gui-field/,
     );
+  });
+
+  it('renders a sidebar with its side child once, as the side region the toggle opens', () => {
+    expect(markup).toMatch(/<gui-sidebar-layout[^>]*class="[^"]*gui-sidebar[^"]*gui-field/);
+    expect(markup).toMatch(
+      /<aside[^>]*class="gui-sidebar__side"[^>]*id="gui-lit-ssr-form-shell_side"[^>]*popover[^>]*aria-label="Account"/,
+    );
+    expect(markup).toMatch(/popovertarget="gui-lit-ssr-form-shell_side"/);
+    expect(markup.match(/<nav[^>]*id="gui-lit-ssr-form-shellNav"/g)).toHaveLength(1);
+    const ids = Array.from(markup.matchAll(/\sid="([^"]+)"/g), (match) => match[1]);
+    expect(ids.filter((id, index) => ids.indexOf(id) !== index)).toEqual([]);
   });
 
   it('renders a breadcrumb trail and a menu, with their state and nothing the elements add', () => {

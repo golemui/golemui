@@ -91,6 +91,9 @@ export type {
   SliderMark,
   SliderProps,
   SliderRange,
+  SidebarProps,
+  SidebarSide,
+  SidebarSideSize,
   TabsProps,
   TagsProps,
   TagsSeparator,
@@ -142,6 +145,12 @@ export {
   menuButtonPanelId,
 } from './lib/utils/menu-button';
 export { breadcrumbLabel, breadcrumbTrail } from './lib/utils/breadcrumb';
+export {
+  sidebarRegions,
+  sidebarSideId,
+  sidebarSideLabel,
+  sidebarToggleLabel,
+} from './lib/utils/sidebar';
 export {
   isMenuGroup,
   menuGroupId,

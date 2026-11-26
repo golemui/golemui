@@ -193,15 +193,13 @@ export const serverTemplate = () =>
       <button
         type="button"
         class="gui-sidebar__toggle"
-        commandfor="account-drawer"
-        command="show-modal"
+        popovertarget="account-nav"
         aria-label="Open menu"
       ></button>
-      <aside class="gui-sidebar__side" aria-label="Account"><a href="#plans">Plans</a></aside>
+      <aside class="gui-sidebar__side" id="account-nav" popover aria-label="Account">
+        <a href="#plans">Plans</a>
+      </aside>
       <div class="gui-sidebar__main"><p>Seats and billing</p></div>
     </gui-sidebar>
-    <gui-dialog placement="start">
-      <dialog id="account-drawer" aria-label="Account"><a href="#plans">Plans</a></dialog>
-    </gui-dialog>
     <gui-toaster placement="top-end"></gui-toaster>
   </form>`;

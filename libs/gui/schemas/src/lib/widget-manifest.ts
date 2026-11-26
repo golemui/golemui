@@ -67,6 +67,7 @@ export const guiWidgetManifest: readonly WidgetManifestEntry[] = [
   { type: 'toggle', schemaFile: 'toggle.schema.json', kind: 'input' },
   { type: 'accordion', schemaFile: 'accordion.schema.json', kind: 'layout' },
   { type: 'grid', schemaFile: 'grid.schema.json', kind: 'layout' },
+  { type: 'sidebar', schemaFile: 'sidebar.schema.json', kind: 'layout' },
   { type: 'tabs', schemaFile: 'tabs.schema.json', kind: 'layout' },
   { type: 'alert', schemaFile: 'alert.schema.json', kind: 'display' },
   { type: 'badge', schemaFile: 'badge.schema.json', kind: 'display' },

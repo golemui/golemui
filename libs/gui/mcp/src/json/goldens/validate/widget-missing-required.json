@@ -1706,6 +1706,39 @@
       "interpolationWarnings": []
     }
   },
+  "sidebar": {
+    "input": {
+      "form": [
+        {
+          "type": "sidebar"
+        }
+      ]
+    },
+    "result": {
+      "valid": false,
+      "errors": [
+        {
+          "path": "/form/0",
+          "message": "Missing required property `kind` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "kind"
+          }
+        },
+        {
+          "path": "/form/0",
+          "message": "Missing required property `children` at `/form/0`",
+          "keyword": "required",
+          "params": {
+            "missingProperty": "children"
+          }
+        }
+      ],
+      "warnings": [],
+      "expressionWarnings": [],
+      "interpolationWarnings": []
+    }
+  },
   "slider": {
     "input": {
       "form": [

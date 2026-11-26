@@ -431,6 +431,34 @@ const EXAMPLES: Record<string, Record<string, unknown>> = {
       { kind: 'input', type: 'textinput', path: 'street', label: 'Street' },
     ],
   },
+  sidebar: {
+    uid: 'shell',
+    kind: 'layout',
+    type: 'sidebar',
+    props: { sideLabel: 'Main', toggleLabel: 'Open menu' },
+    children: [
+      {
+        uid: 'mainMenu',
+        kind: 'action',
+        type: 'menu',
+        label: 'Main',
+        on: { click: 'navigate' },
+        props: {
+          current: '{{ $meta.view }}',
+          items: [
+            { label: 'Orders', value: 'orders' },
+            { label: 'Customers', value: 'customers' },
+          ],
+        },
+      },
+      {
+        uid: 'content',
+        kind: 'layout',
+        type: 'grid',
+        children: [{ kind: 'input', type: 'textinput', path: 'search', label: 'Search' }],
+      },
+    ],
+  },
   repeater: {
     kind: 'input',
     type: 'repeater',
@@ -631,6 +659,13 @@ const NOTES: Record<string, string[]> = {
   tabs: [
     'Children are associated with tabs by **`uid` matching**, not by array order: each direct child must have a `uid` field at the widget level (alongside `kind`/`type`) whose string value equals one of the `props.tabs[].uid` entries. There is no `tag` property — that is not a real GolemUI field.',
     'Children are typically written in display order for readability, but rearranging them does not change which tab they belong to — only the `uid` string match does.',
+  ],
+  sidebar: [
+    "An app layout with EXACTLY two `children`: the side region FIRST (usually a `menu`), the main region SECOND (usually a `grid`). A `sidebar` can't be the side child.",
+    'It follows its own width, not the viewport: from 768px the side is a sticky column; below, the side hides and a toggle opens the SAME side region as a drawer over the content. It is rendered once, so it keeps its state (open menu groups, typed text) across the switch. Nothing to configure for that.',
+    '`props.side`: `"start"` (default) or `"end"`. `props.sideSize`: `"sm"`, `"md"` (default) or `"lg"`. `props.sideLabel` names the side region (default "Menu"); `props.toggleLabel` names the toggle button (default "Open menu"). Both are localizable.',
+    'The drawer closes on Escape, a click outside it, Tab out of it, and when the user picks something in it: an item of a `menu`, `breadcrumb` or `menuButton`, or a `button`. `on.change` reports `{ open }` when the drawer opens or closes. Keep forms in the main region: the drawer is not a modal dialog.',
+    'If a state hides the side child, the main one takes the full width and there is no toggle.',
   ],
   accordion: [
     'Children are associated with sections by **`uid` matching** (same pattern as `tabs`): each direct child must have a `uid` field at the widget level whose value equals one of the `props.sections[].uid` entries. There is no `tag` property.',
