@@ -5,6 +5,8 @@ export const widgetLoaders: WidgetLoaders<React.ComponentType<WithWidget>, Golem
   // INTERACTIVE
   button: async () => (await import('./components/Button')).Button,
   menuButton: async () => (await import('./components/MenuButton')).MenuButton,
+  breadcrumb: async () => (await import('./components/Breadcrumb')).Breadcrumb,
+  menu: async () => (await import('./components/Menu')).Menu,
 
   // CONTROLS
   calendar: async () => (await import('./components/Calendar')).Calendar,
@@ -70,6 +72,7 @@ export const widgetLoaders: WidgetLoaders<React.ComponentType<WithWidget>, Golem
 
   // LAYOUTS
   grid: async () => (await import('./components/Grid')).Grid,
+  sidebar: async () => (await import('./components/Sidebar')).Sidebar,
   tabs: async () => (await import('./components/Tabs')).Tabs,
   accordion: async () => (await import('./components/Accordion')).Accordion,
 

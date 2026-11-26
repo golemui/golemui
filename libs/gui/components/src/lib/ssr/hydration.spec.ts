@@ -160,6 +160,49 @@ describe('resuming server-rendered standalone elements', () => {
     expect(badge().outerHTML).toBe(before.replace(' defer-hydration=""', ''));
   });
 
+  it('leaves a breadcrumb as the server sent it, and reports a pick after the resume', async () => {
+    const breadcrumb = () => document.querySelector('gui-breadcrumb') as HTMLElement;
+    const before = breadcrumb().outerHTML;
+    resumeServerRendered();
+    await settle();
+
+    // Only the hold goes: the element writes nothing on its trail.
+    expect(breadcrumb().outerHTML).toBe(before.replace(' defer-hydration=""', ''));
+    const picked: string[] = [];
+    breadcrumb().addEventListener('gui-action', (event) =>
+      picked.push((event as CustomEvent<{ value: string }>).detail.value),
+    );
+    breadcrumb().querySelector('button')?.click();
+    expect(picked).toEqual(['plans']);
+  });
+
+  it('leaves a menu as the server sent it, and opens a group after the resume', async () => {
+    const menu = () => document.querySelector('gui-menu') as HTMLElement;
+    const before = menu().outerHTML;
+    resumeServerRendered();
+    await settle();
+
+    // Only the holds go: the element writes nothing until the user opens a group.
+    expect(menu().outerHTML).toBe(before.replaceAll(' defer-hydration=""', ''));
+    const toggles: unknown[] = [];
+    menu().addEventListener('gui-toggle', (event) => toggles.push((event as CustomEvent).detail));
+    const roles = menu().querySelector('[aria-controls="account-roles"]') as HTMLElement;
+    roles.click();
+    expect(roles.getAttribute('aria-expanded')).toBe('true');
+    expect(document.getElementById('account-roles')?.hasAttribute('hidden')).toBe(false);
+    expect(toggles).toEqual([{ open: true, value: 'roles' }]);
+  });
+
+  it('leaves a sidebar as the server sent it', async () => {
+    const sidebar = () => document.querySelector('gui-sidebar') as HTMLElement;
+    const before = sidebar().outerHTML;
+    resumeServerRendered();
+    await settle();
+
+    // Only the hold goes: jsdom lays nothing out, so the layout stays the wide one.
+    expect(sidebar().outerHTML).toBe(before.replace(' defer-hydration=""', ''));
+  });
+
   it('leaves a table that fits as the server sent it', async () => {
     const table = () => document.querySelector('gui-table') as HTMLElement;
     const before = table().outerHTML;

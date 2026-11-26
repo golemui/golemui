@@ -112,6 +112,51 @@ describe('a strict style-src-attr policy', () => {
     expectNoViolations();
   });
 
+  it('allows a gui-breadcrumb to render its separators, wrap and fire', () => {
+    cy.mount(
+      html`<div id="box">
+        <gui-breadcrumb>
+          <nav aria-label="Breadcrumb">
+            <ol>
+              <li><button type="button" value="orders">Orders</button></li>
+              <li><button type="button" value="2026">2026</button></li>
+              <li><span aria-current="page">A-1042</span></li>
+            </ol>
+          </nav>
+        </gui-breadcrumb>
+      </div>`,
+    );
+    cy.get('#box').then(([box]) => box.style.setProperty('inline-size', '80px'));
+    cy.contains('gui-breadcrumb button', 'Orders').click();
+    expectNoViolations();
+  });
+
+  it('allows a gui-sidebar to collapse, open its drawer and close it as it grows', () => {
+    cy.mount(
+      html`<div id="box">
+        <gui-sidebar>
+          <button
+            type="button"
+            class="gui-sidebar__toggle"
+            popovertarget="csp-nav"
+            aria-label="Open menu"
+          ></button>
+          <aside class="gui-sidebar__side" id="csp-nav" popover aria-label="Main">
+            <a href="#orders">Orders</a>
+          </aside>
+          <div class="gui-sidebar__main"><p>Orders this week</p></div>
+        </gui-sidebar>
+      </div>`,
+    );
+    cy.get('#box').then(([box]) => box.style.setProperty('inline-size', '500px'));
+    cy.get('gui-sidebar').should('have.attr', 'collapsed');
+    cy.get('.gui-sidebar__toggle').click();
+    cy.get('#csp-nav').should('match', ':popover-open');
+    cy.get('#box').then(([box]) => box.style.setProperty('inline-size', '900px'));
+    cy.get('#csp-nav').should('not.match', ':popover-open');
+    expectNoViolations();
+  });
+
   it('allows a gui-table to render, overflow into a region and scroll', () => {
     cy.mount(
       html`<div id="box">
@@ -153,6 +198,47 @@ describe('a strict style-src-attr policy', () => {
       cy.get('gui-popover').invoke('attr', 'placement', 'bottom-end');
       cy.get('gui-popover').invoke('prop', 'open', false);
       cy.get('#tips').should('not.match', ':popover-open');
+      expectNoViolations();
+      cy.then(() => {
+        GUIAnchorController.forceFallback = false;
+      });
+    });
+
+    it(`allows a gui-menu to open groups in place and in a dropdown${fallback ? ', measuring' : ''}`, () => {
+      GUIAnchorController.forceFallback = fallback;
+      cy.mount(
+        html`<div id="box">
+          <gui-menu orientation="horizontal">
+            <nav aria-label="Main">
+              <ul>
+                <li><button type="button" aria-current="page">Home</button></li>
+                <li>
+                  <button type="button" popovertarget="csp-reports">Reports</button>
+                  <gui-popover>
+                    <ul id="csp-reports" popover>
+                      <li>
+                        <button type="button" aria-expanded="false" aria-controls="csp-yearly">
+                          Yearly
+                        </button>
+                        <ul id="csp-yearly" hidden>
+                          <li><button type="button" value="2026">2026</button></li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </gui-popover>
+                </li>
+                <li><button type="button">Customers</button></li>
+              </ul>
+            </nav>
+          </gui-menu>
+        </div>`,
+      );
+      cy.get('#box').then(([box]) => box.style.setProperty('inline-size', '120px'));
+      cy.get('button[popovertarget="csp-reports"]').click();
+      cy.get('#csp-reports').should('match', ':popover-open');
+      cy.contains('button', 'Yearly').click();
+      cy.contains('button', '2026').click();
+      cy.get('#csp-reports').should('not.match', ':popover-open');
       expectNoViolations();
       cy.then(() => {
         GUIAnchorController.forceFallback = false;

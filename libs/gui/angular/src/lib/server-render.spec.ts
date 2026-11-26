@@ -72,6 +72,28 @@ const config: GuiFormInitConfig = {
                 },
               },
             },
+            {
+              uid: 'shell',
+              kind: 'layout',
+              type: 'sidebar',
+              props: { sideLabel: 'Account' },
+              children: [
+                {
+                  uid: 'shellNav',
+                  kind: 'action',
+                  type: 'menu',
+                  label: 'Account',
+                  props: { items: [{ label: 'Plans', value: 'plans' }] },
+                },
+                {
+                  uid: 'shellNotes',
+                  kind: 'input',
+                  type: 'textarea',
+                  path: 'notes',
+                  label: 'Notes',
+                },
+              ],
+            },
           ],
         },
         { uid: 'tab2', kind: 'input', type: 'textinput', path: 'lastName', label: 'Last name' },
@@ -130,6 +152,17 @@ describe('server rendering the gui widget set in plain node', () => {
     expect(markup).toMatch(/<gui-tabs-layout[^>]*class="[^"]*gui-tabs/);
     expect(markup).toContain('Account');
     expect(markup).toContain('Details');
+  });
+
+  it('renders a sidebar with its side child once, as the side region the toggle opens', () => {
+    expect(markup).toMatch(/<gui-sidebar-layout[^>]*class="[^"]*gui-sidebar/);
+    const aside = markup.match(/<aside[^>]*>/)?.[0] ?? '';
+    expect(aside).toContain('id="gui-angular-ssr-form-shell_side"');
+    expect(aside).toMatch(/\spopover[=\s>]/);
+    expect(markup).toMatch(/popovertarget="gui-angular-ssr-form-shell_side"/);
+    expect(markup.match(/<nav[^>]*id="gui-angular-ssr-form-shellNav"/g)).toHaveLength(1);
+    const ids = Array.from(markup.matchAll(/\sid="([^"]+)"/g), (match) => match[1]);
+    expect(ids.filter((id, index) => ids.indexOf(id) !== index)).toEqual([]);
   });
 
   it('renders a repeater with one card for each row', () => {

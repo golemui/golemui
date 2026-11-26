@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Menu · GolemUI Components playground</title>
+    <link rel="stylesheet" href="/src/styles.scss" />
+  </head>
+  <body data-pg-events="gui-action gui-toggle">
+    <main class="pg-main">
+      <section class="pg-section">
+        <h1>gui-menu</h1>
+        <p>
+          A navigation menu the app writes as a named <code>&lt;nav&gt;</code> with lists of buttons
+          and links. A group is a button with <code>aria-expanded</code> and
+          <code>aria-controls</code> that opens its list in place; groups nest to any depth. Every
+          item stays in the Tab order, and Escape closes the group around the focus.
+        </p>
+      </section>
+
+      <section class="pg-section">
+        <h2>Vertical, three levels deep</h2>
+        <div class="pg-stack">
+          <gui-menu>
+            <nav aria-label="Main">
+              <ul>
+                <li><button type="button" value="home">Home</button></li>
+                <li><a href="#orders">Orders</a></li>
+                <li>
+                  <button
+                    type="button"
+                    value="settings"
+                    aria-expanded="true"
+                    aria-controls="v-settings"
+                  >
+                    Settings
+                  </button>
+                  <ul id="v-settings">
+                    <li>
+                      <button type="button" value="profile" aria-current="page">Profile</button>
+                    </li>
+                    <li>
+                      <button
+                        type="button"
+                        value="billing"
+                        aria-expanded="false"
+                        aria-controls="v-billing"
+                      >
+                        Billing
+                      </button>
+                      <ul id="v-billing" hidden>
+                        <li><button type="button" value="invoices">Invoices</button></li>
+                        <li>
+                          <button
+                            type="button"
+                            value="payment"
+                            aria-expanded="false"
+                            aria-controls="v-payment"
+                          >
+                            Payment methods
+                          </button>
+                          <ul id="v-payment" hidden>
+                            <li><button type="button" value="cards">Cards</button></li>
+                            <li><button type="button" value="bank">Bank accounts</button></li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </li>
+                    <li><button type="button" value="archived" disabled>Archived</button></li>
+                  </ul>
+                </li>
+                <li><button type="button" value="team">Team</button></li>
+              </ul>
+            </nav>
+          </gui-menu>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>Horizontal, with dropdowns</h2>
+        <p>
+          A first-level group opens a dropdown: its button has a <code>popovertarget</code>, and its
+          list is a <code>[popover]</code> in a <code>gui-popover</code>. Groups inside open in
+          place. A row that doesn't fit scrolls, with a shadow at each edge.
+        </p>
+        <gui-menu orientation="horizontal">
+          <nav aria-label="Sections">
+            <ul>
+              <li>
+                <button type="button" value="dashboard" aria-current="page">Dashboard</button>
+              </li>
+              <li>
+                <button type="button" value="reports" popovertarget="h-reports">Reports</button>
+                <gui-popover>
+                  <ul id="h-reports" popover>
+                    <li><button type="button" value="sales">Sales</button></li>
+                    <li><button type="button" value="stock">Stock</button></li>
+                    <li>
+                      <button
+                        type="button"
+                        value="yearly"
+                        aria-expanded="false"
+                        aria-controls="h-yearly"
+                      >
+                        Yearly
+                      </button>
+                      <ul id="h-yearly" hidden>
+                        <li><button type="button" value="2025">2025</button></li>
+                        <li><button type="button" value="2026">2026</button></li>
+                      </ul>
+                    </li>
+                  </ul>
+                </gui-popover>
+              </li>
+              <li>
+                <button type="button" value="help" popovertarget="h-help">Help</button>
+                <gui-popover>
+                  <ul id="h-help" popover>
+                    <li><a href="#docs">Docs</a></li>
+                    <li><button type="button" value="contact">Contact</button></li>
+                  </ul>
+                </gui-popover>
+              </li>
+              <li><button type="button" value="customers">Customers</button></li>
+              <li><button type="button" value="integrations">Integrations</button></li>
+              <li><button type="button" value="audit">Audit log</button></li>
+            </ul>
+          </nav>
+        </gui-menu>
+      </section>
+
+      <section class="pg-section">
+        <h2>Horizontal, in a narrow column</h2>
+        <div class="pg-narrow">
+          <gui-menu orientation="horizontal">
+            <nav aria-label="Sections, narrow">
+              <ul>
+                <li>
+                  <button type="button" value="dashboard" aria-current="page">Dashboard</button>
+                </li>
+                <li>
+                  <button type="button" value="reports" popovertarget="n-reports">Reports</button>
+                  <gui-popover>
+                    <ul id="n-reports" popover>
+                      <li><button type="button" value="sales">Sales</button></li>
+                      <li><button type="button" value="stock">Stock</button></li>
+                    </ul>
+                  </gui-popover>
+                </li>
+                <li><button type="button" value="customers">Customers</button></li>
+                <li><button type="button" value="integrations">Integrations</button></li>
+                <li><button type="button" value="audit">Audit log</button></li>
+              </ul>
+            </nav>
+          </gui-menu>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/pages/menu.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,73 @@
+@use 'caret' as *;
+
+// `gui-breadcrumb`: the app's `<nav>` and `<ol>`, laid out as a trail that wraps. The separators
+// are the caret, drawn between items with no text, so screen readers don't read them.
+gui-breadcrumb {
+  display: block;
+
+  > nav > ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--gui-space-1) var(--gui-breadcrumb-gap, var(--gui-space-2));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    > li {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--gui-breadcrumb-gap, var(--gui-space-2));
+      min-inline-size: 0;
+      color: var(--gui-text-secondary);
+
+      // The caret points down: a quarter turn makes it point to the next item, the other way
+      // right to left.
+      & + li::before {
+        @include gui-caret(14px);
+        content: '';
+        rotate: -90deg;
+      }
+
+      &:dir(rtl) + li::before {
+        rotate: 90deg;
+      }
+
+      > :is(button, a[href]) {
+        appearance: none;
+        padding: 0;
+        border: 0;
+        border-radius: var(--gui-radius-sm);
+        background: transparent;
+        color: var(--gui-breadcrumb-link-color, var(--gui-intent-primary));
+        font: inherit;
+        text-align: start;
+        text-decoration: none;
+        overflow-wrap: anywhere;
+        cursor: pointer;
+
+        &:hover {
+          color: var(--gui-intent-primary-hover);
+          text-decoration: underline;
+        }
+
+        &:focus-visible {
+          outline: 2px solid var(--gui-border-focus);
+          outline-offset: 2px;
+        }
+
+        &:is(:disabled, [aria-disabled='true']) {
+          color: var(--gui-text-disabled);
+          text-decoration: none;
+          cursor: not-allowed;
+        }
+      }
+
+      > [aria-current]:not([aria-current='false']) {
+        color: var(--gui-text-default);
+        font-weight: 500;
+        overflow-wrap: anywhere;
+      }
+    }
+  }
+}

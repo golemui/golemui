@@ -1,4 +1,40 @@
 <form id="checkout">
+    <gui-breadcrumb defer-hydration>
+      <nav aria-label="Breadcrumb">
+        <ol>
+          <li><button type="button" value="plans">Plans</button></li>
+          <li><span aria-current="page">Checkout</span></li>
+        </ol>
+      </nav>
+    </gui-breadcrumb>
+    <gui-menu  orientation="horizontal" defer-hydration>
+      <nav aria-label="Account">
+        <ul>
+          <li><button type="button" value="billing" aria-current="page">Billing</button></li>
+          <li>
+            <button type="button" value="team" popovertarget="account-team">Team</button>
+            <gui-popover defer-hydration>
+              <ul id="account-team" popover>
+                <li><button type="button" value="members">Members</button></li>
+                <li>
+                  <button
+                    type="button"
+                    value="roles"
+                    aria-expanded="false"
+                    aria-controls="account-roles"
+                  >
+                    Roles
+                  </button>
+                  <ul id="account-roles" hidden>
+                    <li><button type="button" value="admins">Admins</button></li>
+                  </ul>
+                </li>
+              </ul>
+            </gui-popover>
+          </li>
+        </ul>
+      </nav>
+    </gui-menu>
     <gui-alert  variant="info" defer-hydration>Yearly billing saves two months.</gui-alert>
     <gui-textinput
 
@@ -2338,5 +2374,17 @@
         </tbody>
       </table>
     </gui-table>
+    <gui-sidebar  side-size="sm" defer-hydration>
+      <button
+        type="button"
+        class="gui-sidebar__toggle"
+        popovertarget="account-nav"
+        aria-label="Open menu"
+      ></button>
+      <aside class="gui-sidebar__side" id="account-nav" popover aria-label="Account">
+        <a href="#plans">Plans</a>
+      </aside>
+      <div class="gui-sidebar__main"><p>Seats and billing</p></div>
+    </gui-sidebar>
     <gui-toaster  placement="top-end" defer-hydration></gui-toaster>
   </form>

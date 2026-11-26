@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/gui/components/menu.schema.json",
+  "title": "Menu Widget",
+  "description": "A navigation menu: destinations, and groups of them that open, to any depth. Picking a destination dispatches `on.click` with its value in `detail.value`; a group's button only opens the group. For a button that opens a list of actions, use `menuButton`.",
+  "type": "object",
+  "$defs": {
+    "labelDef": {
+      "$ref": "../core/common.schema.json#/$defs/localizable",
+      "description": "The name of the menu's navigation landmark, such as \"Main\". Set it: two unnamed navigations on a page sound the same to a screen reader."
+    },
+    "disabledDef": {
+      "$ref": "../core/common.schema.json#/$defs/boolOrWhen"
+    },
+    "menuItem": {
+      "type": "object",
+      "description": "A destination, or a group of items when it has `items`.",
+      "properties": {
+        "label": {
+          "$ref": "../core/common.schema.json#/$defs/localizable"
+        },
+        "value": {
+          "type": "string",
+          "description": "Unique in the menu. A destination sends it in the event's `detail.value`; `current` names an item by it."
+        },
+        "icon": {
+          "type": "string",
+          "description": "An icon before the label: a Material Icons ligature name."
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Shows the item but stops the user picking it, or opening it for a group."
+        },
+        "items": {
+          "type": "array",
+          "description": "The items of a group. Its button opens and closes them, and emits no event.",
+          "items": {
+            "$ref": "#/$defs/menuItem"
+          },
+          "minItems": 1
+        }
+      },
+      "required": ["label", "value"],
+      "additionalProperties": false
+    },
+    "itemsProp": {
+      "type": "array",
+      "description": "The menu's items, in order.",
+      "items": {
+        "$ref": "#/$defs/menuItem"
+      },
+      "minItems": 1
+    },
+    "orientationProp": {
+      "description": "`vertical` (the default): a column whose groups open in place. `horizontal`: a row whose groups open dropdowns, and that scrolls when it doesn't fit.",
+      "enum": ["vertical", "horizontal"]
+    },
+    "currentProp": {
+      "type": "string",
+      "description": "The value of the current page's item: it is marked as the current page, and the groups that hold it start open. Interpolated, so `{{ $meta.view }}` follows the host's view."
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "action"
+    },
+    "type": {
+      "const": "menu"
+    },
+    "label": {
+      "$ref": "#/$defs/labelDef"
+    },
+    "disabled": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "on": {
+      "$ref": "../core/common.schema.json#/$defs/on"
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "$ref": "#/$defs/itemsProp"
+        },
+        "orientation": {
+          "$ref": "#/$defs/orientationProp"
+        },
+        "current": {
+          "$ref": "#/$defs/currentProp"
+        }
+      },
+      "patternProperties": {
+        "^items\\.[^.]+$": {
+          "$ref": "#/$defs/itemsProp"
+        },
+        "^orientation\\.[^.]+$": {
+          "$ref": "#/$defs/orientationProp"
+        },
+        "^current\\.[^.]+$": {
+          "$ref": "#/$defs/currentProp"
+        }
+      },
+      "required": ["items"],
+      "additionalProperties": false
+    }
+  },
+  "patternProperties": {
+    "^disabled\\.[^.]+$": {
+      "$ref": "#/$defs/disabledDef"
+    },
+    "^label\\.[^.]+$": {
+      "$ref": "#/$defs/labelDef"
+    }
+  },
+  "required": ["kind", "type", "props"],
+  "unevaluatedProperties": false
+}

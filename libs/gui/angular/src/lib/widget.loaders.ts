@@ -7,6 +7,9 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
   button: async () => (await import('./components/button/button.component')).ButtonComponent,
   menuButton: async () =>
     (await import('./components/menu-button/menu-button.component')).MenuButtonComponent,
+  breadcrumb: async () =>
+    (await import('./components/breadcrumb/breadcrumb.component')).BreadcrumbComponent,
+  menu: async () => (await import('./components/menu/menu.component')).MenuComponent,
 
   // INPUT WIDGETS
   repeater: async () =>
@@ -117,6 +120,7 @@ export const widgetLoaders: WidgetLoaders<Type<WithWidget>, GolemWidget> = {
 
   // LAYOUT WIDGETS
   grid: async () => (await import('./components/grid/grid.component')).GridComponent,
+  sidebar: async () => (await import('./components/sidebar/sidebar.component')).SidebarComponent,
   tabs: async () => (await import('./components/tabs/tabs.component')).TabsComponent,
   accordion: async () =>
     (await import('./components/accordion/accordion.component')).AccordionComponent,

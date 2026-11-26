@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Breadcrumb · GolemUI Components playground</title>
+    <link rel="stylesheet" href="/src/styles.scss" />
+  </head>
+  <body data-pg-events="gui-action">
+    <main class="pg-main">
+      <section class="pg-section">
+        <h1>gui-breadcrumb</h1>
+        <p>
+          A trail the app writes as a named <code>&lt;nav&gt;</code> with an
+          <code>&lt;ol&gt;</code>. The element draws the separators, which screen readers don't read
+          and which point the other way right to left, and fires <code>gui-action</code> when an
+          item is activated. The last item is the current page, in plain text.
+        </p>
+      </section>
+
+      <section class="pg-section">
+        <h2>Buttons</h2>
+        <gui-breadcrumb>
+          <nav aria-label="Breadcrumb">
+            <ol>
+              <li><button type="button" value="home">Home</button></li>
+              <li><button type="button" value="orders">Orders</button></li>
+              <li><button type="button" value="2026">2026</button></li>
+              <li><span aria-current="page">A-1042</span></li>
+            </ol>
+          </nav>
+        </gui-breadcrumb>
+      </section>
+
+      <section class="pg-section">
+        <h2>Links</h2>
+        <p>A link fires the event too, and still follows its <code>href</code>.</p>
+        <gui-breadcrumb>
+          <nav aria-label="Breadcrumb">
+            <ol>
+              <li><a href="#docs">Docs</a></li>
+              <li><a href="#components">Components</a></li>
+              <li><span aria-current="page">Breadcrumb</span></li>
+            </ol>
+          </nav>
+        </gui-breadcrumb>
+      </section>
+
+      <section class="pg-section">
+        <h2>A long trail, in a narrow column</h2>
+        <div class="pg-stack">
+          <gui-breadcrumb>
+            <nav aria-label="Breadcrumb">
+              <ol>
+                <li><button type="button" value="workspace">Northwind workspace</button></li>
+                <li><button type="button" value="projects">Projects</button></li>
+                <li><button type="button" value="shipping">Shipping and logistics</button></li>
+                <li><button type="button" value="carriers">Carriers</button></li>
+                <li><span aria-current="page">Blue Harbor Lines, Rotterdam terminal</span></li>
+              </ol>
+            </nav>
+          </gui-breadcrumb>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/pages/breadcrumb.ts"></script>
+  </body>
+</html>

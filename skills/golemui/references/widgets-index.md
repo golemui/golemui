@@ -57,6 +57,8 @@ The reference pages for JSON form definitions, one per widget (props, per-prop e
 
 - `button` - https://golemui.com/json/widgets-reference/interactive-fields/button.md
 - `menuButton` - https://golemui.com/json/widgets-reference/interactive-fields/menu.md
+- `breadcrumb` - https://golemui.com/json/widgets-reference/interactive-fields/breadcrumb.md
+- `menu` - https://golemui.com/json/widgets-reference/interactive-fields/menu.md
 - Category overview - https://golemui.com/json/widgets-reference/interactive-fields/overview.md
 
 ## Display widgets
@@ -75,5 +77,6 @@ The reference pages for JSON form definitions, one per widget (props, per-prop e
 
 - `accordion` - https://golemui.com/json/widgets-reference/layout-fields/accordion.md
 - `grid` - https://golemui.com/json/widgets-reference/layout-fields/grid.md
+- `sidebar` - https://golemui.com/json/widgets-reference/layout-fields/sidebar.md
 - `tabs` - https://golemui.com/json/widgets-reference/layout-fields/tabs.md
 - Category overview - https://golemui.com/json/widgets-reference/layout-fields/overview.md

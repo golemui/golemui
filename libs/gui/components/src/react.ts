@@ -25,6 +25,10 @@ import {
 } from './lib/components/accordion-item';
 import { GuiAlert as GuiAlertElement } from './lib/components/alert';
 import { GuiBadge as GuiBadgeElement } from './lib/components/badge';
+import {
+  GuiBreadcrumb as GuiBreadcrumbElement,
+  GuiBreadcrumbEvents,
+} from './lib/components/breadcrumb';
 import { GuiButton as GuiButtonElement } from './lib/components/button';
 import { GuiCalendar as GuiCalendarElement, GuiCalendarEvents } from './lib/components/calendar';
 import { GuiCheckbox as GuiCheckboxElement, GuiCheckboxEvents } from './lib/components/checkbox';
@@ -61,6 +65,8 @@ import { GuiLabel as GuiLabelElement } from './lib/components/label';
 import { GuiList as GuiListElement, GuiListEvents } from './lib/components/list';
 import { GuiMarkdown as GuiMarkdownElement, GuiMarkdownEvents } from './lib/components/markdown';
 import { GuiMarkdownText as GuiMarkdownTextElement } from './lib/components/markdown-text';
+import { GuiMenu as GuiMenuElement, GuiMenuEvents } from './lib/components/menu';
+import { GuiSidebar as GuiSidebarElement, GuiSidebarEvents } from './lib/components/sidebar';
 import {
   GuiMenuButton as GuiMenuButtonElement,
   GuiMenuButtonEvents,
@@ -316,6 +322,7 @@ export const GuiAccordionItem = wrap(
 );
 export const GuiAlert = wrap('gui-alert', GuiAlertElement);
 export const GuiBadge = wrap('gui-badge', GuiBadgeElement);
+export const GuiBreadcrumb = wrap('gui-breadcrumb', GuiBreadcrumbElement, GuiBreadcrumbEvents);
 export const GuiButton = wrap('gui-button', GuiButtonElement, { click: fires<MouseEvent>() });
 export const GuiCalendar = wrap('gui-calendar', GuiCalendarElement, GuiCalendarEvents);
 export const GuiCheckbox = wrap('gui-checkbox', GuiCheckboxElement, GuiCheckboxEvents);
@@ -346,6 +353,8 @@ export const GuiLabel = wrap('gui-label', GuiLabelElement);
 export const GuiList = wrap('gui-list', GuiListElement, GuiListEvents);
 export const GuiMarkdown = wrap('gui-markdown', GuiMarkdownElement, GuiMarkdownEvents);
 export const GuiMarkdownText = wrap('gui-markdown-text', GuiMarkdownTextElement);
+export const GuiMenu = wrap('gui-menu', GuiMenuElement, GuiMenuEvents);
+export const GuiSidebar = wrap('gui-sidebar', GuiSidebarElement, GuiSidebarEvents);
 export const GuiMenuButton = wrap('gui-menu-button', GuiMenuButtonElement, GuiMenuButtonEvents);
 export const GuiMultiDropdown = wrap(
   'gui-multi-dropdown',

@@ -135,6 +135,13 @@ export const DEFAULT_MESSAGES = {
   incompleteCode: 'Enter all {length} digits.',
   invalidCode: 'Enter a {length}-digit code.',
 
+  // ─── Navigation: the name of a breadcrumb trail's <nav> ───
+  breadcrumb: 'Breadcrumb',
+  // The name of the button that opens a collapsed sidebar's drawer.
+  openSidebar: 'Open menu',
+  // The name of a sidebar's side region and its drawer, when the app gives none.
+  sidebarSide: 'Menu',
+
   // ─── Toasts ───
   notifications: 'Notifications',
   dismissNotification: 'Dismiss notification',

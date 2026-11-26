@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://golemui.com/schemas/gui/components/sidebar.schema.json",
+  "title": "Sidebar Widget",
+  "description": "An app layout with two children: the side region first, such as a navigation menu, and the main region second. From 768px of its own width the side region is a sticky column; below, the same side region becomes a drawer that a toggle opens.",
+  "type": "object",
+  "$defs": {
+    "sideProp": {
+      "description": "The side the side region sits on: `start` (the default) or `end`. Start and end follow the reading direction.",
+      "enum": ["start", "end"]
+    },
+    "sideSizeProp": {
+      "description": "The width of the side column: `sm` (12rem), `md` (16rem, the default) or `lg` (20rem).",
+      "enum": ["sm", "md", "lg"]
+    },
+    "sideLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable",
+      "description": "The name of the side region, and of the drawer. Defaults to \"Menu\"."
+    },
+    "toggleLabelProp": {
+      "$ref": "../core/common.schema.json#/$defs/localizable",
+      "description": "The name of the button that opens the drawer. Defaults to \"Open menu\"."
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "../core/common.schema.json#/$defs/baseWidget"
+    }
+  ],
+  "properties": {
+    "kind": {
+      "const": "layout"
+    },
+    "type": {
+      "const": "sidebar"
+    },
+    "on": {
+      "$ref": "../core/common.schema.json#/$defs/on"
+    },
+    "children": {
+      "type": "array",
+      "description": "Exactly two widgets: the side region first, the main region second. The side region can't be a sidebar.",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        {
+          "not": {
+            "properties": {
+              "type": {
+                "const": "sidebar"
+              }
+            },
+            "required": ["type"]
+          }
+        }
+      ],
+      "items": {
+        "$ref": "../widgets.schema.json#/$defs/formWidget"
+      }
+    },
+    "props": {
+      "type": "object",
+      "properties": {
+        "side": {
+          "$ref": "#/$defs/sideProp"
+        },
+        "sideSize": {
+          "$ref": "#/$defs/sideSizeProp"
+        },
+        "sideLabel": {
+          "$ref": "#/$defs/sideLabelProp"
+        },
+        "toggleLabel": {
+          "$ref": "#/$defs/toggleLabelProp"
+        }
+      },
+      "patternProperties": {
+        "^side\\.[^.]+$": {
+          "$ref": "#/$defs/sideProp"
+        },
+        "^sideSize\\.[^.]+$": {
+          "$ref": "#/$defs/sideSizeProp"
+        },
+        "^sideLabel\\.[^.]+$": {
+          "$ref": "#/$defs/sideLabelProp"
+        },
+        "^toggleLabel\\.[^.]+$": {
+          "$ref": "#/$defs/toggleLabelProp"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": ["kind", "type", "children"],
+  "unevaluatedProperties": false
+}

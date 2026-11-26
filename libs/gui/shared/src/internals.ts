@@ -52,6 +52,11 @@ export type {
   MenuButtonItem,
   MenuButtonProps,
   MenuButtonSeparator,
+  BreadcrumbItem,
+  BreadcrumbProps,
+  MenuItem,
+  MenuOrientation,
+  MenuProps,
   MultiDropdownProps,
   MultiFileUploadProps,
   MultiListProps,
@@ -86,6 +91,9 @@ export type {
   SliderMark,
   SliderProps,
   SliderRange,
+  SidebarProps,
+  SidebarSide,
+  SidebarSideSize,
   TabsProps,
   TagsProps,
   TagsSeparator,
@@ -136,4 +144,19 @@ export {
   menuButtonClasses,
   menuButtonPanelId,
 } from './lib/utils/menu-button';
+export { breadcrumbLabel, breadcrumbTrail } from './lib/utils/breadcrumb';
+export {
+  sidebarRegions,
+  sidebarSideId,
+  sidebarSideLabel,
+  sidebarToggleLabel,
+} from './lib/utils/sidebar';
+export {
+  isMenuGroup,
+  menuGroupId,
+  menuItemCy,
+  menuOpenGroups,
+  menuPathTo,
+  toggleMenuGroup,
+} from './lib/utils/menu';
 export { gridCellClasses, gridClasses, resolveGrid, type ResolvedGrid } from './lib/utils/grid';

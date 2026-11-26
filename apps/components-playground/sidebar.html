@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sidebar · GolemUI Components playground</title>
+    <link rel="stylesheet" href="/src/styles.scss" />
+  </head>
+  <body data-pg-events="gui-collapse gui-toggle gui-action">
+    <main class="pg-main">
+      <section class="pg-section">
+        <h1>gui-sidebar</h1>
+        <p>
+          An app layout with a side region next to the main one. It follows its own width: from
+          768px the side is a sticky column; below, it hides, and a toggle opens the same side
+          region as a drawer: it is a popover. One copy, so it keeps its state across the switch.
+          Growing past 768px closes the drawer, and focus never falls to the page.
+        </p>
+      </section>
+
+      <section class="pg-section">
+        <h2>Wide, or drag the box narrower</h2>
+        <label>
+          Width of the box: <output id="sidebar-width-value">1000</output>px
+          <input id="sidebar-width" type="range" min="320" max="1100" value="1000" />
+        </label>
+        <div id="sidebar-box">
+          <gui-sidebar>
+            <button
+              type="button"
+              class="gui-sidebar__toggle"
+              popovertarget="main-nav"
+              aria-label="Open menu"
+            ></button>
+            <aside class="gui-sidebar__side" id="main-nav" popover aria-label="Main">
+              <gui-menu>
+                <nav aria-label="Main">
+                  <ul>
+                    <li>
+                      <button type="button" value="orders" aria-current="page">Orders</button>
+                    </li>
+                    <li><a href="#customers">Customers</a></li>
+                    <li>
+                      <button
+                        type="button"
+                        value="settings"
+                        aria-expanded="false"
+                        aria-controls="main-nav-settings"
+                      >
+                        Settings
+                      </button>
+                      <ul id="main-nav-settings" hidden>
+                        <li><button type="button" value="profile">Profile</button></li>
+                        <li><button type="button" value="billing">Billing</button></li>
+                      </ul>
+                    </li>
+                  </ul>
+                </nav>
+              </gui-menu>
+            </aside>
+            <div class="gui-sidebar__main">
+              <p>Orders this week: 42 open, 7 waiting for payment, 3 to ship today.</p>
+            </div>
+          </gui-sidebar>
+        </div>
+      </section>
+
+      <section class="pg-section">
+        <h2>In a narrow column, side at the end, small</h2>
+        <p>
+          Below 768px of its own width: the toggle opens the side as a drawer from the end edge.
+        </p>
+        <div class="pg-stack">
+          <gui-sidebar side="end" side-size="sm">
+            <button
+              type="button"
+              class="gui-sidebar__toggle"
+              popovertarget="filters"
+              aria-label="Open filters"
+            ></button>
+            <aside class="gui-sidebar__side" id="filters" popover aria-label="Filters">
+              <p>
+                <label for="status">Status</label>
+                <input id="status" value="open" />
+              </p>
+            </aside>
+            <div class="gui-sidebar__main">
+              <p>Orders this week: 42 open, 7 waiting for payment, 3 to ship today.</p>
+            </div>
+          </gui-sidebar>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/pages/sidebar.ts"></script>
+  </body>
+</html>

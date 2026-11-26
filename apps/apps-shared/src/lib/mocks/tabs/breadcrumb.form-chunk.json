@@ -1,0 +1,87 @@
+{
+  "$schema": "../../../../../../libs/gui/schemas/src/lib/layout-widget.schema.json",
+  "uid": "tabBreadcrumb",
+  "kind": "layout",
+  "type": "grid",
+  "children": [
+    {
+      "uid": "breadcrumbOrder",
+      "kind": "action",
+      "type": "breadcrumb",
+      "on": {
+        "click": "onNavigate"
+      },
+      "props": {
+        "items": [
+          {
+            "label": "Orders",
+            "value": "orders"
+          },
+          {
+            "label": "2026",
+            "value": "orders-2026"
+          },
+          {
+            "label": "A-1042",
+            "value": "order"
+          }
+        ]
+      }
+    },
+    {
+      "uid": "breadcrumbNamed",
+      "kind": "action",
+      "type": "breadcrumb",
+      "label": "Where you are in the settings",
+      "on": {
+        "click": "onNavigate"
+      },
+      "props": {
+        "items": [
+          {
+            "label": "Northwind workspace",
+            "value": "workspace"
+          },
+          {
+            "label": "Projects",
+            "value": "projects"
+          },
+          {
+            "label": "Shipping and logistics",
+            "value": "shipping"
+          },
+          {
+            "label": "Carriers",
+            "value": "carriers"
+          },
+          {
+            "label": "Blue Harbor Lines, Rotterdam terminal",
+            "value": "carrier"
+          }
+        ]
+      }
+    },
+    {
+      "uid": "breadcrumbDisabled",
+      "kind": "action",
+      "type": "breadcrumb",
+      "label": "Disabled trail",
+      "disabled": true,
+      "on": {
+        "click": "onNavigate"
+      },
+      "props": {
+        "items": [
+          {
+            "label": "Orders",
+            "value": "orders"
+          },
+          {
+            "label": "A-1042",
+            "value": "order"
+          }
+        ]
+      }
+    }
+  ]
+}

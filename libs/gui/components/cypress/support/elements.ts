@@ -73,6 +73,15 @@ export const elements: ElementCase[] = [
     setup: (badge) => (badge.textContent = 'Paid'),
     hostRendersChildren: true,
   },
+  // Its trail is the app's children: give it one, as breadcrumb.cy.ts does.
+  {
+    tag: 'gui-breadcrumb',
+    props: {},
+    setup: (breadcrumb) =>
+      (breadcrumb.innerHTML =
+        '<nav aria-label="Breadcrumb"><ol><li><button type="button" value="orders">Orders</button></li><li><a href="#2026">2026</a></li><li><span aria-current="page">A-1042</span></li></ol></nav>'),
+    hostRendersChildren: true,
+  },
   { tag: 'gui-button', props: { label: 'Save' } },
   // Icon-only: named by button-aria-label alone.
   { tag: 'gui-button', props: { icon: 'icon-close', buttonAriaLabel: 'Close' } },
@@ -135,6 +144,16 @@ export const elements: ElementCase[] = [
   {
     tag: 'gui-markdown-text',
     props: { md: 'Hello', dependencies: { markdown: { parse: (md: string) => `<p>${md}</p>` } } },
+  },
+  // Its lists are the app's children: give it a group open in place, with the current page in it.
+  // menu.cy.ts checks it closed too, and horizontal with a dropdown open.
+  {
+    tag: 'gui-menu',
+    props: {},
+    setup: (menu) =>
+      (menu.innerHTML =
+        '<nav aria-label="Main"><ul><li><a href="#home">Home</a></li><li><button type="button" aria-expanded="true" aria-controls="contract-settings">Settings</button><ul id="contract-settings"><li><button type="button" aria-current="page">Profile</button></li><li><button type="button" disabled>Archived</button></li></ul></li></ul></nav>'),
+    hostRendersChildren: true,
   },
   // Its panel and items are the app's children: menu-button.cy.ts checks it with them, open and closed.
   { tag: 'gui-menu-button', props: {}, hostRendersChildren: true },
@@ -273,6 +292,16 @@ export const elements: ElementCase[] = [
   },
   { tag: 'gui-slider', props: { label: 'Volume' }, form: { property: 'value', sample: 40 } },
   { tag: 'gui-spinner', props: { label: 'Loading results' } },
+  // Its regions are the app's children: give it a toggle, a named side region and a main one, as
+  // sidebar.cy.ts does.
+  {
+    tag: 'gui-sidebar',
+    props: {},
+    setup: (sidebar) =>
+      (sidebar.innerHTML =
+        '<button type="button" class="gui-sidebar__toggle" popovertarget="contract-nav" aria-label="Open menu"></button><aside class="gui-sidebar__side" id="contract-nav" popover aria-label="Main"><a href="#orders">Orders</a></aside><div class="gui-sidebar__main"><p>Orders this week</p></div>'),
+    hostRendersChildren: true,
+  },
   {
     tag: 'gui-select',
     props: { label: 'Color', options },

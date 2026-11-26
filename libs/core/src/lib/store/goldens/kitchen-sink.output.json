@@ -58,6 +58,10 @@
         "q3": "[undefined]",
         "q4": "[undefined]"
       },
+      "sidebar": {
+        "search": "[undefined]",
+        "notes": "[undefined]"
+      },
       "textinput": "[undefined]",
       "textinputDisabled": "[undefined]",
       "textinputPhone": "[undefined]",
@@ -860,8 +864,15 @@
       "menuIconOnly": "action menuButton",
       "menuTop": "action menuButton",
       "menuDisabled": "action menuButton",
+      "tabBreadcrumb": "layout grid",
+      "breadcrumbOrder": "action breadcrumb",
+      "breadcrumbNamed": "action breadcrumb",
+      "breadcrumbDisabled": "action breadcrumb",
+      "tabMenu": "layout grid",
+      "menuVertical": "action menu",
+      "menuHorizontal": "action menu",
       "tabMarkdownText": "layout grid",
-      "#0.1.9.0": "display markdownText",
+      "#0.1.11.0": "display markdownText",
       "tabAccordion": "layout accordion",
       "section1": "layout grid",
       "shoppingCart.firstName-textinput": "input textinput shoppingCart.firstName",
@@ -873,35 +884,40 @@
       "shoppingCart.billingAddress-textinput": "input textinput shoppingCart.billingAddress",
       "shoppingCart.billingState-textinput": "input textinput shoppingCart.billingState",
       "tabGrid": "layout grid",
-      "#0.1.11.0": "display markdownText",
-      "#0.1.11.1": "layout grid",
+      "#0.1.13.0": "display markdownText",
+      "#0.1.13.1": "layout grid",
       "listName-textinput": "input textinput listName",
       "listOwner-textinput": "input textinput listOwner",
       "cb1-checkbox": "input checkbox cb1",
       "tg1-toggle": "input toggle tg1",
-      "#0.1.11.2": "layout grid",
+      "#0.1.13.2": "layout grid",
       "gridSearch-textinput": "input textinput gridSearch",
-      "#0.1.11.2.1": "action button",
-      "#0.1.11.3": "layout grid",
+      "#0.1.13.2.1": "action button",
+      "#0.1.13.3": "layout grid",
       "gridReport-textinput": "input textinput gridReport",
       "gridPeriod-radiogroup": "input radiogroup gridPeriod",
-      "#0.1.11.4": "display markdownText",
-      "#0.1.11.5": "layout grid",
+      "#0.1.13.4": "display markdownText",
+      "#0.1.13.5": "layout grid",
       "address.street-textinput": "input textinput address.street",
       "address.number-textinput": "input textinput address.number",
       "address.city-textinput": "input textinput address.city",
       "address.state-textinput": "input textinput address.state",
       "address.postcode-textinput": "input textinput address.postcode",
-      "#0.1.11.6": "display markdownText",
-      "#0.1.11.7": "layout grid",
+      "#0.1.13.6": "display markdownText",
+      "#0.1.13.7": "layout grid",
       "quarters.q1-number": "input number quarters.q1",
       "quarters.q2-number": "input number quarters.q2",
       "quarters.q3-number": "input number quarters.q3",
       "quarters.q4-number": "input number quarters.q4",
-      "#0.1.11.8": "display markdownText",
-      "#0.1.11.9": "layout grid",
-      "#0.1.11.9.0": "action button",
-      "#0.1.11.9.1": "action button",
+      "#0.1.13.8": "display markdownText",
+      "#0.1.13.9": "layout grid",
+      "#0.1.13.9.0": "action button",
+      "#0.1.13.9.1": "action button",
+      "tabSidebar": "layout sidebar",
+      "sidebarMenu": "action menu",
+      "sidebarMain": "layout grid",
+      "sidebarSearch": "input textinput sidebar.search",
+      "sidebarNotes": "input textarea sidebar.notes",
       "tabTextinput": "layout grid",
       "textinput-textinput": "input textinput textinput",
       "textinputDisabled-textinput": "input textinput textinputDisabled",
@@ -1020,7 +1036,7 @@
       "rangeDatePickerReadonly-rangeDatePicker": "input rangeDatePicker rangeDatePickerReadonly",
       "rangeDatePickerValidation-rangeDatePicker": "input rangeDatePicker rangeDatePickerValidation",
       "rangeDatePickerDisabledRanges-rangeDatePicker": "input rangeDatePicker rangeDatePickerDisabledRanges",
-      "#0.1.27.7": "layout grid",
+      "#0.1.30.7": "layout grid",
       "rangeDatePickerDestination-textinput": "input textinput rangeDatePickerDestination",
       "rangeDatePickerTrip-rangeDatePicker": "input rangeDatePicker rangeDatePickerTrip",
       "tabRangeTimeInput": "layout grid",
@@ -1037,7 +1053,7 @@
       "rangeTimePickerDisabled-rangeTimePicker": "input rangeTimePicker rangeTimePickerDisabled",
       "rangeTimePickerReadonly-rangeTimePicker": "input rangeTimePicker rangeTimePickerReadonly",
       "rangeTimePickerValidation-rangeTimePicker": "input rangeTimePicker rangeTimePickerValidation",
-      "#0.1.29.6": "layout grid",
+      "#0.1.32.6": "layout grid",
       "rangeTimePickerShiftNote-textinput": "input textinput rangeTimePickerShiftNote",
       "rangeTimePickerShift-rangeTimePicker": "input rangeTimePicker rangeTimePickerShift",
       "tabRangeDateTimeCalendar": "layout grid",
@@ -1061,7 +1077,7 @@
       "rangeDateTimePickerReadonly-rangeDateTimePicker": "input rangeDateTimePicker rangeDateTimePickerReadonly",
       "rangeDateTimePickerValidation-rangeDateTimePicker": "input rangeDateTimePicker rangeDateTimePickerValidation",
       "rangeDateTimePickerConstraints-rangeDateTimePicker": "input rangeDateTimePicker rangeDateTimePickerConstraints",
-      "#0.1.32.6": "layout grid",
+      "#0.1.35.6": "layout grid",
       "rangeDateTimePickerRentalNote-textinput": "input textinput rangeDateTimePickerRentalNote",
       "rangeDateTimePickerRental-rangeDateTimePicker": "input rangeDateTimePicker rangeDateTimePickerRental",
       "tabMultiRangeCalendar": "layout grid",
@@ -1153,7 +1169,7 @@
       "checkboxGroups.days-checkboxGroup": "input checkboxGroup checkboxGroups.days",
       "checkboxGroups.disabled-checkboxGroup": "input checkboxGroup checkboxGroups.disabled",
       "checkboxGroups.readonly-checkboxGroup": "input checkboxGroup checkboxGroups.readonly",
-      "#0.1.45.6": "layout grid",
+      "#0.1.48.6": "layout grid",
       "checkboxGroups.name-textinput": "input textinput checkboxGroups.name",
       "checkboxGroups.contact-checkboxGroup": "input checkboxGroup checkboxGroups.contact",
       "tabRating": "layout grid",
@@ -1162,7 +1178,7 @@
       "ratings.stay-rating": "input rating ratings.stay",
       "ratings.disabled-rating": "input rating ratings.disabled",
       "ratings.readonly-rating": "input rating ratings.readonly",
-      "#0.1.46.5": "layout grid",
+      "#0.1.49.5": "layout grid",
       "ratings.reviewer-textinput": "input textinput ratings.reviewer",
       "ratings.overall-rating": "input rating ratings.overall",
       "tabSelect": "layout grid",
@@ -1179,7 +1195,7 @@
       "sliders.rating-slider": "input slider sliders.rating",
       "sliders.disabled-slider": "input slider sliders.disabled",
       "sliders.readonly-slider": "input slider sliders.readonly",
-      "#0.1.48.6": "layout grid",
+      "#0.1.51.6": "layout grid",
       "sliders.speaker-textinput": "input textinput sliders.speaker",
       "sliders.bass-slider": "input slider sliders.bass",
       "tabRangeSlider": "layout grid",
@@ -1187,7 +1203,7 @@
       "rangeSliders.age-rangeSlider": "input rangeSlider rangeSliders.age",
       "rangeSliders.hours-rangeSlider": "input rangeSlider rangeSliders.hours",
       "rangeSliders.disabled-rangeSlider": "input rangeSlider rangeSliders.disabled",
-      "#0.1.49.4": "layout grid",
+      "#0.1.52.4": "layout grid",
       "rangeSliders.city-textinput": "input textinput rangeSliders.city",
       "rangeSliders.budget-rangeSlider": "input rangeSlider rangeSliders.budget",
       "tabOtp": "layout grid",
@@ -1196,7 +1212,7 @@
       "otp.short-otp": "input otp otp.short",
       "otp.disabled-otp": "input otp otp.disabled",
       "otp.readonly-otp": "input otp otp.readonly",
-      "#0.1.50.5": "layout grid",
+      "#0.1.53.5": "layout grid",
       "otp.email-textinput": "input textinput otp.email",
       "otp.emailCode-otp": "input otp otp.emailCode",
       "tabDropdown": "layout grid",
@@ -1210,7 +1226,7 @@
       "dropdowns.invalidValueList-dropdown": "input dropdown dropdowns.invalidValueList",
       "dropdowns.customItemRenderer-dropdown": "input dropdown dropdowns.customItemRenderer",
       "tabFileUpload": "layout grid",
-      "#0.1.52.0": "layout grid",
+      "#0.1.55.0": "layout grid",
       "fileUploads.title-textinput": "input textinput fileUploads.title",
       "fileUploads.basic-fileUpload": "input fileUpload fileUploads.basic",
       "fileUploads.pdfOnly-fileUpload": "input fileUpload fileUploads.pdfOnly",
@@ -1252,7 +1268,7 @@
       "tags.disabled-tags": "input tags tags.disabled",
       "tags.readonly-tags": "input tags tags.readonly",
       "tabCustomWidget": "layout grid",
-      "#0.1.58.0": "display heading",
+      "#0.1.61.0": "display heading",
       "clientName-textinput": "input textinput clientName",
       "registerMode-toggle": "input toggle registerMode",
       "submit-button": "action button"
@@ -1301,12 +1317,20 @@
               "uid": "tabBadge"
             },
             {
+              "label": "Breadcrumb Component",
+              "uid": "tabBreadcrumb"
+            },
+            {
               "label": "Button Component",
               "uid": "tabButton"
             },
             {
               "label": "Menu Button Component",
               "uid": "tabMenuButton"
+            },
+            {
+              "label": "Menu Component",
+              "uid": "tabMenu"
             },
             {
               "label": "Calendar Component",
@@ -1355,6 +1379,10 @@
             {
               "label": "Grid Layout",
               "uid": "tabGrid"
+            },
+            {
+              "label": "Sidebar Layout",
+              "uid": "tabSidebar"
             },
             {
               "label": "Image Component",
@@ -1536,9 +1564,12 @@
           "tabTable",
           "tabButton",
           "tabMenuButton",
+          "tabBreadcrumb",
+          "tabMenu",
           "tabMarkdownText",
           "tabAccordion",
           "tabGrid",
+          "tabSidebar",
           "tabTextinput",
           "tabPassword",
           "tabNumber",
@@ -2797,17 +2828,256 @@
         },
         "keysWithUndefined": "size include exclude actionType"
       },
+      "tabBreadcrumb": {
+        "uid": "tabBreadcrumb",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "breadcrumbOrder",
+          "breadcrumbNamed",
+          "breadcrumbDisabled"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "breadcrumbOrder": {
+        "uid": "breadcrumbOrder",
+        "type": "breadcrumb",
+        "kind": "action",
+        "props": {
+          "items": [
+            {
+              "label": "Orders",
+              "value": "orders"
+            },
+            {
+              "label": "2026",
+              "value": "orders-2026"
+            },
+            {
+              "label": "A-1042",
+              "value": "order"
+            }
+          ]
+        },
+        "on": {
+          "load": "[undefined]",
+          "click": "onNavigate",
+          "change": "[undefined]",
+          "filter": "[undefined]",
+          "blur": "[undefined]"
+        },
+        "keysWithUndefined": "size include exclude label disabled actionType"
+      },
+      "breadcrumbNamed": {
+        "uid": "breadcrumbNamed",
+        "type": "breadcrumb",
+        "kind": "action",
+        "label": "Where you are in the settings",
+        "props": {
+          "items": [
+            {
+              "label": "Northwind workspace",
+              "value": "workspace"
+            },
+            {
+              "label": "Projects",
+              "value": "projects"
+            },
+            {
+              "label": "Shipping and logistics",
+              "value": "shipping"
+            },
+            {
+              "label": "Carriers",
+              "value": "carriers"
+            },
+            {
+              "label": "Blue Harbor Lines, Rotterdam terminal",
+              "value": "carrier"
+            }
+          ]
+        },
+        "on": {
+          "load": "[undefined]",
+          "click": "onNavigate",
+          "change": "[undefined]",
+          "filter": "[undefined]",
+          "blur": "[undefined]"
+        },
+        "keysWithUndefined": "size include exclude disabled actionType"
+      },
+      "breadcrumbDisabled": {
+        "uid": "breadcrumbDisabled",
+        "type": "breadcrumb",
+        "kind": "action",
+        "label": "Disabled trail",
+        "disabled": true,
+        "props": {
+          "items": [
+            {
+              "label": "Orders",
+              "value": "orders"
+            },
+            {
+              "label": "A-1042",
+              "value": "order"
+            }
+          ]
+        },
+        "on": {
+          "load": "[undefined]",
+          "click": "onNavigate",
+          "change": "[undefined]",
+          "filter": "[undefined]",
+          "blur": "[undefined]"
+        },
+        "keysWithUndefined": "size include exclude actionType"
+      },
+      "tabMenu": {
+        "uid": "tabMenu",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "menuVertical",
+          "menuHorizontal"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "menuVertical": {
+        "uid": "menuVertical",
+        "type": "menu",
+        "kind": "action",
+        "label": "Main",
+        "props": {
+          "current": "cards",
+          "items": [
+            {
+              "label": "Home",
+              "value": "home",
+              "icon": "home"
+            },
+            {
+              "label": "Orders",
+              "value": "orders",
+              "icon": "receipt_long"
+            },
+            {
+              "label": "Settings",
+              "value": "settings",
+              "icon": "settings",
+              "items": [
+                {
+                  "label": "Profile",
+                  "value": "profile"
+                },
+                {
+                  "label": "Billing",
+                  "value": "billing",
+                  "items": [
+                    {
+                      "label": "Invoices",
+                      "value": "invoices"
+                    },
+                    {
+                      "label": "Cards",
+                      "value": "cards"
+                    }
+                  ]
+                },
+                {
+                  "label": "Archived",
+                  "value": "archived",
+                  "disabled": true
+                }
+              ]
+            },
+            {
+              "label": "Team",
+              "value": "team",
+              "icon": "group"
+            }
+          ]
+        },
+        "on": {
+          "load": "[undefined]",
+          "click": "onNavigate",
+          "change": "[undefined]",
+          "filter": "[undefined]",
+          "blur": "[undefined]"
+        },
+        "keysWithUndefined": "size include exclude disabled actionType"
+      },
+      "menuHorizontal": {
+        "uid": "menuHorizontal",
+        "type": "menu",
+        "kind": "action",
+        "label": "Sections",
+        "props": {
+          "orientation": "horizontal",
+          "current": "dashboard",
+          "items": [
+            {
+              "label": "Dashboard",
+              "value": "dashboard"
+            },
+            {
+              "label": "Reports",
+              "value": "reports",
+              "items": [
+                {
+                  "label": "Sales",
+                  "value": "sales"
+                },
+                {
+                  "label": "Stock",
+                  "value": "stock"
+                },
+                {
+                  "label": "Yearly",
+                  "value": "yearly",
+                  "items": [
+                    {
+                      "label": "2025",
+                      "value": "2025"
+                    },
+                    {
+                      "label": "2026",
+                      "value": "2026"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "Customers",
+              "value": "customers"
+            },
+            {
+              "label": "Integrations",
+              "value": "integrations"
+            }
+          ]
+        },
+        "on": {
+          "load": "[undefined]",
+          "click": "onNavigate",
+          "change": "[undefined]",
+          "filter": "[undefined]",
+          "blur": "[undefined]"
+        },
+        "keysWithUndefined": "size include exclude disabled actionType"
+      },
       "tabMarkdownText": {
         "uid": "tabMarkdownText",
         "type": "grid",
         "kind": "layout",
         "children": [
-          "#0.1.9.0"
+          "#0.1.11.0"
         ],
         "keysWithUndefined": "size include exclude"
       },
-      "#0.1.9.0": {
-        "uid": "#0.1.9.0",
+      "#0.1.11.0": {
+        "uid": "#0.1.11.0",
         "type": "markdownText",
         "kind": "display",
         "props": {
@@ -2959,21 +3229,21 @@
         "type": "grid",
         "kind": "layout",
         "children": [
-          "#0.1.11.0",
-          "#0.1.11.1",
-          "#0.1.11.2",
-          "#0.1.11.3",
-          "#0.1.11.4",
-          "#0.1.11.5",
-          "#0.1.11.6",
-          "#0.1.11.7",
-          "#0.1.11.8",
-          "#0.1.11.9"
+          "#0.1.13.0",
+          "#0.1.13.1",
+          "#0.1.13.2",
+          "#0.1.13.3",
+          "#0.1.13.4",
+          "#0.1.13.5",
+          "#0.1.13.6",
+          "#0.1.13.7",
+          "#0.1.13.8",
+          "#0.1.13.9"
         ],
         "keysWithUndefined": "size include exclude"
       },
-      "#0.1.11.0": {
-        "uid": "#0.1.11.0",
+      "#0.1.13.0": {
+        "uid": "#0.1.13.0",
         "type": "markdownText",
         "kind": "display",
         "props": {
@@ -2981,8 +3251,8 @@
         },
         "keysWithUndefined": "size include exclude"
       },
-      "#0.1.11.1": {
-        "uid": "#0.1.11.1",
+      "#0.1.13.1": {
+        "uid": "#0.1.13.1",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -3043,8 +3313,8 @@
         "path": "tg1",
         "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
       },
-      "#0.1.11.2": {
-        "uid": "#0.1.11.2",
+      "#0.1.13.2": {
+        "uid": "#0.1.13.2",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -3052,7 +3322,7 @@
         },
         "children": [
           "gridSearch-textinput",
-          "#0.1.11.2.1"
+          "#0.1.13.2.1"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -3065,15 +3335,15 @@
         "path": "gridSearch",
         "keysWithUndefined": "include exclude disabled readonly validator defaultValue"
       },
-      "#0.1.11.2.1": {
-        "uid": "#0.1.11.2.1",
+      "#0.1.13.2.1": {
+        "uid": "#0.1.13.2.1",
         "type": "button",
         "kind": "action",
         "label": "Search",
         "keysWithUndefined": "size include exclude disabled actionType"
       },
-      "#0.1.11.3": {
-        "uid": "#0.1.11.3",
+      "#0.1.13.3": {
+        "uid": "#0.1.13.3",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -3120,8 +3390,8 @@
         },
         "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
       },
-      "#0.1.11.4": {
-        "uid": "#0.1.11.4",
+      "#0.1.13.4": {
+        "uid": "#0.1.13.4",
         "type": "markdownText",
         "kind": "display",
         "props": {
@@ -3129,8 +3399,8 @@
         },
         "keysWithUndefined": "size include exclude"
       },
-      "#0.1.11.5": {
-        "uid": "#0.1.11.5",
+      "#0.1.13.5": {
+        "uid": "#0.1.13.5",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -3191,8 +3461,8 @@
         "path": "address.postcode",
         "keysWithUndefined": "size include exclude disabled readonly defaultValue"
       },
-      "#0.1.11.6": {
-        "uid": "#0.1.11.6",
+      "#0.1.13.6": {
+        "uid": "#0.1.13.6",
         "type": "markdownText",
         "kind": "display",
         "props": {
@@ -3200,8 +3470,8 @@
         },
         "keysWithUndefined": "size include exclude"
       },
-      "#0.1.11.7": {
-        "uid": "#0.1.11.7",
+      "#0.1.13.7": {
+        "uid": "#0.1.13.7",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -3247,8 +3517,8 @@
         "path": "quarters.q4",
         "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
       },
-      "#0.1.11.8": {
-        "uid": "#0.1.11.8",
+      "#0.1.13.8": {
+        "uid": "#0.1.13.8",
         "type": "markdownText",
         "kind": "display",
         "props": {
@@ -3256,8 +3526,8 @@
         },
         "keysWithUndefined": "size include exclude"
       },
-      "#0.1.11.9": {
-        "uid": "#0.1.11.9",
+      "#0.1.13.9": {
+        "uid": "#0.1.13.9",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -3266,13 +3536,13 @@
           "gap": "sm"
         },
         "children": [
-          "#0.1.11.9.0",
-          "#0.1.11.9.1"
+          "#0.1.13.9.0",
+          "#0.1.13.9.1"
         ],
         "keysWithUndefined": "size include exclude"
       },
-      "#0.1.11.9.0": {
-        "uid": "#0.1.11.9.0",
+      "#0.1.13.9.0": {
+        "uid": "#0.1.13.9.0",
         "type": "button",
         "kind": "action",
         "label": "Cancel",
@@ -3281,12 +3551,96 @@
         },
         "keysWithUndefined": "size include exclude disabled actionType"
       },
-      "#0.1.11.9.1": {
-        "uid": "#0.1.11.9.1",
+      "#0.1.13.9.1": {
+        "uid": "#0.1.13.9.1",
         "type": "button",
         "kind": "action",
         "label": "Save",
         "keysWithUndefined": "size include exclude disabled actionType"
+      },
+      "tabSidebar": {
+        "uid": "tabSidebar",
+        "type": "sidebar",
+        "kind": "layout",
+        "props": {
+          "sideLabel": "Workspace",
+          "toggleLabel": "Open the workspace menu"
+        },
+        "children": [
+          "sidebarMenu",
+          "sidebarMain"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "sidebarMenu": {
+        "uid": "sidebarMenu",
+        "type": "menu",
+        "kind": "action",
+        "label": "Workspace",
+        "props": {
+          "current": "orders",
+          "items": [
+            {
+              "label": "Orders",
+              "value": "orders",
+              "icon": "receipt_long"
+            },
+            {
+              "label": "Customers",
+              "value": "customers",
+              "icon": "group"
+            },
+            {
+              "label": "Settings",
+              "value": "settings",
+              "icon": "settings",
+              "items": [
+                {
+                  "label": "Profile",
+                  "value": "profile"
+                },
+                {
+                  "label": "Billing",
+                  "value": "billing"
+                }
+              ]
+            }
+          ]
+        },
+        "on": {
+          "load": "[undefined]",
+          "click": "onNavigate",
+          "change": "[undefined]",
+          "filter": "[undefined]",
+          "blur": "[undefined]"
+        },
+        "keysWithUndefined": "size include exclude disabled actionType"
+      },
+      "sidebarMain": {
+        "uid": "sidebarMain",
+        "type": "grid",
+        "kind": "layout",
+        "children": [
+          "sidebarSearch",
+          "sidebarNotes"
+        ],
+        "keysWithUndefined": "size include exclude"
+      },
+      "sidebarSearch": {
+        "uid": "sidebarSearch",
+        "type": "textinput",
+        "kind": "input",
+        "label": "Search orders",
+        "path": "sidebar.search",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
+      },
+      "sidebarNotes": {
+        "uid": "sidebarNotes",
+        "type": "textarea",
+        "kind": "input",
+        "label": "Notes",
+        "path": "sidebar.notes",
+        "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
       },
       "tabTextinput": {
         "uid": "tabTextinput",
@@ -5075,7 +5429,7 @@
           "rangeDatePickerReadonly-rangeDatePicker",
           "rangeDatePickerValidation-rangeDatePicker",
           "rangeDatePickerDisabledRanges-rangeDatePicker",
-          "#0.1.27.7"
+          "#0.1.30.7"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -5206,8 +5560,8 @@
         },
         "keysWithUndefined": "size include exclude disabled readonly validator"
       },
-      "#0.1.27.7": {
-        "uid": "#0.1.27.7",
+      "#0.1.30.7": {
+        "uid": "#0.1.30.7",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -5363,7 +5717,7 @@
           "rangeTimePickerDisabled-rangeTimePicker",
           "rangeTimePickerReadonly-rangeTimePicker",
           "rangeTimePickerValidation-rangeTimePicker",
-          "#0.1.29.6"
+          "#0.1.32.6"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -5502,8 +5856,8 @@
         },
         "keysWithUndefined": "size include exclude disabled readonly defaultValue"
       },
-      "#0.1.29.6": {
-        "uid": "#0.1.29.6",
+      "#0.1.32.6": {
+        "uid": "#0.1.32.6",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -5777,7 +6131,7 @@
           "rangeDateTimePickerReadonly-rangeDateTimePicker",
           "rangeDateTimePickerValidation-rangeDateTimePicker",
           "rangeDateTimePickerConstraints-rangeDateTimePicker",
-          "#0.1.32.6"
+          "#0.1.35.6"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -5885,8 +6239,8 @@
         },
         "keysWithUndefined": "size include exclude disabled readonly validator defaultValue"
       },
-      "#0.1.32.6": {
-        "uid": "#0.1.32.6",
+      "#0.1.35.6": {
+        "uid": "#0.1.35.6",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -7253,7 +7607,7 @@
           "checkboxGroups.days-checkboxGroup",
           "checkboxGroups.disabled-checkboxGroup",
           "checkboxGroups.readonly-checkboxGroup",
-          "#0.1.45.6"
+          "#0.1.48.6"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -7436,8 +7790,8 @@
         },
         "keysWithUndefined": "size include exclude disabled validator"
       },
-      "#0.1.45.6": {
-        "uid": "#0.1.45.6",
+      "#0.1.48.6": {
+        "uid": "#0.1.48.6",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -7482,7 +7836,7 @@
           "ratings.stay-rating",
           "ratings.disabled-rating",
           "ratings.readonly-rating",
-          "#0.1.46.5"
+          "#0.1.49.5"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -7551,8 +7905,8 @@
         "defaultValue": 4,
         "keysWithUndefined": "size include exclude disabled validator"
       },
-      "#0.1.46.5": {
-        "uid": "#0.1.46.5",
+      "#0.1.49.5": {
+        "uid": "#0.1.49.5",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -7701,7 +8055,7 @@
           "sliders.rating-slider",
           "sliders.disabled-slider",
           "sliders.readonly-slider",
-          "#0.1.48.6"
+          "#0.1.51.6"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -7800,8 +8154,8 @@
         "defaultValue": 70,
         "keysWithUndefined": "size include exclude disabled validator"
       },
-      "#0.1.48.6": {
-        "uid": "#0.1.48.6",
+      "#0.1.51.6": {
+        "uid": "#0.1.51.6",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -7859,7 +8213,7 @@
           "rangeSliders.age-rangeSlider",
           "rangeSliders.hours-rangeSlider",
           "rangeSliders.disabled-rangeSlider",
-          "#0.1.49.4"
+          "#0.1.52.4"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -7959,8 +8313,8 @@
         },
         "keysWithUndefined": "size include exclude readonly validator"
       },
-      "#0.1.49.4": {
-        "uid": "#0.1.49.4",
+      "#0.1.52.4": {
+        "uid": "#0.1.52.4",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -8020,7 +8374,7 @@
           "otp.short-otp",
           "otp.disabled-otp",
           "otp.readonly-otp",
-          "#0.1.50.5"
+          "#0.1.53.5"
         ],
         "keysWithUndefined": "size include exclude"
       },
@@ -8102,8 +8456,8 @@
         "defaultValue": "482913",
         "keysWithUndefined": "size include exclude disabled validator"
       },
-      "#0.1.50.5": {
-        "uid": "#0.1.50.5",
+      "#0.1.53.5": {
+        "uid": "#0.1.53.5",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -8547,7 +8901,7 @@
         "type": "grid",
         "kind": "layout",
         "children": [
-          "#0.1.52.0",
+          "#0.1.55.0",
           "fileUploads.pdfOnly-fileUpload",
           "fileUploads.preloaded-fileUpload",
           "fileUploads.images-multiFileUpload",
@@ -8557,8 +8911,8 @@
         ],
         "keysWithUndefined": "size include exclude"
       },
-      "#0.1.52.0": {
-        "uid": "#0.1.52.0",
+      "#0.1.55.0": {
+        "uid": "#0.1.55.0",
         "type": "grid",
         "kind": "layout",
         "props": {
@@ -9322,7 +9676,7 @@
           "addLabel": "Add new developer",
           "removeLabel": "Delete",
           "template": {
-            "rowTemplateUid": "#0.1.56.0.t"
+            "rowTemplateUid": "#0.1.59.0.t"
           }
         },
         "keysWithUndefined": "size include exclude disabled readonly defaultValue"
@@ -9466,14 +9820,14 @@
         "type": "grid",
         "kind": "layout",
         "children": [
-          "#0.1.58.0",
+          "#0.1.61.0",
           "clientName-textinput",
           "registerMode-toggle"
         ],
         "keysWithUndefined": "size include exclude"
       },
-      "#0.1.58.0": {
-        "uid": "#0.1.58.0",
+      "#0.1.61.0": {
+        "uid": "#0.1.61.0",
         "type": "heading",
         "kind": "display",
         "props": {
@@ -9914,6 +10268,8 @@
         "shoppingCart.shippingState": [
           "required"
         ],
+        "sidebar.notes": null,
+        "sidebar.search": null,
         "sliders.bass": null,
         "sliders.brightness": null,
         "sliders.disabled": null,
@@ -10251,6 +10607,8 @@
         "shoppingCart.lastName": true,
         "shoppingCart.shippingAddress": true,
         "shoppingCart.shippingState": true,
+        "sidebar.notes": true,
+        "sidebar.search": true,
         "sliders.bass": true,
         "sliders.brightness": true,
         "sliders.disabled": true,
@@ -10547,6 +10905,10 @@
         "q2": "[undefined]",
         "q3": "[undefined]",
         "q4": "[undefined]"
+      },
+      "sidebar": {
+        "search": "[undefined]",
+        "notes": "[undefined]"
       },
       "textinput": "[undefined]",
       "textinputDisabled": "[undefined]",
@@ -11287,8 +11649,15 @@
         "menuIconOnly",
         "menuTop",
         "menuDisabled",
+        "tabBreadcrumb",
+        "breadcrumbOrder",
+        "breadcrumbNamed",
+        "breadcrumbDisabled",
+        "tabMenu",
+        "menuVertical",
+        "menuHorizontal",
         "tabMarkdownText",
-        "#0.1.9.0",
+        "#0.1.11.0",
         "tabAccordion",
         "section1",
         "shoppingCart.firstName-textinput",
@@ -11300,35 +11669,40 @@
         "shoppingCart.billingAddress-textinput",
         "shoppingCart.billingState-textinput",
         "tabGrid",
-        "#0.1.11.0",
-        "#0.1.11.1",
+        "#0.1.13.0",
+        "#0.1.13.1",
         "listName-textinput",
         "listOwner-textinput",
         "cb1-checkbox",
         "tg1-toggle",
-        "#0.1.11.2",
+        "#0.1.13.2",
         "gridSearch-textinput",
-        "#0.1.11.2.1",
-        "#0.1.11.3",
+        "#0.1.13.2.1",
+        "#0.1.13.3",
         "gridReport-textinput",
         "gridPeriod-radiogroup",
-        "#0.1.11.4",
-        "#0.1.11.5",
+        "#0.1.13.4",
+        "#0.1.13.5",
         "address.street-textinput",
         "address.number-textinput",
         "address.city-textinput",
         "address.state-textinput",
         "address.postcode-textinput",
-        "#0.1.11.6",
-        "#0.1.11.7",
+        "#0.1.13.6",
+        "#0.1.13.7",
         "quarters.q1-number",
         "quarters.q2-number",
         "quarters.q3-number",
         "quarters.q4-number",
-        "#0.1.11.8",
-        "#0.1.11.9",
-        "#0.1.11.9.0",
-        "#0.1.11.9.1",
+        "#0.1.13.8",
+        "#0.1.13.9",
+        "#0.1.13.9.0",
+        "#0.1.13.9.1",
+        "tabSidebar",
+        "sidebarMenu",
+        "sidebarMain",
+        "sidebarSearch",
+        "sidebarNotes",
         "tabTextinput",
         "textinput-textinput",
         "textinputDisabled-textinput",
@@ -11447,7 +11821,7 @@
         "rangeDatePickerReadonly-rangeDatePicker",
         "rangeDatePickerValidation-rangeDatePicker",
         "rangeDatePickerDisabledRanges-rangeDatePicker",
-        "#0.1.27.7",
+        "#0.1.30.7",
         "rangeDatePickerDestination-textinput",
         "rangeDatePickerTrip-rangeDatePicker",
         "tabRangeTimeInput",
@@ -11464,7 +11838,7 @@
         "rangeTimePickerDisabled-rangeTimePicker",
         "rangeTimePickerReadonly-rangeTimePicker",
         "rangeTimePickerValidation-rangeTimePicker",
-        "#0.1.29.6",
+        "#0.1.32.6",
         "rangeTimePickerShiftNote-textinput",
         "rangeTimePickerShift-rangeTimePicker",
         "tabRangeDateTimeCalendar",
@@ -11488,7 +11862,7 @@
         "rangeDateTimePickerReadonly-rangeDateTimePicker",
         "rangeDateTimePickerValidation-rangeDateTimePicker",
         "rangeDateTimePickerConstraints-rangeDateTimePicker",
-        "#0.1.32.6",
+        "#0.1.35.6",
         "rangeDateTimePickerRentalNote-textinput",
         "rangeDateTimePickerRental-rangeDateTimePicker",
         "tabMultiRangeCalendar",
@@ -11580,7 +11954,7 @@
         "checkboxGroups.days-checkboxGroup",
         "checkboxGroups.disabled-checkboxGroup",
         "checkboxGroups.readonly-checkboxGroup",
-        "#0.1.45.6",
+        "#0.1.48.6",
         "checkboxGroups.name-textinput",
         "checkboxGroups.contact-checkboxGroup",
         "tabRating",
@@ -11589,7 +11963,7 @@
         "ratings.stay-rating",
         "ratings.disabled-rating",
         "ratings.readonly-rating",
-        "#0.1.46.5",
+        "#0.1.49.5",
         "ratings.reviewer-textinput",
         "ratings.overall-rating",
         "tabSelect",
@@ -11606,7 +11980,7 @@
         "sliders.rating-slider",
         "sliders.disabled-slider",
         "sliders.readonly-slider",
-        "#0.1.48.6",
+        "#0.1.51.6",
         "sliders.speaker-textinput",
         "sliders.bass-slider",
         "tabRangeSlider",
@@ -11614,7 +11988,7 @@
         "rangeSliders.age-rangeSlider",
         "rangeSliders.hours-rangeSlider",
         "rangeSliders.disabled-rangeSlider",
-        "#0.1.49.4",
+        "#0.1.52.4",
         "rangeSliders.city-textinput",
         "rangeSliders.budget-rangeSlider",
         "tabOtp",
@@ -11623,7 +11997,7 @@
         "otp.short-otp",
         "otp.disabled-otp",
         "otp.readonly-otp",
-        "#0.1.50.5",
+        "#0.1.53.5",
         "otp.email-textinput",
         "otp.emailCode-otp",
         "tabDropdown",
@@ -11637,7 +12011,7 @@
         "dropdowns.invalidValueList-dropdown",
         "dropdowns.customItemRenderer-dropdown",
         "tabFileUpload",
-        "#0.1.52.0",
+        "#0.1.55.0",
         "fileUploads.title-textinput",
         "fileUploads.basic-fileUpload",
         "fileUploads.pdfOnly-fileUpload",
@@ -11668,19 +12042,19 @@
         "multiLists.disabled-multiList",
         "tabRepeater",
         "repeaters.users-repeater",
-        "#0.1.56.0.t[0]",
+        "#0.1.59.0.t[0]",
         "repeaters.users.items.firstName-textinput[0]",
         "repeaters.users.items.lastName-textinput[0]",
         "userRowMenu[0]",
-        "#0.1.56.0.t[1]",
+        "#0.1.59.0.t[1]",
         "repeaters.users.items.firstName-textinput[1]",
         "repeaters.users.items.lastName-textinput[1]",
         "userRowMenu[1]",
-        "#0.1.56.0.t[2]",
+        "#0.1.59.0.t[2]",
         "repeaters.users.items.firstName-textinput[2]",
         "repeaters.users.items.lastName-textinput[2]",
         "userRowMenu[2]",
-        "#0.1.56.0.t[3]",
+        "#0.1.59.0.t[3]",
         "repeaters.users.items.firstName-textinput[3]",
         "repeaters.users.items.lastName-textinput[3]",
         "userRowMenu[3]",
@@ -11695,25 +12069,25 @@
         "tags.disabled-tags",
         "tags.readonly-tags",
         "tabCustomWidget",
-        "#0.1.58.0",
+        "#0.1.61.0",
         "clientName-textinput",
         "registerMode-toggle",
         "submit-button"
       ],
       "changedEntries": {
-        "#0.1.56.0.t[0]": "layout grid",
+        "#0.1.59.0.t[0]": "layout grid",
         "repeaters.users.items.firstName-textinput[0]": "input textinput repeaters.users.0.firstName",
         "repeaters.users.items.lastName-textinput[0]": "input textinput repeaters.users.0.lastName",
         "userRowMenu[0]": "action menuButton",
-        "#0.1.56.0.t[1]": "layout grid",
+        "#0.1.59.0.t[1]": "layout grid",
         "repeaters.users.items.firstName-textinput[1]": "input textinput repeaters.users.1.firstName",
         "repeaters.users.items.lastName-textinput[1]": "input textinput repeaters.users.1.lastName",
         "userRowMenu[1]": "action menuButton",
-        "#0.1.56.0.t[2]": "layout grid",
+        "#0.1.59.0.t[2]": "layout grid",
         "repeaters.users.items.firstName-textinput[2]": "input textinput repeaters.users.2.firstName",
         "repeaters.users.items.lastName-textinput[2]": "input textinput repeaters.users.2.lastName",
         "userRowMenu[2]": "action menuButton",
-        "#0.1.56.0.t[3]": "layout grid",
+        "#0.1.59.0.t[3]": "layout grid",
         "repeaters.users.items.firstName-textinput[3]": "input textinput repeaters.users.3.firstName",
         "repeaters.users.items.lastName-textinput[3]": "input textinput repeaters.users.3.lastName",
         "userRowMenu[3]": "action menuButton"
@@ -11721,19 +12095,19 @@
     },
     "repeaterItemScopes": {
       "allEntries": {
-        "#0.1.56.0.t[0]": {
+        "#0.1.59.0.t[0]": {
           "itemPath": "repeaters.users.0",
           "index": 0
         },
-        "#0.1.56.0.t[1]": {
+        "#0.1.59.0.t[1]": {
           "itemPath": "repeaters.users.1",
           "index": 1
         },
-        "#0.1.56.0.t[2]": {
+        "#0.1.59.0.t[2]": {
           "itemPath": "repeaters.users.2",
           "index": 2
         },
-        "#0.1.56.0.t[3]": {
+        "#0.1.59.0.t[3]": {
           "itemPath": "repeaters.users.3",
           "index": 3
         },
@@ -11789,28 +12163,28 @@
     },
     "repeaterRows": {
       "allEntries": {
-        "#0.1.56.0.t[0]": [
+        "#0.1.59.0.t[0]": [
           {
             "declaredItemPath": "repeaters.users.items",
             "itemPath": "repeaters.users.0",
             "index": 0
           }
         ],
-        "#0.1.56.0.t[1]": [
+        "#0.1.59.0.t[1]": [
           {
             "declaredItemPath": "repeaters.users.items",
             "itemPath": "repeaters.users.1",
             "index": 1
           }
         ],
-        "#0.1.56.0.t[2]": [
+        "#0.1.59.0.t[2]": [
           {
             "declaredItemPath": "repeaters.users.items",
             "itemPath": "repeaters.users.2",
             "index": 2
           }
         ],
-        "#0.1.56.0.t[3]": [
+        "#0.1.59.0.t[3]": [
           {
             "declaredItemPath": "repeaters.users.items",
             "itemPath": "repeaters.users.3",
@@ -11905,8 +12279,8 @@
     },
     "calculatedWidgets": {
       "changedEntries": {
-        "#0.1.56.0.t[0]": {
-          "uid": "#0.1.56.0.t[0]",
+        "#0.1.59.0.t[0]": {
+          "uid": "#0.1.59.0.t[0]",
           "type": "grid",
           "kind": "layout",
           "props": {
@@ -11970,8 +12344,8 @@
           },
           "keysWithUndefined": "size include exclude label disabled actionType"
         },
-        "#0.1.56.0.t[1]": {
-          "uid": "#0.1.56.0.t[1]",
+        "#0.1.59.0.t[1]": {
+          "uid": "#0.1.59.0.t[1]",
           "type": "grid",
           "kind": "layout",
           "props": {
@@ -12035,8 +12409,8 @@
           },
           "keysWithUndefined": "size include exclude label disabled actionType"
         },
-        "#0.1.56.0.t[2]": {
-          "uid": "#0.1.56.0.t[2]",
+        "#0.1.59.0.t[2]": {
+          "uid": "#0.1.59.0.t[2]",
           "type": "grid",
           "kind": "layout",
           "props": {
@@ -12100,8 +12474,8 @@
           },
           "keysWithUndefined": "size include exclude label disabled actionType"
         },
-        "#0.1.56.0.t[3]": {
-          "uid": "#0.1.56.0.t[3]",
+        "#0.1.59.0.t[3]": {
+          "uid": "#0.1.59.0.t[3]",
           "type": "grid",
           "kind": "layout",
           "props": {
@@ -12219,6 +12593,10 @@
         "q2": "[undefined]",
         "q3": "[undefined]",
         "q4": "[undefined]"
+      },
+      "sidebar": {
+        "search": "[undefined]",
+        "notes": "[undefined]"
       },
       "textinput": "[undefined]",
       "textinputDisabled": "[undefined]",
@@ -12944,19 +13322,19 @@
     },
     "resolvedSources": {
       "removedKeys": [
-        "#0.1.56.0.t[0]",
+        "#0.1.59.0.t[0]",
         "repeaters.users.items.firstName-textinput[0]",
         "repeaters.users.items.lastName-textinput[0]",
         "userRowMenu[0]",
-        "#0.1.56.0.t[1]",
+        "#0.1.59.0.t[1]",
         "repeaters.users.items.firstName-textinput[1]",
         "repeaters.users.items.lastName-textinput[1]",
         "userRowMenu[1]",
-        "#0.1.56.0.t[2]",
+        "#0.1.59.0.t[2]",
         "repeaters.users.items.firstName-textinput[2]",
         "repeaters.users.items.lastName-textinput[2]",
         "userRowMenu[2]",
-        "#0.1.56.0.t[3]",
+        "#0.1.59.0.t[3]",
         "repeaters.users.items.firstName-textinput[3]",
         "repeaters.users.items.lastName-textinput[3]",
         "userRowMenu[3]"
@@ -12970,19 +13348,19 @@
     },
     "calculatedWidgets": {
       "removedKeys": [
-        "#0.1.56.0.t[0]",
+        "#0.1.59.0.t[0]",
         "repeaters.users.items.firstName-textinput[0]",
         "repeaters.users.items.lastName-textinput[0]",
         "userRowMenu[0]",
-        "#0.1.56.0.t[1]",
+        "#0.1.59.0.t[1]",
         "repeaters.users.items.firstName-textinput[1]",
         "repeaters.users.items.lastName-textinput[1]",
         "userRowMenu[1]",
-        "#0.1.56.0.t[2]",
+        "#0.1.59.0.t[2]",
         "repeaters.users.items.firstName-textinput[2]",
         "repeaters.users.items.lastName-textinput[2]",
         "userRowMenu[2]",
-        "#0.1.56.0.t[3]",
+        "#0.1.59.0.t[3]",
         "repeaters.users.items.firstName-textinput[3]",
         "repeaters.users.items.lastName-textinput[3]",
         "userRowMenu[3]"

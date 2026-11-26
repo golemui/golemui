@@ -73,6 +73,23 @@ describe('server rendering standalone elements in plain node', () => {
 
   it("keeps the app's children of the elements that enhance them", () => {
     expect(markup).toMatch(/<gui-alert[^>]*>Yearly billing saves two months.<\/gui-alert>/);
+    // A menu, with its dropdown closed, its group closed, and nothing the element adds.
+    expect(markup).toMatch(
+      /<gui-menu\s+orientation="horizontal"\s+defer-hydration>\s*<nav aria-label="Account">\s*<ul>/,
+    );
+    expect(markup).toMatch(/<gui-popover[^>]*>\s*<ul id="account-team" popover>/);
+    expect(markup).toMatch(/<ul id="account-roles" hidden>/);
+    // A sidebar with both regions and its toggle, and no `collapsed`: only a browser knows the width.
+    expect(markup).toMatch(
+      /<gui-sidebar\s+side-size="sm"\s+defer-hydration>\s*<button[^>]*class="gui-sidebar__toggle"/,
+    );
+    expect(markup).not.toMatch(/<gui-sidebar[^>]*collapsed/);
+    // The side region once, as a closed popover: the stylesheet shows it as the column.
+    expect(markup).toMatch(/<aside class="gui-sidebar__side" id="account-nav" popover/);
+    // A breadcrumb, with its trail and nothing the element adds.
+    expect(markup).toMatch(
+      /<gui-breadcrumb defer-hydration>\s*<nav aria-label="Breadcrumb">\s*<ol>\s*<li><button/,
+    );
     expect(markup).toMatch(/<gui-badge[^>]*variant="success"[^>]*>Active<\/gui-badge>/);
     expect(markup).toMatch(/<gui-tab [^>]*>Billing<\/gui-tab>/);
     expect(markup).toMatch(/<gui-tab-panel[^>]*>\s*<gui-select/);
@@ -95,7 +112,7 @@ describe('server rendering standalone elements in plain node', () => {
 
   it('holds every GolemUI element inert through defer-hydration', () => {
     const tags = [...markup.matchAll(/<(gui-[a-z-]+)([^>]*)>/g)];
-    expect(tags.length).toBe(29);
+    expect(tags.length).toBe(33);
     for (const [, tag, attributes] of tags) {
       expect(attributes, tag).toContain('defer-hydration');
     }

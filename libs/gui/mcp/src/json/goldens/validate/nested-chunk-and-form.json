@@ -187,7 +187,7 @@
       "errors": [
         {
           "path": "/form/0/props/template",
-          "message": "A repeater template must be a built-in layout widget (`accordion`, `grid`, `tabs`), got `textinput` at `/form/0/props/template`",
+          "message": "A repeater template must be a built-in layout widget (`accordion`, `grid`, `sidebar`, `tabs`), got `textinput` at `/form/0/props/template`",
           "suggestion": "Wrap the widget in a layout, for example `{ \"kind\": \"layout\", \"type\": \"grid\", \"children\": [<the widget>] }`.",
           "keyword": "position",
           "params": {
@@ -196,6 +196,7 @@
             "allowedTypes": [
               "accordion",
               "grid",
+              "sidebar",
               "tabs"
             ]
           }

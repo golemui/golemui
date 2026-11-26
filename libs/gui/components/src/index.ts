@@ -4,6 +4,7 @@ export { GuiAccordion, GuiAccordionEvents } from './lib/components/accordion';
 export { GuiAccordionItem, GuiAccordionItemEvents } from './lib/components/accordion-item';
 export { GuiAlert, type GuiAlertVariant } from './lib/components/alert';
 export { GuiBadge, type GuiBadgeVariant } from './lib/components/badge';
+export { GuiBreadcrumb, GuiBreadcrumbEvents } from './lib/components/breadcrumb';
 export { GuiButton } from './lib/components/button';
 export { GuiCalendar, GuiCalendarEvents } from './lib/components/calendar';
 export type { CalendarDay } from './lib/components/calendar';
@@ -43,6 +44,14 @@ export { matchesAccept } from './lib/utils/file-upload';
 export { GuiMarkdown, GuiMarkdownEvents } from './lib/components/markdown';
 export type { GuiMarkdownProps } from './lib/components/markdown';
 export { GuiMarkdownText } from './lib/components/markdown-text';
+export { GuiMenu, GuiMenuEvents } from './lib/components/menu';
+export { GuiSidebar, GuiSidebarEvents } from './lib/components/sidebar';
+export type {
+  GuiCollapseEventDetail,
+  GuiSidebarSide,
+  GuiSidebarSideSize,
+} from './lib/components/sidebar';
+export type { GuiMenuOrientation, GuiMenuToggleEventDetail } from './lib/components/menu';
 export { GuiMenuButton, GuiMenuButtonEvents } from './lib/components/menu-button';
 export { GuiMultiDropdown, GuiMultiDropdownEvents } from './lib/components/multi-dropdown';
 export { GuiMultiFileUpload, GuiMultiFileUploadEvents } from './lib/components/multi-file-upload';

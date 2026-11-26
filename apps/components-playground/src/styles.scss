@@ -97,6 +97,11 @@ code {
   max-inline-size: 32rem;
 }
 
+// A column narrower than its content, to show how an element fits.
+.pg-narrow {
+  max-inline-size: 16rem;
+}
+
 // Columns that wrap on a narrow screen.
 .pg-columns {
   display: grid;

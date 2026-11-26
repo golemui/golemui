@@ -47,7 +47,7 @@ export const inputWidgets = [
   'timePicker',
   'toggle',
 ] as const;
-export const layoutWidgets = ['accordion', 'grid', 'tabs'] as const;
+export const layoutWidgets = ['accordion', 'grid', 'sidebar', 'tabs'] as const;
 export const displayWidgets = [
   'alert',
   'badge',
@@ -58,7 +58,7 @@ export const displayWidgets = [
   'table',
   'typography',
 ] as const;
-export const actionWidgets = ['button', 'menuButton'] as const;
+export const actionWidgets = ['button', 'menuButton', 'breadcrumb', 'menu'] as const;
 
 export const golemWidgets = [
   ...inputWidgets,

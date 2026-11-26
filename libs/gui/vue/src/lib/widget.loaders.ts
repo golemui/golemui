@@ -6,6 +6,8 @@ export const widgetLoaders: WidgetLoaders<Component<WithWidget>, GolemWidget> = 
   // INTERACTIVE
   button: async () => (await import('./components/Button.vue')).default,
   menuButton: async () => (await import('./components/MenuButton.vue')).default,
+  breadcrumb: async () => (await import('./components/Breadcrumb.vue')).default,
+  menu: async () => (await import('./components/Menu.vue')).default,
 
   // CONTROLS
   calendar: async () => (await import('./components/Calendar.vue')).default,
@@ -64,6 +66,7 @@ export const widgetLoaders: WidgetLoaders<Component<WithWidget>, GolemWidget> = 
 
   // LAYOUTS
   grid: async () => (await import('./components/Grid.vue')).default,
+  sidebar: async () => (await import('./components/Sidebar.vue')).default,
   tabs: async () => (await import('./components/Tabs.vue')).default,
   accordion: async () => (await import('./components/Accordion.vue')).default,
 

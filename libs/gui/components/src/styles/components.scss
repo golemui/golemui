@@ -59,11 +59,16 @@
 
   // Layout Widgets
   @include meta.load-css('grid');
+  @include meta.load-css('sidebar');
   @include meta.load-css('tabs');
   @include meta.load-css('accordion');
 
   // Action Widgets
   @include meta.load-css('button');
+
+  // Navigation
+  @include meta.load-css('breadcrumb');
+  @include meta.load-css('menu');
 
   // Display Widgets
   @include meta.load-css('alert');
