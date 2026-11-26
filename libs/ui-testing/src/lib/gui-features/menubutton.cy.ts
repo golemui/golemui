@@ -158,6 +158,18 @@ export const runMenuButtonComponentTests = (baseMountFn: MountComponentFn) => {
       expectNoDuplicateIds();
     });
 
+    it('names an icon-only button, and the menu after it, by its tooltip when it has no ariaLabel', () => {
+      mountMenu({ label: undefined }, { icon: 'more_vert', tooltip: 'Row actions' });
+
+      button()
+        .should('have.attr', 'aria-label', 'Row actions')
+        .and('not.have.attr', 'aria-describedby');
+      panel().should('have.attr', 'aria-labelledby', testDomId(UID));
+      cy.get('gui-tooltip').should(([element]) =>
+        expect((element as HTMLElement & { type: string }).type).to.equal('label'),
+      );
+    });
+
     it('gives each repeater row its own menu', () => {
       const formEvent = cy.stub().as('formEvent');
       mountFn({

@@ -1,17 +1,33 @@
 import { describe, expect, it } from 'vitest';
-import { tooltipId, tooltipText } from './tooltip';
+import { widgetTooltip } from './tooltip';
 
-describe('tooltip helpers', () => {
-  it('builds the id of the tooltip from the id of its button', () => {
-    expect(tooltipId('checkout-delete')).toBe('checkout-delete_tooltip');
-    expect(tooltipId('checkout-rowActions[2]')).toBe('checkout-rowActions[2]_tooltip');
+describe('widgetTooltip', () => {
+  it('describes a button that has a label or an ariaLabel', () => {
+    expect(widgetTooltip('checkout-delete', 'Deletes the order', 'Delete', undefined)).toEqual({
+      text: 'Deletes the order',
+      id: 'checkout-delete_tooltip',
+      type: 'description',
+    });
+    expect(widgetTooltip('checkout-delete', 'Deletes the order', '', 'Delete')?.type).toBe(
+      'description',
+    );
   });
 
-  it('shows a tooltip only for a text', () => {
-    expect(tooltipText('Delete the order')).toBe('Delete the order');
-    expect(tooltipText('')).toBeUndefined();
-    expect(tooltipText('  ')).toBeUndefined();
-    expect(tooltipText(undefined)).toBeUndefined();
-    expect(tooltipText({ key: 'untranslated' })).toBeUndefined();
+  it('names a button that has neither', () => {
+    expect(widgetTooltip('checkout-rowActions[2]', 'Row actions', undefined, '')).toEqual({
+      text: 'Row actions',
+      id: 'checkout-rowActions[2]_tooltip',
+      type: 'label',
+    });
+    expect(widgetTooltip('checkout-close', 'Close', '', '  ')?.type).toBe('label');
+  });
+
+  it('shows no tooltip without a text', () => {
+    expect(widgetTooltip('checkout-close', '', undefined, undefined)).toBeUndefined();
+    expect(widgetTooltip('checkout-close', '  ', 'Close', undefined)).toBeUndefined();
+    expect(widgetTooltip('checkout-close', undefined, 'Close', undefined)).toBeUndefined();
+    expect(
+      widgetTooltip('checkout-close', { key: 'untranslated' }, 'Close', undefined),
+    ).toBeUndefined();
   });
 });

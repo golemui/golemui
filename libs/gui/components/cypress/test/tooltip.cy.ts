@@ -86,6 +86,26 @@ describe('gui-tooltip', () => {
       cy.get('@warn').should('have.been.calledWithMatch', /<gui-tooltip> found no element/);
     });
 
+    it('adds nothing to the description of a target it labels, and follows a change of type', () => {
+      cy.mount(
+        html`<p id="hint">Ctrl+S</p>
+          <button type="button" id="save" aria-label="Save" aria-describedby="hint">
+            <span aria-hidden="true">💾</span>
+          </button>
+          <gui-tooltip id="save-tip" for="save" type="label" open-delay="40">Save</gui-tooltip>`,
+      );
+
+      tooltip().should('have.attr', 'role', 'tooltip');
+      target().should('have.attr', 'aria-describedby', 'hint');
+      hover();
+      isOpen(true);
+
+      tooltip().invoke('attr', 'type', 'description');
+      target().should('have.attr', 'aria-describedby', 'hint save-tip');
+      tooltip().invoke('attr', 'type', 'label');
+      target().should('have.attr', 'aria-describedby', 'hint');
+    });
+
     it('moves to another target when its for attribute changes', () => {
       cy.mount(html`${save()}<button type="button" id="publish">Publish</button>`);
 

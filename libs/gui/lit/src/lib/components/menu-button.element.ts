@@ -11,8 +11,7 @@ import {
   menuButtonAriaLabel,
   menuButtonClasses,
   menuButtonPanelId,
-  tooltipId,
-  tooltipText,
+  widgetTooltip,
   type MenuButtonProps,
 } from '@golemui/gui-shared/internals';
 import type { GuiActionEventDetail } from '@golemui/gui-components';
@@ -60,8 +59,8 @@ export class MenuButtonElement extends LitElement implements WithWidget {
     const uid = this.widget.uid;
     const { domId } = this.adapter;
     const panelId = menuButtonPanelId(domId);
-    const tooltip = tooltipText(this.adapter.templateData.tooltip);
-    const tipId = tooltipId(domId);
+    const tooltip = widgetTooltip(domId, this.adapter.templateData.tooltip, label, ariaLabel);
+    const name = tooltip?.type === 'label' ? tooltip.text : ariaLabel;
     const iconPart = icon
       ? html`<span
           class="gui-widget-icon gui-button-icon ${icon}"
@@ -79,8 +78,8 @@ export class MenuButtonElement extends LitElement implements WithWidget {
           class=${menuButtonClasses({ variant, icon, iconPosition })}
           data-cy=${`${uid}_button`}
           popovertarget=${panelId}
-          aria-label=${menuButtonAriaLabel(label, ariaLabel) ?? nothing}
-          aria-describedby=${tooltip ? tipId : nothing}
+          aria-label=${menuButtonAriaLabel(label, name) ?? nothing}
+          aria-describedby=${tooltip?.type === 'description' ? tooltip.id : nothing}
           ?disabled=${disabled === true}
         >
           ${iconOnRight ? nothing : iconPart} ${label ? html`<span>${label}</span>` : nothing}
@@ -88,8 +87,13 @@ export class MenuButtonElement extends LitElement implements WithWidget {
         </button>
       </div>
       ${tooltip
-        ? html`<gui-tooltip id=${tipId} role="tooltip" popover="manual" for=${domId}
-            >${tooltip}</gui-tooltip
+        ? html`<gui-tooltip
+            id=${tooltip.id}
+            role="tooltip"
+            popover="manual"
+            for=${domId}
+            type=${tooltip.type}
+            >${tooltip.text}</gui-tooltip
           >`
         : nothing}
       <gui-menu-button

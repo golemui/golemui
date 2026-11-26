@@ -40,8 +40,8 @@ export type ButtonProps = {
   ariaLabel?: Localizable;
   /**
    * A short text shown next to the button while the pointer rests on it or it has keyboard
-   * focus, with `gui-tooltip`. It describes the button and doesn't name it: an icon-only button
-   * still needs `ariaLabel`.
+   * focus, with `gui-tooltip`. It describes the button; on a button with no label and no
+   * `ariaLabel`, such as an icon-only one, it is the button's name instead.
    */
   tooltip?: Localizable;
 };
@@ -79,8 +79,8 @@ export type MenuButtonProps = {
   ariaLabel?: Localizable;
   /**
    * A short text shown next to the button while the pointer rests on it or it has keyboard
-   * focus, with `gui-tooltip`. It describes the button and doesn't name it: an icon-only button
-   * still needs `ariaLabel`.
+   * focus, with `gui-tooltip`. It describes the button; on a button with no label and no
+   * `ariaLabel`, such as an icon-only one, it is the button's name instead.
    */
   tooltip?: Localizable;
 };

@@ -7,8 +7,8 @@
     [class]="menuButtonClasses(templateData)"
     [attr.data-cy]="widget.uid + '_button'"
     [attr.popovertarget]="panelId"
-    [attr.aria-label]="menuButtonAriaLabel(templateData.label, templateData.ariaLabel) ?? null"
-    [attr.aria-describedby]="tooltip() ? tipId : null"
+    [attr.aria-label]="menuButtonAriaLabel(templateData.label, ariaLabel()) ?? null"
+    [attr.aria-describedby]="tooltip()?.type === 'description' ? tooltip()?.id : null"
     [disabled]="templateData.disabled === true"
   >
     @if (templateData.icon && templateData.iconPosition !== 'right') {
@@ -33,11 +33,12 @@
 @if (tooltip(); as tooltip) {
   <gui-tooltip
     [attr.defer-hydration]="deferHydration"
-    [id]="tipId"
+    [id]="tooltip.id"
     role="tooltip"
     popover="manual"
     [attr.for]="adapter.domId"
-    >{{ tooltip }}</gui-tooltip
+    [type]="tooltip.type"
+    >{{ tooltip.text }}</gui-tooltip
   >
 }
 <gui-menu-button

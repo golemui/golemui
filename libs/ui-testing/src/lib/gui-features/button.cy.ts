@@ -88,6 +88,19 @@ export const runButtonComponentTests = (mountFn: MountComponentFn) => {
       cy.get('@warn').should('not.have.been.calledWithMatch', /<gui-tooltip>/);
     });
 
+    it('names a button with no label and no ariaLabel by its tooltip, which describes nothing', () => {
+      mountButton({ label: undefined }, { icon: 'close', tooltip: 'Close' });
+
+      button().should('have.attr', 'aria-label', 'Close');
+      button().should('not.have.attr', 'aria-describedby');
+      tooltip().should(([element]) =>
+        expect((element as HTMLElement & { type: string }).type).to.equal('label'),
+      );
+      hover();
+      tooltipIsOpen(true);
+      button().should('not.have.attr', 'aria-describedby');
+    });
+
     it('renders no tooltip and no description without one', () => {
       mountButton({}, { tooltip: '' });
 

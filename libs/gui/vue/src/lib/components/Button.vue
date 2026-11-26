@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ActionWidget, WithWidget } from '@golemui/core';
 import { useActionWidget } from '@golemui/vue';
-import { tooltipId, tooltipText, type ButtonProps } from '@golemui/gui-shared/internals';
+import { widgetTooltip, type ButtonProps } from '@golemui/gui-shared/internals';
 import { computed } from 'vue';
 import '@golemui/gui-components/button';
 import '@golemui/gui-components/tooltip';
@@ -15,8 +15,17 @@ const { uid, domId, formName, templateData, invalid, onClick } =
 // to an enum prop (which Lit's String converter would coerce to '', overriding the default).
 const variant = computed(() => templateData.value.variant || 'filled');
 const iconPosition = computed(() => templateData.value.iconPosition || 'left');
-const tooltip = computed(() => tooltipText(templateData.value.tooltip));
-const tipId = tooltipId(domId);
+const tooltip = computed(() =>
+  widgetTooltip(
+    domId,
+    templateData.value.tooltip,
+    templateData.value.label,
+    templateData.value.ariaLabel,
+  ),
+);
+const ariaLabel = computed(() =>
+  tooltip.value?.type === 'label' ? tooltip.value.text : templateData.value.ariaLabel,
+);
 </script>
 
 <template>
@@ -33,12 +42,19 @@ const tipId = tooltipId(domId);
       :variant.prop="variant"
       :icon="templateData.icon"
       :iconPosition.prop="iconPosition"
-      :buttonAriaLabel="templateData.ariaLabel"
-      :aria-describedby="tooltip ? tipId : undefined"
+      :buttonAriaLabel="ariaLabel"
+      :aria-describedby="tooltip?.type === 'description' ? tooltip.id : undefined"
       @click="onClick"
     />
-    <gui-tooltip v-if="tooltip" :id="tipId" role="tooltip" popover="manual" :for="domId">{{
-      tooltip
-    }}</gui-tooltip>
+    <gui-tooltip
+      v-if="tooltip"
+      :id="tooltip.id"
+      role="tooltip"
+      popover="manual"
+      :for="domId"
+      :type.prop="tooltip.type"
+    >
+      {{ tooltip.text }}
+    </gui-tooltip>
   </div>
 </template>
