@@ -17,6 +17,7 @@ const pages = [
   'popover',
   'progress',
   'rating',
+  'sidebar',
   'slider',
   'spinner',
   'table',

@@ -16,6 +16,7 @@ import '../components/range-time-picker';
 import '../components/range-date-time-picker';
 import '../components/rating';
 import '../components/select';
+import '../components/sidebar';
 import '../components/slider';
 import '../components/spinner';
 import '../components/tab';
@@ -30,7 +31,7 @@ import '../components/tooltip';
 /**
  * A page of elements shared by the server render and the resume specs: elements that render
  * their own content (the inputs) and elements whose children are the app's (the breadcrumb, the
- * navigation menu, the alert, the tabs, the popover, the tooltip, the dialog, the menu and the table), one nested in the other, and the toaster,
+ * navigation menu, the sidebar, the alert, the tabs, the popover, the tooltip, the dialog, the menu and the table), one nested in the other, and the toaster,
  * which renders nothing until a toast arrives.
  *
  * Every value is an attribute: the client upgrades the elements from the HTML, so a property
@@ -188,5 +189,19 @@ export const serverTemplate = () =>
         </tbody>
       </table>
     </gui-table>
+    <gui-sidebar side-size="sm">
+      <button
+        type="button"
+        class="gui-sidebar__toggle"
+        commandfor="account-drawer"
+        command="show-modal"
+        aria-label="Open menu"
+      ></button>
+      <aside class="gui-sidebar__side" aria-label="Account"><a href="#plans">Plans</a></aside>
+      <div class="gui-sidebar__main"><p>Seats and billing</p></div>
+    </gui-sidebar>
+    <gui-dialog placement="start">
+      <dialog id="account-drawer" aria-label="Account"><a href="#plans">Plans</a></dialog>
+    </gui-dialog>
     <gui-toaster placement="top-end"></gui-toaster>
   </form>`;

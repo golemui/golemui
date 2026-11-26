@@ -193,6 +193,16 @@ describe('resuming server-rendered standalone elements', () => {
     expect(toggles).toEqual([{ open: true, value: 'roles' }]);
   });
 
+  it('leaves a sidebar as the server sent it', async () => {
+    const sidebar = () => document.querySelector('gui-sidebar') as HTMLElement;
+    const before = sidebar().outerHTML;
+    resumeServerRendered();
+    await settle();
+
+    // Only the hold goes: jsdom lays nothing out, so the layout stays the wide one.
+    expect(sidebar().outerHTML).toBe(before.replace(' defer-hydration=""', ''));
+  });
+
   it('leaves a table that fits as the server sent it', async () => {
     const table = () => document.querySelector('gui-table') as HTMLElement;
     const before = table().outerHTML;

@@ -363,6 +363,11 @@
       "import": "./lib/components/select.js",
       "require": "./lib/components/select.umd.cjs"
     },
+    "./sidebar": {
+      "types": "./lib/components/sidebar.d.ts",
+      "import": "./lib/components/sidebar.js",
+      "require": "./lib/components/sidebar.umd.cjs"
+    },
     "./tab": {
       "types": "./lib/components/tab.d.ts",
       "import": "./lib/components/tab.js",

@@ -292,6 +292,16 @@ export const elements: ElementCase[] = [
   },
   { tag: 'gui-slider', props: { label: 'Volume' }, form: { property: 'value', sample: 40 } },
   { tag: 'gui-spinner', props: { label: 'Loading results' } },
+  // Its regions are the app's children: give it a toggle, a named side region and a main one, as
+  // sidebar.cy.ts does.
+  {
+    tag: 'gui-sidebar',
+    props: {},
+    setup: (sidebar) =>
+      (sidebar.innerHTML =
+        '<button type="button" class="gui-sidebar__toggle" aria-label="Open menu"></button><aside class="gui-sidebar__side" aria-label="Main"><a href="#orders">Orders</a></aside><div class="gui-sidebar__main"><p>Orders this week</p></div>'),
+    hostRendersChildren: true,
+  },
   {
     tag: 'gui-select',
     props: { label: 'Color', options },

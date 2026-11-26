@@ -1,0 +1,111 @@
+// `gui-sidebar`: the app's toggle, side region and main region, laid out by the element's own
+// width. The element is its own container: its children switch between two columns and one.
+gui-sidebar {
+  container: gui-sidebar / inline-size;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+
+  > .gui-sidebar__side {
+    grid-column: 1;
+    grid-row: 1;
+    // The size `side-size` picks, or the app's own.
+    inline-size: var(--gui-sidebar-side-size, 16rem);
+    box-sizing: border-box;
+    margin-inline-end: var(--gui-sidebar-gap, var(--gui-space-4));
+    // In view while the main region scrolls, and scrolls on its own when it is taller.
+    position: sticky;
+    inset-block-start: 0;
+    max-block-size: 100dvh;
+    overflow: auto;
+  }
+
+  > .gui-sidebar__main {
+    grid-column: 2;
+    grid-row: 1;
+    min-inline-size: 0;
+  }
+
+  > .gui-sidebar__toggle {
+    display: none;
+  }
+
+  &[side='end'] {
+    grid-template-columns: minmax(0, 1fr) auto;
+
+    > .gui-sidebar__side {
+      grid-column: 2;
+      margin-inline: var(--gui-sidebar-gap, var(--gui-space-4)) 0;
+    }
+
+    > .gui-sidebar__main {
+      grid-column: 1;
+    }
+  }
+
+  &[side-size='sm'] > .gui-sidebar__side {
+    --gui-sidebar-side-size: 12rem;
+  }
+
+  &[side-size='lg'] > .gui-sidebar__side {
+    --gui-sidebar-side-size: 20rem;
+  }
+}
+
+// Narrow: the side region goes into the app's drawer, and the toggle that opens it shows above
+// the main region. The element reads `--gui-sidebar-collapsed` to know, so the threshold lives
+// here only.
+@container gui-sidebar (max-width: 767.98px) {
+  gui-sidebar > * {
+    --gui-sidebar-collapsed: 1;
+  }
+
+  gui-sidebar > .gui-sidebar__side {
+    display: none;
+  }
+
+  gui-sidebar > .gui-sidebar__main {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  gui-sidebar > .gui-sidebar__toggle {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    justify-self: start;
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--gui-widget-size);
+    block-size: var(--gui-widget-size);
+    margin-block-end: var(--gui-space-2);
+    padding: 0;
+    border: 1px solid var(--gui-border-default);
+    border-radius: var(--gui-radius-md);
+    background: transparent;
+    color: var(--gui-text-default);
+    cursor: pointer;
+
+    // Three bars in the text colour: no image, so a strict CSP allows it.
+    &::before {
+      content: '';
+      inline-size: 18px;
+      block-size: 14px;
+      background:
+        linear-gradient(currentColor 0 0) top / 100% 2px no-repeat,
+        linear-gradient(currentColor 0 0) center / 100% 2px no-repeat,
+        linear-gradient(currentColor 0 0) bottom / 100% 2px no-repeat;
+      forced-color-adjust: none;
+    }
+
+    &:hover {
+      background: var(--gui-bg-surface-hover);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--gui-border-focus);
+      outline-offset: 2px;
+    }
+  }
+}

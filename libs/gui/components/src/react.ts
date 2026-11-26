@@ -66,6 +66,7 @@ import { GuiList as GuiListElement, GuiListEvents } from './lib/components/list'
 import { GuiMarkdown as GuiMarkdownElement, GuiMarkdownEvents } from './lib/components/markdown';
 import { GuiMarkdownText as GuiMarkdownTextElement } from './lib/components/markdown-text';
 import { GuiMenu as GuiMenuElement, GuiMenuEvents } from './lib/components/menu';
+import { GuiSidebar as GuiSidebarElement, GuiSidebarEvents } from './lib/components/sidebar';
 import {
   GuiMenuButton as GuiMenuButtonElement,
   GuiMenuButtonEvents,
@@ -353,6 +354,7 @@ export const GuiList = wrap('gui-list', GuiListElement, GuiListEvents);
 export const GuiMarkdown = wrap('gui-markdown', GuiMarkdownElement, GuiMarkdownEvents);
 export const GuiMarkdownText = wrap('gui-markdown-text', GuiMarkdownTextElement);
 export const GuiMenu = wrap('gui-menu', GuiMenuElement, GuiMenuEvents);
+export const GuiSidebar = wrap('gui-sidebar', GuiSidebarElement, GuiSidebarEvents);
 export const GuiMenuButton = wrap('gui-menu-button', GuiMenuButtonElement, GuiMenuButtonEvents);
 export const GuiMultiDropdown = wrap(
   'gui-multi-dropdown',

@@ -59,6 +59,7 @@
 
   // Layout Widgets
   @include meta.load-css('grid');
+  @include meta.load-css('sidebar');
   @include meta.load-css('tabs');
   @include meta.load-css('accordion');
 

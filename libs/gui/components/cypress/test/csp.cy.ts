@@ -131,6 +131,33 @@ describe('a strict style-src-attr policy', () => {
     expectNoViolations();
   });
 
+  it('allows a gui-sidebar to collapse, open its drawer and close it as it grows', () => {
+    cy.mount(
+      html`<div id="box">
+        <gui-sidebar>
+          <button
+            type="button"
+            class="gui-sidebar__toggle"
+            commandfor="csp-drawer"
+            command="show-modal"
+            aria-label="Open menu"
+          ></button>
+          <aside class="gui-sidebar__side" aria-label="Main"><a href="#orders">Orders</a></aside>
+          <div class="gui-sidebar__main"><p>Orders this week</p></div>
+        </gui-sidebar>
+        <gui-dialog placement="start">
+          <dialog id="csp-drawer" aria-label="Main"><a href="#orders">Orders</a></dialog>
+        </gui-dialog>
+      </div>`,
+    );
+    cy.get('#box').then(([box]) => box.style.setProperty('inline-size', '500px'));
+    cy.get('gui-sidebar').should('have.attr', 'collapsed');
+    cy.get<HTMLDialogElement>('#csp-drawer').then(([dialog]) => dialog.showModal());
+    cy.get('#box').then(([box]) => box.style.setProperty('inline-size', '900px'));
+    cy.get('#csp-drawer').should('not.have.attr', 'open');
+    expectNoViolations();
+  });
+
   it('allows a gui-table to render, overflow into a region and scroll', () => {
     cy.mount(
       html`<div id="box">

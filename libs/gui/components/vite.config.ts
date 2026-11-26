@@ -103,6 +103,7 @@ export default defineConfig(() => ({
         'lib/components/multi-range-date-picker': 'src/lib/components/multi-range-date-picker.ts',
         'lib/components/multi-range-time-picker': 'src/lib/components/multi-range-time-picker.ts',
         'lib/components/select': 'src/lib/components/select.ts',
+        'lib/components/sidebar': 'src/lib/components/sidebar.ts',
         'lib/components/tab': 'src/lib/components/tab.ts',
         'lib/components/tab-list': 'src/lib/components/tab-list.ts',
         'lib/components/tab-panel': 'src/lib/components/tab-panel.ts',

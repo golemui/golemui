@@ -164,6 +164,7 @@
         "libs/gui/components/src/lib/components/multi-range-time-picker.ts"
       ],
       "@golemui/gui-components/select": ["libs/gui/components/src/lib/components/select.ts"],
+      "@golemui/gui-components/sidebar": ["libs/gui/components/src/lib/components/sidebar.ts"],
       "@golemui/gui-components/tab": ["libs/gui/components/src/lib/components/tab.ts"],
       "@golemui/gui-components/tab-list": ["libs/gui/components/src/lib/components/tab-list.ts"],
       "@golemui/gui-components/tab-panel": ["libs/gui/components/src/lib/components/tab-panel.ts"],

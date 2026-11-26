@@ -45,6 +45,12 @@ export { GuiMarkdown, GuiMarkdownEvents } from './lib/components/markdown';
 export type { GuiMarkdownProps } from './lib/components/markdown';
 export { GuiMarkdownText } from './lib/components/markdown-text';
 export { GuiMenu, GuiMenuEvents } from './lib/components/menu';
+export { GuiSidebar, GuiSidebarEvents } from './lib/components/sidebar';
+export type {
+  GuiCollapseEventDetail,
+  GuiSidebarSide,
+  GuiSidebarSideSize,
+} from './lib/components/sidebar';
 export type { GuiMenuOrientation, GuiMenuToggleEventDetail } from './lib/components/menu';
 export { GuiMenuButton, GuiMenuButtonEvents } from './lib/components/menu-button';
 export { GuiMultiDropdown, GuiMultiDropdownEvents } from './lib/components/multi-dropdown';

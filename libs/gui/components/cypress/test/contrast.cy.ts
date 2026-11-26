@@ -252,6 +252,30 @@ describe('control boundaries (WCAG 1.4.11)', () => {
         });
       });
 
+      // The toggle of a collapsed sidebar is its three bars alone: they need 3:1 against the page,
+      // and so does its focus ring.
+      it('gui-sidebar: the toggle and its focus ring reach 3:1 against the page', () => {
+        cy.mount(
+          html`<gui-sidebar style="inline-size: 400px">
+            <button type="button" class="gui-sidebar__toggle" aria-label="Open menu"></button>
+            <aside class="gui-sidebar__side" aria-label="Main"></aside>
+            <div class="gui-sidebar__main"></div>
+          </gui-sidebar>`,
+        );
+
+        const page = () => toRgb(getComputedStyle(document.body).backgroundColor, [255, 255, 255]);
+        cy.get('.gui-sidebar__toggle').should(([toggle]) => {
+          const bars = toRgb(getComputedStyle(toggle).color, page());
+          expect(contrast(bars, page()), 'bars against the page').to.be.gte(3);
+        });
+        cy.get('.gui-sidebar__toggle').focus();
+        cy.get('.gui-sidebar__toggle').should(([toggle]) => {
+          expect(getComputedStyle(toggle).outlineStyle, 'focus ring').to.equal('solid');
+          const ring = toRgb(getComputedStyle(toggle).outlineColor, page());
+          expect(contrast(ring, page()), 'focus ring against the page').to.be.gte(3);
+        });
+      });
+
       // The header row's text is the column's name: it needs 4.5:1 against the row's tint. The cell
       // borders only decorate: the header cells and the alignment show the table's structure, so
       // WCAG 1.4.11 asks nothing of them. The focus ring of a scrollable table shows where focus is.

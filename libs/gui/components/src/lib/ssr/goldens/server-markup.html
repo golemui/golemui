@@ -2374,5 +2374,19 @@
         </tbody>
       </table>
     </gui-table>
+    <gui-sidebar  side-size="sm" defer-hydration>
+      <button
+        type="button"
+        class="gui-sidebar__toggle"
+        commandfor="account-drawer"
+        command="show-modal"
+        aria-label="Open menu"
+      ></button>
+      <aside class="gui-sidebar__side" aria-label="Account"><a href="#plans">Plans</a></aside>
+      <div class="gui-sidebar__main"><p>Seats and billing</p></div>
+    </gui-sidebar>
+    <gui-dialog  placement="start" defer-hydration>
+      <dialog id="account-drawer" aria-label="Account"><a href="#plans">Plans</a></dialog>
+    </gui-dialog>
     <gui-toaster  placement="top-end" defer-hydration></gui-toaster>
   </form>

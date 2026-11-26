@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sidebar · GolemUI Components playground</title>
+    <link rel="stylesheet" href="/src/styles.scss" />
+  </head>
+  <body data-pg-events="gui-collapse gui-toggle gui-action">
+    <main class="pg-main">
+      <section class="pg-section">
+        <h1>gui-sidebar</h1>
+        <p>
+          An app layout with a side region next to the main one. It follows its own width: from
+          768px the side is a sticky column; below, the side hides and a toggle opens the app's
+          drawer, a <code>gui-dialog</code> with a second copy of the side. Growing past 768px
+          closes the drawer, and focus never falls to the page when the layout switches.
+        </p>
+      </section>
+
+      <section class="pg-section">
+        <h2>Wide</h2>
+        <gui-sidebar>
+          <button
+            type="button"
+            class="gui-sidebar__toggle"
+            commandfor="wide-drawer"
+            command="show-modal"
+            aria-label="Open menu"
+          ></button>
+          <aside class="gui-sidebar__side" aria-label="Main">
+            <gui-menu>
+              <nav aria-label="Main">
+                <ul>
+                  <li><button type="button" value="orders" aria-current="page">Orders</button></li>
+                  <li><button type="button" value="customers">Customers</button></li>
+                  <li><button type="button" value="settings">Settings</button></li>
+                </ul>
+              </nav>
+            </gui-menu>
+          </aside>
+          <div class="gui-sidebar__main">
+            <p>Orders this week: 42 open, 7 waiting for payment, 3 to ship today.</p>
+          </div>
+        </gui-sidebar>
+        <gui-dialog placement="start">
+          <dialog id="wide-drawer" aria-label="Main">
+            <gui-menu>
+              <nav aria-label="Main">
+                <ul>
+                  <li><button type="button" value="orders" aria-current="page">Orders</button></li>
+                  <li><button type="button" value="customers">Customers</button></li>
+                  <li><button type="button" value="settings">Settings</button></li>
+                </ul>
+              </nav>
+            </gui-menu>
+          </dialog>
+        </gui-dialog>
+      </section>
+
+      <section class="pg-section">
+        <h2>In a narrow column, side at the end, small</h2>
+        <p>Below 768px of its own width: the toggle opens the drawer, from the end side.</p>
+        <div class="pg-stack">
+          <gui-sidebar side="end" side-size="sm">
+            <button
+              type="button"
+              class="gui-sidebar__toggle"
+              commandfor="narrow-drawer"
+              command="show-modal"
+              aria-label="Open menu"
+            ></button>
+            <aside class="gui-sidebar__side" aria-label="Filters">
+              <p>Status: open</p>
+            </aside>
+            <div class="gui-sidebar__main">
+              <p>Orders this week: 42 open, 7 waiting for payment, 3 to ship today.</p>
+            </div>
+          </gui-sidebar>
+          <gui-dialog placement="end">
+            <dialog id="narrow-drawer" aria-label="Filters">
+              <p>Status: open</p>
+              <button type="button" commandfor="narrow-drawer" command="close">Close</button>
+            </dialog>
+          </gui-dialog>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/pages/sidebar.ts"></script>
+  </body>
+</html>
