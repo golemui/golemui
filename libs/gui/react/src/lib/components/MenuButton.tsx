@@ -6,9 +6,11 @@ import {
   menuButtonAriaLabel,
   menuButtonClasses,
   menuButtonPanelId,
+  tooltipId,
+  tooltipText,
   type MenuButtonProps,
 } from '@golemui/gui-shared/internals';
-import { GuiMenuButtonReact } from '../web-components';
+import { GuiMenuButtonReact, GuiTooltipReact } from '../web-components';
 import '../styles.scss';
 
 /**
@@ -20,6 +22,8 @@ export function MenuButton(widgetInstance: WithWidget) {
   const { uid, domId, templateData, emitClick } = useActionWidget<MenuButtonProps>(widget);
   const { variant, icon, iconPosition } = templateData;
   const panelId = menuButtonPanelId(domId);
+  const tooltip = tooltipText(templateData.tooltip);
+  const tipId = tooltipId(domId);
   const iconPart = icon ? (
     <span
       className={`gui-widget-icon gui-button-icon ${icon}`}
@@ -39,6 +43,7 @@ export function MenuButton(widgetInstance: WithWidget) {
           data-cy={`${uid}_button`}
           popoverTarget={panelId}
           aria-label={menuButtonAriaLabel(templateData.label, templateData.ariaLabel)}
+          aria-describedby={tooltip ? tipId : undefined}
           disabled={templateData.disabled === true}
         >
           {iconOnRight ? null : iconPart}
@@ -46,6 +51,11 @@ export function MenuButton(widgetInstance: WithWidget) {
           {iconOnRight ? iconPart : null}
         </button>
       </div>
+      {tooltip ? (
+        <GuiTooltipReact id={tipId} role="tooltip" popover="manual" htmlFor={domId}>
+          {tooltip}
+        </GuiTooltipReact>
+      ) : null}
       <GuiMenuButtonReact
         placement={templateData.placement ?? DEFAULT_MENU_BUTTON_PLACEMENT}
         onGuiAction={(event) => emitClick({ value: event.detail.value })}

@@ -151,6 +151,7 @@ export {
   sidebarSideLabel,
   sidebarToggleLabel,
 } from './lib/utils/sidebar';
+export { tooltipId, tooltipText } from './lib/utils/tooltip';
 export {
   isMenuGroup,
   menuGroupId,

@@ -53,6 +53,12 @@ const config: GuiFormInitConfig = {
           type: 'grid',
           children: [
             { kind: 'input', type: 'textinput', path: 'firstName', label: 'First name' },
+            {
+              uid: 'deleteAccount',
+              kind: 'action',
+              type: 'button',
+              props: { icon: 'delete', ariaLabel: 'Delete', tooltip: 'Deletes the account' },
+            },
             // The upload widgets read their service on their first update, so they must stay
             // inert until the client has bound `dependencies` (see the defer-hydration test).
             { kind: 'input', type: 'fileUpload', path: 'avatar', label: 'Avatar' },
@@ -163,6 +169,18 @@ describe('server rendering the gui widget set in plain node', () => {
     expect(markup.match(/<nav[^>]*id="gui-angular-ssr-form-shellNav"/g)).toHaveLength(1);
     const ids = Array.from(markup.matchAll(/\sid="([^"]+)"/g), (match) => match[1]);
     expect(ids.filter((id, index) => ids.indexOf(id) !== index)).toEqual([]);
+  });
+
+  it("renders a button's tooltip, which its button names as its description", () => {
+    expect(markup).toMatch(
+      /<gui-button[^>]*aria-describedby="gui-angular-ssr-form-deleteAccount_tooltip"/,
+    );
+    const tooltip = markup.match(/<gui-tooltip[^>]*>[^<]*/)?.[0] ?? '';
+    expect(tooltip).toContain('id="gui-angular-ssr-form-deleteAccount_tooltip"');
+    expect(tooltip).toContain('role="tooltip"');
+    expect(tooltip).toContain('popover="manual"');
+    expect(tooltip).toContain('for="gui-angular-ssr-form-deleteAccount"');
+    expect(tooltip).toMatch(/>\s*Deletes the account/);
   });
 
   it('renders a repeater with one card for each row', () => {

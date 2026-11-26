@@ -74,7 +74,11 @@ export class GuiTooltip extends ReactiveElement {
     ensureId(this, 'tooltip');
     this.addEventListener('pointerenter', this.onPointerEnterTooltip);
     this.addEventListener('pointerleave', this.onPointerLeave);
-    this.bind();
+    // After the pending update: the target may render in the same pass, such as the button a
+    // gui-button renders in its own first update.
+    void this.updateComplete.then(() => {
+      if (this.isConnected) this.bind();
+    });
   }
 
   override disconnectedCallback() {
@@ -102,14 +106,15 @@ export class GuiTooltip extends ReactiveElement {
   private bind() {
     const root = this.getRootNode() as Document | ShadowRoot;
     const target = this.htmlFor ? (root.getElementById?.(this.htmlFor) ?? null) : null;
+    if (!target) {
+      this.unbind();
+      warnInDevelopment(this, 'found no element to describe: set its for attribute to an id.');
+      return;
+    }
     if (target === this.target) return;
 
     this.unbind();
     this.target = target;
-    if (!target) {
-      warnInDevelopment(this, 'found no element to describe: set its for attribute to an id.');
-      return;
-    }
     const ids = (target.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(Boolean);
     if (!ids.includes(this.id))
       target.setAttribute('aria-describedby', [...ids, this.id].join(' '));

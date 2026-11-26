@@ -172,6 +172,7 @@
           }
         ],
         "ariaLabel": "Row actions",
+        "tooltip": "Edit, duplicate or delete the row",
         "icon": "more_vert",
         "variant": "outlined",
         "placement": "bottom-end"

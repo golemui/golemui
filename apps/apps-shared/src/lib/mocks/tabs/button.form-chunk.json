@@ -54,7 +54,8 @@
       "props": {
         "icon": "close",
         "variant": "outlined",
-        "ariaLabel": "Close"
+        "ariaLabel": "Close",
+        "tooltip": "Closes without saving"
       }
     }
   ]

@@ -64,6 +64,28 @@ describe('gui-tooltip', () => {
       target().should('have.attr', 'aria-describedby', 'save-tip');
     });
 
+    it('describes the button of a gui-button, which the element renders after it connects', () => {
+      cy.window().then((win) => cy.spy(win.console, 'warn').as('warn'));
+      cy.mount(
+        html`<gui-button uid="save" label="Save"></gui-button>
+          <gui-tooltip for="save" open-delay="40">Saves without publishing</gui-tooltip>`,
+      );
+
+      tooltip().then(([element]) =>
+        cy.get('gui-button button').should('have.attr', 'aria-describedby', element.id),
+      );
+      cy.get('gui-button button').trigger('pointerenter', { pointerType: 'mouse' });
+      isOpen(true);
+      cy.get('@warn').should('not.have.been.calledWithMatch', /<gui-tooltip>/);
+    });
+
+    it('warns about a for attribute that names no element', () => {
+      cy.window().then((win) => cy.spy(win.console, 'warn').as('warn'));
+      cy.mount(html`<gui-tooltip for="nowhere">Saves</gui-tooltip>`);
+
+      cy.get('@warn').should('have.been.calledWithMatch', /<gui-tooltip> found no element/);
+    });
+
     it('moves to another target when its for attribute changes', () => {
       cy.mount(html`${save()}<button type="button" id="publish">Publish</button>`);
 

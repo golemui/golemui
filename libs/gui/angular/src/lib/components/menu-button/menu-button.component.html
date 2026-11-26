@@ -8,6 +8,7 @@
     [attr.data-cy]="widget.uid + '_button'"
     [attr.popovertarget]="panelId"
     [attr.aria-label]="menuButtonAriaLabel(templateData.label, templateData.ariaLabel) ?? null"
+    [attr.aria-describedby]="tooltip() ? tipId : null"
     [disabled]="templateData.disabled === true"
   >
     @if (templateData.icon && templateData.iconPosition !== 'right') {
@@ -29,6 +30,16 @@
     }
   </button>
 </div>
+@if (tooltip(); as tooltip) {
+  <gui-tooltip
+    [attr.defer-hydration]="deferHydration"
+    [id]="tipId"
+    role="tooltip"
+    popover="manual"
+    [attr.for]="adapter.domId"
+    >{{ tooltip }}</gui-tooltip
+  >
+}
 <gui-menu-button
   [attr.defer-hydration]="deferHydration"
   [placement]="templateData.placement ?? defaultPlacement"

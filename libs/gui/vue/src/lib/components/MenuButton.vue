@@ -8,10 +8,13 @@ import {
   menuButtonAriaLabel,
   menuButtonClasses,
   menuButtonPanelId,
+  tooltipId,
+  tooltipText,
   type MenuButtonProps,
 } from '@golemui/gui-shared/internals';
 import { computed } from 'vue';
 import '@golemui/gui-components/menu-button';
+import '@golemui/gui-components/tooltip';
 
 // The menuButton action widget: a button that opens a menu of actions, with `gui-menu-button`.
 // Picking an item emits the widget's `click` event with `{ value }` as its detail.
@@ -25,6 +28,8 @@ const ariaLabel = computed(() =>
   menuButtonAriaLabel(templateData.value.label, templateData.value.ariaLabel),
 );
 const iconOnRight = computed(() => templateData.value.iconPosition === 'right');
+const tooltip = computed(() => tooltipText(templateData.value.tooltip));
+const tipId = tooltipId(domId);
 
 const onAction = (event: CustomEvent<GuiActionEventDetail>) => {
   emitClick({ value: event.detail.value });
@@ -41,6 +46,7 @@ const onAction = (event: CustomEvent<GuiActionEventDetail>) => {
         :data-cy="`${uid}_button`"
         :popovertarget="panelId"
         :aria-label="ariaLabel"
+        :aria-describedby="tooltip ? tipId : undefined"
         :disabled="templateData.disabled === true"
       >
         <span
@@ -58,6 +64,9 @@ const onAction = (event: CustomEvent<GuiActionEventDetail>) => {
         ></span>
       </button>
     </div>
+    <gui-tooltip v-if="tooltip" :id="tipId" role="tooltip" popover="manual" :for="domId">{{
+      tooltip
+    }}</gui-tooltip>
     <gui-menu-button
       :placement.prop="templateData.placement ?? DEFAULT_MENU_BUTTON_PLACEMENT"
       @gui-action="onAction"

@@ -11,5 +11,16 @@
   [icon]="templateData.icon"
   [iconPosition]="templateData.iconPosition"
   [buttonAriaLabel]="templateData.ariaLabel"
+  [attr.aria-describedby]="tooltip() ? tipId : null"
   (click)="onClick()"
 ></gui-button>
+@if (tooltip(); as tooltip) {
+  <gui-tooltip
+    [attr.defer-hydration]="deferHydration"
+    [id]="tipId"
+    role="tooltip"
+    popover="manual"
+    [attr.for]="adapter.domId"
+    >{{ tooltip }}</gui-tooltip
+  >
+}

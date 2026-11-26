@@ -1,12 +1,13 @@
 import type { ActionWidget, WithWidget } from '@golemui/core';
 import { ActionWidgetAdapter, type LitFormContext, actionContext, formContext } from '@golemui/lit';
 import { consume, provide } from '@lit/context';
-import { html, LitElement } from 'lit';
+import { html, LitElement, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { safeDefine, unsubscribeAll } from '@golemui/lit/internals';
 import { type Subscription } from 'rxjs';
-import type { ButtonProps } from '@golemui/gui-shared/internals';
+import { tooltipId, tooltipText, type ButtonProps } from '@golemui/gui-shared/internals';
 import '@golemui/gui-components/button';
+import '@golemui/gui-components/tooltip';
 
 export class ButtonElement extends LitElement implements WithWidget {
   widget!: ActionWidget;
@@ -43,6 +44,9 @@ export class ButtonElement extends LitElement implements WithWidget {
   }
 
   override render() {
+    const { domId } = this.adapter;
+    const tooltip = tooltipText(this.adapter.templateData.tooltip);
+    const tipId = tooltipId(domId);
     return html`
       <gui-button
         .uid=${this.widget.uid}
@@ -54,8 +58,14 @@ export class ButtonElement extends LitElement implements WithWidget {
         .icon=${this.adapter.templateData.icon}
         .iconPosition=${this.adapter.templateData.iconPosition}
         .buttonAriaLabel=${this.adapter.templateData.ariaLabel as string}
+        aria-describedby=${tooltip ? tipId : nothing}
         @click=${() => this.adapter.click()}
       ></gui-button>
+      ${tooltip
+        ? html`<gui-tooltip id=${tipId} role="tooltip" popover="manual" for=${domId}
+            >${tooltip}</gui-tooltip
+          >`
+        : nothing}
     `;
   }
 

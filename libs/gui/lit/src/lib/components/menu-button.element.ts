@@ -11,10 +11,13 @@ import {
   menuButtonAriaLabel,
   menuButtonClasses,
   menuButtonPanelId,
+  tooltipId,
+  tooltipText,
   type MenuButtonProps,
 } from '@golemui/gui-shared/internals';
 import type { GuiActionEventDetail } from '@golemui/gui-components';
 import '@golemui/gui-components/menu-button';
+import '@golemui/gui-components/tooltip';
 
 /**
  * The menuButton action widget: a button that opens a menu of actions, with `gui-menu-button`.
@@ -57,6 +60,8 @@ export class MenuButtonElement extends LitElement implements WithWidget {
     const uid = this.widget.uid;
     const { domId } = this.adapter;
     const panelId = menuButtonPanelId(domId);
+    const tooltip = tooltipText(this.adapter.templateData.tooltip);
+    const tipId = tooltipId(domId);
     const iconPart = icon
       ? html`<span
           class="gui-widget-icon gui-button-icon ${icon}"
@@ -75,12 +80,18 @@ export class MenuButtonElement extends LitElement implements WithWidget {
           data-cy=${`${uid}_button`}
           popovertarget=${panelId}
           aria-label=${menuButtonAriaLabel(label, ariaLabel) ?? nothing}
+          aria-describedby=${tooltip ? tipId : nothing}
           ?disabled=${disabled === true}
         >
           ${iconOnRight ? nothing : iconPart} ${label ? html`<span>${label}</span>` : nothing}
           ${iconOnRight ? iconPart : nothing}
         </button>
       </div>
+      ${tooltip
+        ? html`<gui-tooltip id=${tipId} role="tooltip" popover="manual" for=${domId}
+            >${tooltip}</gui-tooltip
+          >`
+        : nothing}
       <gui-menu-button
         placement=${placement ?? DEFAULT_MENU_BUTTON_PLACEMENT}
         @gui-action=${this.onAction}

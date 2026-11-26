@@ -131,6 +131,33 @@ export const runMenuButtonComponentTests = (baseMountFn: MountComponentFn) => {
       button().should('not.have.attr', 'aria-label');
     });
 
+    it('describes its button with a tooltip, which closes when the button opens the menu', () => {
+      mountMenu(
+        { label: undefined },
+        { icon: 'more_vert', ariaLabel: 'Row actions', tooltip: 'Edit or delete the row' },
+      );
+      const tooltip = () => cy.get('gui-tooltip');
+      const tooltipIsOpen = (open: boolean) =>
+        tooltip().should(([element]) =>
+          expect(element.matches(':popover-open'), 'tooltip open').to.equal(open),
+        );
+
+      tooltip()
+        .should('have.attr', 'id', testDomId(`${UID}_tooltip`))
+        .and('have.attr', 'role', 'tooltip')
+        .and('have.text', 'Edit or delete the row');
+      button()
+        .should('have.attr', 'aria-describedby', testDomId(`${UID}_tooltip`))
+        .and('have.attr', 'aria-label', 'Row actions');
+
+      button().trigger('pointerenter', { pointerType: 'mouse' });
+      tooltipIsOpen(true);
+      button().trigger('pointerdown').click();
+      tooltipIsOpen(false);
+      isOpen(true);
+      expectNoDuplicateIds();
+    });
+
     it('gives each repeater row its own menu', () => {
       const formEvent = cy.stub().as('formEvent');
       mountFn({

@@ -38,6 +38,12 @@ export type ButtonProps = {
    * readers announce it; with a label, the label is the name and this is ignored.
    */
   ariaLabel?: Localizable;
+  /**
+   * A short text shown next to the button while the pointer rests on it or it has keyboard
+   * focus, with `gui-tooltip`. It describes the button and doesn't name it: an icon-only button
+   * still needs `ariaLabel`.
+   */
+  tooltip?: Localizable;
 };
 
 /** An action in a menu. */
@@ -71,6 +77,12 @@ export type MenuButtonProps = {
    * readers announce it, and the menu takes its name from the button.
    */
   ariaLabel?: Localizable;
+  /**
+   * A short text shown next to the button while the pointer rests on it or it has keyboard
+   * focus, with `gui-tooltip`. It describes the button and doesn't name it: an icon-only button
+   * still needs `ariaLabel`.
+   */
+  tooltip?: Localizable;
 };
 
 /** A step of a breadcrumb trail. */

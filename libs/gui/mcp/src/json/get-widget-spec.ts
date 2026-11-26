@@ -687,12 +687,14 @@ const NOTES: Record<string, string[]> = {
       'Both support state suffixes: `"icon.<stateName>": "hourglass_empty"` swaps the icon while a state is active. ' +
       'Call `get_concept({ concept: "icons" })` for setup instructions and the full list of icon-capable widgets.',
     'An icon-only button (no `label`) MUST set `props.ariaLabel` (localizable), its accessible name for screen readers, e.g. `{ "icon": "close", "ariaLabel": "Close" }`. With a `label`, the label is the name and `ariaLabel` is ignored.',
+    '`props.tooltip` (localizable) shows a short text next to the button while the pointer rests on it or it has keyboard focus, e.g. `{ "icon": "delete", "ariaLabel": "Delete", "tooltip": "Deletes the order for everyone" }`. It is the button\'s description, not its name: an icon-only button still needs `ariaLabel`. It never shows on touch, and a disabled button shows none (it takes no pointer or focus). Supports state suffixes.',
   ],
   menuButton: [
     'A button that opens a menu of actions. Picking an item dispatches ONE event, `on.click`, with the item\'s `value` in `detail.value`: the host\'s `formEvent` handler receives `{ name: "rowAction", detail: { value: "edit" } }` and switches on the value. There is no event name per item.',
     '`props.items` is an array of actions `{ label, value, disabled? }` and separators `{ separator: true }`. `label` is localizable. A menu is not an input: it has no `path` and stores nothing in the form data.',
     '`props.placement` sets where the menu opens next to its button (default `"bottom-start"`; `"bottom-end"` suits a menu at the end of a row). `props.variant`, `props.icon` and `props.iconPosition` style the button like a `button` widget.',
     '`label` is optional. An icon-only button (e.g. `props.icon: "more_vert"` for a "⋮" row menu) MUST set `props.ariaLabel`, the button\'s accessible name; the menu is named after the button too. `ariaLabel` is ignored while a `label` is shown.',
+    '`props.tooltip` (localizable) shows a short text next to the button while the pointer rests on it or it has keyboard focus, as on a `button`. It describes the button and does not name it: keep `ariaLabel` on an icon-only button.',
     'In a repeater, every row gets its own menu, and the event carries the row it was picked in, as every action does.',
     'Keyboard and screen reader support come from `gui-menu-button`: the button gets `aria-haspopup="menu"`, the arrows move through the items, typing jumps to an item, Escape closes it and returns focus to the button.',
     'For navigation (the destinations of an app, groups that open, the current page marked) use `menu` instead: `menuButton` is a button with a list of actions.',

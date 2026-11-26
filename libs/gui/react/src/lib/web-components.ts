@@ -55,4 +55,5 @@ export {
   GuiTime as GuiTimeReact,
   GuiTimePicker as GuiTimePickerReact,
   GuiToggle as GuiToggleReact,
+  GuiTooltip as GuiTooltipReact,
 } from '@golemui/gui-components/react';
