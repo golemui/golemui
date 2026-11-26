@@ -176,6 +176,23 @@ describe('resuming server-rendered standalone elements', () => {
     expect(picked).toEqual(['plans']);
   });
 
+  it('leaves a menu as the server sent it, and opens a group after the resume', async () => {
+    const menu = () => document.querySelector('gui-menu') as HTMLElement;
+    const before = menu().outerHTML;
+    resumeServerRendered();
+    await settle();
+
+    // Only the holds go: the element writes nothing until the user opens a group.
+    expect(menu().outerHTML).toBe(before.replaceAll(' defer-hydration=""', ''));
+    const toggles: unknown[] = [];
+    menu().addEventListener('gui-toggle', (event) => toggles.push((event as CustomEvent).detail));
+    const roles = menu().querySelector('[aria-controls="account-roles"]') as HTMLElement;
+    roles.click();
+    expect(roles.getAttribute('aria-expanded')).toBe('true');
+    expect(document.getElementById('account-roles')?.hasAttribute('hidden')).toBe(false);
+    expect(toggles).toEqual([{ open: true, value: 'roles' }]);
+  });
+
   it('leaves a table that fits as the server sent it', async () => {
     const table = () => document.querySelector('gui-table') as HTMLElement;
     const before = table().outerHTML;

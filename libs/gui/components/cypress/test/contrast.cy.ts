@@ -212,6 +212,46 @@ describe('control boundaries (WCAG 1.4.11)', () => {
         });
       });
 
+      // The current page is shown by its tint and its color, and the focus ring shows where focus
+      // is: the current item's text needs 4.5:1 against its tint, the ring 3:1 against the page,
+      // and a group's caret, its only sign that it opens, 3:1.
+      it('gui-menu: the current item, the caret and the focus ring reach their contrast', () => {
+        cy.mount(
+          html`<gui-menu>
+            <nav aria-label="Main">
+              <ul>
+                <li><button type="button" aria-current="page">Home</button></li>
+                <li>
+                  <button type="button" aria-expanded="false" aria-controls="contrast-more">
+                    More
+                  </button>
+                  <ul id="contrast-more" hidden>
+                    <li><button type="button">Help</button></li>
+                  </ul>
+                </li>
+              </ul>
+            </nav>
+          </gui-menu>`,
+        );
+
+        const page = () => toRgb(getComputedStyle(document.body).backgroundColor, [255, 255, 255]);
+        cy.get('gui-menu [aria-current]').should(([current]) => {
+          const tint = toRgb(getComputedStyle(current).backgroundColor, page());
+          const text = toRgb(getComputedStyle(current).color, tint);
+          expect(contrast(text, tint), 'current item text against its tint').to.be.gte(4.5);
+        });
+        cy.contains('gui-menu button', 'More').should(([group]) => {
+          const caret = toRgb(getComputedStyle(group, '::after').backgroundColor, page());
+          expect(contrast(caret, page()), 'caret against the page').to.be.gte(3);
+        });
+        cy.contains('gui-menu button', 'More').focus();
+        cy.contains('gui-menu button', 'More').should(([group]) => {
+          expect(getComputedStyle(group).outlineStyle, 'focus ring').to.equal('solid');
+          const ring = toRgb(getComputedStyle(group).outlineColor, page());
+          expect(contrast(ring, page()), 'focus ring against the page').to.be.gte(3);
+        });
+      });
+
       // The header row's text is the column's name: it needs 4.5:1 against the row's tint. The cell
       // borders only decorate: the header cells and the alignment show the table's structure, so
       // WCAG 1.4.11 asks nothing of them. The focus ring of a scrollable table shows where focus is.

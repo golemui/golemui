@@ -178,6 +178,47 @@ describe('a strict style-src-attr policy', () => {
       });
     });
 
+    it(`allows a gui-menu to open groups in place and in a dropdown${fallback ? ', measuring' : ''}`, () => {
+      GUIAnchorController.forceFallback = fallback;
+      cy.mount(
+        html`<div id="box">
+          <gui-menu orientation="horizontal">
+            <nav aria-label="Main">
+              <ul>
+                <li><button type="button" aria-current="page">Home</button></li>
+                <li>
+                  <button type="button" popovertarget="csp-reports">Reports</button>
+                  <gui-popover>
+                    <ul id="csp-reports" popover>
+                      <li>
+                        <button type="button" aria-expanded="false" aria-controls="csp-yearly">
+                          Yearly
+                        </button>
+                        <ul id="csp-yearly" hidden>
+                          <li><button type="button" value="2026">2026</button></li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </gui-popover>
+                </li>
+                <li><button type="button">Customers</button></li>
+              </ul>
+            </nav>
+          </gui-menu>
+        </div>`,
+      );
+      cy.get('#box').then(([box]) => box.style.setProperty('inline-size', '120px'));
+      cy.get('button[popovertarget="csp-reports"]').click();
+      cy.get('#csp-reports').should('match', ':popover-open');
+      cy.contains('button', 'Yearly').click();
+      cy.contains('button', '2026').click();
+      cy.get('#csp-reports').should('not.match', ':popover-open');
+      expectNoViolations();
+      cy.then(() => {
+        GUIAnchorController.forceFallback = false;
+      });
+    });
+
     it(`allows a gui-tooltip to describe, open and close${fallback ? ', measuring' : ''}`, () => {
       GUIAnchorController.forceFallback = fallback;
       cy.mount(

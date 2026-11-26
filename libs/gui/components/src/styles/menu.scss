@@ -1,0 +1,112 @@
+@use 'caret' as *;
+@use 'scroll-shadow' as *;
+
+// `gui-menu`: the app's `<nav>` and lists. A column by default; with `orientation="horizontal"`,
+// a row whose groups open dropdowns.
+gui-menu {
+  display: block;
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  // A group's list, opened in place: one step in from its button.
+  li > ul {
+    padding-inline-start: var(--gui-menu-indent, var(--gui-space-4));
+  }
+
+  li > :is(button, a[href]) {
+    appearance: none;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: var(--gui-space-2);
+    inline-size: 100%;
+    padding: var(--gui-space-2) var(--gui-space-3);
+    border: 0;
+    border-radius: var(--gui-radius-sm);
+    background: transparent;
+    color: var(--gui-text-default);
+    font: inherit;
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--gui-bg-surface-hover);
+    }
+
+    // Inside the item, so a scrolling row doesn't clip it.
+    &:focus-visible {
+      outline: 2px solid var(--gui-border-focus);
+      outline-offset: -2px;
+    }
+
+    &[aria-current]:not([aria-current='false']) {
+      background: color-mix(in srgb, var(--gui-intent-primary) 10%, transparent);
+      color: var(--gui-intent-primary-active);
+      font-weight: 600;
+    }
+
+    &:is(:disabled, [aria-disabled='true']) {
+      background: transparent;
+      color: var(--gui-text-disabled);
+      cursor: not-allowed;
+    }
+  }
+
+  // A group's button: the caret at its end, turned while the group is open.
+  li > button:is([aria-expanded], [popovertarget])::after {
+    @include gui-caret;
+    content: '';
+    margin-inline-start: auto;
+    transition: rotate 0.2s;
+  }
+
+  li > button[aria-expanded='true']::after,
+  li:has(> gui-popover > [popover]:popover-open) > button::after {
+    rotate: 180deg;
+  }
+
+  // The group that holds the current page shows it, closed too.
+  li:has([aria-current]:not([aria-current='false'])) > button:is([aria-expanded], [popovertarget]) {
+    color: var(--gui-intent-primary-active);
+  }
+
+  // A dropdown: the floating surface of gui-popover, with less room around the items.
+  gui-popover > [popover] {
+    min-inline-size: 12rem;
+    padding: var(--gui-space-1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    li > button::after {
+      transition: none;
+    }
+  }
+}
+
+// As a flex or grid item, a horizontal menu shrinks below its row's width, which then scrolls,
+// instead of widening the row or the track it sits in.
+gui-menu[orientation='horizontal'] {
+  min-inline-size: 0;
+}
+
+gui-menu[orientation='horizontal'] > nav > ul {
+  display: flex;
+  align-items: center;
+  gap: var(--gui-space-1);
+  overflow-x: auto;
+  @include gui-scroll-shadow-backgrounds(var(--gui-menu-bg, var(--gui-bg-default)));
+
+  > li {
+    flex: none;
+
+    > :is(button, a[href]) {
+      inline-size: auto;
+      white-space: nowrap;
+    }
+  }
+}

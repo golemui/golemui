@@ -5,6 +5,7 @@ import '../components/breadcrumb';
 import '../components/checkbox';
 import '../components/checkbox-group';
 import '../components/dialog';
+import '../components/menu';
 import '../components/menu-button';
 import '../components/otp';
 import '../components/popover';
@@ -29,7 +30,7 @@ import '../components/tooltip';
 /**
  * A page of elements shared by the server render and the resume specs: elements that render
  * their own content (the inputs) and elements whose children are the app's (the breadcrumb, the
- * alert, the tabs, the popover, the tooltip, the dialog, the menu and the table), one nested in the other, and the toaster,
+ * navigation menu, the alert, the tabs, the popover, the tooltip, the dialog, the menu and the table), one nested in the other, and the toaster,
  * which renders nothing until a toast arrives.
  *
  * Every value is an attribute: the client upgrades the elements from the HTML, so a property
@@ -45,6 +46,34 @@ export const serverTemplate = () =>
         </ol>
       </nav>
     </gui-breadcrumb>
+    <gui-menu orientation="horizontal">
+      <nav aria-label="Account">
+        <ul>
+          <li><button type="button" value="billing" aria-current="page">Billing</button></li>
+          <li>
+            <button type="button" value="team" popovertarget="account-team">Team</button>
+            <gui-popover>
+              <ul id="account-team" popover>
+                <li><button type="button" value="members">Members</button></li>
+                <li>
+                  <button
+                    type="button"
+                    value="roles"
+                    aria-expanded="false"
+                    aria-controls="account-roles"
+                  >
+                    Roles
+                  </button>
+                  <ul id="account-roles" hidden>
+                    <li><button type="button" value="admins">Admins</button></li>
+                  </ul>
+                </li>
+              </ul>
+            </gui-popover>
+          </li>
+        </ul>
+      </nav>
+    </gui-menu>
     <gui-alert variant="info">Yearly billing saves two months.</gui-alert>
     <gui-textinput
       uid="email"

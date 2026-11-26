@@ -67,6 +67,7 @@
 
   // Navigation
   @include meta.load-css('breadcrumb');
+  @include meta.load-css('menu');
 
   // Display Widgets
   @include meta.load-css('alert');

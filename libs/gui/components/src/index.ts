@@ -44,6 +44,8 @@ export { matchesAccept } from './lib/utils/file-upload';
 export { GuiMarkdown, GuiMarkdownEvents } from './lib/components/markdown';
 export type { GuiMarkdownProps } from './lib/components/markdown';
 export { GuiMarkdownText } from './lib/components/markdown-text';
+export { GuiMenu, GuiMenuEvents } from './lib/components/menu';
+export type { GuiMenuOrientation, GuiMenuToggleEventDetail } from './lib/components/menu';
 export { GuiMenuButton, GuiMenuButtonEvents } from './lib/components/menu-button';
 export { GuiMultiDropdown, GuiMultiDropdownEvents } from './lib/components/multi-dropdown';
 export { GuiMultiFileUpload, GuiMultiFileUploadEvents } from './lib/components/multi-file-upload';
